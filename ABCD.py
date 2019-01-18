@@ -78,6 +78,19 @@ class OpticalPath(object):
 			outputRays.append(ray)
 		return outputRays
 
+	def propagateMany(self, inputRays):
+
+		output = []
+		for inputRay in inputRays:
+			ray = inputRay
+			outputRays = [ray]
+			for element in self.elements:
+				ray = element*ray
+				outputRays.append(ray)
+			output.append(outputRays)
+		
+		return output
+
 
 def rearrangeRays(rayList):
 	x = []
@@ -88,35 +101,31 @@ def rearrangeRays(rayList):
 	return (x,y)
 
 
-M1 = Matrix(1,1,0,1, 1)
-M2 = Matrix(1,2,0,1, 2)
-M3 = M2*M1
+M1 = Space(10)
+M2 = Space(20)
 L = Lens(10)
+L = Lens(20)
 
 path = OpticalPath()
 path.append(M1)
 path.append(L)
-path.append(M3)
-path.append(Space(10))
+path.append(M2)
 
+r = Ray(y=0,theta=0.5,z=0)
+r1 = Ray(y=0,theta=0.5,z=0)
+r2 = Ray(y=1,theta=0.5,z=0)
 
-r = Ray(y=1,theta=0.5,z=0)
+manyRays = path.propagateMany([r1,r2])
+print (manyRays)
 
 rays = path.propagate(r)
 for ray in rays:
 	print(ray.z, ray.y)
+
 (x,y) = rearrangeRays(rays)
 
-
-print(M3.A)
-print(M3.B)
-print(M3.C)
-print(M3.D)
-
-rp = M3*r
-
-print(rp.y)
-print(rp.theta)
+print(rays)
+print(x,y)
 
 # # Data for plotting
 # t = np.arange(0.0, 2.0, 0.01)
@@ -128,6 +137,4 @@ ax.plot(x, y)
 ax.set(xlabel='Distance', ylabel='Rayon',
        title='Trace de rayons')
 ax.grid()
-
-fig.savefig("test.png")
 plt.show()
