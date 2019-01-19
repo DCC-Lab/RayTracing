@@ -32,11 +32,11 @@ class Matrix(object):
 	L = 0
 
 	def __init__(self, A, B, C, D, physicalLength):	
-		self.A = A
-		self.B = B
-		self.C = C
-		self.D = D
-		self.L = physicalLength
+		self.A = float(A)
+		self.B = float(B)
+		self.C = float(C)
+		self.D = float(D)
+		self.L = float(physicalLength)
 
 		super(Matrix, self).__init__()		
 
@@ -68,11 +68,11 @@ class Matrix(object):
 
 class Lens(Matrix):
 	def __init__(self, f):	
-		super(Lens, self).__init__(A=1, B=0, C=-1/f,D=1, physicalLength=0)
+		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0)
 
 class Space(Matrix):
 	def __init__(self, d):	
-		super(Space, self).__init__(A=1, B=d, C=0,D=1, physicalLength=d)
+		super(Space, self).__init__(A=1, B=float(d), C=0,D=1, physicalLength=d)
 
 class OpticalPath(object):
 	def __init__(self):
@@ -103,16 +103,24 @@ class OpticalPath(object):
 		return output
 
 	def display(self):
-		rayFan = Ray.rayFan(y=1,minRadian=-0.5, maxRadian=0.5, N=5)
-		rayFanSequence = path.propagateMany(rayFan)
-
 		fig, ax = plt.subplots()
 		ax.set(xlabel='Distance', ylabel='Rayon', title='Trace de rayons')
 		ax.grid()
 
+		rayFan1 = Ray.rayFan(y=1,minRadian=-0.25, maxRadian=0.25, N=5)
+		rayFanSequence = path.propagateMany(rayFan1)
+
 		for raySequence in rayFanSequence:
 			(x,y) = self.rearrangeRaysForDisplay(raySequence)
-			ax.plot(x, y)
+			ax.plot(x, y,'b')
+
+		rayFan2 = Ray.rayFan(y=0,minRadian=-0.25, maxRadian=0.25, N=5)
+		rayFanSequence = path.propagateMany(rayFan2)
+
+		for raySequence in rayFanSequence:
+			(x,y) = self.rearrangeRaysForDisplay(raySequence)
+			ax.plot(x, y,'r')
+
 
 		plt.show()
 
@@ -125,14 +133,8 @@ class OpticalPath(object):
 			y.append(ray.y)
 		return (x,y)
 
-
-M1 = Space(10)
-M2 = Space(20)
-L = Lens(10)
-L = Lens(20)
-
 path = OpticalPath()
-path.append(M1)
-path.append(L)
-path.append(M2)
+path.append(Space(10))
+path.append(Lens(10))
+path.append(Space(10))
 path.display()
