@@ -11,6 +11,16 @@ class Ray:
 		self.y = y
 		self.theta = theta
 		self.z = z
+	
+	@classmethod
+	def rayFan(self, y, minRadian, maxRadian, N):
+		rays = []
+		for i in range(N):
+			theta = minRadian + i*(maxRadian-minRadian)/(N-1)
+			rays.append(Ray(y,theta,0))
+
+		return rays
+
 
 
 class Matrix(object):
@@ -18,6 +28,7 @@ class Matrix(object):
 	B = 0
 	C = 0
 	D = 1
+
 	L = 0
 
 	def __init__(self, A, B, C, D, physicalLength):	
@@ -91,14 +102,28 @@ class OpticalPath(object):
 		
 		return output
 
+	def display(self):
+		rayFan = Ray.rayFan(y=1,minRadian=-0.5, maxRadian=0.5, N=5)
+		rayFanSequence = path.propagateMany(rayFan)
 
-def rearrangeRays(rayList):
-	x = []
-	y = []
-	for ray in rayList:
-		x.append(ray.z)
-		y.append(ray.y)
-	return (x,y)
+		fig, ax = plt.subplots()
+		ax.set(xlabel='Distance', ylabel='Rayon', title='Trace de rayons')
+		ax.grid()
+
+		for raySequence in rayFanSequence:
+			(x,y) = self.rearrangeRaysForDisplay(raySequence)
+			ax.plot(x, y)
+
+		plt.show()
+
+
+	def rearrangeRaysForDisplay(self, rayList):
+		x = []
+		y = []
+		for ray in rayList:
+			x.append(ray.z)
+			y.append(ray.y)
+		return (x,y)
 
 
 M1 = Space(10)
@@ -110,31 +135,4 @@ path = OpticalPath()
 path.append(M1)
 path.append(L)
 path.append(M2)
-
-r = Ray(y=0,theta=0.5,z=0)
-r1 = Ray(y=0,theta=0.5,z=0)
-r2 = Ray(y=1,theta=0.5,z=0)
-
-manyRays = path.propagateMany([r1,r2])
-print (manyRays)
-
-rays = path.propagate(r)
-for ray in rays:
-	print(ray.z, ray.y)
-
-(x,y) = rearrangeRays(rays)
-
-print(rays)
-print(x,y)
-
-# # Data for plotting
-# t = np.arange(0.0, 2.0, 0.01)
-# s = 1 + np.sin(2 * np.pi * t)
-
-fig, ax = plt.subplots()
-ax.plot(x, y)
-
-ax.set(xlabel='Distance', ylabel='Rayon',
-       title='Trace de rayons')
-ax.grid()
-plt.show()
+path.display()
