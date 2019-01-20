@@ -84,13 +84,10 @@ class Space(Matrix):
 class OpticalPath(object):
 	def __init__(self):
 		self.elements = []
+		self.objectHeight = 1
+		self.objectPosition = 0 # always at z=0 for now
 
 	def physicalLength(self):
-		z = 0
-		for element in self.elements:
-			z += element.L
-		return z
-	def maxHeight(self):
 		z = 0
 		for element in self.elements:
 			z += element.L
@@ -129,7 +126,7 @@ class OpticalPath(object):
 		plt.show()
 
 	def drawObject(self, axes):
-		plt.arrow(0, -1, 0, 2, width=0.2, fc='y', ec='y',length_includes_head=True)
+		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.2, fc='y', ec='y',head_length=0.5, head_width=0.5,length_includes_head=True)
 
 	def drawOpticalElements(self, axes):		
 		z = 0
@@ -138,7 +135,7 @@ class OpticalPath(object):
 			z += element.L
 
 	def drawRaytraces(self, axes):
-		rayFan = Ray.fan(y=1,minRadian=-0.25, maxRadian=0.25, N=5)
+		rayFan = Ray.fan(y=self.objectHeight,minRadian=-0.25, maxRadian=0.25, N=5)
 		rayFanSequence = path.propagateMany(rayFan)
 
 		for raySequence in rayFanSequence:
@@ -152,13 +149,6 @@ class OpticalPath(object):
 			(x,y) = self.rearrangeRaysForDisplay(raySequence)
 			axes.plot(x, y,'r')
 
-		rayFan = Ray.fan(y=-1,minRadian=-0.25, maxRadian=0.25, N=5)
-		rayFanSequence = path.propagateMany(rayFan)
-
-		for raySequence in rayFanSequence:
-			(x,y) = self.rearrangeRaysForDisplay(raySequence)
-			axes.plot(x, y,'g')
-
 
 	def rearrangeRaysForDisplay(self, rayList):
 		x = []
@@ -171,5 +161,8 @@ class OpticalPath(object):
 path = OpticalPath()
 path.append(Space(10))
 path.append(Lens(5))
+path.append(Space(20))
+path.append(Lens(5))
+path.append(Space(10))
 path.append(Space(10))
 path.display()
