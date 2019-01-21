@@ -3,11 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class Ray:
-	y = 0
-	theta = 0
-	z = 0
-	isBlocked = False
-
 	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
 		self.y = y
 		self.theta = theta
@@ -110,6 +105,7 @@ class OpticalPath(object):
 		self.elements = []
 		self.objectHeight = 1
 		self.objectPosition = 0 # always at z=0 for now
+		self.fanAngle = 0.5
 		self.fanNumber = 20
 		self.name = "Ray tracing"
 
@@ -162,14 +158,14 @@ class OpticalPath(object):
 			z += element.L
 
 	def drawRayTraces(self, axes):
-		rayFan = Ray.fan(y=self.objectHeight,minRadian=-0.25, maxRadian=0.25, N=self.fanNumber)
+		rayFan = Ray.fan(y=self.objectHeight,minRadian=-self.fanAngle/2, maxRadian=self.fanAngle/2, N=self.fanNumber)
 		rayFanSequence = self.propagateMany(rayFan)
 
 		for raySequence in rayFanSequence:
 			(x,y) = self.rearrangeRaysForDisplay(raySequence)
 			axes.plot(x, y,'b', linewidth=0.4)
 
-		rayFan = Ray.fan(y=0,minRadian=-0.25, maxRadian=0.25, N=self.fanNumber)
+		rayFan = Ray.fan(y=0,minRadian=-self.fanAngle/2, maxRadian=self.fanAngle/2, N=self.fanNumber)
 		rayFanSequence = self.propagateMany(rayFan)
 
 		for raySequence in rayFanSequence:
