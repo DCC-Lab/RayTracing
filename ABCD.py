@@ -83,16 +83,27 @@ class Lens(Matrix):
 		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0, apertureDiameter=diameter)
 
 	def drawAt(self, z, axes):
-		lensHalfHeight = 4
+		halfHeight = 4
 		if not np.isinf(self.apertureDiameter):
-			lensHalfHeight = self.apertureDiameter/2
+			halfHeight = self.apertureDiameter/2
 
-		plt.arrow(z, 0, 0, lensHalfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.5,length_includes_head=True)
-		plt.arrow(z, 0, 0, -lensHalfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.5, length_includes_head=True)
+		plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25,length_includes_head=True)
+		plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25, length_includes_head=True)
 
 class Space(Matrix):
 	def __init__(self, d):	
 		super(Space, self).__init__(A=1, B=float(d), C=0,D=1, physicalLength=d)
+
+class Aperture(Matrix):
+	def __init__(self, diameter):	
+		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
+	def drawAt(self, z, axes):
+		halfHeight = 4
+		if not np.isinf(self.apertureDiameter):
+			halfHeight = self.apertureDiameter/2
+
+		plt.arrow(z, halfHeight+1, 0,-1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
+		plt.arrow(z, -halfHeight-1, 0, 1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
 
 class OpticalPath(object):
 	def __init__(self):
@@ -133,7 +144,7 @@ class OpticalPath(object):
 
 	def display(self):
 		fig, axes = plt.subplots()
-		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
+		axes.set(xlabel='Distance', ylabel='Height', title=self.name, aspect='equal')
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
@@ -141,7 +152,7 @@ class OpticalPath(object):
 		plt.show()
 
 	def drawObject(self, axes):
-		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.2, fc='b', ec='b',head_length=0.25, head_width=0.5,length_includes_head=True)
+		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
 
 	def drawOpticalElements(self, axes):		
 		z = 0
@@ -175,6 +186,7 @@ class OpticalPath(object):
 			elif removeBlockedRaysCompletely:
 				x = []
 				y = []
+			# else: # ray will simply stop drawing from here
 			
 		return (x,y)
 
@@ -202,6 +214,18 @@ if __name__ == "__main__":
 	path.append(Space(d=10))
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=20))
+	path.append(Lens(f=5, diameter=2.5))
+	path.append(Space(d=10))
+	path.display()
+
+	path = OpticalPath()
+	path.name = "Demonstration: two lenses with aperture"
+	path.objectHeight = 0.5
+	path.append(Space(d=10))
+	path.append(Lens(f=5, diameter=2.5))
+	path.append(Space(d=10))
+	path.append(Aperture(diameter=3))
+	path.append(Space(d=10))
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=10))
 	path.display()
