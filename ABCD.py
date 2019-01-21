@@ -6,11 +6,13 @@ class Ray:
 	y = 0
 	theta = 0
 	z = 0
+	isBlocked = False
 
-	def __init__(self, y, theta, z):	
+	def __init__(self, y, theta, z, isBlocked=False):	
 		self.y = y
 		self.theta = theta
 		self.z = z
+		self.isBlocked = isBlocked
 	
 	@classmethod
 	def fan(self, y, minRadian, maxRadian, N):
@@ -29,7 +31,8 @@ class Matrix(object):
 	C = 0
 	D = 1
 
-	L = 0
+	L = 0 # Physical length
+	halfAperture = float('+inf') # half aperture
 
 	def __init__(self, A, B, C, D, physicalLength):	
 		self.A = float(A)
@@ -59,12 +62,19 @@ class Matrix(object):
 		return Matrix(a,b,c,d,physicalLength=l)
 
 	def mul_ray(self, rightSideRay):
-		y = self.A * rightSideRay.y + self.B * rightSideRay.theta
-		theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+		outputRay = Ray(0,0,0)
 
-		z = self.L + rightSideRay.z
+		outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
+		outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
 
-		return Ray(y, theta, z)
+		outputRay.z = self.L + rightSideRay.z
+
+		if rightSideRay.y > self.halfAperture or rightSideRay.y < -self.halfAperture:			
+			outputRay.isBlocked = True
+		else:
+			outputRay.isBlocked = rightSideRay.isBlocked		
+
+		return outputRay
 
 	def drawAt(self, z, axes):
 		return
@@ -73,9 +83,14 @@ class Matrix(object):
 class Lens(Matrix):
 	def __init__(self, f):	
 		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0)
+
 	def drawAt(self, z, axes):
-		plt.arrow(z, 0, 0, 3, width=0.1, fc='k', ec='k',head_length=0.5, head_width=0.5,length_includes_head=True)
-		plt.arrow(z, 0, 0, -3, width=0.1, fc='k', ec='k',head_length=0.5, head_width=0.5, length_includes_head=True)
+		lensHalfHeight = 4
+		if not np.isinf(self.halfAperture):
+			lensHalfHeight = self.halfAperture
+
+		plt.arrow(z, 0, 0, lensHalfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.5,length_includes_head=True)
+		plt.arrow(z, 0, 0, -lensHalfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.5, length_includes_head=True)
 
 class Space(Matrix):
 	def __init__(self, d):	
@@ -86,6 +101,7 @@ class OpticalPath(object):
 		self.elements = []
 		self.objectHeight = 1
 		self.objectPosition = 0 # always at z=0 for now
+		self.fanNumber = 20
 
 	def physicalLength(self):
 		z = 0
@@ -122,11 +138,11 @@ class OpticalPath(object):
 		self.drawRaytraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
-
+		plt.ioff()
 		plt.show()
 
 	def drawObject(self, axes):
-		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.2, fc='y', ec='y',head_length=0.5, head_width=0.5,length_includes_head=True)
+		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.2, fc='b', ec='b',head_length=0.25, head_width=0.5,length_includes_head=True)
 
 	def drawOpticalElements(self, axes):		
 		z = 0
@@ -135,34 +151,36 @@ class OpticalPath(object):
 			z += element.L
 
 	def drawRaytraces(self, axes):
-		rayFan = Ray.fan(y=self.objectHeight,minRadian=-0.25, maxRadian=0.25, N=5)
-		rayFanSequence = path.propagateMany(rayFan)
+		rayFan = Ray.fan(y=self.objectHeight,minRadian=-0.25, maxRadian=0.25, N=self.fanNumber)
+		rayFanSequence = self.propagateMany(rayFan)
 
 		for raySequence in rayFanSequence:
 			(x,y) = self.rearrangeRaysForDisplay(raySequence)
-			axes.plot(x, y,'b')
+			axes.plot(x, y,'b', linewidth=0.4)
 
-		rayFan = Ray.fan(y=0,minRadian=-0.25, maxRadian=0.25, N=5)
-		rayFanSequence = path.propagateMany(rayFan)
+		rayFan = Ray.fan(y=0,minRadian=-0.25, maxRadian=0.25, N=self.fanNumber)
+		rayFanSequence = self.propagateMany(rayFan)
 
 		for raySequence in rayFanSequence:
 			(x,y) = self.rearrangeRaysForDisplay(raySequence)
-			axes.plot(x, y,'r')
+			axes.plot(x, y,'r', linewidth=0.4)
 
 
 	def rearrangeRaysForDisplay(self, rayList):
 		x = []
 		y = []
 		for ray in rayList:
-			x.append(ray.z)
-			y.append(ray.y)
+			if not ray.isBlocked:
+				x.append(ray.z)
+				y.append(ray.y)
 		return (x,y)
 
-path = OpticalPath()
-path.append(Space(10))
-path.append(Lens(5))
-path.append(Space(20))
-path.append(Lens(5))
-path.append(Space(10))
-path.append(Space(10))
-path.display()
+if __name__ == "__main__":
+	path = OpticalPath()
+	path.append(Space(10))
+	path.append(Lens(5))
+	path.append(Space(20))
+	path.append(Lens(5))
+	path.append(Space(10))
+	path.append(Space(10))
+	path.display()
