@@ -142,6 +142,7 @@ class OpticalPath(object):
 		self.drawOpticalElements(axes)
 		plt.ioff()
 		plt.show()
+		fig.savefig(self.name + ".png")
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
