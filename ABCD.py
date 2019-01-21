@@ -49,7 +49,7 @@ class Matrix(object):
 		elif isinstance(rightSide, Ray):
 			return self.mul_ray(rightSide)
 		else:
-			print "Error"			
+			print "Unrecongnized right side element in multiply: ", rightSide			
 
 	def mul_matrix(self, rightSideMatrix):
 		a = self.A * rightSideMatrix.A + self.B * rightSideMatrix.C
@@ -100,6 +100,7 @@ class OpticalPath(object):
 		self.objectHeight = 1
 		self.objectPosition = 0 # always at z=0 for now
 		self.fanNumber = 20
+		self.name = "Ray tracing"
 
 	def physicalLength(self):
 		z = 0
@@ -132,8 +133,8 @@ class OpticalPath(object):
 
 	def display(self):
 		fig, axes = plt.subplots()
-		axes.set(xlabel='Distance', ylabel='Hauteur', title='Trace de rayons')
-		self.drawRaytraces(axes)
+		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
+		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
 		plt.ioff()
@@ -148,7 +149,7 @@ class OpticalPath(object):
 			element.drawAt(z, axes)
 			z += element.L
 
-	def drawRaytraces(self, axes):
+	def drawRayTraces(self, axes):
 		rayFan = Ray.fan(y=self.objectHeight,minRadian=-0.25, maxRadian=0.25, N=self.fanNumber)
 		rayFanSequence = self.propagateMany(rayFan)
 
@@ -164,21 +165,43 @@ class OpticalPath(object):
 			axes.plot(x, y,'r', linewidth=0.4)
 
 
-	def rearrangeRaysForDisplay(self, rayList):
+	def rearrangeRaysForDisplay(self, rayList, removeBlockedRaysCompletely=True):
 		x = []
 		y = []
 		for ray in rayList:
 			if not ray.isBlocked:
 				x.append(ray.z)
 				y.append(ray.y)
+			elif removeBlockedRaysCompletely:
+				x = []
+				y = []
+			
 		return (x,y)
 
 if __name__ == "__main__":
+	print("")
 	path = OpticalPath()
+	path.name = "Simple demonstration: one infinite lens"
 	path.append(Space(d=10))
-	path.append(Lens(f=5, diameter=2.5))
+	path.append(Lens(f=5))
+	path.append(Space(d=10))
+	path.display()
+
+	path = OpticalPath()
+	path.name = "Simple demonstration: two infinite lenses"
+	path.append(Space(d=10))
+	path.append(Lens(f=5))
 	path.append(Space(d=20))
 	path.append(Lens(f=5))
 	path.append(Space(d=10))
+	path.display()
+
+	path = OpticalPath()
+	path.name = "Demonstration: two 1-inch lenses"
+	path.objectHeight = 0.5
+	path.append(Space(d=10))
+	path.append(Lens(f=5, diameter=2.5))
+	path.append(Space(d=20))
+	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=10))
 	path.display()
