@@ -44,7 +44,7 @@ class Matrix(object):
 		elif isinstance(rightSide, Ray):
 			return self.mul_ray(rightSide)
 		else:
-			print "Unrecongnized right side element in multiply: ", rightSide			
+			print "Unrecognized right side element in multiply: ", rightSide			
 
 	def mul_matrix(self, rightSideMatrix):
 		a = self.A * rightSideMatrix.A + self.B * rightSideMatrix.C
@@ -57,7 +57,6 @@ class Matrix(object):
 
 	def mul_ray(self, rightSideRay):
 		outputRay = Ray()
-
 		outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
 		outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
 		outputRay.z = self.L + rightSideRay.z
@@ -93,21 +92,19 @@ class Aperture(Matrix):
 	def __init__(self, diameter):	
 		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
 	def drawAt(self, z, axes):
-		halfHeight = 4
-		if not np.isinf(self.apertureDiameter):
-			halfHeight = self.apertureDiameter/2
+		halfHeight = self.apertureDiameter/2
 
 		plt.arrow(z, halfHeight+1, 0,-1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
 		plt.arrow(z, -halfHeight-1, 0, 1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
 
 class OpticalPath(object):
 	def __init__(self):
+		self.name = "Ray tracing"
 		self.elements = []
 		self.objectHeight = 1
 		self.objectPosition = 0 # always at z=0 for now
 		self.fanAngle = 0.5
 		self.fanNumber = 20
-		self.name = "Ray tracing"
 
 	def physicalLength(self):
 		z = 0
