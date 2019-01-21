@@ -8,7 +8,7 @@ class Ray:
 	z = 0
 	isBlocked = False
 
-	def __init__(self, y, theta, z, isBlocked=False):	
+	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
 		self.y = y
 		self.theta = theta
 		self.z = z
@@ -24,7 +24,6 @@ class Ray:
 		return rays
 
 
-
 class Matrix(object):
 	A = 1
 	B = 0
@@ -32,15 +31,16 @@ class Matrix(object):
 	D = 1
 
 	L = 0 # Physical length
-	halfAperture = float('+inf') # half aperture
+	apertureDiameter = float('+Inf') 
 
-	def __init__(self, A, B, C, D, physicalLength):	
+	def __init__(self, A, B, C, D, physicalLength, apertureDiameter=float('+Inf')):	
 		self.A = float(A)
 		self.B = float(B)
 		self.C = float(C)
 		self.D = float(D)
 		self.L = float(physicalLength)
-
+		self.apertureDiameter = apertureDiameter
+		
 		super(Matrix, self).__init__()		
 
 	def __mul__(self, rightSide):
@@ -56,20 +56,18 @@ class Matrix(object):
 		b = self.A * rightSideMatrix.B + self.B * rightSideMatrix.D
 		c = self.C * rightSideMatrix.A + self.D * rightSideMatrix.C
 		d = self.C * rightSideMatrix.B + self.D * rightSideMatrix.D
-
 		l = self.L + rightSideMatrix.L
 
 		return Matrix(a,b,c,d,physicalLength=l)
 
 	def mul_ray(self, rightSideRay):
-		outputRay = Ray(0,0,0)
+		outputRay = Ray()
 
 		outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
 		outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
-
 		outputRay.z = self.L + rightSideRay.z
 
-		if rightSideRay.y > self.halfAperture or rightSideRay.y < -self.halfAperture:			
+		if rightSideRay.y > self.apertureDiameter/2 or rightSideRay.y < -self.apertureDiameter/2:			
 			outputRay.isBlocked = True
 		else:
 			outputRay.isBlocked = rightSideRay.isBlocked		
@@ -81,13 +79,13 @@ class Matrix(object):
 
 
 class Lens(Matrix):
-	def __init__(self, f):	
-		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0)
+	def __init__(self, f, diameter=float('+Inf')):	
+		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0, apertureDiameter=diameter)
 
 	def drawAt(self, z, axes):
 		lensHalfHeight = 4
-		if not np.isinf(self.halfAperture):
-			lensHalfHeight = self.halfAperture
+		if not np.isinf(self.apertureDiameter):
+			lensHalfHeight = self.apertureDiameter/2
 
 		plt.arrow(z, 0, 0, lensHalfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.5,length_includes_head=True)
 		plt.arrow(z, 0, 0, -lensHalfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.5, length_includes_head=True)
@@ -177,10 +175,10 @@ class OpticalPath(object):
 
 if __name__ == "__main__":
 	path = OpticalPath()
-	path.append(Space(10))
-	path.append(Lens(5))
-	path.append(Space(20))
-	path.append(Lens(5))
-	path.append(Space(10))
-	path.append(Space(10))
+	path.append(Space(d=10))
+	path.append(Lens(f=5, diameter=2.5))
+	path.append(Space(d=20))
+	path.append(Lens(f=5))
+	path.append(Space(d=10))
+	path.append(Space(d=10))
 	path.display()
