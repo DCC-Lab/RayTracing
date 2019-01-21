@@ -143,8 +143,9 @@ class OpticalPath(object):
 		return output
 
 	def display(self):
-		fig, axes = plt.subplots()
+		fig, axes = plt.subplots(figsize=(10, 7))
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name, aspect='equal')
+		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
