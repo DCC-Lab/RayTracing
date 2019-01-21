@@ -1,6 +1,4 @@
-import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 
 class Ray:
 	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
@@ -78,7 +76,7 @@ class Lens(Matrix):
 
 	def drawAt(self, z, axes):
 		halfHeight = 4
-		if not np.isinf(self.apertureDiameter):
+		if self.apertureDiameter != float('Inf'):
 			halfHeight = self.apertureDiameter/2
 
 		plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25,length_includes_head=True)
