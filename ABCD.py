@@ -67,7 +67,7 @@ class Matrix(object):
 		outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
 		outputRay.z = self.L + rightSideRay.z
 
-		if rightSideRay.y > self.apertureDiameter/2 or rightSideRay.y < -self.apertureDiameter/2:			
+		if abs(rightSideRay.y) > self.apertureDiameter/2:			
 			outputRay.isBlocked = True
 		else:
 			outputRay.isBlocked = rightSideRay.isBlocked		
@@ -223,10 +223,10 @@ if __name__ == "__main__":
 	path.name = "Demonstration: two lenses with aperture"
 	path.objectHeight = 0.5
 	path.append(Space(d=10))
-	path.append(Lens(f=5, diameter=2.5))
-	path.append(Space(d=10))
+	path.append(Lens(f=5))
+	path.append(Space(d=2))
 	path.append(Aperture(diameter=3))
-	path.append(Space(d=10))
+	path.append(Space(d=18))
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=10))
 	path.display()
