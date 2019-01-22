@@ -30,7 +30,7 @@ class Matrix(object):
 		self.C = float(C)
 		self.D = float(D)
 
-		# Position of this ray
+		# Length of this element
 		self.L = float(physicalLength)
 
 		# Aperture
