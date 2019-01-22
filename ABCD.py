@@ -2,9 +2,14 @@ import matplotlib.pyplot as plt
 
 class Ray:
 	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
+		# Ray matrix formalism
 		self.y = y
 		self.theta = theta
+
+		# Position of this ray
 		self.z = z
+
+		# Aperture
 		self.isBlocked = isBlocked
 	
 	@classmethod
@@ -19,11 +24,16 @@ class Ray:
 
 class Matrix(object):
 	def __init__(self, A, B, C, D, physicalLength, apertureDiameter=float('+Inf')):	
+		# Ray matrix formalism
 		self.A = float(A)
 		self.B = float(B)
 		self.C = float(C)
 		self.D = float(D)
+
+		# Position of this ray
 		self.L = float(physicalLength)
+
+		# Aperture
 		self.apertureDiameter = apertureDiameter
 		
 		super(Matrix, self).__init__()		
