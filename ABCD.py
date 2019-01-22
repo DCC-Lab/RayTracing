@@ -18,14 +18,6 @@ class Ray:
 
 
 class Matrix(object):
-	A = 1
-	B = 0
-	C = 0
-	D = 1
-
-	L = 0 # Physical length
-	apertureDiameter = float('+Inf') 
-
 	def __init__(self, A, B, C, D, physicalLength, apertureDiameter=float('+Inf')):	
 		self.A = float(A)
 		self.B = float(B)
@@ -78,7 +70,6 @@ class Lens(Matrix):
 		halfHeight = 4
 		if self.apertureDiameter != float('Inf'):
 			halfHeight = self.apertureDiameter/2
-
 		plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25,length_includes_head=True)
 		plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25, length_includes_head=True)
 
@@ -89,9 +80,9 @@ class Space(Matrix):
 class Aperture(Matrix):
 	def __init__(self, diameter):	
 		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
+
 	def drawAt(self, z, axes):
 		halfHeight = self.apertureDiameter/2
-
 		plt.arrow(z, halfHeight+1, 0,-1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
 		plt.arrow(z, -halfHeight-1, 0, 1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
 
@@ -104,12 +95,6 @@ class OpticalPath(object):
 		self.objectPosition = 0 # always at z=0 for now
 		self.fanAngle = 0.5
 		self.fanNumber = 20
-
-	def physicalLength(self):
-		z = 0
-		for element in self.elements:
-			z += element.L
-		return z
 
 	def append(self, matrix):
 		self.elements.append(matrix)
@@ -169,7 +154,6 @@ class OpticalPath(object):
 			(x,y) = self.rearrangeRaysForDisplay(raySequence)
 			axes.plot(x, y,'r', linewidth=0.4)
 
-
 	def rearrangeRaysForDisplay(self, rayList, removeBlockedRaysCompletely=True):
 		x = []
 		y = []
@@ -185,17 +169,19 @@ class OpticalPath(object):
 		return (x,y)
 
 
+# This is an example for the module.
+# Don't modify this: create a new script that imports ABCD
+# See test.py
 if __name__ == "__main__":
-	print("")
 	path = OpticalPath()
-	path.name = "Simple demonstration: one infinite lens"
+	path.name = "Simple demo: one infinite lens f = 5cm"
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
 	path.append(Space(d=10))
 	path.display()
 
 	path = OpticalPath()
-	path.name = "Simple demonstration: two infinite lenses"
+	path.name = "Simple demo: two infinite lenses with f = 5cm"
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
 	path.append(Space(d=20))
@@ -204,7 +190,7 @@ if __name__ == "__main__":
 	path.display()
 
 	path = OpticalPath()
-	path.name = "Demonstration: two 1-inch lenses"
+	path.name = "Advanced demo: two lenses f = 5cm, with a finite diameter of 2.5 cm"
 	path.objectHeight = 0.5
 	path.append(Space(d=10))
 	path.append(Lens(f=5, diameter=2.5))
@@ -214,7 +200,7 @@ if __name__ == "__main__":
 	path.display()
 
 	path = OpticalPath()
-	path.name = "Demonstration: two lenses with aperture"
+	path.name = "Advanced demo: two lenses with aperture"
 	path.objectHeight = 0.5
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
