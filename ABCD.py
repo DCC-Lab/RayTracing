@@ -138,7 +138,15 @@ class OpticalPath(object):
 		self.drawOpticalElements(axes)
 		plt.ioff()
 		plt.show()
-		fig.savefig(self.name + ".png")
+
+	def save(self, filepath):
+		fig, axes = plt.subplots(figsize=(10, 7))
+		axes.set(xlabel='Distance', ylabel='Height', title=self.name, aspect='equal')
+		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
+		self.drawRayTraces(axes)
+		self.drawObject(axes)
+		self.drawOpticalElements(axes)
+		fig.savefig(filepath)
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
@@ -189,6 +197,8 @@ if __name__ == "__main__":
 	path.append(Lens(f=5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	#path.save("Figure 1.png")
 
 	path = OpticalPath()
 	path.name = "Simple demo: two infinite lenses with f = 5cm"
@@ -198,6 +208,8 @@ if __name__ == "__main__":
 	path.append(Lens(f=5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	# path.save("Figure 2.png")
 
 	path = OpticalPath()
 	path.name = "Advanced demo: two lenses f = 5cm, with a finite diameter of 2.5 cm"
@@ -208,6 +220,8 @@ if __name__ == "__main__":
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	# path.save("Figure 3.png")
 
 	path = OpticalPath()
 	path.name = "Advanced demo: two lenses with aperture"
@@ -220,3 +234,5 @@ if __name__ == "__main__":
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	# path.save("Figure 4.png")
