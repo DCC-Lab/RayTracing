@@ -7,6 +7,7 @@ class DielectricInterface(rt.Matrix):
 		super(DielectricInterface, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
 	
 	def drawAt(self, z, axes):
+		# Vous pouvez ameliorez le dessin si vous voulez, pas necessaire
 		halfHeight = 4
 		if self.apertureDiameter != float('Inf'):
 			halfHeight = self.apertureDiameter/2
