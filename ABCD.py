@@ -115,8 +115,8 @@ class OpticalPath(object):
 		self.objectHeight = 1.0   # object height (full). FIXME: Python 2.7 requires 1.0, not 1 (float)
 		self.objectPosition = 0.0 # always at z=0 for now. FIXME: Python 2.7 requires 1.0, not 1 (float)
 		self.fanAngle = 0.5       # full fan angle for rays
-		self.fanNumber = 10        # number of rays in fan
-		self.rayNumber = 3        # number of rays in height
+		self.fanNumber = 10       # number of rays in fan
+		self.rayNumber = 3        # number of rays from different height on object
 
 	def append(self, matrix):
 		self.elements.append(matrix)
@@ -158,7 +158,7 @@ class OpticalPath(object):
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
-		fig.savefig(filepath)
+		fig.savefig(filepath,dpi=600)
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, -self.objectHeight/2, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
@@ -238,7 +238,7 @@ if __name__ == "__main__":
 	path.append(Space(d=10))
 	path.display()
 	# or 
-	# path.save("Figure 3.png")
+	path.save("Figure 3.png")
 
 	path = OpticalPath()
 	path.name = "Advanced demo: two lenses with aperture"
