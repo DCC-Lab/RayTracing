@@ -7,7 +7,19 @@ class Axicon(ExtendedMatrix):
 
 		super(Axicon, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
 
-	def 
+	def mul_ray(self, rightSideRay):
+		outputRay = Ray()
+		outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
+		outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta + -(self.n-1)*self.alpha
+		outputRay.z = self.L + rightSideRay.z
+
+		if abs(rightSideRay.y) > self.apertureDiameter/2:			
+			outputRay.isBlocked = True
+		else:
+			outputRay.isBlocked = rightSideRay.isBlocked		
+
+		return outputRay
+
 	def drawAt(self, z, axes):
 		halfHeight = 4
 		if self.apertureDiameter != float('Inf'):
