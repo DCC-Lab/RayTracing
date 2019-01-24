@@ -112,3 +112,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+Advanced demo: two lenses f = 5cm, with a finite diameter of 2.5 cm.png
+Advanced demo: two lenses with aperture.png
+Simple demo: one infinite lens f = 5cm.png
+Simple demo: two infinite lenses with f = 5cm.png

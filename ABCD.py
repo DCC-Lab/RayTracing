@@ -2,9 +2,14 @@ import matplotlib.pyplot as plt
 
 class Ray:
 	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
+		# Ray matrix formalism
 		self.y = y
 		self.theta = theta
+
+		# Position of this ray
 		self.z = z
+
+		# Aperture
 		self.isBlocked = isBlocked
 	
 	@classmethod
@@ -29,20 +34,17 @@ class Ray:
 
 
 class Matrix(object):
-	A = 1
-	B = 0
-	C = 0
-	D = 1
-
-	L = 0 # Physical length
-	apertureDiameter = float('+Inf') 
-
 	def __init__(self, A, B, C, D, physicalLength, apertureDiameter=float('+Inf')):	
+		# Ray matrix formalism
 		self.A = float(A)
 		self.B = float(B)
 		self.C = float(C)
 		self.D = float(D)
+
+		# Length of this element
 		self.L = float(physicalLength)
+
+		# Aperture
 		self.apertureDiameter = apertureDiameter
 		
 		super(Matrix, self).__init__()		
@@ -89,7 +91,6 @@ class Lens(Matrix):
 		halfHeight = 4
 		if self.apertureDiameter != float('Inf'):
 			halfHeight = self.apertureDiameter/2
-
 		plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25,length_includes_head=True)
 		plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25, length_includes_head=True)
 
@@ -100,9 +101,9 @@ class Space(Matrix):
 class Aperture(Matrix):
 	def __init__(self, diameter):	
 		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
+
 	def drawAt(self, z, axes):
 		halfHeight = self.apertureDiameter/2
-
 		plt.arrow(z, halfHeight+1, 0,-1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
 		plt.arrow(z, -halfHeight-1, 0, 1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
 
@@ -116,12 +117,6 @@ class OpticalPath(object):
 		self.fanAngle = 0.5       # full fan angle for rays
 		self.fanNumber = 10        # number of rays in fan
 		self.rayNumber = 3        # number of rays in height
-
-	def physicalLength(self):
-		z = 0
-		for element in self.elements:
-			z += element.L
-		return z
 
 	def append(self, matrix):
 		self.elements.append(matrix)
@@ -155,7 +150,15 @@ class OpticalPath(object):
 		self.drawOpticalElements(axes)
 		plt.ioff()
 		plt.show()
-		fig.savefig(self.name + ".png")
+
+	def save(self, filepath):
+		fig, axes = plt.subplots(figsize=(10, 7))
+		axes.set(xlabel='Distance', ylabel='Height', title=self.name, aspect='equal')
+		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
+		self.drawRayTraces(axes)
+		self.drawObject(axes)
+		self.drawOpticalElements(axes)
+		fig.savefig(filepath)
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, -self.objectHeight/2, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
@@ -186,7 +189,6 @@ class OpticalPath(object):
 			colorIndex = int((rayInitialHeight-(-halfHeight-binSize/2))/binSize)
 			axes.plot(x, y, color[colorIndex], linewidth=0.4)
 
-
 	def rearrangeRaysForDisplay(self, rayList, removeBlockedRaysCompletely=True):
 		x = []
 		y = []
@@ -202,26 +204,32 @@ class OpticalPath(object):
 		return (x,y)
 
 
+# This is an example for the module.
+# Don't modify this: create a new script that imports ABCD
+# See test.py
 if __name__ == "__main__":
-	print("")
 	path = OpticalPath()
-	path.name = "Simple demonstration: one infinite lens"
+	path.name = "Simple demo: one infinite lens f = 5cm"
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	#path.save("Figure 1.png")
 
 	path = OpticalPath()
-	path.name = "Simple demonstration: two infinite lenses"
+	path.name = "Simple demo: two infinite lenses with f = 5cm"
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
 	path.append(Space(d=20))
 	path.append(Lens(f=5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	# path.save("Figure 2.png")
 
 	path = OpticalPath()
-	path.name = "Demonstration: two 1-inch lenses"
+	path.name = "Advanced demo: two lenses f = 5cm, with a finite diameter of 2.5 cm"
 	path.objectHeight = 0.5
 	path.append(Space(d=10))
 	path.append(Lens(f=5, diameter=2.5))
@@ -229,9 +237,11 @@ if __name__ == "__main__":
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	# path.save("Figure 3.png")
 
 	path = OpticalPath()
-	path.name = "Demonstration: two lenses with aperture"
+	path.name = "Advanced demo: two lenses with aperture"
 	path.objectHeight = 0.5
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
@@ -241,3 +251,5 @@ if __name__ == "__main__":
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=10))
 	path.display()
+	# or 
+	# path.save("Figure 4.png")
