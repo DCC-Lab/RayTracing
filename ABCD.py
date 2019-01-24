@@ -13,20 +13,20 @@ class Ray:
 		self.isBlocked = isBlocked
 	
 	@classmethod
-	def fan(self, y, minRadian, maxRadian, N):
+	def fan(self, y, radianMin, radianMax, N):
 		rays = []
 		for i in range(N):
-			theta = minRadian + i*(maxRadian-minRadian)/(N-1)
+			theta = radianMin + i*(radianMax-radianMin)/(N-1)
 			rays.append(Ray(y,theta,0))
 
 		return rays
 
 	@classmethod
-	def fanGroup(self, yMin, yMax, M, minRadian, maxRadian, N):
+	def fanGroup(self, yMin, yMax, M, radianMin, radianMax, N):
 		rays = []
 		for j in range(M):
 			for i in range(N):
-				theta = minRadian + i*(maxRadian-minRadian)/(N-1)
+				theta = radianMin + i*(radianMax-radianMin)/(N-1)
 				y = yMin + j*(yMax-yMin)/(M-1)
 				rays.append(Ray(y,theta,0))
 		return rays
@@ -175,7 +175,7 @@ class OpticalPath(object):
 		halfHeight = self.objectHeight/2
 		halfAngle = self.fanAngle/2
 
-		rayFan = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,minRadian=-halfAngle, maxRadian=halfAngle, N=self.fanNumber)
+		rayFan = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
 		rayFanSequence = self.propagateMany(rayFan)
 
 		lastHeight = float('+Inf')
