@@ -14,19 +14,12 @@ class Axicon(rt.Matrix):
 		super(Axicon, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
 
 	def mul_ray(self, rightSideRay):
-		outputRay = rt.Ray()
-		outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
+		outputRay = super(Axicon, self).mul_ray(rightSideRay)
+
 		if rightSideRay.y > 0:
-			outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta + -(self.n-1)*self.alpha
+			outputRay.theta += -(self.n-1)*self.alpha
 		else:
-			outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta + (self.n-1)*self.alpha
-
-		outputRay.z = self.L + rightSideRay.z
-
-		if abs(rightSideRay.y) > self.apertureDiameter/2:			
-			outputRay.isBlocked = True
-		else:
-			outputRay.isBlocked = rightSideRay.isBlocked		
+			outputRay.theta +=  (self.n-1)*self.alpha
 
 		return outputRay
 
@@ -42,7 +35,7 @@ class Axicon(rt.Matrix):
 if __name__ == "__main__":
 	path = rt.OpticalPath()
 	path.name = "Demo Axicon"
-	path.fanAngle = 0
+	path.fanAngle = 0.0
 	path.rayNumber = 10
 	path.objectHeight = 2.0
 
