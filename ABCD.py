@@ -1,6 +1,20 @@
 import matplotlib.pyplot as plt
 
+"""ABCD: A simple module for ray tracing with ABCD matrices
+
+"""
+
 class Ray:
+	"""Ray: a Ray as defined by the ABCD formalism
+
+	The Ray() has a height (y) and an angle with the optical axis (theta).
+	It also has a position (z) and a marker if it has been blocked.
+
+	Simple class functions are defined to obtain a group of rays: fans
+	originate from the same height, but sweep a range of angles. fan groups 
+	are fans originating from different height.
+	"""
+
 	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
 		# Ray matrix formalism
 		self.y = y
@@ -34,6 +48,17 @@ class Ray:
 
 
 class Matrix(object):
+	"""Matrix: a matrix representing an element that can transform another Matrix() or a Ray()
+
+	The general properties (A,B,C,D) are defined here. The operator "*" is overloaded to allow
+	simple statements such as:
+
+	M2 = M1 * ray  or M3 = M2 * M1
+
+	In addition apertures are considered and the physical length is included to allow 
+	simple management of the ray tracing.
+	"""
+
 	def __init__(self, A, B, C, D, physicalLength, apertureDiameter=float('+Inf')):	
 		# Ray matrix formalism
 		self.A = float(A)
@@ -84,6 +109,10 @@ class Matrix(object):
 
 
 class Lens(Matrix):
+	"""Lens: a matrix representing a thin lens of focal f and finite diameter 
+
+	"""
+
 	def __init__(self, f, diameter=float('+Inf')):	
 		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0, apertureDiameter=diameter)
 
@@ -95,10 +124,19 @@ class Lens(Matrix):
 		plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25, length_includes_head=True)
 
 class Space(Matrix):
+	"""Space: a matrix representing free space
+
+	"""
+
 	def __init__(self, d):	
 		super(Space, self).__init__(A=1, B=float(d), C=0,D=1, physicalLength=d)
 
 class Aperture(Matrix):
+	"""Aperture: a matrix representing an aperture of finite diameter.
+
+	If the ray is above the finite diameter, the ray is blocked.
+	"""
+
 	def __init__(self, diameter):	
 		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
 
@@ -109,6 +147,12 @@ class Aperture(Matrix):
 
 
 class OpticalPath(object):
+	"""OpticalPath: the main class of the module, allowing calculations and ray tracing for an object at the beginning.
+
+	Usage is to create the OpticalPath(), then append() elements and display().
+	You may change objectHeight, fanAngle, fanNumber and rayNumber.
+	"""
+
 	def __init__(self):
 		self.name = "Ray tracing"
 		self.elements = []
