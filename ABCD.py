@@ -238,7 +238,7 @@ if __name__ == "__main__":
 	path.append(Space(d=10))
 	path.display()
 	# or 
-	path.save("Figure 3.png")
+	# path.save("Figure 3.png")
 
 	path = OpticalPath()
 	path.name = "Advanced demo: two lenses with aperture"
