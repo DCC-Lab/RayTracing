@@ -180,7 +180,7 @@ class OpticalPath(object):
 
 		lastHeight = float('+Inf')
 		for raySequence in rayFanSequence:
-			(x,y) = self.rearrangeRaysForDisplay(raySequence)
+			(x,y) = self.rearrangeRaysForPlotting(raySequence)
 			if len(y) == 0:
 				continue # nothing to plot, ray was fully blocked
 
@@ -189,7 +189,7 @@ class OpticalPath(object):
 			colorIndex = int((rayInitialHeight-(-halfHeight-binSize/2))/binSize)
 			axes.plot(x, y, color[colorIndex], linewidth=0.4)
 
-	def rearrangeRaysForDisplay(self, rayList, removeBlockedRaysCompletely=True):
+	def rearrangeRaysForPlotting(self, rayList, removeBlockedRaysCompletely=True):
 		x = []
 		y = []
 		for ray in rayList:
