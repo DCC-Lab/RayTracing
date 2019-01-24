@@ -1,6 +1,11 @@
 import ABCD as rt
 import matplotlib.pyplot as plt
 
+"""
+Axicon: An advanced module that describes an axicon lens, not part of the basic formalism.
+
+"""
+
 class Axicon(rt.Matrix):
 	def __init__(self, alpha, n, diameter=float('+Inf')):	
 		self.n = n
