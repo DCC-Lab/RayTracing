@@ -16,6 +16,17 @@ class Ray:
 
 		return rays
 
+	@classmethod
+	def fanGroup(self, yMin, yMax, M, minRadian, maxRadian, N):
+		rays = []
+		for j in range(M):
+			for i in range(N):
+				theta = minRadian + i*(maxRadian-minRadian)/(N-1)
+				y = yMin + j*(yMax-yMin)/(M-1)
+				rays.append(Ray(y,theta,0))
+		return rays
+
+
 
 class Matrix(object):
 	A = 1
@@ -100,10 +111,11 @@ class OpticalPath(object):
 	def __init__(self):
 		self.name = "Ray tracing"
 		self.elements = []
-		self.objectHeight = 1
-		self.objectPosition = 0 # always at z=0 for now
-		self.fanAngle = 0.5
-		self.fanNumber = 20
+		self.objectHeight = 1.0   # object height (full). FIXME: Python 2.7 requires 1.0, not 1 (float)
+		self.objectPosition = 0.0 # always at z=0 for now. FIXME: Python 2.7 requires 1.0, not 1 (float)
+		self.fanAngle = 0.5       # full fan angle for rays
+		self.fanNumber = 10        # number of rays in fan
+		self.rayNumber = 3        # number of rays in height
 
 	def physicalLength(self):
 		z = 0
@@ -146,7 +158,7 @@ class OpticalPath(object):
 		fig.savefig(self.name + ".png")
 
 	def drawObject(self, axes):
-		plt.arrow(self.objectPosition, 0, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
+		plt.arrow(self.objectPosition, -self.objectHeight/2, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
 
 	def drawOpticalElements(self, axes):		
 		z = 0
@@ -155,19 +167,24 @@ class OpticalPath(object):
 			z += element.L
 
 	def drawRayTraces(self, axes):
-		rayFan = Ray.fan(y=self.objectHeight,minRadian=-self.fanAngle/2, maxRadian=self.fanAngle/2, N=self.fanNumber)
+		color = ['b','r','g']
+
+		halfHeight = self.objectHeight/2
+		halfAngle = self.fanAngle/2
+
+		rayFan = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,minRadian=-halfAngle, maxRadian=halfAngle, N=self.fanNumber)
 		rayFanSequence = self.propagateMany(rayFan)
 
+		lastHeight = float('+Inf')
 		for raySequence in rayFanSequence:
 			(x,y) = self.rearrangeRaysForDisplay(raySequence)
-			axes.plot(x, y,'b', linewidth=0.4)
+			if len(y) == 0:
+				continue # nothing to plot, ray was fully blocked
 
-		rayFan = Ray.fan(y=0,minRadian=-self.fanAngle/2, maxRadian=self.fanAngle/2, N=self.fanNumber)
-		rayFanSequence = self.propagateMany(rayFan)
-
-		for raySequence in rayFanSequence:
-			(x,y) = self.rearrangeRaysForDisplay(raySequence)
-			axes.plot(x, y,'r', linewidth=0.4)
+			rayInitialHeight = y[0]
+			binSize = self.objectHeight/(len(color)-1)
+			colorIndex = int((rayInitialHeight-(-halfHeight-binSize/2))/binSize)
+			axes.plot(x, y, color[colorIndex], linewidth=0.4)
 
 
 	def rearrangeRaysForDisplay(self, rayList, removeBlockedRaysCompletely=True):
