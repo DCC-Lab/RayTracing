@@ -116,7 +116,7 @@ class OpticalPath(object):
 		self.objectPosition = 0.0 # always at z=0 for now. FIXME: Python 2.7 requires 1.0, not 1 (float)
 		self.fanAngle = 0.5       # full fan angle for rays
 		self.fanNumber = 10       # number of rays in fan
-		self.rayNumber = 6        # number of rays from different height on object
+		self.rayNumber = 3        # number of rays from different heights on object
 
 	def append(self, matrix):
 		self.elements.append(matrix)
@@ -175,10 +175,10 @@ class OpticalPath(object):
 		halfHeight = self.objectHeight/2
 		halfAngle = self.fanAngle/2
 
-		rayFan = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
-		rayFanSequence = self.propagateMany(rayFan)
+		rayFanGroup = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
+		rayFanGroupSequence = self.propagateMany(rayFanGroup)
 
-		for raySequence in rayFanSequence:
+		for raySequence in rayFanGroupSequence:
 			(x,y) = self.rearrangeRaysForPlotting(raySequence)
 			if len(y) == 0:
 				continue # nothing to plot, ray was fully blocked
@@ -209,7 +209,6 @@ class OpticalPath(object):
 if __name__ == "__main__":
 	path = OpticalPath()
 	path.name = "Simple demo: one infinite lens f = 5cm"
-	path.objectHeight = 2
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
 	path.append(Space(d=10))
@@ -230,7 +229,6 @@ if __name__ == "__main__":
 
 	path = OpticalPath()
 	path.name = "Advanced demo: two lenses f = 5cm, with a finite diameter of 2.5 cm"
-	path.objectHeight = 0.5
 	path.append(Space(d=10))
 	path.append(Lens(f=5, diameter=2.5))
 	path.append(Space(d=20))
@@ -242,7 +240,6 @@ if __name__ == "__main__":
 
 	path = OpticalPath()
 	path.name = "Advanced demo: two lenses with aperture"
-	path.objectHeight = 0.5
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
 	path.append(Space(d=2))
