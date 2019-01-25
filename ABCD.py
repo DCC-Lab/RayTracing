@@ -59,7 +59,7 @@ class Matrix(object):
 	simple management of the ray tracing.
 	"""
 
-	def __init__(self, A, B, C, D, physicalLength, apertureDiameter=float('+Inf')):	
+	def __init__(self, A, B, C, D, physicalLength=0, apertureDiameter=float('+Inf')):	
 		# Ray matrix formalism
 		self.A = float(A)
 		self.B = float(B)
@@ -107,6 +107,16 @@ class Matrix(object):
 	def drawAt(self, z, axes):
 		return
 
+	def __str__(self):
+		""" __str__: Defining this function allows us to call:
+		a = Matrix()
+		print a
+
+		"""
+
+		description = "A={0}, B={1}, C={2}, D={3}\n".format(self.A, self.B, self.C, self.D)
+		description += "f={0:0.3f}".format(-1.0/self.C)
+		return description
 
 class Lens(Matrix):
 	"""Lens: a matrix representing a thin lens of focal f and finite diameter 
@@ -165,6 +175,12 @@ class OpticalPath(object):
 	def append(self, matrix):
 		self.elements.append(matrix)
 
+	def transferMatrix(self):
+		transferMatrix = Matrix(A=1, B=0, C=0, D=1)
+		for element in self.elements:
+			transferMatrix = element*transferMatrix
+		return transferMatrix
+
 	def propagate(self, inputRay):
 		ray = inputRay
 		outputRays = [ray]
@@ -182,7 +198,6 @@ class OpticalPath(object):
 				ray = element*ray
 				outputRays.append(ray)
 			output.append(outputRays)
-		
 		return output
 
 	def display(self):
@@ -242,8 +257,7 @@ class OpticalPath(object):
 			elif removeBlockedRaysCompletely:
 				x = []
 				y = []
-			# else: # ray will simply stop drawing from here
-			
+			# else: # ray will simply stop drawing from here			
 		return (x,y)
 
 
