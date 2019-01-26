@@ -106,13 +106,19 @@ class Matrix(object):
 
 		return outputRay
 
-	def focalDistance(self):
-		focalDistance = -1.0/self.C
-		return focalDistance
+	def focalDistances(self):
+		focalDistance = -1.0/self.C #FIXME: Assumes n=1 on either side
+		return (focalDistance, focalDistance)
 
 	def focusPositions(self, z):
-		focalDistance = self.focalDistance()
-		return (z-focalDistance, z+focalDistance)
+		(frontFocal, backFocal) = self.focalDistances()
+		(p1, p2) = self.principalPlanePositions(z)
+		return (p1-frontFocal, p2+backFocal)
+
+	def principalPlanePositions(self, z):
+		p1 = z + (1-self.D)/self.C #FIXME: Assumes n=1 on either side
+		p2 = z + self.L + (1-self.A)/self.C #FIXME: Assumes n=1 on either side
+		return (p1,p2)
 
 	def drawAt(self, z, axes):
 		halfHeight = self.displayHalfHeight()
@@ -124,7 +130,7 @@ class Matrix(object):
 		plt.annotate(self.label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
 	def displayHalfHeight(self):
-		halfHeight = 2.5 # default height is reasonable for display
+		halfHeight = 2.5 # default height is reasonable for display if infinite
 		if self.apertureDiameter != float('+Inf'):
 			halfHeight = self.apertureDiameter/2.0 # real half height
 		return halfHeight
