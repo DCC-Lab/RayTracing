@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 """ABCD: A simple module for ray tracing with ABCD matrices
 
@@ -59,7 +60,7 @@ class Matrix(object):
 	simple management of the ray tracing.
 	"""
 
-	def __init__(self, A, B, C, D, physicalLength=0, apertureDiameter=float('+Inf')):	
+	def __init__(self, A, B, C, D, physicalLength=0, apertureDiameter=float('+Inf'), label=''):	
 		# Ray matrix formalism
 		self.A = float(A)
 		self.B = float(B)
@@ -72,6 +73,7 @@ class Matrix(object):
 		# Aperture
 		self.apertureDiameter = apertureDiameter
 		
+		self.label = label
 		super(Matrix, self).__init__()		
 
 	def __mul__(self, rightSide):
@@ -104,8 +106,29 @@ class Matrix(object):
 
 		return outputRay
 
+	def focalDistance(self):
+		focalDistance = -1.0/self.C
+		return focalDistance
+
+	def focusPositions(self, z):
+		focalDistance = self.focalDistance()
+		return (z-focalDistance, z+focalDistance)
+
 	def drawAt(self, z, axes):
-		return
+		halfHeight = self.displayHalfHeight()
+		p = patches.Rectangle((z,-halfHeight), self.L, 2*halfHeight, color='k', fill=False, transform=axes.transData, clip_on=False)
+		axes.add_patch(p)
+
+	def drawLabels(self,z, axes):
+		halfHeight = self.displayHalfHeight()
+		plt.annotate(self.label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
+
+	def displayHalfHeight(self):
+		halfHeight = 2.5 # default height is reasonable for display
+		if self.apertureDiameter != float('+Inf'):
+			halfHeight = self.apertureDiameter/2.0 # real half height
+		return halfHeight
+
 
 	def __str__(self):
 		""" __str__: Defining this function allows us to call:
@@ -123,23 +146,28 @@ class Lens(Matrix):
 
 	"""
 
-	def __init__(self, f, diameter=float('+Inf')):	
-		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0, apertureDiameter=diameter)
+	def __init__(self, f, diameter=float('+Inf'), label=''):	
+		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0, apertureDiameter=diameter,label=label)
 
 	def drawAt(self, z, axes):
-		halfHeight = 4
-		if self.apertureDiameter != float('Inf'):
-			halfHeight = self.apertureDiameter/2
+		halfHeight = self.displayHalfHeight()
 		plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25,length_includes_head=True)
 		plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25, length_includes_head=True)
+		self.drawCardinalPoints(z, axes)
+
+	def drawCardinalPoints(self, z, axes):
+		(f1,f2) = self.focusPositions(z)
+		axes.plot([f1,f2], [0,0], 'ko', color='k', linewidth=0.4)
 
 class Space(Matrix):
 	"""Space: a matrix representing free space
 
 	"""
 
-	def __init__(self, d):	
-		super(Space, self).__init__(A=1, B=float(d), C=0,D=1, physicalLength=d)
+	def __init__(self, d,label=''):	
+		super(Space, self).__init__(A=1, B=float(d), C=0,D=1, physicalLength=d, label=label)
+	def drawAt(self, z, axes):
+		return
 
 class Aperture(Matrix):
 	"""Aperture: a matrix representing an aperture of finite diameter.
@@ -147,8 +175,8 @@ class Aperture(Matrix):
 	If the ray is above the finite diameter, the ray is blocked.
 	"""
 
-	def __init__(self, diameter):	
-		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
+	def __init__(self, diameter,label=''):	
+		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter, label=label)
 
 	def drawAt(self, z, axes):
 		halfHeight = self.apertureDiameter/2
@@ -226,6 +254,7 @@ class OpticalPath(object):
 		z = 0
 		for element in self.elements:
 			element.drawAt(z, axes)
+			element.drawLabels(z,axes)
 			z += element.L
 
 	def drawRayTraces(self, axes):
