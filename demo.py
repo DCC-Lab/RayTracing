@@ -41,9 +41,9 @@ path.display()
 path = rt.OpticalPath()
 path.fanAngle = 0.1
 path.append(rt.Space(d=40))
-path.append(rt.Lens(f=-10, label='Lentille'))
+path.append(rt.Lens(f=-10, label='Div'))
 path.append(rt.Space(d=4))
-path.append(rt.Lens(f=5, label='L2'))
+path.append(rt.Lens(f=5, label='Foc'))
 path.append(rt.Space(d=18))
 focal = -1.0/path.transferMatrix().C
 path.name = "Retrofocus system with f={0:.2f} cm".format(focal)
