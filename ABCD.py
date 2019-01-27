@@ -130,7 +130,7 @@ class Matrix(object):
 		plt.annotate(self.label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
 	def displayHalfHeight(self):
-		halfHeight = 2.5 # default height is reasonable for display if infinite
+		halfHeight = 4 # default height is reasonable for display if infinite
 		if self.apertureDiameter != float('+Inf'):
 			halfHeight = self.apertureDiameter/2.0 # real half height
 		return halfHeight
