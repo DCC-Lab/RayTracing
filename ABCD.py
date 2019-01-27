@@ -127,7 +127,8 @@ class Matrix(object):
 
 	def drawLabels(self,z, axes):
 		halfHeight = self.displayHalfHeight()
-		plt.annotate(self.label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
+		center = z+self.L/2.0
+		plt.annotate(self.label, xy=(center, 0.0), xytext=(center, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
 	def displayHalfHeight(self):
 		halfHeight = 4 # default height is reasonable for display if infinite
