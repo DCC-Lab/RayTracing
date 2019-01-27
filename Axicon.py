@@ -1,4 +1,4 @@
-import ABCD as rt
+from ABCD import *
 import matplotlib.pyplot as plt
 
 """
@@ -6,7 +6,7 @@ Axicon: An advanced module that describes an axicon lens, not part of the basic 
 
 """
 
-class Axicon(rt.Matrix):
+class Axicon(Matrix):
 	def __init__(self, alpha, n, diameter=float('+Inf')):	
 		self.n = n
 		self.alpha = alpha
@@ -33,13 +33,13 @@ class Axicon(rt.Matrix):
 
 
 if __name__ == "__main__":
-	path = rt.OpticalPath()
+	path = OpticalPath()
 	path.name = "Demo Axicon"
 	path.fanAngle = 0.0
 	path.rayNumber = 10
 	path.objectHeight = 2.0
 
-	path.append(rt.Space(d=10))
+	path.append(Space(d=10))
 	path.append(Axicon(n=1.55, alpha=0.25))
-	path.append(rt.Space(d=20))
+	path.append(Space(d=20))
 	path.display()

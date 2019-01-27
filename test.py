@@ -1,8 +1,8 @@
-import ABCD as rt
+from ABCD import *
 
 # Object at 2f, image at 2f.
-path = rt.OpticalPath()
-path.append(rt.Space(d=10))
-path.append(rt.Lens(f=5))
-path.append(rt.Space(d=10))
+path = OpticalPath()
+path.append(Space(d=10))
+path.append(Lens(f=5))
+path.append(Space(d=10))
 path.display()

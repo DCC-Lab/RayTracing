@@ -13,7 +13,8 @@ class Ray:
 
 	Simple class functions are defined to obtain a group of rays: fans
 	originate from the same height, but sweep a range of angles. fan groups 
-	are fans originating from different height.
+	are fans originating from different height. beam spans various heights
+	with a fixed angle
 	"""
 
 	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
@@ -54,6 +55,20 @@ class Ray:
 			theta = radian
 			rays.append(Ray(y,theta,z=0))
 		return rays
+		
+	def __str__(self):
+		""" __str__: Defining this function allows us to call:
+		r = Ray()
+		print r
+
+		"""
+
+		description = "y={0:0.3f}, theta={1:0.3f}, z={2:0.3f}\n".format(self.y, self.theta, self.z)
+		if self.isBlocked:
+			description += " (blocked)"
+
+		return description
+
 
 
 class Matrix(object):
@@ -139,7 +154,7 @@ class Matrix(object):
 		plt.annotate(self.label, xy=(center, 0.0), xytext=(center, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
 	def displayHalfHeight(self):
-		halfHeight = 4 # default height is reasonable for display if infinite
+		halfHeight = 4 # default half height is reasonable for display if infinite
 		if self.apertureDiameter != float('+Inf'):
 			halfHeight = self.apertureDiameter/2.0 # real half height
 		return halfHeight
