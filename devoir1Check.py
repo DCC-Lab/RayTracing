@@ -28,13 +28,13 @@ else:
 	print("Test #2 erreur: diel + space not consistent") 
 
 checkCurveDown = flatAirGlassInterface*obliqueRay
-if checkCurveDown.theta > obliqueRay.theta and checkCurveDown.y == obliqueRay.y:
+if checkCurveDown.theta < obliqueRay.theta and checkCurveDown.y == obliqueRay.y:
 	print("Check")
 else:
 	print("Test #3 erreur: diel + space not consistent") 
 
 checkCurveUp = flatGlassAirInterface*obliqueRay
-if checkCurveUp.theta < obliqueRay.theta and checkCurveUp.y == obliqueRay.y:
+if checkCurveUp.theta > obliqueRay.theta and checkCurveUp.y == obliqueRay.y:
 	print("Check")
 else:
 	print("Test #4 erreur: diel + space not consistent") 
@@ -59,8 +59,17 @@ M3 = dev.DielectricInterface(n1=1.55, n2=1.0,R=-5.0)
 lens1 = M3*M2*M1
 lens2 = dev.ThickLens(n=1.55, R1=5.0, R2=-5.0,thickness=2.0)
 
-if lens1.C != lens2.C:
-	print("Erreur: diel + space not consistent") 
-else:
+if lens1.C == lens2.C:
 	print("Check")
+else:
+	print("Erreur: diel + space not consistent") 
+
+
+thinLens1 = M3*M1
+thinLens2 = rt.Lens(f=10.0)
+
+if lens1.C == lens2.C:
+	print("Check")
+else:
+	print("Erreur: diel + space not consistent") 
 
