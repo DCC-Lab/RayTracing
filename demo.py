@@ -48,5 +48,5 @@ path.append(Space(d=18))
 focal = -1.0/path.transferMatrix().C
 path.name = "Retrofocus system with f={0:.2f} cm".format(focal)
 path.display()
-print path.transferMatrix()
+print(path.transferMatrix())
 
