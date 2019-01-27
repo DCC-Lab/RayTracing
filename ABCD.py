@@ -27,25 +27,33 @@ class Ray:
 		# Aperture
 		self.isBlocked = isBlocked
 	
-	@classmethod
+	@staticmethod
 	def fan(self, y, radianMin, radianMax, N):
 		rays = []
 		for i in range(N):
 			theta = radianMin + i*(radianMax-radianMin)/(N-1)
-			rays.append(Ray(y,theta,0))
+			rays.append(Ray(y,theta,z=0))
 
 		return rays
 
-	@classmethod
-	def fanGroup(self, yMin, yMax, M, radianMin, radianMax, N):
+	@staticmethod
+	def fanGroup(yMin, yMax, M, radianMin, radianMax, N):
 		rays = []
 		for j in range(M):
 			for i in range(N):
 				theta = radianMin + i*(radianMax-radianMin)/(N-1)
 				y = yMin + j*(yMax-yMin)/(M-1)
-				rays.append(Ray(y,theta,0))
+				rays.append(Ray(y,theta,z=0))
 		return rays
 
+	@staticmethod
+	def beam(yMin, yMax, M, radian):
+		rays = []
+		for i in range(M):
+			y = yMin + i*(yMax-yMin)/(M-1)
+			theta = radian
+			rays.append(Ray(y,theta,z=0))
+		return rays
 
 
 class Matrix(object):
@@ -144,7 +152,7 @@ class Matrix(object):
 
 		"""
 
-		description = "A={0}, B={1}, C={2}, D={3}\n".format(self.A, self.B, self.C, self.D)
+		description = "A={0:0.3f}, B={1:0.3f}, C={2:0.3f}, D={3:0.3f}\n".format(self.A, self.B, self.C, self.D)
 		description += "f={0:0.3f}".format(-1.0/self.C)
 		return description
 
