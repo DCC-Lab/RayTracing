@@ -1,9 +1,14 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+import sys
+if sys.version_info[0] < 3:
+    print("Warning: you should really be using Python 3")
+
 """ABCD: A simple module for ray tracing with ABCD matrices
 
 """
+
 
 class Ray:
 	"""Ray: a Ray as defined by the ABCD formalism
