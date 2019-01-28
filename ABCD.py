@@ -258,6 +258,22 @@ class OpticalPath(object):
 			output.append(outputRays)
 		return output
 
+	def apertureStopPosition(self):
+		# Take a ray off axis
+		# divide by real aperture diameter. 
+		ray = Ray(y=0, theta=0.1)
+		apertureStopPosition = float('+Inf')
+		maxRatio = 0 
+		for element in self.elements:
+			ray = element*ray
+			ratio = ray.y/element.apertureDiameter
+			if ratio > maxRatio:
+				apertureStopPosition = ray.z
+				maxRatio = ratio
+
+		return apertureStopPosition
+
+
 	def display(self):
 		fig, axes = plt.subplots(figsize=(10, 7))
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
