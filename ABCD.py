@@ -162,7 +162,6 @@ class Matrix(object):
 			halfHeight = self.apertureDiameter/2.0 # real half height
 		return halfHeight
 
-
 	def __str__(self):
 		""" __str__: Defining this function allows us to call:
 		a = Matrix()
@@ -276,6 +275,12 @@ class OpticalPath(object):
 			output.append(outputRays)
 		return output
 
+	def hasFiniteDiameterElements(self):
+		for element in self.elements:
+			if element.apertureDiameter != float('+Inf'):
+				return True
+		return False
+
 	def chiefRay(self, y):
 		transferMatrixToApertureStop = self.transferMatrix(z=self.apertureStopPosition())
 		A = transferMatrixToApertureStop.A
@@ -286,38 +291,59 @@ class OpticalPath(object):
 	def apertureStopPosition(self):
 		# Aperture stop is the aperture that limits the system
 		# Strategy: take ray height and divide by real aperture diameter.
-		# Max ratio is the aperture stop. 
-		ray = Ray(y=0, theta=0.1)
-		apertureStopPosition = float('+Inf')
-		maxRatio = 0 
-		for element in self.elements:
-			ray = element*ray
-			ratio = ray.y/element.apertureDiameter
-			if ratio > maxRatio:
-				apertureStopPosition = ray.z
-				maxRatio = ratio
+		# Max ratio is the aperture stop.
+		if not self.hasFiniteDiameterElements():
+			return None
+		else:
+			ray = Ray(y=0, theta=0.1)
+			maxRatio = 0 
+			apertureStopPosition = 0
+			for element in self.elements:
+				ray = element*ray
+				ratio = ray.y/element.apertureDiameter
+				if ratio > maxRatio:
+					apertureStopPosition = ray.z
+					maxRatio = ratio
 
-		return apertureStopPosition
+			return apertureStopPosition
 
 	def fieldStopPosition(self):
 		# Field stop is the aperture that limits the image size (or field of view)
 		# Strategy: take ray at various height from object and aim at center of pupil
 		# until ray is blocked
-		deltaHeight = 0.01
-		fieldOfView = 0.0
-		fieldStopPosition = float('+Inf')
-		for i in range(1000):
-			fieldOfView = i*deltaHeight
-			chiefRay = self.chiefRay(y=fieldOfView)
-			outputRaySequence = self.propagate(chiefRay)
-			for ray in reversed(outputRaySequence):
-				if not ray.isBlocked:
-					break
-				else:
-					fieldStopPosition = ray.z
+		if not self.hasFiniteDiameterElements():
+			return None
+		else:
+			deltaHeight = 0.01
+			fieldOfView = 0.0
+			fieldStopPosition = float('+Inf')
+			for i in range(1000):
+				fieldOfView = i*deltaHeight
+				chiefRay = self.chiefRay(y=fieldOfView)
+				outputRaySequence = self.propagate(chiefRay)
+				for ray in reversed(outputRaySequence):
+					if not ray.isBlocked:
+						break
+					else:
+						fieldStopPosition = ray.z
 
-		return fieldStopPosition
+			return fieldStopPosition
 
+	def fieldOfView(self):
+		if not self.hasFiniteDiameterElements():
+			return float('+Inf')
+		else:
+			deltaHeight = 0.01
+			fieldOfView = 0.0
+			for i in range(1000):
+				fieldOfView = i*deltaHeight
+				chiefRay = self.chiefRay(y=fieldOfView)
+				outputRaySequence = self.propagate(chiefRay)
+				for ray in reversed(outputRaySequence):
+					if not ray.isBlocked:
+						break
+
+			return fieldOfView
 
 	def display(self):
 		fig, axes = plt.subplots(figsize=(10, 7))
