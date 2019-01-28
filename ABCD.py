@@ -300,7 +300,7 @@ class OpticalPath(object):
 		if not self.hasFiniteDiameterElements():
 			return None
 		else:
-			ray = Ray(y=0, theta=0.1)
+			ray = Ray(y=0, theta=0.1) # Any ray angle will do
 			maxRatio = 0 
 			apertureStopPosition = 0
 			for element in self.elements:
@@ -337,16 +337,15 @@ class OpticalPath(object):
 			return float('+Inf')
 		else:
 			deltaHeight = 0.01
-			fieldOfView = 0.0
 			for i in range(1000):
 				fieldOfView = i*deltaHeight
 				chiefRay = self.chiefRay(y=fieldOfView)
 				outputRaySequence = self.propagate(chiefRay)
 				for ray in reversed(outputRaySequence):
 					if not ray.isBlocked:
-						break
+						return fieldOfView
 
-			return fieldOfView
+		return float('+Inf')
 
 	def display(self):
 		fig, axes = plt.subplots(figsize=(10, 7))
