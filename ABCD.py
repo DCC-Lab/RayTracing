@@ -287,18 +287,19 @@ class OpticalPath(object):
 		return False
 
 	def chiefRay(self, y):
-		transferMatrixToApertureStop = self.transferMatrix(z=self.apertureStopPosition())
+		( stopPosition, stopDiameter ) = self.apertureStop()
+		transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
 		A = transferMatrixToApertureStop.A
 		B = transferMatrixToApertureStop.B
 		chiefRay = Ray(y=y, theta=-A*y/B)
 		return chiefRay
 
-	def apertureStopPosition(self):
+	def apertureStop(self):
 		# Aperture stop is the aperture that limits the system
 		# Strategy: take ray height and divide by real aperture diameter.
 		# Max ratio is the aperture stop.
 		if not self.hasFiniteDiameterElements():
-			return None
+			return (None,float('+Inf'))
 		else:
 			ray = Ray(y=0, theta=0.1) # Any ray angle will do
 			maxRatio = 0 
@@ -308,23 +309,25 @@ class OpticalPath(object):
 				ratio = ray.y/element.apertureDiameter
 				if ratio > maxRatio:
 					apertureStopPosition = ray.z
+					apertureStopDiameter = element.apertureDiameter
 					maxRatio = ratio
 
-			return apertureStopPosition
+			return (apertureStopPosition, apertureStopDiameter)
 
-	def fieldStopPosition(self):
+	def fieldStop(self):
 		# Field stop is the aperture that limits the image size (or field of view)
 		# Strategy: take ray at various height from object and aim at center of pupil
 		# (chief ray from that point) until ray is blocked
 		# It is possible to have finite diameter elements but still an infinite
 		# field of view and therefore no Field stop.
 
-		if self.fieldOfView() == float('+Inf'):
-			return None
+		if not self.hasFiniteDiameterElements():
+			return (None,float('+Inf'))
 		else:
-			deltaHeight = 0.01
+			deltaHeight = 0.001
 			fieldStopPosition = None
-			for i in range(1000):
+			fieldStopDiameter = float('+Inf')
+			for i in range(10000):
 				chiefRay = self.chiefRay(y=i*deltaHeight)
 				outputRaySequence = self.propagate(chiefRay)
 				for ray in reversed(outputRaySequence):
@@ -332,11 +335,12 @@ class OpticalPath(object):
 						break
 					else:
 						fieldStopPosition = ray.z
+						fieldStopDiameter = abs(ray.y) * 2.0
 
 				if fieldStopPosition != None:
-					return fieldStopPosition
+					return (fieldStopPosition,fieldStopDiameter)
 
-			return fieldStopPosition
+			return (fieldStopPosition,fieldStopDiameter)
 
 	def fieldOfView(self):
 		# The field of view is the maximum object height visible until blocked by field stop
@@ -344,25 +348,22 @@ class OpticalPath(object):
 		# (chief ray from that point) until ray is blocked.
 		# It is possible to have finite diameter elements but still an infinite
 		# field of view and therefore no Field stop.
-		if not self.hasFiniteDiameterElements():
-			return float('+Inf')
-		else:
-			deltaHeight = 0.01 #FIXME: This is not that great.
-			halfFieldOfView = float('+Inf')
-			for i in range(1000): #FIXME: When do we stop? Currently 10.0 (abritrary).
-				height = i*deltaHeight
-				chiefRay = self.chiefRay(y=height)
-				outputRaySequence = self.propagate(chiefRay)
-				for ray in reversed(outputRaySequence):
-					if not ray.isBlocked:
-						break
-					else:
-						halfFieldOfView = height
+		halfFieldOfView = float('+Inf')
+		(stopPosition, stopDiameter) = self.fieldStop()
+		if stopPosition == None:
+			return halfFieldOfView
 
-				if halfFieldOfView != float('+Inf'):
-					return halfFieldOfView*2.0
+		transferMatrixToFieldStop = self.transferMatrix(z=stopPosition)
+		deltaHeight = 0.01 #FIXME: This is not that great.
+		for i in range(1000): #FIXME: When do we stop? Currently 10.0 (abritrary).
+			height = i*deltaHeight
+			chiefRay = self.chiefRay(y=height)
+			outputRay = transferMatrixToFieldStop*chiefRay
+			if outputRay.y > stopDiameter/2.0:
+				halfFieldOfView = height
+				break
 
-			return halfFieldOfView*2.0
+		return halfFieldOfView*2.0
 
 	def display(self):
 		fig, axes = plt.subplots(figsize=(10, 7))
@@ -418,13 +419,13 @@ class OpticalPath(object):
 				halfHeight = 4 #FIXME
 				plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
-		apertureStopPosition = self.apertureStopPosition()
+		(apertureStopPosition, apertureStopDiameter) = self.apertureStop()
 		if apertureStopPosition != None:
-			plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, halfHeight), xycoords='data', ha='center', va='bottom')		
+			plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, apertureStopDiameter/2), xycoords='data', ha='center', va='bottom')		
 
-		fieldStopPosition = self.fieldStopPosition()
+		(fieldStopPosition, fieldStopDiameter) = self.fieldStop()
 		if fieldStopPosition != None:
-			plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, halfHeight), xycoords='data', ha='center', va='bottom')		
+			plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, fieldStopDiameter/2), xycoords='data', ha='center', va='bottom')		
 
 	def drawOpticalElements(self, axes):		
 		z = 0

@@ -15,4 +15,6 @@ path.append(Space(d=9))
 path.append(Lens(f=9, diameter=8))
 path.append(Space(d=9))
 
+print(path.fieldStop())
+print(path.fieldOfView())
 path.display()
