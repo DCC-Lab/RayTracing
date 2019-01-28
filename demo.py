@@ -48,7 +48,6 @@ path.append(Space(d=18))
 focal = -1.0/path.transferMatrix().C
 path.name = "Retrofocus system with f={0:.2f} cm".format(focal)
 path.display()
-print(path.transferMatrix())
 
 path = OpticalPath()
 path.name = "Microscope system"
@@ -58,7 +57,5 @@ path.append(Lens(f=1, diameter=0.8, label='Obj'))
 path.append(Space(d=19))
 path.append(Lens(f=18,diameter=5.0, label='Tube Lens'))
 path.append(Space(d=18))
-print("AS at z= {0:.2f}".format(path.apertureStopPosition()))
-print("FS at z= {0:.2f}".format(path.fieldStopPosition()))
-
+print(path.fieldOfView())
 path.display()
