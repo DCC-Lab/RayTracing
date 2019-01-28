@@ -336,6 +336,9 @@ class OpticalPath(object):
 			return fieldStopPosition
 
 	def fieldOfView(self):
+		# The field of view is the maximum object height visible until blocked by field stop
+		# Strategy: take ray at various height from object and aim at center of pupil
+		# (chief ray from that point) until ray is blocked.
 		# It is possible to have finite diameter elements but still an infinite
 		# field of view and therefore no Field stop.
 		if not self.hasFiniteDiameterElements():
