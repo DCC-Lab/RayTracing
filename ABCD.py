@@ -237,6 +237,8 @@ class OpticalPath(object):
 		self.fanAngle = 0.5       # full fan angle for rays
 		self.fanNumber = 10       # number of rays in fan
 		self.rayNumber = 3        # number of rays from different heights on object
+		
+		# Display properties
 		self.showElementLabels = True
 		self.showPointsOfInterest = True
 		self.showPointsOfInterestLabels = True
@@ -245,10 +247,14 @@ class OpticalPath(object):
 	def append(self, matrix):
 		self.elements.append(matrix)
 
-	def transferMatrix(self):
+	def transferMatrix(self, z = float('+Inf')):
 		transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-		for element in self.elements:
-			transferMatrix = element*transferMatrix
+		for element in self.elements: 
+			if transferMatrix.L + element.L <= z: #FIXME: Assumes z falls on edge of element
+				transferMatrix = element*transferMatrix
+			else:
+				break
+
 		return transferMatrix
 
 	def propagate(self, inputRay):
@@ -270,6 +276,13 @@ class OpticalPath(object):
 			output.append(outputRays)
 		return output
 
+	def chiefRay(self, y):
+		transferMatrixToApertureStop = self.transferMatrix(z=self.apertureStopPosition())
+		A = transferMatrixToApertureStop.A
+		B = transferMatrixToApertureStop.B
+		chiefRay = Ray(y=y, theta=-A*y/B)
+		return chiefRay
+
 	def apertureStopPosition(self):
 		# Aperture stop is the aperture that limits the system
 		# Strategy: take ray height and divide by real aperture diameter.
@@ -285,6 +298,25 @@ class OpticalPath(object):
 				maxRatio = ratio
 
 		return apertureStopPosition
+
+	def fieldStopPosition(self):
+		# Field stop is the aperture that limits the image size (or field of view)
+		# Strategy: take ray at various height from object and aim at center of pupil
+		# until ray is blocked
+		deltaHeight = 0.01
+		fieldOfView = 0.0
+		fieldStopPosition = float('+Inf')
+		for i in range(1000):
+			fieldOfView = i*deltaHeight
+			chiefRay = self.chiefRay(y=fieldOfView)
+			outputRaySequence = self.propagate(chiefRay)
+			for ray in reversed(outputRaySequence):
+				if not ray.isBlocked:
+					break
+				else:
+					fieldStopPosition = ray.z
+
+		return fieldStopPosition
 
 
 	def display(self):
