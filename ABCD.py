@@ -360,9 +360,9 @@ class OpticalPath(object):
 						halfFieldOfView = height
 
 				if halfFieldOfView != float('+Inf'):
-					return halfFieldOfView
+					return halfFieldOfView*2.0
 
-			return halfFieldOfView
+			return halfFieldOfView*2.0
 
 	def display(self):
 		fig, axes = plt.subplots(figsize=(10, 7))

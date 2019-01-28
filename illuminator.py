@@ -3,7 +3,7 @@ from ABCD import *
 path = OpticalPath()
 path.name = "Kohler illumination"
 path.objectHeight = 1.0
-path.fanAngle = 0.2
+path.fanAngle = 0.5
 path.rayNumber = 3
 path.append(Space(d=4))
 path.append(Lens(f=4,diameter=2.5))
