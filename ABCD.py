@@ -359,7 +359,7 @@ class OpticalPath(object):
 			height = i*deltaHeight
 			chiefRay = self.chiefRay(y=height)
 			outputRay = transferMatrixToFieldStop*chiefRay
-			if outputRay.y > stopDiameter/2.0:
+			if abs(outputRay.y) > stopDiameter/2.0:
 				halfFieldOfView = height
 				break
 
@@ -370,8 +370,9 @@ class OpticalPath(object):
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
 		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
 		
-		if self.fieldOfView() != float('+Inf'):
-			self.objectHeight = self.fieldOfView()/2.0
+		fieldOfView = self.fieldOfView()
+		if fieldOfView != float('+Inf'):
+			self.objectHeight = fieldOfView
 
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
@@ -438,8 +439,8 @@ class OpticalPath(object):
 
 	def drawRayTraces(self, axes):
 		color = ['b','r','g']
-		
-		halfAngle = self.fanAngle/2
+
+		halfAngle = self.fanAngle/2.0
 		halfHeight = self.objectHeight/2.0
 
 		rayFanGroup = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
