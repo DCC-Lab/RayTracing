@@ -323,7 +323,7 @@ class OpticalPath(object):
 			return None
 		else:
 			deltaHeight = 0.01
-			fieldStopPosition = float('+Inf')
+			fieldStopPosition = None
 			for i in range(1000):
 				chiefRay = self.chiefRay(y=i*deltaHeight)
 				outputRaySequence = self.propagate(chiefRay)
