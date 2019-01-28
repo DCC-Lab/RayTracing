@@ -369,6 +369,9 @@ class OpticalPath(object):
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
 		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
 		
+		if self.fieldOfView() != float('+Inf'):
+			self.objectHeight = self.fieldOfView()/2.0
+
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
@@ -382,9 +385,14 @@ class OpticalPath(object):
 		fig, axes = plt.subplots(figsize=(10, 7))
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name, aspect='equal')
 		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
+		if self.fieldOfView() != float('+Inf'):
+			self.objectHeight = self.fieldOfView()/2.0
+
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
+		if self.showPointsOfInterest:
+			self.drawPointsOfInterest(axes)
 		fig.savefig(filepath,dpi=600)
 
 	def drawObject(self, axes):
@@ -429,15 +437,9 @@ class OpticalPath(object):
 
 	def drawRayTraces(self, axes):
 		color = ['b','r','g']
-
+		
 		halfAngle = self.fanAngle/2
-		if self.fieldOfView() != float('+Inf'):
-			halfHeight = self.fieldOfView()/2.0
-		else:
-			halfHeight = self.objectHeight/2.0
-
-		print("Requested half-height {0}".format(halfHeight))
-		print("Field of view: {0}".format(self.fieldOfView()))
+		halfHeight = self.objectHeight/2.0
 
 		rayFanGroup = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
 		rayFanGroupSequence = self.propagateMany(rayFanGroup)
