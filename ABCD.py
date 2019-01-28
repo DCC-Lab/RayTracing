@@ -316,6 +316,9 @@ class OpticalPath(object):
 		# Field stop is the aperture that limits the image size (or field of view)
 		# Strategy: take ray at various height from object and aim at center of pupil
 		# (chief ray from that point) until ray is blocked
+		# It is possible to have finite diameter elements but still an infinite
+		# field of view and therefore no Field stop.
+
 		if self.fieldOfView() == float('+Inf'):
 			return None
 		else:
@@ -333,11 +336,13 @@ class OpticalPath(object):
 			return fieldStopPosition
 
 	def fieldOfView(self):
+		# It is possible to have finite diameter elements but still an infinite
+		# field of view and therefore no Field stop.
 		if not self.hasFiniteDiameterElements():
 			return float('+Inf')
 		else:
-			deltaHeight = 0.01
-			for i in range(1000):
+			deltaHeight = 0.01 #FIXME: This is not that great.
+			for i in range(1000): #FIXME: When do we stop? Currently 10.0 (abritrary).
 				fieldOfView = i*deltaHeight
 				chiefRay = self.chiefRay(y=fieldOfView)
 				outputRaySequence = self.propagate(chiefRay)
@@ -354,7 +359,8 @@ class OpticalPath(object):
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
-		self.drawPointsOfInterest(axes)
+		if self.showPointsOfInterest:
+			self.drawPointsOfInterest(axes)
 
 		plt.ioff()
 		plt.show()
@@ -403,7 +409,9 @@ class OpticalPath(object):
 		z = 0
 		for element in self.elements:
 			element.drawAt(z, axes)
-			element.drawLabels(z,axes)
+
+			if self.showElementLabels:
+				element.drawLabels(z,axes)
 			z += element.L
 
 	def drawRayTraces(self, axes):
