@@ -110,7 +110,7 @@ class Matrix(object):
 		elif isinstance(rightSide, Ray):
 			return self.mul_ray(rightSide)
 		else:
-			print("Unrecognized right side element in multiply: ", rightSide)			
+			raise TypeError("Unrecognized right side element in multiply: '{0}' cannot be multiplied by a Matrix".format(rightSide))			
 
 	def mul_matrix(self, rightSideMatrix):
 		a = self.A * rightSideMatrix.A + self.B * rightSideMatrix.C
