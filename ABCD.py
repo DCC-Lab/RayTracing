@@ -333,6 +333,9 @@ class OpticalPath(object):
 					else:
 						fieldStopPosition = ray.z
 
+				if fieldStopPosition != None:
+					return fieldStopPosition
+
 			return fieldStopPosition
 
 	def fieldOfView(self):
@@ -345,20 +348,27 @@ class OpticalPath(object):
 			return float('+Inf')
 		else:
 			deltaHeight = 0.01 #FIXME: This is not that great.
+			halfFieldOfView = float('+Inf')
 			for i in range(1000): #FIXME: When do we stop? Currently 10.0 (abritrary).
-				fieldOfView = i*deltaHeight
-				chiefRay = self.chiefRay(y=fieldOfView)
+				height = i*deltaHeight
+				chiefRay = self.chiefRay(y=height)
 				outputRaySequence = self.propagate(chiefRay)
 				for ray in reversed(outputRaySequence):
 					if not ray.isBlocked:
-						return fieldOfView
+						break
+					else:
+						halfFieldOfView = height
 
-		return float('+Inf')
+				if halfFieldOfView != float('+Inf'):
+					return halfFieldOfView
+
+			return halfFieldOfView
 
 	def display(self):
 		fig, axes = plt.subplots(figsize=(10, 7))
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
 		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
+		
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
@@ -420,8 +430,14 @@ class OpticalPath(object):
 	def drawRayTraces(self, axes):
 		color = ['b','r','g']
 
-		halfHeight = self.objectHeight/2
 		halfAngle = self.fanAngle/2
+		if self.fieldOfView() != float('+Inf'):
+			halfHeight = self.fieldOfView()/2.0
+		else:
+			halfHeight = self.objectHeight/2.0
+
+		print("Requested half-height {0}".format(halfHeight))
+		print("Field of view: {0}".format(self.fieldOfView()))
 
 		rayFanGroup = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
 		rayFanGroupSequence = self.propagateMany(rayFanGroup)
@@ -432,7 +448,7 @@ class OpticalPath(object):
 				continue # nothing to plot, ray was fully blocked
 
 			rayInitialHeight = y[0]
-			binSize = self.objectHeight/(len(color)-1)
+			binSize = 2.0*halfHeight/(len(color)-1)
 			colorIndex = int((rayInitialHeight-(-halfHeight-binSize/2))/binSize)
 			axes.plot(x, y, color[colorIndex], linewidth=0.4)
 
