@@ -237,6 +237,10 @@ class OpticalPath(object):
 		self.fanAngle = 0.5       # full fan angle for rays
 		self.fanNumber = 10       # number of rays in fan
 		self.rayNumber = 3        # number of rays from different heights on object
+		self.showElementLabels = True
+		self.showPointsOfInterest = True
+		self.showPointsOfInterestLabels = True
+		self.showPlanesAcrossPointsOfInterest = True
 
 	def append(self, matrix):
 		self.elements.append(matrix)
@@ -327,6 +331,8 @@ class OpticalPath(object):
 				halfHeight = 4 #FIXME
 				plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
+		apertureStopPosition = self.apertureStopPosition()
+		plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, halfHeight), xycoords='data', ha='center', va='bottom')		
 
 	def drawOpticalElements(self, axes):		
 		z = 0
