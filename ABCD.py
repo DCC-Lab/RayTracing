@@ -3,7 +3,7 @@ import matplotlib.patches as patches
 
 import sys
 if sys.version_info[0] < 3:
-    print("Warning: you should really be using Python 3")
+    print("Warning: you should really be using Python 3. No guarantee this will work in 2.x")
 
 """ABCD: A simple module for ray tracing with ABCD matrices
 
@@ -33,6 +33,10 @@ class Ray:
 		# Aperture
 		self.isBlocked = isBlocked
 	
+	@property
+	def isNotBlocked(self):
+		return not self.isBlocked
+
 	@staticmethod
 	def fan(self, y, radianMin, radianMax, N):
 		rays = []
@@ -291,8 +295,18 @@ class OpticalPath(object):
 		transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
 		A = transferMatrixToApertureStop.A
 		B = transferMatrixToApertureStop.B
-		chiefRay = Ray(y=y, theta=-A*y/B)
-		return chiefRay
+		return Ray(y=y, theta=-A*y/B)
+
+	def marginalRays(self, y):
+		( stopPosition, stopDiameter ) = self.apertureStop()
+		transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
+		A = transferMatrixToApertureStop.A
+		B = transferMatrixToApertureStop.B
+
+		thetaUp = (stopDiameter/2*0.98 - A * y )/ B ;
+		thetaDown = (-stopDiameter/2*0.98 - A * y )/ B ;
+
+		return (Ray(y=0, theta=thetaUp), Ray(y=0, theta=thetaDown))
 
 	def apertureStop(self):
 		# Aperture stop is the aperture that limits the system
@@ -374,7 +388,7 @@ class OpticalPath(object):
 		if fieldOfView != float('+Inf'):
 			self.objectHeight = fieldOfView
 
-		self.drawRayTraces(axes)
+		self.drawRayTraces(axes, removeBlockedRaysCompletely=False)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
 		if self.showPointsOfInterest:
@@ -415,18 +429,18 @@ class OpticalPath(object):
 					pointsOfInterestLabels[zStr] = label
 			zElement += element.L
 
+		halfHeight = 4 #FIXME
 		for zStr, label in pointsOfInterestLabels.items():
-				z = float(zStr)
-				halfHeight = 4 #FIXME
-				plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
+			z = float(zStr)
+			plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
 		(apertureStopPosition, apertureStopDiameter) = self.apertureStop()
 		if apertureStopPosition != None:
-			plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, apertureStopDiameter/2), xycoords='data', ha='center', va='bottom')		
+			plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, halfHeight*1.1), xycoords='data', ha='center', va='bottom')		
 
 		(fieldStopPosition, fieldStopDiameter) = self.fieldStop()
 		if fieldStopPosition != None:
-			plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, fieldStopDiameter/2), xycoords='data', ha='center', va='bottom')		
+			plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, halfHeight*1.1), xycoords='data', ha='center', va='bottom')		
 
 	def drawOpticalElements(self, axes):		
 		z = 0
@@ -437,17 +451,24 @@ class OpticalPath(object):
 				element.drawLabels(z,axes)
 			z += element.L
 
-	def drawRayTraces(self, axes):
+	def drawRayTraces(self, axes, removeBlockedRaysCompletely=True):
 		color = ['b','r','g']
 
-		halfAngle = self.fanAngle/2.0
-		halfHeight = self.objectHeight/2.0
+		if self.fieldOfView() == float('+Inf'):
+			halfAngle = self.fanAngle/2.0
+			halfHeight = self.objectHeight/2.0
+			rayGroup = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
+		else:
+			halfHeight = self.objectHeight/2.0
+			chiefRay = self.chiefRay(y=halfHeight-0.01)
+			print(chiefRay)
+			(marginalUp, marginalDown) = self.marginalRays(y=0)
+			rayGroup = (chiefRay, marginalUp)
 
-		rayFanGroup = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
-		rayFanGroupSequence = self.propagateMany(rayFanGroup)
+		rayGroupSequence = self.propagateMany(rayGroup)
 
-		for raySequence in rayFanGroupSequence:
-			(x,y) = self.rearrangeRaysForPlotting(raySequence)
+		for raySequence in rayGroupSequence:
+			(x,y) = self.rearrangeRaysForPlotting(raySequence, removeBlockedRaysCompletely)
 			if len(y) == 0:
 				continue # nothing to plot, ray was fully blocked
 
@@ -506,14 +527,28 @@ if __name__ == "__main__":
 	# path.save("Figure 3.png")
 
 	path = OpticalPath()
+	path.name = "Microscope system"
+	path.objectHeight = 0.1
+	path.append(Space(d=4))
+	path.append(Lens(f=4, diameter=0.8, label='Obj'))
+	path.append(Space(d=4+18))
+	path.append(Lens(f=18,diameter=5.0, label='Tube Lens'))
+	path.append(Space(d=18))
+	path.display()
+	(r1,r2) = path.marginalRays(y=0)
+	print(r1, r2)
+	# or 
+	# path.save("Figure 4.png")
+
+	path = OpticalPath()
 	path.name = "Advanced demo: two lenses with aperture"
 	path.append(Space(d=10))
 	path.append(Lens(f=5))
 	path.append(Space(d=2))
-	path.append(Aperture(diameter=3))
-	path.append(Space(d=18))
 	path.append(Lens(f=5, diameter=2.5))
-	path.append(Space(d=10))
+	path.append(Space(d=2))
+	path.append(Aperture(diameter=2.0))
+	(r1,r2) = path.marginalRays(y=0)
+	print(r1, r2)
+	print(path.fieldOfView())
 	path.display()
-	# or 
-	# path.save("Figure 4.png")

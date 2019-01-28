@@ -58,3 +58,6 @@ path.append(Space(d=19))
 path.append(Lens(f=18,diameter=5.0, label='Tube Lens'))
 path.append(Space(d=18))
 path.display()
+(r1,r2) = path.marginalRays(y=0)
+print(r1, r2)
+
