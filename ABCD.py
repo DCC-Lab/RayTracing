@@ -5,21 +5,26 @@ import sys
 if sys.version_info[0] < 3:
     print("Warning: you should really be using Python 3. No guarantee this will work in 2.x")
 
-"""ABCD: A simple module for ray tracing with ABCD matrices
+"""A simple module for ray tracing with ABCD matrices.
 
+Create an OpticalPath(), append matrices (optical elements).
+and then display().
+The  objectHeight, fanAngle, and fanNumber are used if the
+field of view is not defined. You may adjust the values
+to suit your needs.
 """
 
 
 class Ray:
-	"""Ray: a Ray as defined by the ABCD formalism
+	"""A vector and a light ray as transformed by ABCD matrices
 
 	The Ray() has a height (y) and an angle with the optical axis (theta).
 	It also has a position (z) and a marker if it has been blocked.
 
 	Simple class functions are defined to obtain a group of rays: fans
-	originate from the same height, but sweep a range of angles. fan groups 
-	are fans originating from different height. beam spans various heights
-	with a fixed angle
+	originate from the same height but sweep a range of angles; fan groups 
+	are fans originating from different heights; and a beam spans 
+	various heights with a fixed angle.
 	"""
 
 	def __init__(self, y=0, theta=0, z=0, isBlocked=False):	
@@ -32,13 +37,20 @@ class Ray:
 
 		# Aperture
 		self.isBlocked = isBlocked
-	
+
 	@property
 	def isNotBlocked(self):
+		"""Opposite of isBlocked.  Convenience function for readability
+
+		"""
+
 		return not self.isBlocked
 
 	@staticmethod
 	def fan(self, y, radianMin, radianMax, N):
+		"""A list of rays spanning from radianMin to radianMax to be used with Matrix().propagate()
+
+		"""
 		rays = []
 		for i in range(N):
 			theta = radianMin + i*(radianMax-radianMin)/(N-1)
@@ -48,6 +60,9 @@ class Ray:
 
 	@staticmethod
 	def fanGroup(yMin, yMax, M, radianMin, radianMax, N):
+		""" A list of rays spanning from yMin to yMax and radianMin to 
+		radianMax to be used with Matrix().propagate()
+		"""
 		rays = []
 		for j in range(M):
 			for i in range(N):
@@ -58,6 +73,9 @@ class Ray:
 
 	@staticmethod
 	def beam(yMin, yMax, M, radian):
+		""" A list of rays spanning from yMin to yMax at a fixed
+		angle to be used with Matrix().propagate()
+		"""
 		rays = []
 		for i in range(M):
 			y = yMin + i*(yMax-yMin)/(M-1)
@@ -66,13 +84,15 @@ class Ray:
 		return rays
 		
 	def __str__(self):
-		""" __str__: Defining this function allows us to call:
-		r = Ray()
-		print r
+		""" String description that allows the use of print(Ray()) """
 
-		"""
+		description  = " /     \\ \n"
+		description += "| {0:0.3f} |\n".format(self.y)
+		description += "|       |\n"
+		description += "| {0:0.3f} |\n".format(self.theta)
+		description += " \\     /\n\n"
 
-		description = "y={0:0.3f}, theta={1:0.3f}, z={2:0.3f}\n".format(self.y, self.theta, self.z)
+		description += "z = {0:0.3f}\n".format(self.z)
 		if self.isBlocked:
 			description += " (blocked)"
 
@@ -81,15 +101,17 @@ class Ray:
 
 
 class Matrix(object):
-	"""Matrix: a matrix representing an element that can transform another Matrix() or a Ray()
+	"""A matrix and an optical element that can transform a ray or another matrix.
 
-	The general properties (A,B,C,D) are defined here. The operator "*" is overloaded to allow
-	simple statements such as:
+	The general properties (A,B,C,D) are defined here. The operator "*" is 
+	overloaded to allow simple statements such as:
 
-	M2 = M1 * ray  or M3 = M2 * M1
+	M2 = M1 * ray  
+	or 
+	M3 = M2 * M1
 
-	In addition apertures are considered and the physical length is included to allow 
-	simple management of the ray tracing.
+	In addition apertures are considered and the physical length is 
+	included to allow simple management of the ray tracing.
 	"""
 
 	def __init__(self, A, B, C, D, physicalLength=0, apertureDiameter=float('+Inf'), label=''):	
@@ -109,6 +131,12 @@ class Matrix(object):
 		super(Matrix, self).__init__()		
 
 	def __mul__(self, rightSide):
+		"""Operator overloading allowing easy to read matrix multiplication 
+
+		For instance, with M1 = Matrix() and M2= Matrix(), one can write M3 = M1*M2.
+		With r = Ray(), one can apply the M1 transform to a ray with r = M1*r
+
+		"""
 		if isinstance(rightSide, Matrix):
 			return self.mul_matrix(rightSide)
 		elif isinstance(rightSide, Ray):
@@ -117,6 +145,11 @@ class Matrix(object):
 			raise TypeError("Unrecognized right side element in multiply: '{0}' cannot be multiplied by a Matrix".format(rightSide))			
 
 	def mul_matrix(self, rightSideMatrix):
+		""" Multiplication of two matrices.  Total length of the elements is calculated.
+		Apertures are lost.
+
+		"""
+
 		a = self.A * rightSideMatrix.A + self.B * rightSideMatrix.C
 		b = self.A * rightSideMatrix.B + self.B * rightSideMatrix.D
 		c = self.C * rightSideMatrix.A + self.D * rightSideMatrix.C
@@ -126,6 +159,12 @@ class Matrix(object):
 		return Matrix(a,b,c,d,physicalLength=l)
 
 	def mul_ray(self, rightSideRay):
+		""" Multiplication of a ray by a matrix.  New position of ray is updated by 
+		the physical length of the matrix. If the ray is beyond the aperture diameter
+		it is labelled as "isBlocked = True" but can still propagate.
+
+		"""
+
 		outputRay = Ray()
 		outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
 		outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
@@ -139,47 +178,80 @@ class Matrix(object):
 		return outputRay
 
 	def pointsOfInterest(self, z):
+		""" Any points of interest for this matrix (focal points, principal planes etc...)
+		"""
 		return []
 
 	def focalDistances(self):
+		""" The equivalent focal distance calcuated from the power (C) of the matrix.
+
+		Currently, it is assumed the index is n=1 on either side and both focal 
+		distances are the same.
+		"""
+
 		focalDistance = -1.0/self.C #FIXME: Assumes n=1 on either side
 		return (focalDistance, focalDistance)
 
 	def focusPositions(self, z):
+		""" Positions of both focal points on either side.
+
+		Currently, it is assumed the index is n=1 on either side and both focal 
+		distances are the same.
+		"""
 		(frontFocal, backFocal) = self.focalDistances()
 		(p1, p2) = self.principalPlanePositions(z)
 		return (p1-frontFocal, p2+backFocal)
 
 	def principalPlanePositions(self, z):
+		""" Positions of the input and output prinicpal planes.
+
+		Currently, it is assumed the index is n=1 on either side.
+		"""
 		p1 = z + (1-self.D)/self.C #FIXME: Assumes n=1 on either side
 		p2 = z + self.L + (1-self.A)/self.C #FIXME: Assumes n=1 on either side
 		return (p1,p2)
 
 	def drawAt(self, z, axes):
+		""" Draw element on plot with starting edge at 'z'.
+
+		"""
 		halfHeight = self.displayHalfHeight()
 		p = patches.Rectangle((z,-halfHeight), self.L, 2*halfHeight, color='k', fill=False, transform=axes.transData, clip_on=False)
 		axes.add_patch(p)
 
 	def drawLabels(self,z, axes):
+		""" Draw element labels on plot with starting edge at 'z'.
+
+		"""
 		halfHeight = self.displayHalfHeight()
 		center = z+self.L/2.0
 		plt.annotate(self.label, xy=(center, 0.0), xytext=(center, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
 	def displayHalfHeight(self):
+		""" A reasonable height for display purposes for an element, whether it is infinite or not.
+
+		If the element is infinite, currently the half-height will be '4'.
+		If not, it is the apertureDiameter/2.
+
+		"""
 		halfHeight = 4 # default half height is reasonable for display if infinite
 		if self.apertureDiameter != float('+Inf'):
 			halfHeight = self.apertureDiameter/2.0 # real half height
 		return halfHeight
 
 	def __str__(self):
-		""" __str__: Defining this function allows us to call:
-		a = Matrix()
-		print a
+		""" String description that allows the use of print(Matrix())
 
 		"""
-
-		description = "A={0:0.3f}, B={1:0.3f}, C={2:0.3f}, D={3:0.3f}\n".format(self.A, self.B, self.C, self.D)
-		description += "f={0:0.3f}".format(-1.0/self.C)
+		description  = " /             \\ \n"
+		description += "| {0:0.3f}   {1:0.3f} |\n".format(self.A, self.B)
+		description += "|               |\n"
+		description += "| {0:0.3f}   {1:0.3f} |\n".format(self.C, self.D)
+		description += " \\             /\n"
+		if self.C != 0:
+			description += "\nf={0:0.3f}\n".format(-1.0/self.C)
+		else:
+			description += "\nf = +inf (afocal)\n"
 		return description
 
 class Lens(Matrix):
