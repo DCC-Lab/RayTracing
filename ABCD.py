@@ -129,6 +129,9 @@ class Matrix(object):
 
 		return outputRay
 
+	def pointsOfInterest(self, z):
+		return []
+
 	def focalDistances(self):
 		focalDistance = -1.0/self.C #FIXME: Assumes n=1 on either side
 		return (focalDistance, focalDistance)
@@ -188,6 +191,11 @@ class Lens(Matrix):
 	def drawCardinalPoints(self, z, axes):
 		(f1,f2) = self.focusPositions(z)
 		axes.plot([f1,f2], [0,0], 'ko', color='k', linewidth=0.4)
+
+	def pointsOfInterest(self,z):
+		(f1,f2) = self.focusPositions(z)
+		return [{'z':f1,'label':'$F_1$'},{'z':f2,'label':'$F_2$'}]
+
 
 class Space(Matrix):
 	"""Space: a matrix representing free space
@@ -259,8 +267,9 @@ class OpticalPath(object):
 		return output
 
 	def apertureStopPosition(self):
-		# Take a ray off axis
-		# divide by real aperture diameter. 
+		# Aperture stop is the aperture that limits the system
+		# Strategy: take ray height and divide by real aperture diameter.
+		# Max ratio is the aperture stop. 
 		ray = Ray(y=0, theta=0.1)
 		apertureStopPosition = float('+Inf')
 		maxRatio = 0 
@@ -281,6 +290,8 @@ class OpticalPath(object):
 		self.drawRayTraces(axes)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
+		self.drawPointsOfInterest(axes)
+
 		plt.ioff()
 		plt.show()
 
@@ -295,6 +306,27 @@ class OpticalPath(object):
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, -self.objectHeight/2, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
+
+	def drawPointsOfInterest(self, axes):
+		pointsOfInterestLabels = {} # Regroup labels at same z
+		zElement = 0
+		for element in self.elements:
+			pointsOfInterest = element.pointsOfInterest(zElement)
+
+			for pointOfInterest in pointsOfInterest:
+				zStr = "{0:3.3f}".format(pointOfInterest['z'])
+				label = pointOfInterest['label']
+				if zStr in pointsOfInterestLabels:
+					pointsOfInterestLabels[zStr] = pointsOfInterestLabels[zStr]+", "+label
+				else:
+					pointsOfInterestLabels[zStr] = label
+			zElement += element.L
+
+		for zStr, label in pointsOfInterestLabels.items():
+				z = float(zStr)
+				halfHeight = 4 #FIXME
+				plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
+
 
 	def drawOpticalElements(self, axes):		
 		z = 0
