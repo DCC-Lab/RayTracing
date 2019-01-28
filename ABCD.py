@@ -388,10 +388,12 @@ class OpticalPath(object):
 				plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
 
 		apertureStopPosition = self.apertureStopPosition()
-		plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, halfHeight), xycoords='data', ha='center', va='bottom')		
+		if apertureStopPosition != None:
+			plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, halfHeight), xycoords='data', ha='center', va='bottom')		
 
 		fieldStopPosition = self.fieldStopPosition()
-		plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, halfHeight), xycoords='data', ha='center', va='bottom')		
+		if fieldStopPosition != None:
+			plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, halfHeight), xycoords='data', ha='center', va='bottom')		
 
 	def drawOpticalElements(self, axes):		
 		z = 0
