@@ -255,7 +255,7 @@ class Matrix(object):
 		return description
 
 class Lens(Matrix):
-	"""Lens: a matrix representing a thin lens of focal f and finite diameter 
+	"""A thin lens of focal f, null thickness and infinite or finite diameter 
 
 	"""
 
@@ -263,43 +263,55 @@ class Lens(Matrix):
 		super(Lens, self).__init__(A=1, B=0, C=-1/float(f),D=1, physicalLength=0, apertureDiameter=diameter,label=label)
 
 	def drawAt(self, z, axes):
+		""" Draw a thin lens at z """
 		halfHeight = self.displayHalfHeight()
 		plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25,length_includes_head=True)
 		plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25, length_includes_head=True)
 		self.drawCardinalPoints(z, axes)
 
 	def drawCardinalPoints(self, z, axes):
+		""" Draw the focal points of a thin lens as black dots """
 		(f1,f2) = self.focusPositions(z)
 		axes.plot([f1,f2], [0,0], 'ko', color='k', linewidth=0.4)
 
 	def pointsOfInterest(self,z):
+		""" List of points of interest for this element as a dictionary: 
+		'z':position
+		'label':the label to be used.  Can include LaTeX math code.
+		"""
 		(f1,f2) = self.focusPositions(z)
 		return [{'z':f1,'label':'$F_1$'},{'z':f2,'label':'$F_2$'}]
 
 
 class Space(Matrix):
-	"""Space: a matrix representing free space
+	"""Free space of length d
 
 	"""
 
 	def __init__(self, d,label=''):	
 		super(Space, self).__init__(A=1, B=float(d), C=0,D=1, physicalLength=d, label=label)
+
 	def drawAt(self, z, axes):
+		""" Draw nothing because free space is nothing. """
 		return
 
 class Aperture(Matrix):
-	"""Aperture: a matrix representing an aperture of finite diameter.
+	"""An aperture of finite diameter, null thickness.
 
-	If the ray is above the finite diameter, the ray is blocked.
+	If the ray is beyond the finite diameter, the ray is blocked.
 	"""
 
 	def __init__(self, diameter,label=''):	
 		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter, label=label)
 
 	def drawAt(self, z, axes):
+		""" Draw an aperture at z.
+
+		Currently, this is a squished arrow because that is how I roll.
+		"""
 		halfHeight = self.apertureDiameter/2
-		plt.arrow(z, halfHeight+1, 0,-1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
-		plt.arrow(z, -halfHeight-1, 0, 1, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
+		plt.arrow(z, halfHeight*1.2, 0,-halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
+		plt.arrow(z, -halfHeight*1.2, 0, halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
 
 
 class OpticalPath(object):
@@ -325,9 +337,13 @@ class OpticalPath(object):
 		self.showPlanesAcrossPointsOfInterest = True
 
 	def append(self, matrix):
+		""" Add an element at the end of the path """
 		self.elements.append(matrix)
 
 	def transferMatrix(self, z = float('+Inf')):
+		""" The transfer matrix between z = 0 and z 
+
+		Currently, z must be where a new element starts."""
 		transferMatrix = Matrix(A=1, B=0, C=0, D=1)
 		for element in self.elements: 
 			if transferMatrix.L + element.L <= z: #FIXME: Assumes z falls on edge of element
@@ -338,31 +354,42 @@ class OpticalPath(object):
 		return transferMatrix
 
 	def propagate(self, inputRay):
+		""" Starting with inputRay, propagate from z = 0 until after the last element 
+
+		Returns a list of rays (called a ray sequence) starting with inputRay, 
+		followed by the ray after each element.
+		"""
 		ray = inputRay
-		outputRays = [ray]
+		raySequence = [ray]
 		for element in self.elements:
 			ray = element*ray
-			outputRays.append(ray)
-		return outputRays
+			raySequence.append(ray)
+		return raySequence
 
 	def propagateMany(self, inputRays):
-		output = []
+		""" Propagate each ray from a list from z = 0 until after the last element 
+
+		Returns a list of ray sequences for each input ray. See propagate().
+		"""
+		manyRaySequences = []
 		for inputRay in inputRays:
-			ray = inputRay
-			outputRays = [ray]
-			for element in self.elements:
-				ray = element*ray
-				outputRays.append(ray)
-			output.append(outputRays)
-		return output
+			raySequence = self.propagate(inputRay)
+			manyRaySequences.append(raySequence)
+		return manyRaySequences
 
 	def hasFiniteDiameterElements(self):
+		""" True if OpticalPath has at least one element of finite diameter """
 		for element in self.elements:
 			if element.apertureDiameter != float('+Inf'):
 				return True
 		return False
 
 	def chiefRay(self, y):
+		""" Chief ray for a height y (i.e., the ray that goes through the center of the aperture stop) 
+
+		The calculation is simple: obtain the transfer matrix to the aperture stop, then we know
+		that the input ray (which we are looking for) will end at y=0 at the aperture stop.
+		"""
 		( stopPosition, stopDiameter ) = self.apertureStop()
 		transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
 		A = transferMatrixToApertureStop.A
@@ -370,6 +397,12 @@ class OpticalPath(object):
 		return Ray(y=y, theta=-A*y/B)
 
 	def marginalRays(self, y):
+		""" Marginal rays for a height y (i.e., the rays that hit the upper and lower 
+		edges of the aperture stop 
+
+		The calculation is simple: obtain the transfer matrix to the aperture stop, then we know
+		that the input ray (which we are looking for) will end at y=0 at the aperture stop.
+		"""
 		( stopPosition, stopDiameter ) = self.apertureStop()
 		transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
 		A = transferMatrixToApertureStop.A
@@ -380,10 +413,23 @@ class OpticalPath(object):
 
 		return (Ray(y=0, theta=thetaUp), Ray(y=0, theta=thetaDown))
 
+	def axialRays(self, y):
+		""" Synonym of marginal rays """
+		return self.marginalRays(y)
+
 	def apertureStop(self):
-		# Aperture stop is the aperture that limits the system
-		# Strategy: take ray height and divide by real aperture diameter.
-		# Max ratio is the aperture stop.
+		""" The aperture in the system that limits the cone of angles
+		originating from zero height at the object plane. 
+
+		Returns the position and diameter of the aperture stop
+
+		Strategy: we take a ray height and divide by real aperture diameter.
+		The position where the ratio is maximum is the aperture stop.
+
+		If there are no elements of finite diameter (i.e. all optical elements
+		are infinite in diameters), then there is no aperture stop in the system
+		and the size of the aperture stop is infinite.
+		"""
 		if not self.hasFiniteDiameterElements():
 			return (None,float('+Inf'))
 		else:
@@ -401,11 +447,22 @@ class OpticalPath(object):
 			return (apertureStopPosition, apertureStopDiameter)
 
 	def fieldStop(self):
-		# Field stop is the aperture that limits the image size (or field of view)
-		# Strategy: take ray at various height from object and aim at center of pupil
-		# (chief ray from that point) until ray is blocked
-		# It is possible to have finite diameter elements but still an infinite
-		# field of view and therefore no Field stop.
+		""" The field stop is the aperture that limits the image size (or field of view) 
+
+		Returns the position and diameter of the field stop.
+
+		Strategy: take ray at various height from object and aim at center of pupil
+		(i.e. chief ray from that height) until ray is blocked. When it is blocked, 
+		the position at which it was blocked is the field stop. To obtain the diameter
+		we must go back to the last ray that was not blocked and calculate the diameter.
+
+		It is possible to have finite diameter elements but still an infinite
+		field of view and therefore no Field stop.
+
+		If there are no elements of finite diameter (i.e. all optical elements
+		are infinite in diameters), then there is no aperture stop in the system
+		and the size of the aperture stop is infinite.
+		"""
 
 		if not self.hasFiniteDiameterElements():
 			return (None,float('+Inf'))
