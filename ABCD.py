@@ -453,7 +453,6 @@ class OpticalPath(object):
 
 		Strategy: take ray at various height from object and aim at center of pupil
 		(i.e. chief ray from that height) until ray is blocked. When it is blocked, 
-		the position at which it was blocked is the field stop. To obtain the diameter
 		we must go back to the last ray that was not blocked and calculate the diameter.
 
 		It is possible to have finite diameter elements but still an infinite
@@ -464,33 +463,41 @@ class OpticalPath(object):
 		and the size of the aperture stop is infinite.
 		"""
 
-		if not self.hasFiniteDiameterElements():
-			return (None,float('+Inf'))
-		else:
-			deltaHeight = 0.001
-			fieldStopPosition = None
-			fieldStopDiameter = float('+Inf')
-			for i in range(10000):
-				chiefRay = self.chiefRay(y=i*deltaHeight)
-				outputRaySequence = self.propagate(chiefRay)
-				for ray in reversed(outputRaySequence):
-					if not ray.isBlocked:
-						break
-					else:
-						fieldStopPosition = ray.z
-						fieldStopDiameter = abs(ray.y) * 2.0
+		fieldStopPosition = None
+		fieldStopDiameter = float('+Inf')
+		if self.hasFiniteDiameterElements():			
+			dy = 1.0
+			y = 0.0
+			chiefRay = Ray(y=0, theta=0)
+			chiefRaySequence = []
+			wasBlocked = False
+			while abs(dy) > 0.0001 or not wasBlocked:
+				y += dy
+				chiefRay = self.chiefRay(y=y)
+				chiefRaySequence = self.propagate(chiefRay)
+				outputChiefRay = chiefRaySequence[-1]
 
-				if fieldStopPosition != None:
-					return (fieldStopPosition,fieldStopDiameter)
+				if outputChiefRay.isBlocked != wasBlocked:
+					dy = -dy/2.0
+				wasBlocked = outputChiefRay.isBlocked
+			
+			chiefRaySequence
+			print(y,dy, wasBlocked, outputChiefRay.isBlocked)
 
-			return (fieldStopPosition,fieldStopDiameter)
+			# fieldStopPosition = ray.z
+			# fieldStopDiameter = abs(ray.y) * 2.0
+
+
+		return (fieldStopPosition,fieldStopDiameter)
 
 	def fieldOfView(self):
-		# The field of view is the maximum object height visible until blocked by field stop
-		# Strategy: take ray at various height from object and aim at center of pupil
-		# (chief ray from that point) until ray is blocked.
-		# It is possible to have finite diameter elements but still an infinite
-		# field of view and therefore no Field stop.
+		""" The field of view is the maximum object height visible until blocked by field stop
+		
+		Strategy: take ray at various height from object and aim at center of pupil
+		(chief ray from that point) until ray is blocked.
+		It is possible to have finite diameter elements but still an infinite
+		field of view and therefore no Field stop. """
+		
 		halfFieldOfView = float('+Inf')
 		(stopPosition, stopDiameter) = self.fieldStop()
 		if stopPosition == None:
