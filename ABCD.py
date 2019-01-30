@@ -530,7 +530,7 @@ class OpticalPath(object):
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
 		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
 
-		note1 = "Fixed object height: {0}".format(self.objectHeight)
+		note1 = ""
 		note2 = ""
 		if limitObjectToFieldOfView:
 			fieldOfView = self.fieldOfView()
