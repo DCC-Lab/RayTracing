@@ -17,17 +17,17 @@ python ABCD.py
 python demo.py
 ```
 
-In your code, (such as the `test.py` or `demo.py`  files), you would do this:
+In your code, (such as the `test.py` or `demo.py`  files), you would do this:
 
 ```python
-import ABCD as rt
+from ABCD import *
 
-path = rt.OpticalPath()
-path.append(rt.Space(d=10))
-path.append(rt.Lens(f=5, diameter=2.5))
-path.append(rt.Space(d=12))
-path.append(rt.Lens(f=7))
-path.append(rt.Space(d=10))
+path = OpticalPath()
+path.append(Space(d=10))
+path.append(Lens(f=5, diameter=2.5))
+path.append(Space(d=12))
+path.append(Lens(f=7))
+path.append(Space(d=10))
 path.display()
 ```
 
