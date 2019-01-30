@@ -558,16 +558,16 @@ class OpticalPath(object):
 		if self.showPointsOfInterest:
 			self.drawPointsOfInterest(axes)
 
-		return plt
+		return (fig, axes)
 
 	def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
-		plt = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
+		(fig, axes) = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
 		plt.ioff()
 		plt.show()
 
 	def save(self, filepath, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
-		plt = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
-		plt.fig.savefig(filepath,dpi=600)
+		(fig, axes) = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
+		fig.savefig(filepath,dpi=600)
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, -self.objectHeight/2, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
@@ -693,8 +693,7 @@ if __name__ == "__main__":
 	path.append(Lens(f=18,diameter=5.0, label='Tube Lens'))
 	path.append(Space(d=18))
 	path.display()
-	(r1,r2) = path.marginalRays(y=0)
-	print(r1, r2)
+	path.save("MicroscopeSystem.png",onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 	# or 
 	# path.save("Figure 4.png")
 
