@@ -1,3 +1,4 @@
+# Devoir #1: Simple assignement for 1st-year students. 
 from ABCD import *
 import matplotlib.pyplot as plt
 
