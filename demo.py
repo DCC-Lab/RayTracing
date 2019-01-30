@@ -49,4 +49,3 @@ path.append(Aperture(diameter=2))
 path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 (r1,r2) = path.marginalRays(y=0)
 print(r1, r2)
-
