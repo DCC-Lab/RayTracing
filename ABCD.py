@@ -86,13 +86,13 @@ class Ray:
 	def __str__(self):
 		""" String description that allows the use of print(Ray()) """
 
-		description  = " /     \\ \n"
-		description += "| {0:0.3f} |\n".format(self.y)
-		description += "|       |\n"
-		description += "| {0:0.3f} |\n".format(self.theta)
-		description += " \\     /\n\n"
+		description  = "\n /       \\ \n"
+		description += "| {0:6.3f}  |\n".format(self.y)
+		description += "|         |\n"
+		description += "| {0:6.3f}  |\n".format(self.theta)
+		description += " \\       /\n\n"
 
-		description += "z = {0:0.3f}\n".format(self.z)
+		description += "z = {0:4.3f}\n".format(self.z)
 		if self.isBlocked:
 			description += " (blocked)"
 
@@ -225,7 +225,14 @@ class Matrix(object):
 		"""
 		halfHeight = self.displayHalfHeight()
 		center = z+self.L/2.0
-		plt.annotate(self.label, xy=(center, 0.0), xytext=(center, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
+		plt.annotate(self.label, xy=(center, 0.0), xytext=(center, halfHeight*1.1), fontsize=14, xycoords='data', ha='center', va='bottom')
+
+	def drawAperture(self, z, axes):
+		if self.apertureDiameter != float('+Inf'):
+			halfHeight = self.apertureDiameter/2.0
+			width = 0.5
+			axes.add_patch(patches.Polygon([[z-width,halfHeight], [z+width, halfHeight], [z,halfHeight], [z, halfHeight+width], [z,halfHeight]], linewidth=3, closed=False,color='0.7'))
+			axes.add_patch(patches.Polygon([[z-width,-halfHeight], [z+width, -halfHeight], [z,-halfHeight], [z, -halfHeight-width], [z,-halfHeight]], linewidth=3, closed=False,color='0.7'))
 
 	def displayHalfHeight(self):
 		""" A reasonable height for display purposes for an element, whether it is infinite or not.
@@ -243,10 +250,10 @@ class Matrix(object):
 		""" String description that allows the use of print(Matrix())
 
 		"""
-		description  = " /             \\ \n"
-		description += "| {0:0.3f}   {1:0.3f} |\n".format(self.A, self.B)
+		description  = "\n /             \\ \n"
+		description += "| {0:6.3f}   {1:6.3f} |\n".format(self.A, self.B)
 		description += "|               |\n"
-		description += "| {0:0.3f}   {1:0.3f} |\n".format(self.C, self.D)
+		description += "| {0:6.3f}   {1:6.3f} |\n".format(self.C, self.D)
 		description += " \\             /\n"
 		if self.C != 0:
 			description += "\nf={0:0.3f}\n".format(-1.0/self.C)
@@ -309,9 +316,14 @@ class Aperture(Matrix):
 
 		Currently, this is a squished arrow because that is how I roll.
 		"""
-		halfHeight = self.apertureDiameter/2
-		plt.arrow(z, halfHeight*1.2, 0,-halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
-		plt.arrow(z, -halfHeight*1.2, 0, halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
+		# halfHeight = self.apertureDiameter/2
+		# width = 0.25
+		# axes.add_patch(patches.Polygon([[z-width,halfHeight], [z+width, halfHeight], [z,halfHeight], [z, halfHeight+width], [z,halfHeight]], linewidth=3, closed=False,color='k'))
+		# axes.add_patch(patches.Polygon([[z-width,-halfHeight], [z+width, -halfHeight], [z,-halfHeight], [z, -halfHeight-width], [z,-halfHeight]], linewidth=3, closed=False,color='k'))
+
+# Add the patch to the Axes
+		# plt.arrow(z, halfHeight*1.2, 0,-halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
+		# plt.arrow(z, -halfHeight*1.2, 0, halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
 
 
 class OpticalPath(object):
@@ -457,11 +469,12 @@ class OpticalPath(object):
 		we must go back to the last ray that was not blocked and calculate the diameter.
 
 		It is possible to have finite diameter elements but still an infinite
-		field of view and therefore no Field stop.
+		field of view and therefore no Field stop. In fact, if only a single element
+		has a finite diameter, there is no field stop (only an aperture stop).
 
 		If there are no elements of finite diameter (i.e. all optical elements
-		are infinite in diameters), then there is no aperture stop in the system
-		and the size of the aperture stop is infinite.
+		are infinite in diameters), then there is no field stop and no aperture
+		stop in the system and the sizes are infinite.
 		"""
 
 		if not self.hasFiniteDiameterElements():
@@ -486,11 +499,14 @@ class OpticalPath(object):
 			return (fieldStopPosition,fieldStopDiameter)
 
 	def fieldOfView(self):
-		# The field of view is the maximum object height visible until blocked by field stop
-		# Strategy: take ray at various height from object and aim at center of pupil
-		# (chief ray from that point) until ray is blocked.
-		# It is possible to have finite diameter elements but still an infinite
-		# field of view and therefore no Field stop.
+		""" The field of view is the maximum object height visible until its chief ray 
+		is blocked by the field stop
+		
+		Strategy: take ray at various heights from object and aim at center of pupil
+		(chief ray from that point) until ray is blocked.
+		It is possible to have finite diameter elements but still an infinite
+		field of view and therefore no Field stop.
+		"""
 		halfFieldOfView = float('+Inf')
 		(stopPosition, stopDiameter) = self.fieldStop()
 		if stopPosition == None:
@@ -498,47 +514,60 @@ class OpticalPath(object):
 
 		transferMatrixToFieldStop = self.transferMatrix(z=stopPosition)
 		deltaHeight = 0.001 #FIXME: This is not that great.
-		for i in range(10000): #FIXME: When do we stop? Currently 10.0 (abritrary).
+		for i in range(10000): #FIXME: When do we stop? Currently 10.0 (arbitrary).
 			height = i*deltaHeight
 			chiefRay = self.chiefRay(y=height)
-			outputRay = transferMatrixToFieldStop*chiefRay
-			if abs(outputRay.y) > stopDiameter/2.0:
-				halfFieldOfView = height
-				break
+			outputRayAtFieldStop = transferMatrixToFieldStop*chiefRay
+			if abs(outputRayAtFieldStop.y) > stopDiameter/2.0:
+				break # Last height was the last one to not be blocked
+			else:
+				halfFieldOfView = height 
 
 		return halfFieldOfView*2.0
 
-	def display(self):
+	def createRayTracePlot(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
 		fig, axes = plt.subplots(figsize=(10, 7))
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
 		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
-		
-		fieldOfView = self.fieldOfView()
-		if fieldOfView != float('+Inf'):
-			self.objectHeight = fieldOfView
 
-		self.drawRayTraces(axes, removeBlockedRaysCompletely=False)
+		note1 = "Fixed object height: {0}".format(self.objectHeight)
+		note2 = ""
+		if limitObjectToFieldOfView:
+			fieldOfView = self.fieldOfView()
+			if fieldOfView != float('+Inf'):
+				self.objectHeight = fieldOfView
+				note1 = "Field of view: {0:.2f}".format(self.objectHeight)
+			else:
+				raise ValueError("Infinite field of view: cannot use limitObjectToFieldOfView=True.")			
+		
+		else:
+			note1 = "Object height: {0:.2f}".format(self.objectHeight)
+
+
+		if onlyChiefAndMarginalRays:
+			(stopPosition, stopDiameter) = self.apertureStop()
+			if stopPosition == None:
+				raise ValueError("No aperture stop in system: cannot use onlyChiefAndMarginalRays=True since they are not defined.")			
+			note2 = "Only chief and marginal rays shown"
+
+		axes.text(0.05, 0.1, note1+"\n"+note2, transform=axes.transAxes, fontsize=14,verticalalignment='top')
+
+		self.drawRayTraces(axes, onlyChiefAndMarginalRays=onlyChiefAndMarginalRays, removeBlockedRaysCompletely=False)
 		self.drawObject(axes)
 		self.drawOpticalElements(axes)
 		if self.showPointsOfInterest:
 			self.drawPointsOfInterest(axes)
 
+		return plt
+
+	def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
+		plt = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
 		plt.ioff()
 		plt.show()
 
-	def save(self, filepath):
-		fig, axes = plt.subplots(figsize=(10, 7))
-		axes.set(xlabel='Distance', ylabel='Height', title=self.name, aspect='equal')
-		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
-		if self.fieldOfView() != float('+Inf'):
-			self.objectHeight = self.fieldOfView()/2.0
-
-		self.drawRayTraces(axes)
-		self.drawObject(axes)
-		self.drawOpticalElements(axes)
-		if self.showPointsOfInterest:
-			self.drawPointsOfInterest(axes)
-		fig.savefig(filepath,dpi=600)
+	def save(self, filepath, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
+		plt = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
+		plt.fig.savefig(filepath,dpi=600)
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, -self.objectHeight/2, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
@@ -561,38 +590,38 @@ class OpticalPath(object):
 		halfHeight = 4 #FIXME
 		for zStr, label in pointsOfInterestLabels.items():
 			z = float(zStr)
-			plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*1.1), xycoords='data', ha='center', va='bottom')
+			plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight*0.2), xycoords='data', fontsize=14, ha='center', va='bottom')
 
 		(apertureStopPosition, apertureStopDiameter) = self.apertureStop()
 		if apertureStopPosition != None:
-			plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, halfHeight*1.1), xycoords='data', ha='center', va='bottom')		
+			plt.annotate('AS', xy=(apertureStopPosition, 0.0), xytext=(apertureStopPosition, halfHeight*1.1), fontsize=14, xycoords='data', ha='center', va='bottom')		
 
 		(fieldStopPosition, fieldStopDiameter) = self.fieldStop()
 		if fieldStopPosition != None:
-			plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, halfHeight*1.1), xycoords='data', ha='center', va='bottom')		
+			plt.annotate('FS', xy=(fieldStopPosition, 0.0), xytext=(fieldStopPosition, halfHeight*1.1), fontsize=14, xycoords='data', ha='center', va='bottom')		
 
 	def drawOpticalElements(self, axes):		
 		z = 0
 		for element in self.elements:
 			element.drawAt(z, axes)
+			element.drawAperture(z,axes)
 
 			if self.showElementLabels:
 				element.drawLabels(z,axes)
 			z += element.L
 
-	def drawRayTraces(self, axes, removeBlockedRaysCompletely=True):
+	def drawRayTraces(self, axes, onlyChiefAndMarginalRays, removeBlockedRaysCompletely=True):
 		color = ['b','r','g']
 
-		if self.fieldOfView() == float('+Inf'):
+		if onlyChiefAndMarginalRays:
+			halfHeight = self.objectHeight/2.0
+			chiefRay = self.chiefRay(y=halfHeight-0.01)
+			(marginalUp, marginalDown) = self.marginalRays(y=0)
+			rayGroup = (chiefRay, marginalUp)
+		else:
 			halfAngle = self.fanAngle/2.0
 			halfHeight = self.objectHeight/2.0
 			rayGroup = Ray.fanGroup(yMin=-halfHeight, yMax=halfHeight, M=self.rayNumber,radianMin=-halfAngle, radianMax=halfAngle, N=self.fanNumber)
-		else:
-			halfHeight = self.objectHeight/2.0
-			chiefRay = self.chiefRay(y=halfHeight-0.01)
-			print(chiefRay)
-			(marginalUp, marginalDown) = self.marginalRays(y=0)
-			rayGroup = (chiefRay, marginalUp)
 
 		rayGroupSequence = self.propagateMany(rayGroup)
 
@@ -680,4 +709,4 @@ if __name__ == "__main__":
 	(r1,r2) = path.marginalRays(y=0)
 	print(r1, r2)
 	print(path.fieldOfView())
-	path.display()
+	path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
