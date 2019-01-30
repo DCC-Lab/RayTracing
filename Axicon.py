@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 """
 Axicon: An advanced module that describes an axicon lens, not part of the basic formalism.
 
+Completely untested and undocumented.
+
 """
 
 class Axicon(Matrix):
