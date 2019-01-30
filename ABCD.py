@@ -513,9 +513,9 @@ class OpticalPath(object):
 			return halfFieldOfView
 
 		transferMatrixToFieldStop = self.transferMatrix(z=stopPosition)
-		deltaHeight = 0.001 #FIXME: This is not that great.
+		deltaHeight = self.objectHeight/10000.0 #FIXME: This is not that great.
 		for i in range(10000): #FIXME: When do we stop? Currently 10.0 (arbitrary).
-			height = i*deltaHeight
+			height = float(i)*deltaHeight
 			chiefRay = self.chiefRay(y=height)
 			outputRayAtFieldStop = transferMatrixToFieldStop*chiefRay
 			if abs(outputRayAtFieldStop.y) > stopDiameter/2.0:

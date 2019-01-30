@@ -27,18 +27,6 @@ path.display()
 #path.save('Figure3.png')
 
 path = OpticalPath()
-path.name = "Microscope system"
-path.objectHeight = 0.1
-path.append(Space(d=1))
-path.append(Lens(f=1,label='Obj'))
-path.append(Space(d=19))
-path.append(Lens(f=18,label='Tube Lens'))
-path.append(Space(d=18))
-path.display()
-
-#path.save('Figure4.png')
-
-path = OpticalPath()
 path.fanAngle = 0.1
 path.append(Space(d=40))
 path.append(Lens(f=-10, label='Div'))
@@ -57,7 +45,8 @@ path.append(Lens(f=1, diameter=0.8, label='Obj'))
 path.append(Space(d=19))
 path.append(Lens(f=18,diameter=5.0, label='Tube Lens'))
 path.append(Space(d=18))
-path.display()
+path.append(Aperture(diameter=2))
+path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 (r1,r2) = path.marginalRays(y=0)
 print(r1, r2)
 
