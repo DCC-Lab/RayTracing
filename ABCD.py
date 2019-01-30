@@ -5,13 +5,15 @@ import sys
 if sys.version_info[0] < 3:
     print("Warning: you should really be using Python 3. No guarantee this will work in 2.x")
 
-"""A simple module for ray tracing with ABCD matrices.
+"""A simple module for ray tracing with ABCD matrices. https://github.com/DCC-Lab/RayTracing
 
 Create an OpticalPath(), append matrices (optical elements).
-and then display().
-The  objectHeight, fanAngle, and fanNumber are used if the
-field of view is not defined. You may adjust the values
-to suit your needs.
+and then display(). This helps determine of course simple things like 
+focal distance of compound systems, object-image, etc... but also 
+the aperture stop, field stop, field of view and any clipping issues that may occur.
+
+When displaying the result, the  objectHeight, fanAngle, and fanNumber are used if the
+field of view is not defined. You may adjust the values to suit your needs in OpticalPath().
 """
 
 
