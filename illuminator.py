@@ -17,4 +17,4 @@ path.append(Space(d=9))
 
 print(path.fieldStop())
 print(path.fieldOfView())
-path.display()
+path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
