@@ -494,12 +494,11 @@ class OpticalPath(object):
 					dy = -dy/2.0
 				wasBlocked = outputChiefRay.isBlocked
 			
-			chiefRaySequence
-			print(y,dy, wasBlocked, outputChiefRay.isBlocked)
-
-			# fieldStopPosition = ray.z
-			# fieldStopDiameter = abs(ray.y) * 2.0
-
+			for ray in chiefRaySequence:
+				if ray.isBlocked:
+					fieldStopPosition = ray.z
+					fieldStopDiameter = abs(ray.y) * 2.0
+					break
 
 		return (fieldStopPosition,fieldStopDiameter)
 
@@ -523,7 +522,7 @@ class OpticalPath(object):
 			height = float(i)*deltaHeight
 			chiefRay = self.chiefRay(y=height)
 			outputRayAtFieldStop = transferMatrixToFieldStop*chiefRay
-			if abs(outputRayAtFieldStop.y) > stopDiameter/2.0:
+			if abs(outputRayAtFieldStop.y) >= stopDiameter/2.0:
 				break # Last height was the last one to not be blocked
 			else:
 				halfFieldOfView = height 
