@@ -50,3 +50,14 @@ path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 (r1,r2) = path.marginalRays(y=0)
 print(r1, r2)
 
+
+M1 = Space(d=10)
+M2 = Lens(f=5)
+M3 = M2*M1
+print(M3.forwardConjugate())
+
+
+M1 = Space(d=10)
+M2 = Lens(f=5)
+M3 = M1*M2
+print(M3.backwardConjugate())

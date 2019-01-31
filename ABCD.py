@@ -116,6 +116,8 @@ class Matrix(object):
 	included to allow simple management of the ray tracing.
 	"""
 
+	__epsilon__ = 1e-5 # Anything smaller is zero
+
 	def __init__(self, A, B, C, D, physicalLength=0, apertureDiameter=float('+Inf'), label=''):	
 		# Ray matrix formalism
 		self.A = float(A)
@@ -179,6 +181,15 @@ class Matrix(object):
 
 		return outputRay
 
+	@property
+	def isImaging(self):
+		"""If B=0, then the matrix is from a conjugate plane to another (i.e. object at the 
+		front edge and image at the back edge)
+
+		"""
+
+		return abs(self.B) < Matrix.__epsilon__
+
 	def pointsOfInterest(self, z):
 		""" Any points of interest for this matrix (focal points, principal planes etc...)
 		"""
@@ -205,7 +216,7 @@ class Matrix(object):
 		return (p1-frontFocal, p2+backFocal)
 
 	def principalPlanePositions(self, z):
-		""" Positions of the input and output prinicpal planes.
+		""" Positions of the input and output principal planes.
 
 		Currently, it is assumed the index is n=1 on either side.
 		"""
@@ -213,9 +224,43 @@ class Matrix(object):
 		p2 = z + self.L + (1-self.A)/self.C #FIXME: Assumes n=1 on either side
 		return (p1,p2)
 
+	def forwardConjugate(self):
+		""" With an object at the front edge of the element, where is the image?
+		Distance after the element by which a ray must travel to reach the conjugate 
+		plane of the front of the element. A positive distance means the image is "distance"
+		beyond the back of the element (or to the right, or after).
+
+		M2 = Space(distance)*M1
+		# M2.isImaging == True
+
+		"""
+
+		if self.D == 0:
+			return (None, None)
+		distance = -self.B/self.D
+		conjugateMatrix = Space(d=distance)*self
+		return (distance, conjugateMatrix) 
+
+	def backwardConjugate(self):
+		""" With an image at the back edge of the element, where is the object ?
+		Distance before the element by which a ray must travel to reach the conjugate 
+		plane of the back of the element. A positive distance means the object is "distance"
+		in front of the element (or to the left, or before).
+
+		M2 = M1*Space(distance)
+		# M2.isImaging == True
+
+		"""
+		if self.A == 0:
+			return (None, None)
+		distance = -self.B/self.A
+		conjugateMatrix = self*Space(d=distance)
+		return (distance, conjugateMatrix) 
+
 	def drawAt(self, z, axes):
 		""" Draw element on plot with starting edge at 'z'.
 
+		Default is a black box of appropriate length.
 		"""
 		halfHeight = self.displayHalfHeight()
 		p = patches.Rectangle((z,-halfHeight), self.L, 2*halfHeight, color='k', fill=False, transform=axes.transData, clip_on=False)
@@ -314,18 +359,7 @@ class Aperture(Matrix):
 		super(Aperture, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter, label=label)
 
 	def drawAt(self, z, axes):
-		""" Draw an aperture at z.
-
-		Currently, this is a squished arrow because that is how I roll.
-		"""
-		# halfHeight = self.apertureDiameter/2
-		# width = 0.25
-		# axes.add_patch(patches.Polygon([[z-width,halfHeight], [z+width, halfHeight], [z,halfHeight], [z, halfHeight+width], [z,halfHeight]], linewidth=3, closed=False,color='k'))
-		# axes.add_patch(patches.Polygon([[z-width,-halfHeight], [z+width, -halfHeight], [z,-halfHeight], [z, -halfHeight-width], [z,-halfHeight]], linewidth=3, closed=False,color='k'))
-
-# Add the patch to the Axes
-		# plt.arrow(z, halfHeight*1.2, 0,-halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1,length_includes_head=True)
-		# plt.arrow(z, -halfHeight*1.2, 0, halfHeight*0.2, width=0.1, fc='k', ec='k',head_length=0.05, head_width=1, length_includes_head=True)
+		""" Currently nothing specific to draw because any aperture for any object is drawn with drawAperture() """
 
 
 class OpticalPath(object):
@@ -422,8 +456,8 @@ class OpticalPath(object):
 		A = transferMatrixToApertureStop.A
 		B = transferMatrixToApertureStop.B
 
-		thetaUp = (stopDiameter/2*0.98 - A * y )/ B ;
-		thetaDown = (-stopDiameter/2*0.98 - A * y )/ B ;
+		thetaUp = (stopDiameter/2 - A * y )/ B ;
+		thetaDown = (-stopDiameter/2 - A * y )/ B ;
 
 		return (Ray(y=0, theta=thetaUp), Ray(y=0, theta=thetaDown))
 
@@ -556,6 +590,7 @@ class OpticalPath(object):
 
 		self.drawRayTraces(axes, onlyChiefAndMarginalRays=onlyChiefAndMarginalRays, removeBlockedRaysCompletely=False)
 		self.drawObject(axes)
+		self.drawImages(axes)
 		self.drawOpticalElements(axes)
 		if self.showPointsOfInterest:
 			self.drawPointsOfInterest(axes)
@@ -563,16 +598,27 @@ class OpticalPath(object):
 		return (fig, axes)
 
 	def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
-		(fig, axes) = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
+		(fig, axes) = self.createRayTracePlot(limitObjectToFieldOfView=limitObjectToFieldOfView, onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
 		plt.ioff()
 		plt.show()
 
 	def save(self, filepath, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
-		(fig, axes) = self.createRayTracePlot(limitObjectToFieldOfView, onlyChiefAndMarginalRays)
+		(fig, axes) = self.createRayTracePlot(limitObjectToFieldOfView=limitObjectToFieldOfView, onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
 		fig.savefig(filepath,dpi=600)
 
 	def drawObject(self, axes):
 		plt.arrow(self.objectPosition, -self.objectHeight/2, 0, self.objectHeight, width=0.1, fc='b', ec='b',head_length=0.25, head_width=0.25,length_includes_head=True)
+
+	def drawImages(self, axes):
+		transferMatrix = Matrix(A=1,B=0,C=0,D=1)
+		for element in self.elements:
+			transferMatrix = element*transferMatrix
+			(distance, conjugate)= transferMatrix.forwardConjugate()
+			if distance != None:
+				imagePosition = transferMatrix.L + distance
+				if imagePosition != 0:  
+					magnification = conjugate.A
+					plt.arrow(imagePosition, -magnification*self.objectHeight/2, 0, (magnification)*self.objectHeight, width=0.1, fc='r', ec='r',head_length=0.25, head_width=0.25,length_includes_head=True)
 
 	def drawPointsOfInterest(self, axes):
 		pointsOfInterestLabels = {} # Regroup labels at same z
@@ -688,26 +734,13 @@ if __name__ == "__main__":
 
 	path = OpticalPath()
 	path.name = "Microscope system"
-	path.objectHeight = 0.1
+#	path.objectHeight = 0.1
 	path.append(Space(d=4))
 	path.append(Lens(f=4, diameter=0.8, label='Obj'))
 	path.append(Space(d=4+18))
 	path.append(Lens(f=18,diameter=5.0, label='Tube Lens'))
 	path.append(Space(d=18))
-	path.display()
+	path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 	path.save("MicroscopeSystem.png",onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 	# or 
 	# path.save("Figure 4.png")
-
-	path = OpticalPath()
-	path.name = "Advanced demo: two lenses with aperture"
-	path.append(Space(d=10))
-	path.append(Lens(f=5))
-	path.append(Space(d=2))
-	path.append(Lens(f=5, diameter=2.5))
-	path.append(Space(d=2))
-	path.append(Aperture(diameter=2.0))
-	(r1,r2) = path.marginalRays(y=0)
-	print(r1, r2)
-	print(path.fieldOfView())
-	path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
