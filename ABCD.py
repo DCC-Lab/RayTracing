@@ -722,12 +722,12 @@ if __name__ == "__main__":
 	# path.save("Figure 2.png")
 
 	path = OpticalPath()
-	path.name = "Advanced demo: two lenses f = 5cm, with a finite diameter of 2.5 cm"
+	path.name = "Simple demo: Aperture behind lens"
 	path.append(Space(d=10))
-	path.append(Lens(f=5, diameter=2.5))
-	path.append(Space(d=20))
-	path.append(Lens(f=5, diameter=2.5))
-	path.append(Space(d=10))
+	path.append(Lens(f=5))
+	path.append(Space(d=3))
+	path.append(Aperture(diameter=3))
+	path.append(Space(d=17))
 	path.display()
 	# or 
 	# path.save("Figure 3.png")
