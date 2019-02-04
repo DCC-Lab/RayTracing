@@ -9,8 +9,8 @@ if sys.version_info[0] < 3:
 """A simple module for ray tracing with ABCD matrices. https://github.com/DCC-Lab/RayTracing
 
 Create an OpticalPath(), append matrices (optical elements).
-and then display(). This helps determine of course simple things like
-focal distance of compound systems, object-image, etc... but also
+and then display(). This helps determine of course simple things like 
+focal distance of compound systems, object-image, etc... but also 
 the aperture stop, field stop, field of view and any clipping issues that may occur.
 
 When displaying the result, the  objectHeight, fanAngle, and fanNumber are used if the
