@@ -14,6 +14,16 @@ the aperture stop, field stop, field of view and any clipping issues that may oc
 
 When displaying the result, the  objectHeight, fanAngle, and fanNumber are used if the
 field of view is not defined. You may adjust the values to suit your needs in OpticalPath().
+
+To install a local copy that can be used from any directory, copy to the directory
+pointed to by the command: python -m site --user-site
+
+mkdir -p "`python -m site --user-site`"
+cp ABCD.py "`python -m site --user-site`/"
+
+or the Windows equivalent.
+
+
 """
 
 
