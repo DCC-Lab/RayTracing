@@ -17,6 +17,14 @@ path.display()
 #path.save('Figure2.png')
 
 path = OpticalPath()
+path.name = "Object at 4f, virtual image at"
+path.append(Space(d=2.5))
+path.append(Lens(f=5))
+path.append(Space(d=10))
+path.display()
+#path.save('Figure2.png')
+
+path = OpticalPath()
 path.name = "4f system"
 path.append(Space(d=5))
 path.append(Lens(f=5))
@@ -50,3 +58,14 @@ path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 (r1,r2) = path.marginalRays(y=0)
 print(r1, r2)
 
+
+M1 = Space(d=10)
+M2 = Lens(f=5)
+M3 = M2*M1
+print(M3.forwardConjugate())
+
+
+M1 = Space(d=10)
+M2 = Lens(f=5)
+M3 = M1*M2
+print(M3.backwardConjugate())
