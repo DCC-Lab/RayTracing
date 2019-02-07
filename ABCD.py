@@ -14,6 +14,16 @@ the aperture stop, field stop, field of view and any clipping issues that may oc
 
 When displaying the result, the  objectHeight, fanAngle, and fanNumber are used if the
 field of view is not defined. You may adjust the values to suit your needs in OpticalPath().
+
+To install a local copy that can be used from any directory, copy to the directory
+pointed to by the command: python -m site --user-site
+
+mkdir -p "`python -m site --user-site`"
+cp ABCD.py "`python -m site --user-site`/"
+
+or the Windows equivalent.
+
+
 """
 
 
@@ -432,6 +442,20 @@ class OpticalPath(object):
 				return True
 		return False
 
+	def largestDiameterElement(self):
+		""" True if OpticalPath has at least one element of finite diameter """
+
+		maxDiameter	= 0.0
+		for element in self.elements:
+			diameter = element.apertureDiameter
+			if diameter == float('+Inf'):
+				diameter = element.displayHalfHeight()*2
+
+			if diameter > maxDiameter:
+					maxDiameter = diameter
+
+		return maxDiameter
+
 	def chiefRay(self, y):
 		""" Chief ray for a height y (i.e., the ray that goes through the center of the aperture stop) 
 
@@ -563,8 +587,13 @@ class OpticalPath(object):
 
 	def createRayTracePlot(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
 		fig, axes = plt.subplots(figsize=(10, 7))
+
+		displayRange = 1.2*self.largestDiameterElement()
+		if displayRange == float('+Inf'):
+			displayRange = self.objectHeight * 2
+
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
-		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
+		axes.set_ylim([-displayRange/2,displayRange/2])
 
 		note1 = ""
 		note2 = ""
@@ -696,11 +725,24 @@ class OpticalPath(object):
 			# else: # ray will simply stop drawing from here			
 		return (x,y)
 
+import os
+import subprocess
+def installModule():
+	directory = subprocess.check_output('python -m site --user-site', shell=True)
+	os.system('mkdir -p "`python -m site --user-site`"')
+	os.system('cp ABCD.py "`python -m site --user-site`/"')
+	os.system('cp Axicon.py "`python -m site --user-site`/"')
+	print('Module ABCD.py and Axicon.py copied to ', directory)
 
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD
 # See test.py
 if __name__ == "__main__":
+	if len(sys.argv) >= 2:
+		if sys.argv[1] == 'install':
+			installModule()
+			exit()
+
 	path = OpticalPath()
 	path.name = "Simple demo: one infinite lens f = 5cm"
 	path.append(Space(d=10))
@@ -722,12 +764,12 @@ if __name__ == "__main__":
 	# path.save("Figure 2.png")
 
 	path = OpticalPath()
-	path.name = "Advanced demo: two lenses f = 5cm, with a finite diameter of 2.5 cm"
+	path.name = "Simple demo: Aperture behind lens"
 	path.append(Space(d=10))
-	path.append(Lens(f=5, diameter=2.5))
-	path.append(Space(d=20))
-	path.append(Lens(f=5, diameter=2.5))
-	path.append(Space(d=10))
+	path.append(Lens(f=5))
+	path.append(Space(d=3))
+	path.append(Aperture(diameter=3))
+	path.append(Space(d=17))
 	path.display()
 	# or 
 	# path.save("Figure 3.png")
