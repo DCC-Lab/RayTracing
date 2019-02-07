@@ -389,6 +389,8 @@ class OpticalPath(object):
 		self.rayNumber = 3        # number of rays from different heights on object
 		
 		# Display properties
+		self.showObject = True
+		self.showImages = True
 		self.showElementLabels = True
 		self.showPointsOfInterest = True
 		self.showPointsOfInterestLabels = True
@@ -618,8 +620,12 @@ class OpticalPath(object):
 		axes.text(0.05, 0.1, note1+"\n"+note2, transform=axes.transAxes, fontsize=14,verticalalignment='top')
 
 		self.drawRayTraces(axes, onlyChiefAndMarginalRays=onlyChiefAndMarginalRays, removeBlockedRaysCompletely=False)
-		self.drawObject(axes)
-		self.drawImages(axes)
+		if self.showObject:
+			self.drawObject(axes)
+
+		if self.showImages:
+			self.drawImages(axes)
+			
 		self.drawOpticalElements(axes)
 		if self.showPointsOfInterest:
 			self.drawPointsOfInterest(axes)
