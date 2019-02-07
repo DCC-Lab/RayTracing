@@ -442,6 +442,19 @@ class OpticalPath(object):
 				return True
 		return False
 
+	def largestDiameterElement(self):
+		""" True if OpticalPath has at least one element of finite diameter """
+		if self.hasFiniteDiameterElements():
+			maxDiameter	= 0.0
+			for element in self.elements:
+				diameter = element.apertureDiameter
+				if diameter != float('+Inf'):
+					if diameter > maxDiameter:
+						maxDiameter = diameter
+			return maxDiameter
+		else:
+			return float("+Inf")
+
 	def chiefRay(self, y):
 		""" Chief ray for a height y (i.e., the ray that goes through the center of the aperture stop) 
 
@@ -573,8 +586,10 @@ class OpticalPath(object):
 
 	def createRayTracePlot(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
 		fig, axes = plt.subplots(figsize=(10, 7))
+
 		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
-		axes.set_ylim([-5,5]) # FIXME: obtain limits from plot.  Currently 5cm either side
+		displayRange = 1.2*self.largestDiameterElement()
+		axes.set_ylim([-displayRange/2,displayRange/2])
 
 		note1 = ""
 		note2 = ""
