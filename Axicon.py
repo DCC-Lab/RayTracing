@@ -8,13 +8,16 @@ Axicon: An advanced module that describes an axicon lens, not part of the basic 
 
 class Axicon(Matrix):
 	def __init__(self, alpha, n, diameter=float('+Inf'), label=''):	
-		""" alpha is the small angle in radians of the axicon 
+		""" An element representing an axicon conical lens, used to obtain 
+		a line focus instead of a point.
+
+		alpha is the small angle in radians of the axicon 
 		(typically 2.5 or 5 degrees) corresponding to 90-apex angle
 
 		"""
 		self.n = n
 		self.alpha = alpha
-		super(Axicon, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
+		super(Axicon, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter, label=label)
 
 	def deviationAngle(self):
 		""" Provides deviation angle delta
@@ -45,6 +48,7 @@ class Axicon(Matrix):
 			outputRay.theta += -self.deviationAngle()
 		elif rightSideRay.y < 0:
 			outputRay.theta +=  self.deviationAngle()
+		# theta == 0 is not deviated
 				
 		return outputRay
 
