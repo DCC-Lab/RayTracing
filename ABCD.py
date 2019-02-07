@@ -726,11 +726,13 @@ class OpticalPath(object):
 		return (x,y)
 
 import os
+import subprocess
 def installModule():
+	directory = subprocess.check_output('python -m site --user-site', shell=True)
 	os.system('mkdir -p "`python -m site --user-site`"')
 	os.system('cp ABCD.py "`python -m site --user-site`/"')
 	os.system('cp Axicon.py "`python -m site --user-site`/"')
-
+	print('Module ABCD.py and Axicon.py copied to ', directory)
 
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD
@@ -739,6 +741,7 @@ if __name__ == "__main__":
 	if len(sys.argv) >= 2:
 		if sys.argv[1] == 'install':
 			installModule()
+			exit()
 
 	path = OpticalPath()
 	path.name = "Simple demo: one infinite lens f = 5cm"
