@@ -444,16 +444,17 @@ class OpticalPath(object):
 
 	def largestDiameterElement(self):
 		""" True if OpticalPath has at least one element of finite diameter """
-		if self.hasFiniteDiameterElements():
-			maxDiameter	= 0.0
-			for element in self.elements:
-				diameter = element.apertureDiameter
-				if diameter != float('+Inf'):
-					if diameter > maxDiameter:
-						maxDiameter = diameter
-			return maxDiameter
-		else:
-			return float("+Inf")
+
+		maxDiameter	= 0.0
+		for element in self.elements:
+			diameter = element.apertureDiameter
+			if diameter == float('+Inf'):
+				diameter = element.displayHalfHeight()*2
+
+			if diameter > maxDiameter:
+					maxDiameter = diameter
+
+		return maxDiameter
 
 	def chiefRay(self, y):
 		""" Chief ray for a height y (i.e., the ray that goes through the center of the aperture stop) 
@@ -587,8 +588,11 @@ class OpticalPath(object):
 	def createRayTracePlot(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False):
 		fig, axes = plt.subplots(figsize=(10, 7))
 
-		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
 		displayRange = 1.2*self.largestDiameterElement()
+		if displayRange == float('+Inf'):
+			displayRange = self.objectHeight * 2
+
+		axes.set(xlabel='Distance', ylabel='Height', title=self.name)
 		axes.set_ylim([-displayRange/2,displayRange/2])
 
 		note1 = ""
@@ -721,11 +725,21 @@ class OpticalPath(object):
 			# else: # ray will simply stop drawing from here			
 		return (x,y)
 
+import os
+def installModule():
+	os.system('mkdir -p "`python -m site --user-site`"')
+	os.system('cp ABCD.py "`python -m site --user-site`/"')
+	os.system('cp Axicon.py "`python -m site --user-site`/"')
+
 
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD
 # See test.py
 if __name__ == "__main__":
+	if len(sys.argv) >= 2:
+		if sys.argv[1] == 'install':
+			installModule()
+
 	path = OpticalPath()
 	path.name = "Simple demo: one infinite lens f = 5cm"
 	path.append(Space(d=10))
