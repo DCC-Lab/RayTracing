@@ -61,16 +61,16 @@ class Matrix(builtins.object)
  |  Methods defined here:
  |  
  |  __init__(self, A, B, C, D, physicalLength=0, apertureDiameter=inf, label='')
- |      Initialize self.  See help(type(self)) for accurate signature.
+ |     Initialize self.  See help(type(self)) for accurate signature.
  |  
  |  __mul__(self, rightSide)
- |      Operator overloading allowing easy to read matrix multiplication 
+ |     Operator overloading allowing easy to read matrix multiplication 
  |      
- |      For instance, with M1 = Matrix() and M2= Matrix(), one can write M3 = M1*M2.
- |      With r = Ray(), one can apply the M1 transform to a ray with r = M1*r
+ |     For instance, with M1 = Matrix() and M2= Matrix(), one can write M3 = M1*M2.
+ |     With r = Ray(), one can apply the M1 transform to a ray with r = M1*r
  |  
  |  __str__(self)
- |      String description that allows the use of print(Matrix())
+ |     String description that allows the use of print(Matrix())
  |  
  |  displayHalfHeight(self)
  |      A reasonable height for display purposes for an element, whether it is infinite or 
