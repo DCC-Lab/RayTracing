@@ -479,17 +479,14 @@ class DielectricSlab(ThickLens):
             thickness=thickness, diameter=diameter,label=label)
 
     def drawAt(self, z, axes):
-        """ Draw element on plot with starting edge at 'z'.
-
-        Default is a black box of appropriate length.
+        """ Draw a faint blue box of length L starting at 'z'.
+        
         """
         halfHeight = self.displayHalfHeight()
         p = patches.Rectangle((z, -halfHeight), self.L,
-                              2 * halfHeight, color=[0.84,0.95,0.95], fill=True,
+                              2 * halfHeight, color=[0.85,0.95,0.95], fill=True,
                               transform=axes.transData, clip_on=False)
         axes.add_patch(p)
-
-
 
 class Aperture(Matrix):
     """An aperture of finite diameter, null thickness.
