@@ -633,13 +633,17 @@ class OpticalPath(object):
         """ Marginal rays for a height y at object
         (i.e., the rays that hit the upper and lower
         edges of the aperture stop). In general, this could
-        be any height, not just y=0, although we usually
-        only want y=0.
+        be any height, not just y=0. However, we usually
+        only want y=0 which is implicitly called 
+        "the marginal ray (of the system)", and both rays
+        will be symmetrically oriented on either side of the 
+        optical axis.
 
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
-        (which we are looking for) will end at y=diameter/2 at the
-        aperture stop.
+        (which we are looking for) will end at y=±diameter/2 at the
+        aperture stop. We return the largest angle first, for
+        convenience.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
@@ -648,6 +652,9 @@ class OpticalPath(object):
 
         thetaUp = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
+
+        if thetaDown > thetaUp:
+            (thetaUp, thetaDown) = (thetaDown, thetaUp)
 
         return (Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown))
 
