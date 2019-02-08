@@ -5,7 +5,7 @@
 from ABCD import *
 
 path = OpticalPath()
-path.name = "Systeme 4f, objet de 1 cm, petites lentilles"
+path.name = "4f system, 1 cm object, small lenses"
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=2.5))
 path.append(Space(d=15))
@@ -15,7 +15,7 @@ path.display()
 #path.save('object-smallLenses.png')
 
 path = OpticalPath()
-path.name = "Systeme 4f, objet de 1 cm, petite lentille suivi de grande lentille"
+path.name = "4f system, 1 cm object, small and large lenses"
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=2.5))
 path.append(Space(d=15))
@@ -25,7 +25,7 @@ path.display()
 #path.save('object-smallLargeLenses.png')
 
 path = OpticalPath()
-path.name = "Systeme 4f, champ de vue, petites lentilles"
+path.name = "4f system, calculated field of view, small lenses"
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=2.5))
 path.append(Space(d=15))
@@ -35,7 +35,7 @@ path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 #path.save('fov-smallLenses.png', onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 
 path = OpticalPath()
-path.name = "Systeme 4f, champ de vue, petite lentille suivi de grande lentille"
+path.name = "4f system, improved field of view, small and large lenses"
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=2.5))
 path.append(Space(d=15))
@@ -45,7 +45,7 @@ path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 #path.save('fov-smallLargeLenses.png', onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
 
 path = OpticalPath()
-path.name = "Systeme 4f, champ de vue, grandes lentilles"
+path.name = "4f systeme, no change in field of view with large first lens"
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=5.0))
 path.append(Space(d=15))

@@ -78,6 +78,10 @@ class Matrix(builtins.object)
 
 ## Examples
 
+You can run the code directly from the [examples](./examples) directory.  The modules modify the path to be able to import `ABCD.py`.
+
+You can run `demo.py`, `illuminator.py`, `invariant.py`.
+
 ![Figure1](assets/Figure1.png)
 ![Microscope](assets/Microscope.png)
 ![Illumination](assets/Illumination.png)
