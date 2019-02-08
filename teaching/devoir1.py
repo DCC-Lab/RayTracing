@@ -1,4 +1,8 @@
 # Devoir #1: Simple assignement for 1st-year students. 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../'))
+
 from ABCD import *
 import matplotlib.pyplot as plt
 
