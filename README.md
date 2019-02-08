@@ -40,7 +40,7 @@ path.display()
 
 You may obtain help by typing (interactively): `help(Matrix)`, `help(Ray)`,`help(OpticalPath)`
 
-```
+```python
 python
 >>> help(Matrix)
 Help on class Matrix in module ABCD:
@@ -80,7 +80,7 @@ class Matrix(builtins.object)
 
 You can run the code directly from the [examples](./examples) directory.  The modules modify the path to be able to import `ABCD.py`.
 
-You can run `demo.py`, `illuminator.py`, `invariant.py`.
+You can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view.
 
 ![Figure1](assets/Figure1.png)
 ![Microscope](assets/Microscope.png)
