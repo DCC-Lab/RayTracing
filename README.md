@@ -14,8 +14,15 @@ This will show you a few examples of things you can do:
 
 ```shell
 python ABCD.py
+cd teaching
 python demo.py
 ```
+
+In order to be able to *import* the `ABCD` module, you must have one of the following:
+
+1. The module `ABCD.py` in the same directory as your file
+2. The path to `ABCD.py` added to `sys.path` manually or through the command-line with PYTHONPATH
+3. The module ABCD installed in the standard location. ABCD.py has a special option `python ABCD.py install` will copy it to your standard directory. Soon, when it is more stable, it will be submitted to 
 
 In your code, (such as the `test.py` or `demo.py`  files), you would do this:
 
