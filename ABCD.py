@@ -646,10 +646,10 @@ class OpticalPath(object):
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
-        thetaUp = (stopDiameter / 2 - A * y) / B
-        thetaDown = (-stopDiameter / 2 - A * y) / B
+        thetaUp = (stopDiameter / 2.0 - A * y) / B
+        thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
-        return (Ray(y=0, theta=thetaUp), Ray(y=0, theta=thetaDown))
+        return (Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown))
 
     def axialRays(self, y):
         """ Synonym of marginal rays """
@@ -674,12 +674,12 @@ class OpticalPath(object):
             return (None, float('+Inf'))
         else:
             ray = Ray(y=0, theta=0.1)  # Any ray angle will do
-            maxRatio = 0
+            maxRatio = 0.0
             apertureStopPosition = 0
             for element in self.elements:
                 ray = element * ray
-                ratio = ray.y / element.apertureDiameter
-                if ratio > maxRatio:
+                ratio = abs(ray.y / element.apertureDiameter)
+                if ratio >= maxRatio:
                     apertureStopPosition = ray.z
                     apertureStopDiameter = element.apertureDiameter
                     maxRatio = ratio
