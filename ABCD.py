@@ -392,16 +392,10 @@ class Lens(Matrix):
     """
 
     def __init__(self, f, diameter=float('+Inf'), label=''):
-        super(
-            Lens,
-            self).__init__(
-            A=1,
-            B=0,
-            C=-1 / float(f),
-            D=1,
-            physicalLength=0,
-            apertureDiameter=diameter,
-            label=label)
+        super(Lens, self).__init__(A=1, B=0, C=-1 / float(f), D=1,
+                                   physicalLength=0,
+                                   apertureDiameter=diameter,
+                                   label=label)
 
     def drawAt(self, z, axes):
         """ Draw a thin lens at z """
@@ -439,27 +433,33 @@ class Space(Matrix):
         """ Draw nothing because free space is nothing. """
         return
 
+
 class DielectricInterface(Matrix):
-    """A dielectric interface of radius R, with an index n1 before and n2 after the interface
-    
+    """A dielectric interface of radius R, with an index n1 before and n2
+    after the interface
+
     A convex interface from the perspective of the ray has R > 0
     """
 
-    def __init__(self, n1, n2, R, diameter=float('+Inf'),label=''):
+    def __init__(self, n1, n2, R, diameter=float('+Inf'), label=''):
         a = 1.0
         b = 0.0
         c = - (n2-n1)/(n2*R)
         d = n1/n2
 
-        super(DielectricInterface, self).__init__(A=a, B=b, C=c,D=d, physicalLength=0,
-            apertureDiameter=diameter,label=label)
-	
+        super(DielectricInterface, self).__init__(A=a, B=b, C=c, D=d,
+                                                  physicalLength=0,
+                                                  apertureDiameter=diameter,
+                                                  label=label)
+
+
 class ThickLens(Matrix):
-    """A thick lens of first radius R1 and then R2, with an index n and length d
-    
+    """A thick lens of first radius R1 and then R2, with an index n
+    and length d
+
     A biconvex lens has R1 > 0 and R2 < 0.
     """
-    def __init__(self, n, R1, R2, thickness, diameter=float('+Inf'),label=''):
+    def __init__(self, n, R1, R2, thickness, diameter=float('+Inf'), label=''):
         # ... corrigez le code ici le code pour une lentille epaisse
         t = thickness
 
@@ -467,26 +467,34 @@ class ThickLens(Matrix):
         b = t/n
         c = - (n - 1.0)*(1.0/R1 - 1.0/R2 + t*(n-1.0)/(n*R1*R2))
         d = t*(n-1.0)/(n*R2) + 1
-        super(ThickLens, self).__init__(A=a, B=b, C=c,D=d, physicalLength=thickness,
-			apertureDiameter=diameter,label=label)	
+        super(ThickLens, self).__init__(A=a, B=b, C=c, D=d,
+                                        physicalLength=thickness,
+                                        apertureDiameter=diameter,
+                                        label=label)
+
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
 
     """
-    def __init__(self, n, thickness, diameter=float('+Inf'),label=''):
-        super(DielectricSlab, self).__init__(n=n, R1=float("+Inf"), R2=float("+Inf"),
-            thickness=thickness, diameter=diameter,label=label)
+    def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
+        super(DielectricSlab, self).__init__(n=n, R1=float("+Inf"),
+                                             R2=float("+Inf"),
+                                             thickness=thickness,
+                                             diameter=diameter,
+                                             label=label)
 
     def drawAt(self, z, axes):
         """ Draw a faint blue box of length L starting at 'z'.
-        
+
         """
         halfHeight = self.displayHalfHeight()
         p = patches.Rectangle((z, -halfHeight), self.L,
-                              2 * halfHeight, color=[0.85,0.95,0.95], fill=True,
-                              transform=axes.transData, clip_on=False)
+                              2 * halfHeight, color=[0.85, 0.95, 0.95],
+                              fill=True, transform=axes.transData,
+                              clip_on=False)
         axes.add_patch(p)
+
 
 class Aperture(Matrix):
     """An aperture of finite diameter, null thickness.
