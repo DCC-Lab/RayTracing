@@ -662,8 +662,8 @@ class OpticalPath(object):
         Returns the position and diameter of the aperture stop
 
         Strategy: we take a ray height and divide by real aperture
-        diameter. The position where the ratio is maximum is
-        the aperture stop.
+        diameter. The position where the absolute value of the 
+        ratio is maximum is the aperture stop.
 
         If there are no elements of finite diameter (i.e. all
         optical elements are infinite in diameters), then
