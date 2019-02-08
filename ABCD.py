@@ -63,9 +63,14 @@ class Ray:
 		"""A list of rays spanning from radianMin to radianMax to be used with Matrix().propagate()
 
 		"""
+		if N >= 2:
+			deltaRadian = (radianMax-radianMin)/(N-1)
+		else:
+			deltaRadian = 0.0
+
 		rays = []
 		for i in range(N):
-			theta = radianMin + i*(radianMax-radianMin)/(N-1)
+			theta = radianMin + i*deltaRadian
 			rays.append(Ray(y,theta,z=0))
 
 		return rays
@@ -75,12 +80,22 @@ class Ray:
 		""" A list of rays spanning from yMin to yMax and radianMin to 
 		radianMax to be used with Matrix().propagate()
 		"""
+		if N >= 2:
+			deltaRadian = (radianMax-radianMin)/(N-1)
+		else:
+			deltaRadian = 0.0
+		if M >= 2:
+			deltaHeight = (yMax-yMin)/(M-1)
+		else:
+			deltaHeight = 0.0
+
 		rays = []
 		for j in range(M):
 			for i in range(N):
-				theta = radianMin + i*(radianMax-radianMin)/(N-1)
-				y = yMin + j*(yMax-yMin)/(M-1)
+				theta = radianMin + i*deltaRadian
+				y = yMin + j*deltaHeight
 				rays.append(Ray(y,theta,z=0))
+
 		return rays
 
 	@staticmethod
@@ -88,9 +103,14 @@ class Ray:
 		""" A list of rays spanning from yMin to yMax at a fixed
 		angle to be used with Matrix().propagate()
 		"""
+		if M >= 2:
+			deltaHeight = (yMax-yMin)/(M-1)
+		else:
+			deltaHeight = 0.0
+
 		rays = []
 		for i in range(M):
-			y = yMin + i*(yMax-yMin)/(M-1)
+			y = yMin + i*deltaHeight
 			theta = radian
 			rays.append(Ray(y,theta,z=0))
 		return rays
@@ -389,6 +409,8 @@ class OpticalPath(object):
 		self.rayNumber = 3        # number of rays from different heights on object
 		
 		# Display properties
+		self.showObject = True
+		self.showImages = True
 		self.showElementLabels = True
 		self.showPointsOfInterest = True
 		self.showPointsOfInterestLabels = True
@@ -618,8 +640,12 @@ class OpticalPath(object):
 		axes.text(0.05, 0.1, note1+"\n"+note2, transform=axes.transAxes, fontsize=14,verticalalignment='top')
 
 		self.drawRayTraces(axes, onlyChiefAndMarginalRays=onlyChiefAndMarginalRays, removeBlockedRaysCompletely=False)
-		self.drawObject(axes)
-		self.drawImages(axes)
+		if self.showObject:
+			self.drawObject(axes)
+
+		if self.showImages:
+			self.drawImages(axes)
+			
 		self.drawOpticalElements(axes)
 		if self.showPointsOfInterest:
 			self.drawPointsOfInterest(axes)
