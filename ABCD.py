@@ -441,7 +441,7 @@ class DielectricInterface(Matrix):
     A convex interface from the perspective of the ray has R > 0
     """
 
-    def __init__(self, n1, n2, R, diameter=float('+Inf'), label=''):
+    def __init__(self, n1, n2, R=float('+Inf'), diameter=float('+Inf'), label=''):
         a = 1.0
         b = 0.0
         c = - (n2-n1)/(n2*R)
