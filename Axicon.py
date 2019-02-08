@@ -7,21 +7,54 @@ Axicon: An advanced module that describes an axicon lens, not part of the basic 
 """
 
 class Axicon(Matrix):
-	def __init__(self, alpha, n, diameter=float('+Inf')):	
+	def __init__(self, alpha, n, diameter=float('+Inf'), label=''):	
+		""" An element representing an axicon conical lens, used to obtain 
+		a line focus instead of a point.
+
+		alpha is the small angle in radians of the axicon 
+		(typically 2.5 or 5 degrees) corresponding to 90-apex angle
+
+		"""
 		self.n = n
 		self.alpha = alpha
+		super(Axicon, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter, label=label)
 
-		super(Axicon, self).__init__(A=1, B=0, C=0,D=1, physicalLength=0, apertureDiameter=diameter)
+	def deviationAngle(self):
+		""" Provides deviation angle delta
+
+		See Kloos, p.48
+
+		"""
+
+		return (self.n-1.0)*self.alpha
+
+
+	def focalLineLength(self, yMax=None):
+		""" Provides the line length, assuming a ray at height yMax
+
+		See Kloos, p.48
+
+		"""
+
+		if yMax == None:
+			yMax = self.apertureDiameter/2
+
+		return yMax/(self.n-1.0)/self.alpha
 
 	def mul_ray(self, rightSideRay):
 		outputRay = super(Axicon, self).mul_ray(rightSideRay)
 
 		if rightSideRay.y > 0:
-			outputRay.theta += -(self.n-1)*self.alpha
-		else:
-			outputRay.theta +=  (self.n-1)*self.alpha
-
+			outputRay.theta += -self.deviationAngle()
+		elif rightSideRay.y < 0:
+			outputRay.theta +=  self.deviationAngle()
+		# theta == 0 is not deviated
+				
 		return outputRay
+
+	def mul_mat(self, rightSideMatrix):
+		raise TypeError("Cannot calculate final matrix with axicon in path. \
+			You can only propagate rays all rhe way through")
 
 	def drawAt(self, z, axes):
 		halfHeight = 4
@@ -32,14 +65,3 @@ class Axicon(Matrix):
 		plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',head_length=0.25, head_width=0.25, length_includes_head=True)
 
 
-if __name__ == "__main__":
-	path = OpticalPath()
-	path.name = "Demo Axicon"
-	path.fanAngle = 0.0
-	path.rayNumber = 10
-	path.objectHeight = 2.0
-
-	path.append(Space(d=10))
-	path.append(Axicon(n=1.55, alpha=0.25))
-	path.append(Space(d=20))
-	path.display()

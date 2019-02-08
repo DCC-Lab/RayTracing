@@ -14,8 +14,15 @@ This will show you a few examples of things you can do:
 
 ```shell
 python ABCD.py
+cd teaching
 python demo.py
 ```
+
+In order to be able to *import* the `ABCD` module, you must have one of the following:
+
+1. The module `ABCD.py` in the same directory as your file
+2. The path to `ABCD.py` added to `sys.path` manually or through the command-line with PYTHONPATH
+3. The module ABCD installed in the standard location. ABCD.py has a special option `python ABCD.py install` will copy it to your standard directory. Soon, when it is more stable, it will be submitted to PyPi.
 
 In your code, (such as the `test.py` or `demo.py`  files), you would do this:
 
@@ -30,6 +37,50 @@ path.append(Lens(f=7))
 path.append(Space(d=10))
 path.display()
 ```
+
+You may obtain help by typing (interactively): `help(Matrix)`, `help(Ray)`,`help(OpticalPath)`
+
+```
+python
+>>> help(Matrix)
+Help on class Matrix in module ABCD:
+
+class Matrix(builtins.object)
+ |  A matrix and an optical element that can transform a ray or another matrix.
+ |  
+ |  The general properties (A,B,C,D) are defined here. The operator "*" is 
+ |  overloaded to allow simple statements such as:
+ |  
+ |  M2 = M1 * ray  
+ |  or 
+ |  M3 = M2 * M1
+ |  
+ |  In addition apertures are considered and the physical length is 
+ |  included to allow simple management of the ray tracing.
+ |  
+ |  Methods defined here:
+ |  
+ |  __init__(self, A, B, C, D, physicalLength=0, apertureDiameter=inf, label='')
+ |      Initialize self.  See help(type(self)) for accurate signature.
+ |  
+ |  __mul__(self, rightSide)
+ |      Operator overloading allowing easy to read matrix multiplication 
+ |      
+ |      For instance, with M1 = Matrix() and M2= Matrix(), one can write M3 = M1*M2.
+ |      With r = Ray(), one can apply the M1 transform to a ray with r = M1*r
+ |  
+ |  __str__(self)
+ |      String description that allows the use of print(Matrix())
+ |  
+ |  displayHalfHeight(self)
+ |      A reasonable height for display purposes for an element, whether it is infinite or 
+```
+
+## Examples
+
+![Figure1](assets/Figure1.png)
+![Microscope](assets/Microscope.png)
+![Illumination](assets/Illumination.png)
 
 ## Licence
 

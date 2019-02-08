@@ -1,7 +1,11 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../'))
+
 from ABCD import *
 
 path = OpticalPath()
-path.name = "Kohler illumination"
+path.name = "Kohler illumination with 1 cm wide lamp and 0.5 NA"
 path.objectHeight = 1.0
 path.fanAngle = 0.5
 path.rayNumber = 3
@@ -18,3 +22,4 @@ path.append(Space(d=9))
 print(path.fieldStop())
 print(path.fieldOfView())
 path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
+path.save("Illumination.png",onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
