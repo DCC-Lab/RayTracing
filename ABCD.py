@@ -626,10 +626,7 @@ class OpticalPath(Matrix):
     and rayNumber.
     """
 
-    def __init__(self):
-        self.label = "Ray tracing"
-        self.elements = []
-
+    def __init__(self, elements=[], label=""):
         self.objectHeight = 1.0    # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
         self.fanAngle = 0.5        # full fan angle for rays
@@ -643,7 +640,10 @@ class OpticalPath(Matrix):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
-        super(OpticalPath, self).__init__(1,0,0,1,label=self.label)
+        super(OpticalPath, self).__init__(1,0,0,1,label=label)
+        self.elements = []
+        for element in elements:
+            self.append(element)
 
     def append(self, matrix):
         """ Add an element at the end of the path """
@@ -799,6 +799,8 @@ class OpticalPath(Matrix):
 
             maxRatio = 0.0
             apertureStopPosition = 0
+            apertureStopDiameter = float("+Inf")
+            
             for ray in rayTrace:
                 ratio = abs(ray.y / ray.apertureDiameter)
                 if ratio > maxRatio:
@@ -893,7 +895,7 @@ class OpticalPath(Matrix):
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
 
-        axes.set(xlabel='Distance', ylabel='Height', title=self.name)
+        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-displayRange / 2, displayRange / 2])
 
         note1 = ""
@@ -1128,7 +1130,7 @@ if __name__ == "__main__":
             exit()
 
     path = OpticalPath()
-    path.name = "Simple demo: one infinite lens f = 5cm"
+    path.label = "Simple demo: one infinite lens f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=10))
@@ -1137,7 +1139,7 @@ if __name__ == "__main__":
     # path.save("Figure 1.png")
 
     path = OpticalPath()
-    path.name = "Simple demo: two infinite lenses with f = 5cm"
+    path.label = "Simple demo: two infinite lenses with f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=20))
@@ -1148,7 +1150,7 @@ if __name__ == "__main__":
     # path.save("Figure 2.png")
 
     path = OpticalPath()
-    path.name = "Simple demo: Aperture behind lens"
+    path.label = "Simple demo: Aperture behind lens"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=3))
@@ -1159,7 +1161,7 @@ if __name__ == "__main__":
     # path.save("Figure 3.png")
 
     path = OpticalPath()
-    path.name = "Microscope system"
+    path.label = "Microscope system"
 #   path.objectHeight = 0.1
     path.append(Space(d=4))
     path.append(Lens(f=4, diameter=0.8, label='Obj'))
@@ -1173,7 +1175,7 @@ if __name__ == "__main__":
     # path.save("Figure 4.png")
 
     path = OpticalPath()
-    path.name = "Focussing through a dielectric slab"
+    path.label = "Focussing through a dielectric slab"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=3))
