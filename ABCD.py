@@ -23,23 +23,25 @@ When displaying the result, the  objectHeight, fanAngle, and fanNumber
 are used if the field of view is not defined. You may adjust the values
 to suit your needs in OpticalPath().
 
-To install a local copy that can be used from any directory, copy to
-the directory pointed to by the command: python -m site --user-site
+To install a local copy that can be used from any directory, either:
+1) python ABCD.py install
+or
+2) copy to the directory pointed to by the command: python -m site --user-site
+such as:
 
 mkdir -p "`python -m site --user-site`"
 cp ABCD.py "`python -m site --user-site`/"
 
 or the Windows equivalent.
-
-
 """
 
 
-""" Two constants: deg and rad to quickly convert to degrees 
+""" Two constants: deg and rad to quickly convert to degrees
 or radians with angle*degPerRad or angle*radPerDeg """
 
 degPerRad = 180.0/math.pi
 radPerDeg = math.pi/180.0
+
 
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices
@@ -160,8 +162,8 @@ class Matrix(object):
     The physical length is included to allow simple management of
     the ray tracing.
 
-    In addition apertures are considered: if the apertureDiameter is not
-    +Inf, then the object is assumed to limit the ray height to
+    In addition finite apertures are considered: if the apertureDiameter
+    is not +Inf, then the object is assumed to limit the ray height to
     ± apertureDiameter/2 from the front edge to the back edge of the
     element.
     """
@@ -195,7 +197,7 @@ class Matrix(object):
     def __mul__(self, rightSide):
         """Operator overloading allowing easy to read matrix multiplication
 
-        For instance, with M1 = Matrix() and M2= Matrix(), one can write
+        For instance, with M1 = Matrix() and M2 = Matrix(), one can write
         M3 = M1*M2. With r = Ray(), one can apply the M1 transform to a ray
         with r = M1*r
 
@@ -270,7 +272,7 @@ class Matrix(object):
         return (focalDistance, focalDistance)
 
     def focusPositions(self, z):
-        """ Positions of both focal points on either side.
+        """ Positions of both focal points on either side of the element.
 
         Currently, it is assumed the index is n=1 on either side and both focal
         distances are the same.
@@ -333,7 +335,7 @@ class Matrix(object):
         halfHeight = self.displayHalfHeight()
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color='k', fill=False,
-                              transform=axes.transData, clip_on=False)
+                              transform=axes.transData, clip_on=True)
         axes.add_patch(p)
 
     def drawLabels(self, z, axes):
@@ -351,7 +353,7 @@ class Matrix(object):
     def drawAperture(self, z, axes):
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0
-            
+
             center = z + self.L/2
             if self.L == 0:
                 width = 0.5
@@ -446,8 +448,13 @@ class Space(Matrix):
     """
 
     def __init__(self, d, diameter=float('+Inf'), label=''):
-        super(Space, self).__init__(A=1, B=float(d),
-                                    C=0, D=1, physicalLength=d, apertureDiameter=diameter, label=label)
+        super(Space, self).__init__(A=1,
+                                    B=float(d),
+                                    C=0,
+                                    D=1,
+                                    physicalLength=d,
+                                    apertureDiameter=diameter,
+                                    label=label)
 
     def drawAt(self, z, axes):
         """ Draw nothing because free space is nothing. """
@@ -461,7 +468,8 @@ class DielectricInterface(Matrix):
     A convex interface from the perspective of the ray has R > 0
     """
 
-    def __init__(self, n1, n2, R=float('+Inf'), diameter=float('+Inf'), label=''):
+    def __init__(self, n1, n2, R=float('+Inf'),
+                 diameter=float('+Inf'), label=''):
         a = 1.0
         b = 0.0
         c = - (n2-n1)/(n2*R)
@@ -479,6 +487,7 @@ class ThickLens(Matrix):
 
     A biconvex lens has R1 > 0 and R2 < 0.
     """
+
     def __init__(self, n, R1, R2, thickness, diameter=float('+Inf'), label=''):
         self.R1 = R1
         self.R2 = R2
@@ -494,28 +503,28 @@ class ThickLens(Matrix):
                                         physicalLength=thickness,
                                         apertureDiameter=diameter,
                                         label=label)
+
     def drawAt(self, z, axes):
-        """ Draw a faint blue box with slightly curved interfaces 
+        """ Draw a faint blue box with slightly curved interfaces
         of length 'thickness' starting at 'z'.
 
         """
         halfHeight = self.displayHalfHeight()
+        apexHeight = self.L * 0.2
+        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
+        backVertex = z + self.L + apexHeight * (-self.R2/abs(self.R2))
+
         Path = mpath.Path
-
-        extrude = self.L * 0.2
-        frontVertex = z + extrude * (-self.R1/abs(self.R1))
-        backVertex = z + self.L  + extrude * (-self.R2/abs(self.R2))
-
         p = patches.PathPatch(
-        Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight), 
-              (z+self.L, halfHeight), (backVertex, 0), (z+self.L, -halfHeight),
-              (z, -halfHeight)],
-             [Path.MOVETO, Path.CURVE3, Path.CURVE3,
-              Path.LINETO, Path.CURVE3, Path.CURVE3,
-              Path.LINETO]),
-              color=[0.85, 0.95, 0.95], 
-              fill=True, 
-              transform=axes.transData)
+            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
+                  (z+self.L, halfHeight), (backVertex, 0),
+                  (z+self.L, -halfHeight), (z, -halfHeight)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.85, 0.95, 0.95],
+            fill=True,
+            transform=axes.transData)
 
         axes.add_patch(p)
 
@@ -524,6 +533,7 @@ class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
 
     """
+
     def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
         super(DielectricSlab, self).__init__(n=n, R1=float("+Inf"),
                                              R2=float("+Inf"),
@@ -539,7 +549,7 @@ class DielectricSlab(ThickLens):
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color=[0.85, 0.95, 0.95],
                               fill=True, transform=axes.transData,
-                              clip_on=False)
+                              clip_on=True)
         axes.add_patch(p)
 
 
@@ -681,9 +691,9 @@ class OpticalPath(object):
         (i.e., the rays that hit the upper and lower
         edges of the aperture stop). In general, this could
         be any height, not just y=0. However, we usually
-        only want y=0 which is implicitly called 
+        only want y=0 which is implicitly called
         "the marginal ray (of the system)", and both rays
-        will be symmetrically oriented on either side of the 
+        will be symmetrically oriented on either side of the
         optical axis.
 
         The calculation is simple: obtain the transfer matrix
@@ -719,7 +729,7 @@ class OpticalPath(object):
         diameter at that position.  Some elements may have a finite length
         (e.g., Space() or ThickLens()), so we always calculate the ratio
         before propagating inside the element and after having propoagated
-        through the element. The position where the absolute value of the 
+        through the element. The position where the absolute value of the
         ratio is maximum is the aperture stop.
 
         If there are no elements of finite diameter (i.e. all
@@ -952,8 +962,7 @@ class OpticalPath(object):
                     labels[zStr] = label
             zElement += element.L
 
-
-        halfHeight =  self.largestDiameterElement()/2
+        halfHeight = self.largestDiameterElement()/2
         for zStr, label in labels.items():
             z = float(zStr)
             plt.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.15),
