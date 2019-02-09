@@ -675,13 +675,13 @@ class OpticalPath(Matrix):
         return self.traceMany(inputRays)
 
     def trace(self, inputRay):
-        """ Starting with inputRay, ray trace from z = 0
+        """ Starting with inputRay, ray trace from first element
         until after the last element
 
-        Returns a list of rays (called a ray trace)
+        Returns a ray trace (i.e. [Ray()])
         starting with inputRay, followed by the ray after
         each element. If an element is composed of sub-elements,
-        the ray will be traced in several steps.
+        the ray will also be traced in several steps.
         """
         ray = inputRay
         rayTrace = [ray]
@@ -783,20 +783,16 @@ class OpticalPath(Matrix):
             return (None, float('+Inf'))
         else:
             ray = Ray(y=0, theta=0.1)  # Any ray angle will do
+            rayTrace = self.trace(ray)
+
             maxRatio = 0.0
             apertureStopPosition = 0
-            for element in self.elements:
-                ratioBefore = abs(ray.y / element.apertureDiameter)
-                if ratioBefore >= maxRatio:
+            for ray in rayTrace:
+                ratio = abs(ray.y / ray.apertureDiameter)
+                if ratio >= maxRatio:
                     apertureStopPosition = ray.z
-                    apertureStopDiameter = element.apertureDiameter
-                    maxRatio = ratioBefore
-                ray = element * ray
-                ratioAfter = abs(ray.y / element.apertureDiameter)
-                if ratioAfter >= maxRatio:
-                    apertureStopPosition = ray.z
-                    apertureStopDiameter = element.apertureDiameter
-                    maxRatio = ratioAfter
+                    apertureStopDiameter = ray.apertureDiameter
+                    maxRatio = ratio
 
             return (apertureStopPosition, apertureStopDiameter)
 
