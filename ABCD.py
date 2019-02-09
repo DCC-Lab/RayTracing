@@ -245,6 +245,15 @@ class Matrix(object):
 
         return outputRay
 
+    def transferMatrix(self, z=float('+Inf')):
+        if self.L <= z:
+            return self
+        elif self.L == 0:
+            return self
+        else:
+            raise TypeError("Must override")
+
+
     @property
     def isImaging(self):
         """If B=0, then the matrix is from a conjugate plane to another
@@ -460,6 +469,12 @@ class Space(Matrix):
         """ Draw nothing because free space is nothing. """
         return
 
+    def transferMatrix(self, z=float('+Inf')):
+        if z < self.L:
+            return Space(z)
+        else:
+            return self
+
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
@@ -577,7 +592,7 @@ class Aperture(Matrix):
         """
 
 
-class OpticalPath(object):
+class OpticalPath(Matrix):
     """OpticalPath: the main class of the module, allowing
     calculations and ray tracing for an object at the beginning.
 
@@ -603,21 +618,30 @@ class OpticalPath(object):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
+        super(OpticalPath, self).__init__(1,0,0,1,label=self.name)
 
     def append(self, matrix):
         """ Add an element at the end of the path """
         self.elements.append(matrix)
+        transferMatrix = self.transferMatrix()
+        self.A = transferMatrix.A
+        self.B = transferMatrix.B
+        self.C = transferMatrix.C
+        self.D = transferMatrix.D
+        self.L = transferMatrix.L
 
     def transferMatrix(self, z=float('+Inf')):
         """ The transfer matrix between z = 0 and z
 
         Currently, z must be where a new element starts."""
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
+        distance = z
         for element in self.elements:
-            if transferMatrix.L + element.L <= z:
-                # FIXME: Assumes z falls on edge of element
+            if element.L <= distance:
                 transferMatrix = element * transferMatrix
+                distance -= element.L
             else:
+                transferMatrix = element.transferMatrix(z=distance) * transferMatrix
                 break
 
         return transferMatrix
@@ -883,7 +907,7 @@ class OpticalPath(object):
         if self.showImages:
             self.drawImages(axes)
 
-        self.drawOpticalElements(axes)
+        self.drawOpticalElements(z=0, axes=axes)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(axes)
 
@@ -906,6 +930,9 @@ class OpticalPath(object):
             limitObjectToFieldOfView=limitObjectToFieldOfView,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
         fig.savefig(filepath, dpi=600)
+
+    def drawAt(self, z, axes):
+        self.drawOpticalElements(z=z, axes=axes)
 
     def drawObject(self, axes):
         plt.arrow(
@@ -991,8 +1018,7 @@ class OpticalPath(object):
                          ha='center',
                          va='bottom')
 
-    def drawOpticalElements(self, axes):
-        z = 0
+    def drawOpticalElements(self, z, axes):
         for element in self.elements:
             element.drawAt(z, axes)
             element.drawAperture(z, axes)
