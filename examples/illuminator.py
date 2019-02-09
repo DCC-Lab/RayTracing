@@ -16,7 +16,7 @@ path.append(Lens(f=25, diameter=7.5, label='Condenser'))
 path.append(Space(d=20))
 path.append(Space(d=5))
 path.append(Space(d=9))
-path.append(Lens(f=9, diameter=8, label='objective'))
+path.append(Lens(f=9, diameter=8, label='Objective'))
 path.append(Space(d=9))
 path.showLabels=True
 print(path.fieldStop())

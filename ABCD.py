@@ -2,8 +2,10 @@ import os
 import subprocess
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-
+import matplotlib.path as mpath
+import math
 import sys
+
 if sys.version_info[0] < 3:
     print("Warning: you should really be using Python 3. \
         No guarantee this will work in 2.x")
@@ -32,6 +34,12 @@ or the Windows equivalent.
 
 """
 
+
+""" Two constants: deg and rad to quickly convert to degrees 
+or radians with angle*degPerRad or angle*radPerDeg """
+
+degPerRad = 180.0/math.pi
+radPerDeg = math.pi/180.0
 
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices
@@ -149,8 +157,13 @@ class Matrix(object):
     or
     M3 = M2 * M1
 
-    In addition apertures are considered and the physical length is
-    included to allow simple management of the ray tracing.
+    The physical length is included to allow simple management of
+    the ray tracing.
+
+    In addition apertures are considered: if the apertureDiameter is not
+    +Inf, then the object is assumed to limit the ray height to
+    ± apertureDiameter/2 from the front edge to the back edge of the
+    element.
     """
 
     __epsilon__ = 1e-5  # Anything smaller is zero
@@ -326,33 +339,40 @@ class Matrix(object):
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
 
+        Labels are drawn 30% above the display height
         """
         halfHeight = self.displayHalfHeight()
         center = z + self.L / 2.0
         plt.annotate(self.label, xy=(center, 0.0),
-                     xytext=(center, halfHeight * 1.1),
-                     fontsize=14, xycoords='data', ha='center',
+                     xytext=(center, halfHeight * 1.3),
+                     fontsize=12, xycoords='data', ha='center',
                      va='bottom')
 
     def drawAperture(self, z, axes):
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0
-            width = 0.5
+            
+            center = z + self.L/2
+            if self.L == 0:
+                width = 0.5
+            else:
+                width = self.L/2
+
             axes.add_patch(patches.Polygon(
-                           [[z - width, halfHeight],
-                            [z + width, halfHeight],
-                            [z, halfHeight],
-                            [z, halfHeight + width],
-                            [z, halfHeight]],
+                           [[center - width, halfHeight],
+                            [center + width, halfHeight],
+                            [center, halfHeight],
+                            [center, halfHeight + width],
+                            [center, halfHeight]],
                            linewidth=3,
                            closed=False,
                            color='0.7'))
             axes.add_patch(patches.Polygon(
-                           [[z - width, -halfHeight],
-                            [z + width, -halfHeight],
-                            [z, -halfHeight],
-                            [z, -halfHeight - width],
-                            [z, -halfHeight]],
+                           [[center - width, -halfHeight],
+                            [center + width, -halfHeight],
+                            [center, -halfHeight],
+                            [center, -halfHeight - width],
+                            [center, -halfHeight]],
                            linewidth=3,
                            closed=False,
                            color='0.7'))
@@ -365,7 +385,7 @@ class Matrix(object):
         will be '4'. If not, it is the apertureDiameter/2.
 
         """
-        halfHeight = 4  # reasonable half height when infinite
+        halfHeight = 4  # FIXME: reasonable half height when infinite
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
@@ -425,9 +445,9 @@ class Space(Matrix):
 
     """
 
-    def __init__(self, d, label=''):
+    def __init__(self, d, diameter=float('+Inf'), label=''):
         super(Space, self).__init__(A=1, B=float(d),
-                                    C=0, D=1, physicalLength=d, label=label)
+                                    C=0, D=1, physicalLength=d, apertureDiameter=diameter, label=label)
 
     def drawAt(self, z, axes):
         """ Draw nothing because free space is nothing. """
@@ -460,7 +480,10 @@ class ThickLens(Matrix):
     A biconvex lens has R1 > 0 and R2 < 0.
     """
     def __init__(self, n, R1, R2, thickness, diameter=float('+Inf'), label=''):
-        # ... corrigez le code ici le code pour une lentille epaisse
+        self.R1 = R1
+        self.R2 = R2
+        self.n = n
+
         t = thickness
 
         a = t*(1.0-n)/(n*R1) + 1
@@ -471,6 +494,30 @@ class ThickLens(Matrix):
                                         physicalLength=thickness,
                                         apertureDiameter=diameter,
                                         label=label)
+    def drawAt(self, z, axes):
+        """ Draw a faint blue box with slightly curved interfaces 
+        of length 'thickness' starting at 'z'.
+
+        """
+        halfHeight = self.displayHalfHeight()
+        Path = mpath.Path
+
+        extrude = self.L * 0.2
+        frontVertex = z + extrude * (-self.R1/abs(self.R1))
+        backVertex = z + self.L  + extrude * (-self.R2/abs(self.R2))
+
+        p = patches.PathPatch(
+        Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight), 
+              (z+self.L, halfHeight), (backVertex, 0), (z+self.L, -halfHeight),
+              (z, -halfHeight)],
+             [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+              Path.LINETO, Path.CURVE3, Path.CURVE3,
+              Path.LINETO]),
+              color=[0.85, 0.95, 0.95], 
+              fill=True, 
+              transform=axes.transData)
+
+        axes.add_patch(p)
 
 
 class DielectricSlab(ThickLens):
@@ -669,7 +716,10 @@ class OpticalPath(object):
         Returns the position and diameter of the aperture stop
 
         Strategy: we take a ray height and divide by real aperture
-        diameter. The position where the absolute value of the 
+        diameter at that position.  Some elements may have a finite length
+        (e.g., Space() or ThickLens()), so we always calculate the ratio
+        before propagating inside the element and after having propoagated
+        through the element. The position where the absolute value of the 
         ratio is maximum is the aperture stop.
 
         If there are no elements of finite diameter (i.e. all
@@ -684,12 +734,17 @@ class OpticalPath(object):
             maxRatio = 0.0
             apertureStopPosition = 0
             for element in self.elements:
-                ray = element * ray
-                ratio = abs(ray.y / element.apertureDiameter)
-                if ratio >= maxRatio:
+                ratioBefore = abs(ray.y / element.apertureDiameter)
+                if ratioBefore >= maxRatio:
                     apertureStopPosition = ray.z
                     apertureStopDiameter = element.apertureDiameter
-                    maxRatio = ratio
+                    maxRatio = ratioBefore
+                ray = element * ray
+                ratioAfter = abs(ray.y / element.apertureDiameter)
+                if ratioAfter >= maxRatio:
+                    apertureStopPosition = ray.z
+                    apertureStopDiameter = element.apertureDiameter
+                    maxRatio = ratioAfter
 
             return (apertureStopPosition, apertureStopDiameter)
 
@@ -714,7 +769,7 @@ class OpticalPath(object):
         If there are no elements of finite diameter (i.e. all
         optical elements are infinite in diameters), then there
         is no field stop and no aperture stop in the system
-        and the sizes are infinite.
+        and their sizes are infinite.
         """
 
         if not self.hasFiniteDiameterElements():
@@ -774,7 +829,7 @@ class OpticalPath(object):
             onlyChiefAndMarginalRays=False):
         fig, axes = plt.subplots(figsize=(10, 7))
 
-        displayRange = 1.2 * self.largestDiameterElement()
+        displayRange = 1.4 * self.largestDiameterElement()
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
 
@@ -877,6 +932,12 @@ class OpticalPath(object):
                         length_includes_head=True)
 
     def drawPointsOfInterest(self, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 15% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
         labels = {}  # Regroup labels at same z
         zElement = 0
         for element in self.elements:
@@ -891,11 +952,12 @@ class OpticalPath(object):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = 4  # FIXME
+
+        halfHeight =  self.largestDiameterElement()/2
         for zStr, label in labels.items():
             z = float(zStr)
-            plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight * 0.2),
-                         xycoords='data', fontsize=14,
+            plt.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.15),
+                         xycoords='data', fontsize=12,
                          ha='center', va='bottom')
 
         (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
@@ -903,7 +965,7 @@ class OpticalPath(object):
             plt.annotate('AS',
                          xy=(apertureStopPosition, 0.0),
                          xytext=(apertureStopPosition, halfHeight * 1.1),
-                         fontsize=14,
+                         fontsize=18,
                          xycoords='data',
                          ha='center',
                          va='bottom')
@@ -915,7 +977,7 @@ class OpticalPath(object):
                              0.0),
                          xytext=(fieldStopPosition,
                                  halfHeight * 1.1),
-                         fontsize=14,
+                         fontsize=18,
                          xycoords='data',
                          ha='center',
                          va='bottom')
@@ -1045,7 +1107,7 @@ if __name__ == "__main__":
     # path.save("Figure 4.png")
 
     path = OpticalPath()
-    path.name = "Focussing into a dielectric slab"
+    path.name = "Focussing through a dielectric slab"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=3))
