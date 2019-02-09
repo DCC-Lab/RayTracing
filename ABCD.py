@@ -250,13 +250,14 @@ class Matrix(object):
     def hasFiniteApertureDiameter(self):
         return self.apertureDiameter != float("+Inf")
 
-    def transferMatrix(self, distance=float('+Inf')):
-        if self.L <= distance:
+    def transferMatrix(self, upTo=float('+Inf')):
+        distance = upTo
+        if self.L == 0:
             return self
-        elif self.L == 0:
+        elif self.L <= distance:
             return self
         else:
-            raise TypeError("Must override")
+            raise TypeError("Subclass of non-null physical length must override")
 
     def transferMatrices(self):
         return [self]
@@ -492,9 +493,10 @@ class Space(Matrix):
         """ Draw nothing because free space is nothing. """
         return
 
-    def transferMatrix(self, z=float('+Inf')):
-        if z < self.L:
-            return Space(z)
+    def transferMatrix(self, upTo=float('+Inf')):
+        distance = upTo
+        if distance < self.L:
+            return Space(distance)
         else:
             return self
 
@@ -653,18 +655,18 @@ class OpticalPath(Matrix):
         self.D = transferMatrix.D
         self.L = transferMatrix.L
 
-    def transferMatrix(self, z=float('+Inf')):
-        """ The transfer matrix between z = 0 and z
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ The transfer matrix between front edge and distance=upTo
 
         Currently, z must be where a new element starts."""
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-        distance = z
+        distance = upTo
         for element in self.elements:
             if element.L <= distance:
                 transferMatrix = element * transferMatrix
                 distance -= element.L
             else:
-                transferMatrix = element.transferMatrix(z=distance) * transferMatrix
+                transferMatrix = element.transferMatrix(upTo=distance) * transferMatrix
                 break
 
         return transferMatrix
@@ -733,7 +735,7 @@ class OpticalPath(Matrix):
         aperture stop.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
-        transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
+        transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
         return Ray(y=y, theta=-A * y / B)
@@ -755,7 +757,7 @@ class OpticalPath(Matrix):
         convenience.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
-        transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
+        transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
@@ -866,7 +868,7 @@ class OpticalPath(Matrix):
         if stopPosition is None:
             return halfFieldOfView
 
-        transferMatrixToFieldStop = self.transferMatrix(z=stopPosition)
+        transferMatrixToFieldStop = self.transferMatrix(upTo=stopPosition)
         # FIXME: This is not that great.
         deltaHeight = self.objectHeight / 10000.0
         # FIXME: When do we stop? Currently 10.0 (arbitrary).
