@@ -47,7 +47,9 @@ class Ray:
     """A vector and a light ray as transformed by ABCD matrices
 
     The Ray() has a height (y) and an angle with the optical axis (theta).
-    It also has a position (z) and a marker if it has been blocked.
+    It also has a position (z), the diameter of the aperture at that point
+    when it propagated through, and a marker if it has been blocked by the
+    aperture.
 
     Simple static functions are defined to obtain a group of rays: fans
     originate from the same height but sweep a range of angles; fan groups
@@ -60,10 +62,9 @@ class Ray:
         self.y = y
         self.theta = theta
 
-        # Position of this ray
+        # Position of this ray and the diameter of the aperture
         self.z = z
-
-        # Aperture
+        self.apertureDiameter = float("+Inf")
         self.isBlocked = isBlocked
 
     @property
@@ -237,22 +238,28 @@ class Matrix(object):
         outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
         outputRay.z = self.L + rightSideRay.z
-
-        if abs(rightSideRay.y) > self.apertureDiameter / 2:
+        outputRay.apertureDiameter = self.apertureDiameter
+        
+        if abs(rightSideRay.y) > outputRay.apertureDiameter / 2:
             outputRay.isBlocked = True
         else:
             outputRay.isBlocked = rightSideRay.isBlocked
 
         return outputRay
 
-    def transferMatrix(self, z=float('+Inf')):
-        if self.L <= z:
+    def transferMatrix(self, distance=float('+Inf')):
+        if self.L <= distance:
             return self
         elif self.L == 0:
             return self
         else:
             raise TypeError("Must override")
 
+    def hasFiniteDiameter(self):
+        return self.apertureDiameter != float("+Inf")
+
+    def trace(self, ray):
+        return [self.mul_ray(ray)]
 
     @property
     def isImaging(self):
