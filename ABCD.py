@@ -78,7 +78,7 @@ class Ray:
     @staticmethod
     def fan(self, y, radianMin, radianMax, N):
         """A list of rays spanning from radianMin to radianMax to be used
-        with Matrix().propagate()
+        with Matrix.trace() or Matrix.traceMany()
 
         """
         if N >= 2:
@@ -96,7 +96,7 @@ class Ray:
     @staticmethod
     def fanGroup(yMin, yMax, M, radianMin, radianMax, N):
         """ A list of rays spanning from yMin to yMax and radianMin to
-        radianMax to be used with Matrix().propagate()
+        radianMax to be used with Matrix.trace() or Matrix.traceMany()
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
@@ -119,7 +119,7 @@ class Ray:
     @staticmethod
     def beam(yMin, yMax, M, radian):
         """ A list of rays spanning from yMin to yMax at a fixed
-        angle to be used with Matrix().propagate()
+        angle to be used with Matrix.trace() or Matrix.traceMany()
         """
         if M >= 2:
             deltaHeight = (yMax - yMin) / (M - 1)
@@ -239,7 +239,7 @@ class Matrix(object):
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
-        
+
         if abs(rightSideRay.y) > outputRay.apertureDiameter / 2:
             outputRay.isBlocked = True
         else:
@@ -260,6 +260,19 @@ class Matrix(object):
 
     def trace(self, ray):
         return [self.mul_ray(ray)]
+
+    def traceMany(self, inputRays):
+        """ Trace each ray from a list from front edge of element to
+        the back edge.
+
+        Returns a list of ray traces for each input ray.
+        See trace().
+        """
+        manyRayTraces = []
+        for inputRay in inputRays:
+            rayTrace = self.trace(inputRay)
+            manyRayTraces.append(rayTrace)
+        return manyRayTraces
 
     @property
     def isImaging(self):
@@ -609,7 +622,7 @@ class OpticalPath(Matrix):
     """
 
     def __init__(self):
-        self.name = "Ray tracing"
+        self.label = "Ray tracing"
         self.elements = []
 
         self.objectHeight = 1.0    # object height (full).
@@ -625,7 +638,7 @@ class OpticalPath(Matrix):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
-        super(OpticalPath, self).__init__(1,0,0,1,label=self.name)
+        super(OpticalPath, self).__init__(1,0,0,1,label=self.label)
 
     def append(self, matrix):
         """ Add an element at the end of the path """
@@ -654,32 +667,30 @@ class OpticalPath(Matrix):
         return transferMatrix
 
     def propagate(self, inputRay):
-        """ Starting with inputRay, propagate from z = 0
-        until after the last element
-
-        Returns a list of rays (called a ray sequence)
-        starting with inputRay, followed by the ray after
-        each element.
-        """
-        ray = inputRay
-        raySequence = [ray]
-        for element in self.elements:
-            ray = element * ray
-            raySequence.append(ray)
-        return raySequence
+        print("propagate() was renamed trace().")
+        return self.trace(inputRay)
 
     def propagateMany(self, inputRays):
-        """ Propagate each ray from a list from z = 0 until
-        after the last element
+        print("propagateMany() was renamed traceMany().")
+        return self.traceMany(inputRays)
 
-        Returns a list of ray sequences for each input ray.
-        See propagate().
+    def trace(self, inputRay):
+        """ Starting with inputRay, ray trace from z = 0
+        until after the last element
+
+        Returns a list of rays (called a ray trace)
+        starting with inputRay, followed by the ray after
+        each element. If an element is composed of sub-elements,
+        the ray will be traced in several steps.
         """
-        manyRaySequences = []
-        for inputRay in inputRays:
-            raySequence = self.propagate(inputRay)
-            manyRaySequences.append(raySequence)
-        return manyRaySequences
+        ray = inputRay
+        rayTrace = [ray]
+        for element in self.elements:
+            rayTraceInElement = element.trace(ray)
+            rayTrace.extend(rayTraceInElement)
+            ray = rayTraceInElement[-1]  # last
+
+        return rayTrace
 
     def hasFiniteDiameterElements(self):
         """ True if OpticalPath has at least one element of finite diameter """
@@ -821,13 +832,13 @@ class OpticalPath(Matrix):
             fieldStopDiameter = float('+Inf')
             for i in range(10000):
                 chiefRay = self.chiefRay(y=i * deltaHeight)
-                outputRaySequence = self.propagate(chiefRay)
-                for ray in reversed(outputRaySequence):
+                rayTrace = self.trace(chiefRay)
+                for ray in reversed(rayTrace):
                     if not ray.isBlocked:
                         break
                     else:
                         fieldStopPosition = ray.z
-                        fieldStopDiameter = abs(ray.y) * 2.0
+                        fieldStopDiameter = ray.apertureDiameter
 
                 if fieldStopPosition is not None:
                     return (fieldStopPosition, fieldStopDiameter)
@@ -1054,11 +1065,11 @@ class OpticalPath(Matrix):
                 radianMax=halfAngle,
                 N=self.fanNumber)
 
-        rayGroupSequence = self.propagateMany(rayGroup)
+        manyRayTraces = self.traceMany(rayGroup)
 
-        for raySequence in rayGroupSequence:
+        for rayTrace in manyRayTraces:
             (x, y) = self.rearrangeRaysForPlotting(
-                raySequence, removeBlockedRaysCompletely)
+                rayTrace, removeBlockedRaysCompletely)
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
 
