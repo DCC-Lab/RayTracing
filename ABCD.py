@@ -247,6 +247,9 @@ class Matrix(object):
 
         return outputRay
 
+    def hasFiniteApertureDiameter(self):
+        return self.apertureDiameter != float("+Inf")
+
     def transferMatrix(self, distance=float('+Inf')):
         if self.L <= distance:
             return self
@@ -257,9 +260,6 @@ class Matrix(object):
 
     def transferMatrices(self):
         return [self]
-
-    def hasFiniteDiameter(self):
-        return self.apertureDiameter != float("+Inf")
 
     def trace(self, ray):
         return [self.mul_ray(ray)]
@@ -702,10 +702,10 @@ class OpticalPath(Matrix):
 
         return rayTrace
 
-    def hasFiniteDiameterElements(self):
+    def hasFiniteApertureDiameter(self):
         """ True if OpticalPath has at least one element of finite diameter """
         for element in self.elements:
-            if element.apertureDiameter != float('+Inf'):
+            if element.hasFiniteApertureDiameter():
                 return True
         return False
 
@@ -789,7 +789,7 @@ class OpticalPath(Matrix):
         there is no aperture stop in the system and the size
         of the aperture stop is infinite.
         """
-        if not self.hasFiniteDiameterElements():
+        if not self.hasFiniteApertureDiameter():
             return (None, float('+Inf'))
         else:
             ray = Ray(y=0, theta=0.1)  # Any ray angle will do
@@ -799,7 +799,7 @@ class OpticalPath(Matrix):
             apertureStopPosition = 0
             for ray in rayTrace:
                 ratio = abs(ray.y / ray.apertureDiameter)
-                if ratio >= maxRatio:
+                if ratio > maxRatio:
                     apertureStopPosition = ray.z
                     apertureStopDiameter = ray.apertureDiameter
                     maxRatio = ratio
@@ -830,7 +830,7 @@ class OpticalPath(Matrix):
         and their sizes are infinite.
         """
 
-        if not self.hasFiniteDiameterElements():
+        if not self.hasFiniteApertureDiameter():
             return (None, float('+Inf'))
         else:
             deltaHeight = 0.001
@@ -931,7 +931,7 @@ class OpticalPath(Matrix):
         if self.showImages:
             self.drawImages(axes)
 
-        self.drawOpticalElements(z=0, axes=axes)
+        self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(axes)
 
@@ -1044,6 +1044,10 @@ class OpticalPath(Matrix):
                          va='bottom')
 
     def drawOpticalElements(self, z, axes):
+        print("drawOpticalElements() was renamed drawAt()")
+        self.drawAt(z,axes)
+
+    def drawAt(self, z, axes):
         for element in self.elements:
             element.drawAt(z, axes)
             element.drawAperture(z, axes)
