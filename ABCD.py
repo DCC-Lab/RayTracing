@@ -255,6 +255,9 @@ class Matrix(object):
         else:
             raise TypeError("Must override")
 
+    def transferMatrices(self):
+        return [self]
+
     def hasFiniteDiameter(self):
         return self.apertureDiameter != float("+Inf")
 
@@ -666,6 +669,13 @@ class OpticalPath(Matrix):
 
         return transferMatrix
 
+    def transferMatrices(self):
+        transferMatrices = []
+        for element in self.elements:
+            elementTransferMatrices = element.transferMatrices()
+            transferMatrices.extend(elementTransferMatrices)
+        return transferMatrices
+
     def propagate(self, inputRay):
         print("propagate() was renamed trace().")
         return self.trace(inputRay)
@@ -963,7 +973,8 @@ class OpticalPath(Matrix):
 
     def drawImages(self, axes):
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-        for element in self.elements:
+        matrices = self.transferMatrices()
+        for element in matrices:
             transferMatrix = element * transferMatrix
             (distance, conjugate) = transferMatrix.forwardConjugate()
             if distance is not None:
