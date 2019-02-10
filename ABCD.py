@@ -871,6 +871,17 @@ class OpticalPath(Matrix):
 
         return halfFieldOfView * 2.0
 
+    def imageSize(self):
+        """ The image size is the object field of view
+        multiplied by magnification
+
+        """
+        fieldOfView = self.fieldOfView()
+        (distance, conjugateMatrix) = self.forwardConjugate()
+        print (distance, conjugateMatrix)
+        magnification = conjugateMatrix.A
+        return fieldOfView * magnification
+
     def createRayTracePlot(
             self,
             limitObjectToFieldOfView=False,

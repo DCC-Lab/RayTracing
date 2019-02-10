@@ -24,7 +24,7 @@ class Objective(OpticalPath):
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
-        self.frontAperture = 2.0 * NA * workingDistance
+        self.frontAperture = 1.2 * (2.0 * NA * workingDistance)  # 20% larger
 
         elements = [Aperture(diameter=backAperture),
                     Space(d=f),
