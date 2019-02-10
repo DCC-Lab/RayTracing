@@ -91,7 +91,7 @@ class XLUMPlanFLN20X(Objective):
                                          focusToFocusLength=80,
                                          backAperture=22,
                                          workingDistance=2,
-                                         label='SUPER20XUIS2')
+                                         label='XLUMPlanFLN20X')
 
 if __name__ == "__main__":
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
