@@ -12,28 +12,69 @@ ft = 150.0
 fo = 180/40.0
 
 class Objective(OpticalPath):
-    def __init__(self, f, length, backAperture, workingDistance, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, label=''):
+        self.f = f
+        self.NA = NA
+        self.focusToFocusLength = focusToFocusLength
+        self.backAperture = backAperture
+        self.workingDistance = workingDistance
+        self.frontAperture = 2.0 * NA * workingDistance
+
         elements = [Aperture(diameter=backAperture),
                     Space(f),
-                    Matrix(1,0,0,1, physicalLength=length),
+                    Matrix(1,0,0,1, physicalLength=focusToFocusLength-2*f),
                     Lens(f=f),
-                    Space(f)]
+                    Space(d=f-workingDistance),
+                    Aperture(diameter=self.frontAperture),
+                    Space(workingDistance)]
 
         super(Objective, self).__init__(elements=elements, label=label)
     
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
+
     def drawAt(self, z, axes):
-        halfHeight = self.displayHalfHeight()
-        p = patches.Rectangle((z, -halfHeight), self.L,
-                              2 * halfHeight, color='k', fill=False,
-                              transform=axes.transData, clip_on=True)
-        axes.add_patch(p)
+        L = self.focusToFocusLength
+        f = self.f
+        wd = self.workingDistance
+        edge = 0
 
+        halfHeight = self.backAperture/2
 
-obj = Objective(f=10, length=60, backAperture=20, workingDistance=2)
+        axes.add_patch(patches.Polygon(
+               [[z, halfHeight],
+                [z, halfHeight + edge],
+                [z + L - 7*wd, halfHeight + edge],
+                [z + L - wd, self.frontAperture/2],
+                [z + L - wd, -self.frontAperture/2],
+                [z + L - 7*wd, -halfHeight - edge],
+                [z, -halfHeight - edge],
+                [z, -halfHeight]],
+               linewidth=1, linestyle='--',closed=True,
+               color='k', fill=False))
+
+        self.drawCardinalPoints(z, axes)
+        self.elements[0].drawAperture(z, axes)
+        self.elements[-2].drawAperture(z+self.focusToFocusLength-self.workingDistance, axes)
+
+obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
+print("focal dist", obj.focalDistances())
+print("p1 p2", obj.principalPlanePositions(z=10))
+print("f1 f2 pos", obj.focusPositions(z=10))
+print("Physical length", obj.L)
 
 path1 = OpticalPath()
+path1.fanAngle = 0.0
+path1.fanNumber = 1
+path1.rayNumber = 15
+path1.objectHeight = 10.0
+
 path1.label = "Objective"
-path1.append(Space(10))
+path1.append(Space(180))
 path1.append(obj)
 path1.append(Space(10))
 path1.display()

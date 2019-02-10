@@ -247,6 +247,9 @@ class Matrix(object):
 
         return outputRay
 
+    def largestDiameterElement(self):
+        return self.apertureDiameter
+
     def hasFiniteApertureDiameter(self):
         return self.apertureDiameter != float("+Inf")
 
@@ -319,7 +322,7 @@ class Matrix(object):
 
         Currently, it is assumed the index is n=1 on either side.
         """
-        p1 = z + (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
+        p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
         # FIXME: Assumes n=1 on either side
         p2 = z + self.L + (1 - self.A) / self.C
         return (p1, p2)
@@ -370,6 +373,11 @@ class Matrix(object):
                               2 * halfHeight, color='k', fill=False,
                               transform=axes.transData, clip_on=True)
         axes.add_patch(p)
+
+    def drawCardinalPoints(self, z, axes):
+        """ Draw the focal points of a thin lens as black dots """
+        (f1, f2) = self.focusPositions(z)
+        axes.plot([f1, f2], [0, 0], 'ko', color='k', linewidth=0.4)
 
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
@@ -460,11 +468,6 @@ class Lens(Matrix):
         plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',
                   head_length=0.25, head_width=0.25, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
-
-    def drawCardinalPoints(self, z, axes):
-        """ Draw the focal points of a thin lens as black dots """
-        (f1, f2) = self.focusPositions(z)
-        axes.plot([f1, f2], [0, 0], 'ko', color='k', linewidth=0.4)
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -712,11 +715,11 @@ class OpticalPath(Matrix):
         return False
 
     def largestDiameterElement(self):
-        """ True if OpticalPath has at least one element of finite diameter """
+        """ Largest finite diameters in elements """
 
         maxDiameter = 0.0
         for element in self.elements:
-            diameter = element.apertureDiameter
+            diameter = element.largestDiameterElement()
             if diameter == float('+Inf'):
                 diameter = element.displayHalfHeight() * 2
 
@@ -800,7 +803,7 @@ class OpticalPath(Matrix):
             maxRatio = 0.0
             apertureStopPosition = 0
             apertureStopDiameter = float("+Inf")
-            
+
             for ray in rayTrace:
                 ratio = abs(ray.y / ray.apertureDiameter)
                 if ratio > maxRatio:
