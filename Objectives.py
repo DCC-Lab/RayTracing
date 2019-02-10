@@ -79,13 +79,14 @@ class LUMPLFL40X(Objective):
                                          workingDistance=2,
                                          label='LUMPLFL40X')
 
-class SUPER20XUIS2(Objective):
-    """ Olympus Super 20X 1.0 NA with large back aperture.
+class XLUMPlanFLN20X(Objective):
+    """ Olympus XLUMPlanFLN20X (Super 20X) 1.0 NA with large 
+    back aperture.
 
     Immersion not considered at this point.
     """
     def __init__(self):
-        super(SUPER20XUIS2, self).__init__(f=180/20,
+        super(XLUMPlanFLN20X, self).__init__(f=180/20,
                                          NA=1.0,
                                          focusToFocusLength=80,
                                          backAperture=22,
