@@ -61,6 +61,15 @@ class LUMPLFL40X(Objective):
                                          workingDistance=2,
                                          label='LUMPLFL40X')
 
+class SUPER20XUIS2(Objective):
+    def __init__(self):
+        super(SUPER20XUIS2, self).__init__(f=180/20,
+                                         NA=1.0,
+                                         focusToFocusLength=80,
+                                         backAperture=22,
+                                         workingDistance=2,
+                                         label='SUPER20XUIS2')
+
 if __name__ == "__main__":
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
     print("Focal distances: ", obj.focalDistances())
