@@ -30,12 +30,12 @@ class Objective(OpticalPath):
 
         super(Objective, self).__init__(elements=elements, label=label)
     
-    def pointsOfInterest(self, z):
-        """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
-        """
-        return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
+    # def pointsOfInterest(self, z):
+    #     """ List of points of interest for this element as a dictionary:
+    #     'z':position
+    #     'label':the label to be used.  Can include LaTeX math code.
+    #     """
+    #     return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
 
     def drawAt(self, z, axes):
         L = self.focusToFocusLength
