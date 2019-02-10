@@ -6,6 +6,19 @@ except ImportError:
 
 class Objective(OpticalPath):
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, label=''):
+        """ General microscope objective, approximately correct.
+
+        We model the objective as an ideal lens with back focal point at the entrance
+        and front focal plane "working distance" after the last surface.
+        In between, we propagate from one principal plane to another with the identity
+        matrix, with the planes separated by focusToFocusLength-2*f
+        All the elements that describe this objective will cumulate to a total distance
+        of focusToFocusLength.  However, the physical length of the objective is shorter:
+        the focal point is outside the objective, therefore the objective has an actual
+        length of focusToFocusLength-workingDistance.
+        The numerical aperture is used to estimate the front aperture.
+        """
+
         self.f = f
         self.NA = NA
         self.focusToFocusLength = focusToFocusLength
@@ -53,6 +66,11 @@ class Objective(OpticalPath):
 
 
 class LUMPLFL40X(Objective):
+    """ Olympus 40x immersion objective
+
+    Immersion not considered at this point.
+    """
+
     def __init__(self):
         super(LUMPLFL40X, self).__init__(f=180/40,
                                          NA=0.8,
@@ -62,6 +80,10 @@ class LUMPLFL40X(Objective):
                                          label='LUMPLFL40X')
 
 class SUPER20XUIS2(Objective):
+    """ Olympus Super 20X 1.0 NA with large back aperture.
+
+    Immersion not considered at this point.
+    """
     def __init__(self):
         super(SUPER20XUIS2, self).__init__(f=180/20,
                                          NA=1.0,
