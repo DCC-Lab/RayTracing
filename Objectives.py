@@ -39,10 +39,10 @@ class Objective(OpticalPath):
 
         axes.add_patch(patches.Polygon(
                [[z, halfHeight],
-                [z + L - 7*wd, halfHeight],
+                [z + L - 5*wd, halfHeight],
                 [z + L - wd, self.frontAperture/2],
                 [z + L - wd, -self.frontAperture/2],
-                [z + L - 7*wd, -halfHeight],
+                [z + L - 5*wd, -halfHeight],
                 [z, -halfHeight]],
                linewidth=1, linestyle='--',closed=True,
                color='k', fill=False))
@@ -50,6 +50,16 @@ class Objective(OpticalPath):
         self.drawCardinalPoints(z, axes)
         self.elements[0].drawAperture(z, axes)
         self.elements[-2].drawAperture(z+self.focusToFocusLength-self.workingDistance, axes)
+
+
+class LUMPLFL40X(Objective):
+    def __init__(self):
+        super(LUMPLFL40X, self).__init__(f=180/40,
+                                         NA=0.8,
+                                         focusToFocusLength=40,
+                                         backAperture=7,
+                                         workingDistance=2,
+                                         label='LUMPLFL40X')
 
 if __name__ == "__main__":
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
@@ -63,9 +73,19 @@ if __name__ == "__main__":
     path1.fanNumber = 1
     path1.rayNumber = 15
     path1.objectHeight = 10.0
-
     path1.label = "Path with objective"
     path1.append(Space(180))
     path1.append(obj)
     path1.append(Space(10))
     path1.display()
+
+    path2 = OpticalPath()
+    path2.fanAngle = 0.0
+    path2.fanNumber = 1
+    path2.rayNumber = 15
+    path2.objectHeight = 10.0
+    path2.label = "Path with LUMPLFL40X"
+    path2.append(Space(180))
+    path2.append(LUMPLFL40X())
+    path2.append(Space(10))
+    path2.display()
