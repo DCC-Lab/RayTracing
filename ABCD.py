@@ -1120,7 +1120,8 @@ def installModule():
     os.system('mkdir -p "`python -m site --user-site`"')
     os.system('cp ABCD.py "`python -m site --user-site`/"')
     os.system('cp Axicon.py "`python -m site --user-site`/"')
-    print('Module ABCD.py and Axicon.py copied to ', directory)
+    os.system('cp Objectives.py "`python -m site --user-site`/"')
+    print('Module ABCD.py, Axicon.py and Objectives.py copied to ', directory)
 
 
 # This is an example for the module.
