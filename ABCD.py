@@ -13,11 +13,11 @@ if sys.version_info[0] < 3:
 """A simple module for ray tracing with ABCD matrices.
 https://github.com/DCC-Lab/RayTracing
 
-Create an OpticalPath(), append matrices (optical elements).
-and then display(). This helps determine of course simple things like
-focal distance of compound systems, object-image, etc... but also
-the aperture stop, field stop, field of view and any clipping issues
-that may occur.
+Create an OpticalPath(), append matrices (optical elements or other
+OpticalPath()s), and then display(). This helps determine of
+course simple things like focal distance of compound systems,
+object-image, etc... but also the aperture stop, field stop, field
+of view and any clipping issues that may occur.
 
 When displaying the result, the  objectHeight, fanAngle, and fanNumber
 are used if the field of view is not defined. You may adjust the values
@@ -114,23 +114,6 @@ class Ray:
                 y = yMin + j * deltaHeight
                 rays.append(Ray(y, theta, z=0))
 
-        return rays
-
-    @staticmethod
-    def beam(yMin, yMax, M, radian):
-        """ A list of rays spanning from yMin to yMax at a fixed
-        angle to be used with Matrix.trace() or Matrix.traceMany()
-        """
-        if M >= 2:
-            deltaHeight = (yMax - yMin) / (M - 1)
-        else:
-            deltaHeight = 0.0
-
-        rays = []
-        for i in range(M):
-            y = yMin + i * deltaHeight
-            theta = radian
-            rays.append(Ray(y, theta, z=0))
         return rays
 
     def __str__(self):
@@ -247,7 +230,7 @@ class Matrix(object):
 
         return outputRay
 
-    def largestDiameterElement(self):
+    def largestDiameter(self):
         return self.apertureDiameter
 
     def hasFiniteApertureDiameter(self):
@@ -714,12 +697,12 @@ class OpticalPath(Matrix):
                 return True
         return False
 
-    def largestDiameterElement(self):
-        """ Largest finite diameters in elements """
+    def largestDiameter(self):
+        """ Largest finite diameter in all elements """
 
         maxDiameter = 0.0
         for element in self.elements:
-            diameter = element.largestDiameterElement()
+            diameter = element.largestDiameter()
             if diameter == float('+Inf'):
                 diameter = element.displayHalfHeight() * 2
 
@@ -894,7 +877,7 @@ class OpticalPath(Matrix):
             onlyChiefAndMarginalRays=False):
         fig, axes = plt.subplots(figsize=(10, 7))
 
-        displayRange = 1.4 * self.largestDiameterElement()
+        displayRange = 1.4 * self.largestDiameter()
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
 
@@ -1021,7 +1004,7 @@ class OpticalPath(Matrix):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = self.largestDiameterElement()/2
+        halfHeight = self.largestDiameter()/2
         for zStr, label in labels.items():
             z = float(zStr)
             plt.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.15),
