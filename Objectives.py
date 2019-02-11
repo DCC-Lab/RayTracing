@@ -25,6 +25,7 @@ class Objective(OpticalPath):
         self.backAperture = backAperture
         self.workingDistance = workingDistance
         self.frontAperture = 1.2 * (2.0 * NA * workingDistance)  # 20% larger
+        self.dir = 1.0 
 
         elements = [Aperture(diameter=backAperture),
                     Space(d=f),
@@ -41,7 +42,14 @@ class Objective(OpticalPath):
         'z':position
         'label':the label to be used.  Can include LaTeX math code.
         """
-        return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
+        if self.dir == 1:
+            return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
+        else:
+            return [{'z': z+self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]            
+
+    def flipOrientation(self):
+        self.dir *= -1
+        self.elements.reverse()
 
     def drawAt(self, z, axes):
         L = self.focusToFocusLength
@@ -50,13 +58,20 @@ class Objective(OpticalPath):
 
         halfHeight = self.backAperture/2
 
+        points = [[0, halfHeight],
+                  [(L - 5*wd), halfHeight],
+                  [(L - wd), self.frontAperture/2],
+                  [(L - wd), -self.frontAperture/2],
+                  [(L - 5*wd), -halfHeight],
+                  [0, -halfHeight]]
+
+        if self.dir > 0:
+            points = list(map(lambda pt: [z+pt[0],pt[1]], points))
+        else:
+            points = list(map(lambda pt: [z+L-pt[0],pt[1]], points))
+
         axes.add_patch(patches.Polygon(
-               [[z, halfHeight],
-                [z + L - 5*wd, halfHeight],
-                [z + L - wd, self.frontAperture/2],
-                [z + L - wd, -self.frontAperture/2],
-                [z + L - 5*wd, -halfHeight],
-                [z, -halfHeight]],
+               points,
                linewidth=1, linestyle='--',closed=True,
                color='k', fill=False))
 

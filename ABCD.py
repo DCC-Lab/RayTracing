@@ -267,8 +267,10 @@ class Matrix(object):
     @property
     def isImaging(self):
         """If B=0, then the matrix is from a conjugate plane to another
-        (i.e. object at the front edge and image at the back edge)
+        (i.e. object at the front edge and image at the back edge).
 
+        In this case, A = transverse magnification, D = angular magnification
+        As usual, C = -1/f (always).
         """
 
         return abs(self.B) < Matrix.__epsilon__
@@ -280,7 +282,7 @@ class Matrix(object):
         return []
 
     def focalDistances(self):
-        """ The equivalent focal distance calcuated from the power (C)
+        """ The equivalent focal distance calculated from the power (C)
         of the matrix.
 
         Currently, it is assumed the index is n=1 on either side and
@@ -458,7 +460,7 @@ class Lens(Matrix):
         'label':the label to be used.  Can include LaTeX math code.
         """
         (f1, f2) = self.focusPositions(z)
-        return [{'z': f1, 'label': '$F_1$'}, {'z': f2, 'label': '$F_2$'}]
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
 
 class Space(Matrix):
@@ -1120,7 +1122,8 @@ def installModule():
 
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD
-# See test.py
+# See test.py or examples/*.py
+
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         if sys.argv[1] == 'install':
