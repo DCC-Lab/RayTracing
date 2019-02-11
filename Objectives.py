@@ -6,7 +6,7 @@ try:
 except ImportError:
     raise ImportError('You must have ABCD.py installed. run "python ABCD.py install"')
 
-class Objective(OpticalPath):
+class Objective(MatrixGroup):
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, label=''):
         """ General microscope objective, approximately correct.
 
@@ -27,7 +27,7 @@ class Objective(OpticalPath):
         self.backAperture = backAperture
         self.workingDistance = workingDistance
         self.frontAperture = 1.2 * (2.0 * NA * workingDistance)  # 20% larger
-        self.dir = 1.0 
+        self.isFlipped = False
 
         elements = [Aperture(diameter=backAperture),
                     Space(d=f),
@@ -44,20 +44,19 @@ class Objective(OpticalPath):
         'z':position
         'label':the label to be used.  Can include LaTeX math code.
         """
-        if self.dir == 1:
-            return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
-        else:
+        if self.isFlipped:
             return [{'z': z+self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]            
+        else:
+            return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
 
     def flipOrientation(self):
-        self.dir *= -1
+        self.isFlipped = not self.isFlipped
         self.elements.reverse()
 
     def drawAt(self, z, axes):
         L = self.focusToFocusLength
         f = self.f
         wd = self.workingDistance
-
         halfHeight = self.backAperture/2
 
         points = [[0, halfHeight],
@@ -67,10 +66,10 @@ class Objective(OpticalPath):
                   [(L - 5*wd), -halfHeight],
                   [0, -halfHeight]]
 
-        if self.dir > 0:
-            trans = transforms.Affine2D().translate(tx=z,ty=0) + axes.transData
-        else:
+        if self.isFlipped:
             trans = transforms.Affine2D().scale(-1).translate(tx=z+L,ty=0) + axes.transData
+        else:
+            trans = transforms.Affine2D().translate(tx=z,ty=0) + axes.transData
 
         axes.add_patch(patches.Polygon(
                points,

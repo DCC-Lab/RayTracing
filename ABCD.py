@@ -23,6 +23,24 @@ When displaying the result, the  objectHeight, fanAngle, and fanNumber
 are used if the field of view is not defined. You may adjust the values
 to suit your needs in OpticalPath().
 
+The class hierarchy can be seen on http://webgraphviz.com with the
+following description:
+
+digraph G {
+
+    subgraph mathview {
+        "Matrix" -> "MatrixGroup"
+                "MatrixGroup" -> ImagingGroup
+                "MatrixGroup" -> ScanningGroup
+    }
+
+    subgraph opticsview {
+        "Element" -> "Group"
+                "Group" -> ImagingGroup
+                "Group" -> ScanningGroup
+    }
+}
+
 To install a local copy that can be used from any directory, either:
 1) python ABCD.py install
 or
@@ -605,28 +623,12 @@ class Aperture(Matrix):
 
 
 class MatrixGroup(Matrix):
-    """OpticalPath: the main class of the module, allowing
-    calculations and ray tracing for an object at the beginning.
-
-    Usage is to create the OpticalPath(), then append() elements
-    and display(). You may change objectHeight, fanAngle, fanNumber
-    and rayNumber.
+    """MatrixGroup: A group of Matrix(), allowing
+    the combination of several elements to be treated as a 
+    whole, or treated explicitly as a sequence when needed.
     """
 
     def __init__(self, elements=[], label=""):
-        self.objectHeight = 1.0    # object height (full).
-        self.objectPosition = 0.0  # always at z=0 for now.
-        self.fanAngle = 0.5        # full fan angle for rays
-        self.fanNumber = 10        # number of rays in fan
-        self.rayNumber = 3         # number of points on object
-
-        # Display properties
-        self.showObject = True
-        self.showImages = True
-        self.showElementLabels = True
-        self.showPointsOfInterest = True
-        self.showPointsOfInterestLabels = True
-        self.showPlanesAcrossPointsOfInterest = True
         super(MatrixGroup, self).__init__(1,0,0,1,label=label)
         self.elements = []
         for element in elements:
@@ -711,6 +713,42 @@ class MatrixGroup(Matrix):
                 maxDiameter = diameter
 
         return maxDiameter
+
+    def drawAt(self, z, axes, showLabels=True):
+        for element in self.elements:
+            element.drawAt(z, axes)
+            element.drawAperture(z, axes)
+
+            if showLabels:
+                element.drawLabels(z, axes)
+            z += element.L
+
+
+class ImagingGroup(MatrixGroup):
+    """ImagingGroup: the main class of the module, allowing
+    the combination of Matrix() or MatrixGroup() to be used 
+    as an imaging group with an object at the beginning.
+
+    Usage is to create the ImagingGroup(), then append() elements
+    and display(). You may change objectHeight, fanAngle, fanNumber
+    and rayNumber.
+    """
+
+    def __init__(self, elements=[], label=""):
+        self.objectHeight = 1.0    # object height (full).
+        self.objectPosition = 0.0  # always at z=0 for now.
+        self.fanAngle = 0.5        # full fan angle for rays
+        self.fanNumber = 10        # number of rays in fan
+        self.rayNumber = 3         # number of points on object
+
+        # Display properties
+        self.showObject = True
+        self.showImages = True
+        self.showElementLabels = True
+        self.showPointsOfInterest = True
+        self.showPointsOfInterestLabels = True
+        self.showPlanesAcrossPointsOfInterest = True
+        super(ImagingGroup, self).__init__(elements=elements, label=label)
 
     def chiefRay(self, y):
         """ Chief ray for a height y (i.e., the ray that goes
@@ -947,18 +985,13 @@ class MatrixGroup(Matrix):
         plt.ioff()
         plt.show()
 
-    def save(
-            self,
-            filepath,
+    def save(self, filepath,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False):
         (fig, axes) = self.createRayTracePlot(
             limitObjectToFieldOfView=limitObjectToFieldOfView,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
         fig.savefig(filepath, dpi=600)
-
-    def drawAt(self, z, axes):
-        self.drawOpticalElements(z=z, axes=axes)
 
     def drawObject(self, axes):
         plt.arrow(
@@ -1049,15 +1082,6 @@ class MatrixGroup(Matrix):
         print("drawOpticalElements() was renamed drawAt()")
         self.drawAt(z,axes)
 
-    def drawAt(self, z, axes):
-        for element in self.elements:
-            element.drawAt(z, axes)
-            element.drawAperture(z, axes)
-
-            if self.showElementLabels:
-                element.drawLabels(z, axes)
-            z += element.L
-
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):
         color = ['b', 'r', 'g']
@@ -1081,7 +1105,7 @@ class MatrixGroup(Matrix):
         manyRayTraces = self.traceMany(rayGroup)
 
         for rayTrace in manyRayTraces:
-            (x, y) = self.rearrangeRaysForPlotting(
+            (x, y) = self.rearrangeRayTraceForPlotting(
                 rayTrace, removeBlockedRaysCompletely)
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
@@ -1092,7 +1116,7 @@ class MatrixGroup(Matrix):
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
             axes.plot(x, y, color[colorIndex], linewidth=0.4)
 
-    def rearrangeRaysForPlotting(
+    def rearrangeRayTraceForPlotting(
             self,
             rayList,
             removeBlockedRaysCompletely=True):
@@ -1113,8 +1137,8 @@ class MatrixGroup(Matrix):
 We can use a mamthematical language (Matrix) or optics terms (Element)
 """
 Element = Matrix
-OpticalPath = MatrixGroup
 Group = MatrixGroup
+OpticalPath = ImagingGroup
 
 def installModule():
     directory = subprocess.check_output(
@@ -1136,7 +1160,7 @@ if __name__ == "__main__":
             installModule()
             exit()
 
-    path = OpticalPath()
+    path = ImagingGroup()
     path.label = "Simple demo: one infinite lens f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
@@ -1145,7 +1169,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 1.png")
 
-    path = OpticalPath()
+    path = ImagingGroup()
     path.label = "Simple demo: two infinite lenses with f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
@@ -1156,7 +1180,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 2.png")
 
-    path = OpticalPath()
+    path = ImagingGroup()
     path.label = "Simple demo: Aperture behind lens"
     path.append(Space(d=10))
     path.append(Lens(f=5))
@@ -1167,7 +1191,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 3.png")
 
-    path = OpticalPath()
+    path = ImagingGroup()
     path.label = "Microscope system"
 #   path.objectHeight = 0.1
     path.append(Space(d=4))
@@ -1181,7 +1205,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 4.png")
 
-    path = OpticalPath()
+    path = ImagingGroup()
     path.label = "Focussing through a dielectric slab"
     path.append(Space(d=10))
     path.append(Lens(f=5))

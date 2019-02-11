@@ -4,32 +4,32 @@ sys.path.insert(0, os.path.abspath('../'))
 
 from ABCD import *
 
-path = OpticalPath()
-path.name = "Object at 2f, image at 2f"
+path = ImagingGroup()
+path.label = "Object at 2f, image at 2f"
 path.append(Space(d=10))
 path.append(Lens(f=5))
 path.append(Space(d=10))
 path.display()
 #path.save('Figure1.png')
 
-path = OpticalPath()
-path.name = "Object at 4f, image at 4f/3"
+path = ImagingGroup()
+path.label = "Object at 4f, image at 4f/3"
 path.append(Space(d=20))
 path.append(Lens(f=5))
 path.append(Space(d=10))
 path.display()
 #path.save('Figure2.png')
 
-path = OpticalPath()
-path.name = "Object at 4f, virtual image at"
+path = ImagingGroup()
+path.label = "Object at 4f, virtual image at"
 path.append(Space(d=2.5))
 path.append(Lens(f=5))
 path.append(Space(d=10))
 path.display()
 #path.save('Figure2.png')
 
-path = OpticalPath()
-path.name = "4f system"
+path = ImagingGroup()
+path.label = "4f system"
 path.append(Space(d=5))
 path.append(Lens(f=5))
 path.append(Space(d=10))
@@ -38,7 +38,7 @@ path.append(Space(d=5))
 path.display()
 #path.save('Figure3.png')
 
-path = OpticalPath()
+path = ImagingGroup()
 path.fanAngle = 0.1
 path.append(Space(d=40))
 path.append(Lens(f=-10, label='Div'))
@@ -46,19 +46,19 @@ path.append(Space(d=4))
 path.append(Lens(f=5, label='Foc'))
 path.append(Space(d=18))
 focal = -1.0/path.transferMatrix().C
-path.name = "Retrofocus system with f={0:.2f} cm".format(focal)
+path.label = "Retrofocus system with f={0:.2f} cm".format(focal)
 path.display()
 
-path = OpticalPath()
-path.name = "Thick diverging lens"
+path = ImagingGroup()
+path.label = "Thick diverging lens"
 path.objectHeight = 20
 path.append(Space(d=50))
 path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
 path.append(Space(d=50))
 path.display(onlyChiefAndMarginalRays=True)
 
-path = OpticalPath()
-path.name = "Thick diverging lens, made with individual elements"
+path = ImagingGroup()
+path.label = "Thick diverging lens, made with individual elements"
 path.objectHeight = 20
 path.append(Space(d=50))
 path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
@@ -67,8 +67,8 @@ path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'
 path.append(Space(d=50))
 path.display(onlyChiefAndMarginalRays=True)
 
-path = OpticalPath()
-path.name = "Microscope system"
+path = ImagingGroup()
+path.label = "Microscope system"
 path.objectHeight = 0.1
 path.append(Space(d=1))
 path.append(Lens(f=1, diameter=0.8, label='Obj'))
