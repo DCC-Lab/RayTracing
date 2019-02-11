@@ -1,6 +1,8 @@
 try:
     from ABCD import *
     from math import  *
+    import matplotlib.transforms as transforms
+
 except ImportError:
     raise ImportError('You must have ABCD.py installed. run "python ABCD.py install"')
 
@@ -66,14 +68,14 @@ class Objective(OpticalPath):
                   [0, -halfHeight]]
 
         if self.dir > 0:
-            points = list(map(lambda pt: [z+pt[0],pt[1]], points))
+            trans = transforms.Affine2D().translate(tx=z,ty=0) + axes.transData
         else:
-            points = list(map(lambda pt: [z+L-pt[0],pt[1]], points))
+            trans = transforms.Affine2D().scale(-1).translate(tx=z+L,ty=0) + axes.transData
 
         axes.add_patch(patches.Polygon(
                points,
                linewidth=1, linestyle='--',closed=True,
-               color='k', fill=False))
+               color='k', fill=False, transform=trans))
 
         self.drawCardinalPoints(z, axes)
         self.elements[0].drawAperture(z, axes)
