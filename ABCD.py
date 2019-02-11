@@ -131,7 +131,6 @@ class Ray:
 
         return description
 
-
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
     matrix.
@@ -605,7 +604,7 @@ class Aperture(Matrix):
         """
 
 
-class OpticalPath(Matrix):
+class MatrixGroup(Matrix):
     """OpticalPath: the main class of the module, allowing
     calculations and ray tracing for an object at the beginning.
 
@@ -628,7 +627,7 @@ class OpticalPath(Matrix):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
-        super(OpticalPath, self).__init__(1,0,0,1,label=label)
+        super(MatrixGroup, self).__init__(1,0,0,1,label=label)
         self.elements = []
         for element in elements:
             self.append(element)
@@ -1109,6 +1108,13 @@ class OpticalPath(Matrix):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
+""" Synonym of Matrix: Element 
+
+We can use a mamthematical language (Matrix) or optics terms (Element)
+"""
+Element = Matrix
+OpticalPath = MatrixGroup
+Group = MatrixGroup
 
 def installModule():
     directory = subprocess.check_output(
