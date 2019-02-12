@@ -13,8 +13,8 @@ if sys.version_info[0] < 3:
 """A simple module for ray tracing with ABCD matrices.
 https://github.com/DCC-Lab/RayTracing
 
-Create an OpticalPath(), append matrices (optical elements or other
-OpticalPath()s), and then display(). This helps determine of
+Create an ImagingGroup(), append matrices (optical elements or other
+group of elements), and then display(). This helps determine of
 course simple things like focal distance of compound systems,
 object-image, etc... but also the aperture stop, field stop, field
 of view and any clipping issues that may occur.
@@ -30,14 +30,14 @@ digraph G {
 
     subgraph mathview {
         "Matrix" -> "MatrixGroup"
-                "MatrixGroup" -> ImagingGroup
-                "MatrixGroup" -> ScanningGroup
+        "MatrixGroup" -> ImagingGroup
+        "MatrixGroup" -> ScanningGroup
     }
 
     subgraph opticsview {
         "Element" -> "Group"
-                "Group" -> ImagingGroup
-                "Group" -> ScanningGroup
+        "Group" -> ImagingGroup
+        "Group" -> ScanningGroup
     }
 }
 
@@ -365,7 +365,7 @@ class Matrix(object):
         conjugateMatrix = self * Space(d=distance)
         return (distance, conjugateMatrix)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw element on plot with starting edge at 'z'.
 
         Default is a black box of appropriate length.
@@ -462,7 +462,7 @@ class Lens(Matrix):
                                    apertureDiameter=diameter,
                                    label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw a thin lens at z """
         halfHeight = self.displayHalfHeight()
         plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
@@ -494,7 +494,7 @@ class Space(Matrix):
                                     apertureDiameter=diameter,
                                     label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw nothing because free space is nothing. """
         return
 
@@ -549,7 +549,7 @@ class ThickLens(Matrix):
                                         apertureDiameter=diameter,
                                         label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw a faint blue box with slightly curved interfaces
         of length 'thickness' starting at 'z'.
 
@@ -586,7 +586,7 @@ class DielectricSlab(ThickLens):
                                              diameter=diameter,
                                              label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw a faint blue box of length L starting at 'z'.
 
         """
@@ -616,7 +616,7 @@ class Aperture(Matrix):
             apertureDiameter=diameter,
             label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Currently nothing specific to draw because any
         aperture for any object is drawn with drawAperture()
         """

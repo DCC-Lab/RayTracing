@@ -53,7 +53,7 @@ class Objective(MatrixGroup):
         self.isFlipped = not self.isFlipped
         self.elements.reverse()
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         L = self.focusToFocusLength
         f = self.f
         wd = self.workingDistance
@@ -77,8 +77,10 @@ class Objective(MatrixGroup):
                color='k', fill=False, transform=trans))
 
         self.drawCardinalPoints(z, axes)
-        self.elements[0].drawAperture(z, axes)
-        self.elements[-2].drawAperture(z+self.focusToFocusLength-self.workingDistance, axes)
+
+        for element in self.elements:
+            element.drawAperture(z, axes)
+            z += L
 
 
 class LUMPLFL40X(Objective):
