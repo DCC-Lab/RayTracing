@@ -2,8 +2,10 @@ import os
 import subprocess
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-
+import matplotlib.path as mpath
+import math
 import sys
+
 if sys.version_info[0] < 3:
     print("Warning: you should really be using Python 3. \
         No guarantee this will work in 2.x")
@@ -11,38 +13,63 @@ if sys.version_info[0] < 3:
 """A simple module for ray tracing with ABCD matrices.
 https://github.com/DCC-Lab/RayTracing
 
-Create an OpticalPath(), append matrices (optical elements).
-and then display(). This helps determine of course simple things like
-focal distance of compound systems, object-image, etc... but also
-the aperture stop, field stop, field of view and any clipping issues
-that may occur.
+Create an ImagingPath(), append matrices (optical elements or other
+group of elements), and then display(). This helps determine of
+course simple things like focal distance of compound systems,
+object-image, etc... but also the aperture stop, field stop, field
+of view and any clipping issues that may occur.
 
 When displaying the result, the  objectHeight, fanAngle, and fanNumber
 are used if the field of view is not defined. You may adjust the values
-to suit your needs in OpticalPath().
+to suit your needs in ImagingPath().
 
-To install a local copy that can be used from any directory, copy to
-the directory pointed to by the command: python -m site --user-site
+The class hierarchy can be seen on http://webgraphviz.com with the
+following description:
+
+digraph G {
+
+    subgraph mathview {
+        "Matrix" -> "MatrixGroup"
+        "MatrixGroup" -> ImagingPath
+    }
+
+    subgraph opticsview {
+        "Element" -> "Group"
+        "Group" -> ImagingPath
+    }
+}
+
+To install a local copy that can be used from any directory, either:
+1) python ABCD.py install
+or
+2) copy to the directory pointed to by the command: python -m site --user-site
+such as:
 
 mkdir -p "`python -m site --user-site`"
 cp ABCD.py "`python -m site --user-site`/"
 
 or the Windows equivalent.
-
-
 """
+
+
+""" Two constants: deg and rad to quickly convert to degrees
+or radians with angle*degPerRad or angle*radPerDeg """
+
+degPerRad = 180.0/math.pi
+radPerDeg = math.pi/180.0
 
 
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices
 
     The Ray() has a height (y) and an angle with the optical axis (theta).
-    It also has a position (z) and a marker if it has been blocked.
+    It also has a position (z), the diameter of the aperture at that point
+    when it propagated through, and a marker if it has been blocked by the
+    aperture.
 
     Simple static functions are defined to obtain a group of rays: fans
     originate from the same height but sweep a range of angles; fan groups
-    are fans originating from different heights; and a beam spans
-    various heights with a fixed angle.
+    are fans originating from different heights.
     """
 
     def __init__(self, y=0, theta=0, z=0, isBlocked=False):
@@ -50,10 +77,9 @@ class Ray:
         self.y = y
         self.theta = theta
 
-        # Position of this ray
+        # Position of this ray and the diameter of the aperture
         self.z = z
-
-        # Aperture
+        self.apertureDiameter = float("+Inf")
         self.isBlocked = isBlocked
 
     @property
@@ -67,7 +93,7 @@ class Ray:
     @staticmethod
     def fan(self, y, radianMin, radianMax, N):
         """A list of rays spanning from radianMin to radianMax to be used
-        with Matrix().propagate()
+        with Matrix.trace() or Matrix.traceMany()
 
         """
         if N >= 2:
@@ -85,7 +111,7 @@ class Ray:
     @staticmethod
     def fanGroup(yMin, yMax, M, radianMin, radianMax, N):
         """ A list of rays spanning from yMin to yMax and radianMin to
-        radianMax to be used with Matrix().propagate()
+        radianMax to be used with Matrix.trace() or Matrix.traceMany()
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
@@ -105,23 +131,6 @@ class Ray:
 
         return rays
 
-    @staticmethod
-    def beam(yMin, yMax, M, radian):
-        """ A list of rays spanning from yMin to yMax at a fixed
-        angle to be used with Matrix().propagate()
-        """
-        if M >= 2:
-            deltaHeight = (yMax - yMin) / (M - 1)
-        else:
-            deltaHeight = 0.0
-
-        rays = []
-        for i in range(M):
-            y = yMin + i * deltaHeight
-            theta = radian
-            rays.append(Ray(y, theta, z=0))
-        return rays
-
     def __str__(self):
         """ String description that allows the use of print(Ray()) """
 
@@ -137,7 +146,6 @@ class Ray:
 
         return description
 
-
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
     matrix.
@@ -145,12 +153,18 @@ class Matrix(object):
     The general properties (A,B,C,D) are defined here. The operator "*" is
     overloaded to allow simple statements such as:
 
-    M2 = M1 * ray
+    ray2 = M1 * ray
     or
     M3 = M2 * M1
 
-    In addition apertures are considered and the physical length is
-    included to allow simple management of the ray tracing.
+    The physical length is included in the matrix to allow simple management of
+    the ray tracing. IF two matrices are multiplied, the resulting matrice
+    will have a physical length that is the sum of both matrices.
+
+    In addition finite apertures are considered: if the apertureDiameter
+    is not infinite (default), then the object is assumed to limit the
+    ray height to plus or minus apertureDiameter/2 from the front edge to the back
+    edge of the element.
     """
 
     __epsilon__ = 1e-5  # Anything smaller is zero
@@ -182,7 +196,7 @@ class Matrix(object):
     def __mul__(self, rightSide):
         """Operator overloading allowing easy to read matrix multiplication
 
-        For instance, with M1 = Matrix() and M2= Matrix(), one can write
+        For instance, with M1 = Matrix() and M2 = Matrix(), one can write
         M3 = M1*M2. With r = Ray(), one can apply the M1 transform to a ray
         with r = M1*r
 
@@ -222,19 +236,56 @@ class Matrix(object):
         outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
         outputRay.z = self.L + rightSideRay.z
+        outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(rightSideRay.y) > self.apertureDiameter / 2:
+        if abs(rightSideRay.y) > outputRay.apertureDiameter / 2:
             outputRay.isBlocked = True
         else:
             outputRay.isBlocked = rightSideRay.isBlocked
 
         return outputRay
 
+    def largestDiameter(self):
+        return self.apertureDiameter
+
+    def hasFiniteApertureDiameter(self):
+        return self.apertureDiameter != float("+Inf")
+
+    def transferMatrix(self, upTo=float('+Inf')):
+        distance = upTo
+        if self.L == 0:
+            return self
+        elif self.L <= distance:
+            return self
+        else:
+            raise TypeError("Subclass of non-null physical length must override")
+
+    def transferMatrices(self):
+        return [self]
+
+    def trace(self, ray):
+        return [self.mul_ray(ray)]
+
+    def traceMany(self, inputRays):
+        """ Trace each ray from a list from front edge of element to
+        the back edge.
+
+        Returns a list of ray traces for each input ray.
+        See trace().
+        """
+        manyRayTraces = []
+        for inputRay in inputRays:
+            rayTrace = self.trace(inputRay)
+            manyRayTraces.append(rayTrace)
+        return manyRayTraces
+
     @property
     def isImaging(self):
         """If B=0, then the matrix is from a conjugate plane to another
-        (i.e. object at the front edge and image at the back edge)
+        (i.e. object at the front edge and image at the back edge).
 
+        In this case, A = transverse magnification, D = angular magnification
+        As usual, C = -1/f (always).
         """
 
         return abs(self.B) < Matrix.__epsilon__
@@ -246,7 +297,7 @@ class Matrix(object):
         return []
 
     def focalDistances(self):
-        """ The equivalent focal distance calcuated from the power (C)
+        """ The equivalent focal distance calculated from the power (C)
         of the matrix.
 
         Currently, it is assumed the index is n=1 on either side and
@@ -257,7 +308,7 @@ class Matrix(object):
         return (focalDistance, focalDistance)
 
     def focusPositions(self, z):
-        """ Positions of both focal points on either side.
+        """ Positions of both focal points on either side of the element.
 
         Currently, it is assumed the index is n=1 on either side and both focal
         distances are the same.
@@ -271,7 +322,7 @@ class Matrix(object):
 
         Currently, it is assumed the index is n=1 on either side.
         """
-        p1 = z + (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
+        p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
         # FIXME: Assumes n=1 on either side
         p2 = z + self.L + (1 - self.A) / self.C
         return (p1, p2)
@@ -297,7 +348,7 @@ class Matrix(object):
     def backwardConjugate(self):
         """ With an image at the back edge of the element,
         where is the object ? Distance before the element by
-        which a ray must travel to reach the conjugate plane of
+        which a ray must travel to reach the conjugate plane at
         the back of the element. A positive distance means the
         object is "distance" in front of the element (or to the
         left, or before).
@@ -312,7 +363,7 @@ class Matrix(object):
         conjugateMatrix = self * Space(d=distance)
         return (distance, conjugateMatrix)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw element on plot with starting edge at 'z'.
 
         Default is a black box of appropriate length.
@@ -320,39 +371,51 @@ class Matrix(object):
         halfHeight = self.displayHalfHeight()
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color='k', fill=False,
-                              transform=axes.transData, clip_on=False)
+                              transform=axes.transData, clip_on=True)
         axes.add_patch(p)
+
+    def drawCardinalPoints(self, z, axes):
+        """ Draw the focal points of a thin lens as black dots """
+        (f1, f2) = self.focusPositions(z)
+        axes.plot([f1, f2], [0, 0], 'ko', color='k', linewidth=0.4)
 
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
 
+        Labels are drawn 30% above the display height
         """
         halfHeight = self.displayHalfHeight()
         center = z + self.L / 2.0
         plt.annotate(self.label, xy=(center, 0.0),
-                     xytext=(center, halfHeight * 1.1),
-                     fontsize=14, xycoords='data', ha='center',
+                     xytext=(center, halfHeight * 1.3),
+                     fontsize=12, xycoords='data', ha='center',
                      va='bottom')
 
     def drawAperture(self, z, axes):
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0
-            width = 0.5
+
+            center = z + self.L/2
+            if self.L == 0:
+                width = 0.5
+            else:
+                width = self.L/2
+
             axes.add_patch(patches.Polygon(
-                           [[z - width, halfHeight],
-                            [z + width, halfHeight],
-                            [z, halfHeight],
-                            [z, halfHeight + width],
-                            [z, halfHeight]],
+                           [[center - width, halfHeight],
+                            [center + width, halfHeight],
+                            [center, halfHeight],
+                            [center, halfHeight + width],
+                            [center, halfHeight]],
                            linewidth=3,
                            closed=False,
                            color='0.7'))
             axes.add_patch(patches.Polygon(
-                           [[z - width, -halfHeight],
-                            [z + width, -halfHeight],
-                            [z, -halfHeight],
-                            [z, -halfHeight - width],
-                            [z, -halfHeight]],
+                           [[center - width, -halfHeight],
+                            [center + width, -halfHeight],
+                            [center, -halfHeight],
+                            [center, -halfHeight - width],
+                            [center, -halfHeight]],
                            linewidth=3,
                            closed=False,
                            color='0.7'))
@@ -365,7 +428,7 @@ class Matrix(object):
         will be '4'. If not, it is the apertureDiameter/2.
 
         """
-        halfHeight = 4  # reasonable half height when infinite
+        halfHeight = 4  # FIXME: reasonable half height when infinite
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
@@ -392,18 +455,12 @@ class Lens(Matrix):
     """
 
     def __init__(self, f, diameter=float('+Inf'), label=''):
-        super(
-            Lens,
-            self).__init__(
-            A=1,
-            B=0,
-            C=-1 / float(f),
-            D=1,
-            physicalLength=0,
-            apertureDiameter=diameter,
-            label=label)
+        super(Lens, self).__init__(A=1, B=0, C=-1 / float(f), D=1,
+                                   physicalLength=0,
+                                   apertureDiameter=diameter,
+                                   label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw a thin lens at z """
         halfHeight = self.displayHalfHeight()
         plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
@@ -412,18 +469,13 @@ class Lens(Matrix):
                   head_length=0.25, head_width=0.25, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
-    def drawCardinalPoints(self, z, axes):
-        """ Draw the focal points of a thin lens as black dots """
-        (f1, f2) = self.focusPositions(z)
-        axes.plot([f1, f2], [0, 0], 'ko', color='k', linewidth=0.4)
-
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
         'z':position
         'label':the label to be used.  Can include LaTeX math code.
         """
         (f1, f2) = self.focusPositions(z)
-        return [{'z': f1, 'label': '$F_1$'}, {'z': f2, 'label': '$F_2$'}]
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
 
 class Space(Matrix):
@@ -431,13 +483,117 @@ class Space(Matrix):
 
     """
 
-    def __init__(self, d, label=''):
-        super(Space, self).__init__(A=1, B=float(d),
-                                    C=0, D=1, physicalLength=d, label=label)
+    def __init__(self, d, diameter=float('+Inf'), label=''):
+        super(Space, self).__init__(A=1,
+                                    B=float(d),
+                                    C=0,
+                                    D=1,
+                                    physicalLength=d,
+                                    apertureDiameter=diameter,
+                                    label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw nothing because free space is nothing. """
         return
+
+    def transferMatrix(self, upTo=float('+Inf')):
+        distance = upTo
+        if distance < self.L:
+            return Space(distance)
+        else:
+            return self
+
+
+class DielectricInterface(Matrix):
+    """A dielectric interface of radius R, with an index n1 before and n2
+    after the interface
+
+    A convex interface from the perspective of the ray has R > 0
+    """
+
+    def __init__(self, n1, n2, R=float('+Inf'),
+                 diameter=float('+Inf'), label=''):
+        a = 1.0
+        b = 0.0
+        c = - (n2-n1)/(n2*R)
+        d = n1/n2
+
+        super(DielectricInterface, self).__init__(A=a, B=b, C=c, D=d,
+                                                  physicalLength=0,
+                                                  apertureDiameter=diameter,
+                                                  label=label)
+
+
+class ThickLens(Matrix):
+    """A thick lens of first radius R1 and then R2, with an index n
+    and length d
+
+    A biconvex lens has R1 > 0 and R2 < 0.
+    """
+
+    def __init__(self, n, R1, R2, thickness, diameter=float('+Inf'), label=''):
+        self.R1 = R1
+        self.R2 = R2
+        self.n = n
+
+        t = thickness
+
+        a = t*(1.0-n)/(n*R1) + 1
+        b = t/n
+        c = - (n - 1.0)*(1.0/R1 - 1.0/R2 + t*(n-1.0)/(n*R1*R2))
+        d = t*(n-1.0)/(n*R2) + 1
+        super(ThickLens, self).__init__(A=a, B=b, C=c, D=d,
+                                        physicalLength=thickness,
+                                        apertureDiameter=diameter,
+                                        label=label)
+
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw a faint blue box with slightly curved interfaces
+        of length 'thickness' starting at 'z'.
+
+        """
+        halfHeight = self.displayHalfHeight()
+        apexHeight = self.L * 0.2
+        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
+        backVertex = z + self.L + apexHeight * (-self.R2/abs(self.R2))
+
+        Path = mpath.Path
+        p = patches.PathPatch(
+            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
+                  (z+self.L, halfHeight), (backVertex, 0),
+                  (z+self.L, -halfHeight), (z, -halfHeight)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.85, 0.95, 0.95],
+            fill=True,
+            transform=axes.transData)
+
+        axes.add_patch(p)
+
+
+class DielectricSlab(ThickLens):
+    """A slab of dielectric material of index n and length d, with flat faces
+
+    """
+
+    def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
+        super(DielectricSlab, self).__init__(n=n, R1=float("+Inf"),
+                                             R2=float("+Inf"),
+                                             thickness=thickness,
+                                             diameter=diameter,
+                                             label=label)
+
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw a faint blue box of length L starting at 'z'.
+
+        """
+        halfHeight = self.displayHalfHeight()
+        p = patches.Rectangle((z, -halfHeight), self.L,
+                              2 * halfHeight, color=[0.85, 0.95, 0.95],
+                              fill=True, transform=axes.transData,
+                              clip_on=True)
+        axes.add_patch(p)
 
 
 class Aperture(Matrix):
@@ -458,29 +614,138 @@ class Aperture(Matrix):
             apertureDiameter=diameter,
             label=label)
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes, showLabels=False):
         """ Currently nothing specific to draw because any
         aperture for any object is drawn with drawAperture()
         """
 
 
-class OpticalPath(object):
-    """OpticalPath: the main class of the module, allowing
-    calculations and ray tracing for an object at the beginning.
+class MatrixGroup(Matrix):
+    """MatrixGroup: A group of Matrix(), allowing
+    the combination of several elements to be treated as a 
+    whole, or treated explicitly as a sequence when needed.
+    """
 
-    Usage is to create the OpticalPath(), then append() elements
+    def __init__(self, elements=[], label=""):
+        super(MatrixGroup, self).__init__(1,0,0,1,label=label)
+        self.elements = []
+        for element in elements:
+            self.append(element)
+
+    def append(self, matrix):
+        """ Add an element at the end of the path """
+        self.elements.append(matrix)
+        transferMatrix = self.transferMatrix()
+        self.A = transferMatrix.A
+        self.B = transferMatrix.B
+        self.C = transferMatrix.C
+        self.D = transferMatrix.D
+        self.L = transferMatrix.L
+
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ The transfer matrix between front edge and distance=upTo
+
+        If "upTo" falls inside an element of finite length, then 
+        it will request from that element a "partial" transfer matrix
+        for a fraction of the length.  It is up to the Matrix() or 
+        MatrixGroup() to define such partial transfer matrix when possible.
+        Quite simply, Space() defines a partial matrix as Space(d=upTo).
+        """
+        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
+        distance = upTo
+        for element in self.elements:
+            if element.L <= distance:
+                transferMatrix = element * transferMatrix
+                distance -= element.L
+            else:
+                transferMatrix = element.transferMatrix(upTo=distance) * transferMatrix
+                break
+
+        return transferMatrix
+
+    def transferMatrices(self):
+        transferMatrices = []
+        for element in self.elements:
+            elementTransferMatrices = element.transferMatrices()
+            transferMatrices.extend(elementTransferMatrices)
+        return transferMatrices
+
+    def propagate(self, inputRay):
+        if not warningPrinted:
+            print("propagate() was renamed trace().")
+            warningPrinted = True
+
+        return self.trace(inputRay)
+
+    def propagateMany(self, inputRays):
+        if not warningPrinted:
+            print("propagateMany() was renamed traceMany().")
+        return self.traceMany(inputRays)
+
+    def trace(self, inputRay):
+        """ Starting with inputRay, ray trace from first element
+        until after the last element
+
+        Returns a ray trace (i.e. [Ray()])
+        starting with inputRay, followed by the ray after
+        each element. If an element is composed of sub-elements,
+        the ray will also be traced in several steps.
+        """
+        ray = inputRay
+        rayTrace = [ray]
+        for element in self.elements:
+            rayTraceInElement = element.trace(ray)
+            rayTrace.extend(rayTraceInElement)
+            ray = rayTraceInElement[-1]  # last
+
+        return rayTrace
+
+    def hasFiniteApertureDiameter(self):
+        """ True if OpticalPath has at least one element of finite diameter """
+        for element in self.elements:
+            if element.hasFiniteApertureDiameter():
+                return True
+        return False
+
+    def largestDiameter(self):
+        """ Largest finite diameter in all elements """
+
+        maxDiameter = 0.0
+        for element in self.elements:
+            diameter = element.largestDiameter()
+            if diameter == float('+Inf'):
+                diameter = element.displayHalfHeight() * 2
+
+            if diameter > maxDiameter:
+                maxDiameter = diameter
+
+        return maxDiameter
+
+    def drawAt(self, z, axes, showLabels=True):
+        for element in self.elements:
+            element.drawAt(z, axes)
+            element.drawAperture(z, axes)
+
+            if showLabels:
+                element.drawLabels(z, axes)
+            z += element.L
+
+
+class ImagingPath(MatrixGroup):
+    """ImagingPath: the main class of the module, allowing
+    the combination of Matrix() or MatrixGroup() to be used 
+    as an imaging group with an object at the beginning.
+
+    Usage is to create the ImagingPath(), then append() elements
     and display(). You may change objectHeight, fanAngle, fanNumber
     and rayNumber.
     """
 
-    def __init__(self):
-        self.name = "Ray tracing"
-        self.elements = []
-
+    def __init__(self, elements=[], label=""):
         self.objectHeight = 1.0    # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
         self.fanAngle = 0.5        # full fan angle for rays
-        self.fanNumber = 10        # number of rays in fan
+        self.fanNumber = 9         # number of rays in fan
         self.rayNumber = 3         # number of points on object
 
         # Display properties
@@ -490,73 +755,7 @@ class OpticalPath(object):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
-
-    def append(self, matrix):
-        """ Add an element at the end of the path """
-        self.elements.append(matrix)
-
-    def transferMatrix(self, z=float('+Inf')):
-        """ The transfer matrix between z = 0 and z
-
-        Currently, z must be where a new element starts."""
-        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-        for element in self.elements:
-            if transferMatrix.L + element.L <= z:
-                # FIXME: Assumes z falls on edge of element
-                transferMatrix = element * transferMatrix
-            else:
-                break
-
-        return transferMatrix
-
-    def propagate(self, inputRay):
-        """ Starting with inputRay, propagate from z = 0
-        until after the last element
-
-        Returns a list of rays (called a ray sequence)
-        starting with inputRay, followed by the ray after
-        each element.
-        """
-        ray = inputRay
-        raySequence = [ray]
-        for element in self.elements:
-            ray = element * ray
-            raySequence.append(ray)
-        return raySequence
-
-    def propagateMany(self, inputRays):
-        """ Propagate each ray from a list from z = 0 until
-        after the last element
-
-        Returns a list of ray sequences for each input ray.
-        See propagate().
-        """
-        manyRaySequences = []
-        for inputRay in inputRays:
-            raySequence = self.propagate(inputRay)
-            manyRaySequences.append(raySequence)
-        return manyRaySequences
-
-    def hasFiniteDiameterElements(self):
-        """ True if OpticalPath has at least one element of finite diameter """
-        for element in self.elements:
-            if element.apertureDiameter != float('+Inf'):
-                return True
-        return False
-
-    def largestDiameterElement(self):
-        """ True if OpticalPath has at least one element of finite diameter """
-
-        maxDiameter = 0.0
-        for element in self.elements:
-            diameter = element.apertureDiameter
-            if diameter == float('+Inf'):
-                diameter = element.displayHalfHeight() * 2
-
-            if diameter > maxDiameter:
-                maxDiameter = diameter
-
-        return maxDiameter
+        super(ImagingPath, self).__init__(elements=elements, label=label)
 
     def chiefRay(self, y):
         """ Chief ray for a height y (i.e., the ray that goes
@@ -568,7 +767,7 @@ class OpticalPath(object):
         aperture stop.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
-        transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
+        transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
         return Ray(y=y, theta=-A * y / B)
@@ -577,23 +776,30 @@ class OpticalPath(object):
         """ Marginal rays for a height y at object
         (i.e., the rays that hit the upper and lower
         edges of the aperture stop). In general, this could
-        be any height, not just y=0, although we usually
-        only want y=0.
+        be any height, not just y=0. However, we usually
+        only want y=0 which is implicitly called
+        "the marginal ray (of the system)", and both rays
+        will be symmetrically oriented on either side of the
+        optical axis.
 
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
-        (which we are looking for) will end at y=diameter/2 at the
-        aperture stop.
+        (which we are looking for) will end at y= plus/minus diameter/2 at the
+        aperture stop. We return the largest angle first, for
+        convenience.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
-        transferMatrixToApertureStop = self.transferMatrix(z=stopPosition)
+        transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
-        thetaUp = (stopDiameter / 2 - A * y) / B
-        thetaDown = (-stopDiameter / 2 - A * y) / B
+        thetaUp = (stopDiameter / 2.0 - A * y) / B
+        thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
-        return (Ray(y=0, theta=thetaUp), Ray(y=0, theta=thetaDown))
+        if thetaDown > thetaUp:
+            (thetaUp, thetaDown) = (thetaDown, thetaUp)
+
+        return (Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown))
 
     def axialRays(self, y):
         """ Synonym of marginal rays """
@@ -606,26 +812,32 @@ class OpticalPath(object):
         Returns the position and diameter of the aperture stop
 
         Strategy: we take a ray height and divide by real aperture
-        diameter. The position where the ratio is maximum is
-        the aperture stop.
+        diameter at that position.  Some elements may have a finite length
+        (e.g., Space() or ThickLens()), so we always calculate the ratio
+        before propagating inside the element and after having propoagated
+        through the element. The position where the absolute value of the
+        ratio is maximum is the aperture stop.
 
         If there are no elements of finite diameter (i.e. all
         optical elements are infinite in diameters), then
         there is no aperture stop in the system and the size
         of the aperture stop is infinite.
         """
-        if not self.hasFiniteDiameterElements():
+        if not self.hasFiniteApertureDiameter():
             return (None, float('+Inf'))
         else:
             ray = Ray(y=0, theta=0.1)  # Any ray angle will do
-            maxRatio = 0
+            rayTrace = self.trace(ray)
+
+            maxRatio = 0.0
             apertureStopPosition = 0
-            for element in self.elements:
-                ray = element * ray
-                ratio = ray.y / element.apertureDiameter
+            apertureStopDiameter = float("+Inf")
+
+            for ray in rayTrace:
+                ratio = abs(ray.y / ray.apertureDiameter)
                 if ratio > maxRatio:
                     apertureStopPosition = ray.z
-                    apertureStopDiameter = element.apertureDiameter
+                    apertureStopDiameter = ray.apertureDiameter
                     maxRatio = ratio
 
             return (apertureStopPosition, apertureStopDiameter)
@@ -636,49 +848,56 @@ class OpticalPath(object):
 
         Returns the position and diameter of the field stop.
 
-        Strategy: take ray at various height from object and aim
-        at center of pupil (i.e. chief ray from that height)
-        until ray is blocked. When it is blocked, the position
-        at which it was blocked is the field stop. To obtain
-        the diameter we must go back to the last ray that was
-        not blocked and calculate the diameter.
+        Strategy: take ray at various height starting at y=0
+        with a finite "dy" from object and aim at center of pupil
+        (i.e. chief ray from that height) until ray is blocked. If
+        it is not blocked, increase y by dy. When it is blocked,
+        we turn around and increase by half the dy, then we continue until
+        it is unblocked, turn around, divide dy by 2, etc... 
+        This rapidly converges to the position at which the
+        ray is blocked, which is the field stop half diameter.
 
         It is possible to have finite diameter elements but
         still an infinite field of view and therefore no Field stop.
         In fact, if only a single element has a finite diameter,
-        there is no field stop (only an aperture stop).
+        there is no field stop (only an aperture stop). The limit
+        is arbitrarily set to 1000.
 
         If there are no elements of finite diameter (i.e. all
         optical elements are infinite in diameters), then there
         is no field stop and no aperture stop in the system
-        and the sizes are infinite.
+        and their sizes are infinite.
         """
 
         fieldStopPosition = None
         fieldStopDiameter = float('+Inf')
-        if self.hasFiniteDiameterElements():            
+        if self.hasFiniteApertureDiameter():            
             dy = 1.0
             y = 0.0
             chiefRay = Ray(y=0, theta=0)
-            chiefRaySequence = []
             wasBlocked = False
             while abs(dy) > 0.0001 or not wasBlocked:
                 y += dy
                 chiefRay = self.chiefRay(y=y)
-                chiefRaySequence = self.propagate(chiefRay)
-                outputChiefRay = chiefRaySequence[-1]
+                chiefRayTrace = self.trace(chiefRay)
+                outputChiefRay = chiefRayTrace[-1]
 
                 if outputChiefRay.isBlocked != wasBlocked:
                     dy = -dy/2.0
+                else:
+                    dy = dy*2.0
+
                 wasBlocked = outputChiefRay.isBlocked
+                if abs(y) > 1000:
+                    return (fieldStopPosition, fieldStopDiameter)
             
-            for ray in chiefRaySequence:
+            for ray in chiefRayTrace:
                 if ray.isBlocked:
                     fieldStopPosition = ray.z
-                    fieldStopDiameter = abs(ray.y) * 2.0
+                    fieldStopDiameter = ray.apertureDiameter
                     break
 
-        return (fieldStopPosition,fieldStopDiameter)
+        return (fieldStopPosition, fieldStopDiameter)
 
     def fieldOfView(self):
         """ The field of view is the maximum object height
@@ -695,7 +914,7 @@ class OpticalPath(object):
         if stopPosition is None:
             return halfFieldOfView
 
-        transferMatrixToFieldStop = self.transferMatrix(z=stopPosition)
+        transferMatrixToFieldStop = self.transferMatrix(upTo=stopPosition)
         # FIXME: This is not that great.
         deltaHeight = self.objectHeight / 10000.0
         # FIXME: When do we stop? Currently 10.0 (arbitrary).
@@ -710,17 +929,28 @@ class OpticalPath(object):
 
         return halfFieldOfView * 2.0
 
+    def imageSize(self):
+        """ The image size is the object field of view
+        multiplied by magnification
+
+        """
+        fieldOfView = self.fieldOfView()
+        (distance, conjugateMatrix) = self.forwardConjugate()
+        print (distance, conjugateMatrix)
+        magnification = conjugateMatrix.A
+        return fieldOfView * magnification
+
     def createRayTracePlot(
             self,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False):
         fig, axes = plt.subplots(figsize=(10, 7))
 
-        displayRange = 1.2 * self.largestDiameterElement()
+        displayRange = 1.4 * self.largestDiameter()
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
 
-        axes.set(xlabel='Distance', ylabel='Height', title=self.name)
+        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-displayRange / 2, displayRange / 2])
 
         note1 = ""
@@ -760,7 +990,7 @@ class OpticalPath(object):
         if self.showImages:
             self.drawImages(axes)
 
-        self.drawOpticalElements(axes)
+        self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(axes)
 
@@ -774,9 +1004,7 @@ class OpticalPath(object):
         plt.ioff()
         plt.show()
 
-    def save(
-            self,
-            filepath,
+    def save(self, filepath,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False):
         (fig, axes) = self.createRayTracePlot(
@@ -799,7 +1027,8 @@ class OpticalPath(object):
 
     def drawImages(self, axes):
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-        for element in self.elements:
+        matrices = self.transferMatrices()
+        for element in matrices:
             transferMatrix = element * transferMatrix
             (distance, conjugate) = transferMatrix.forwardConjugate()
             if distance is not None:
@@ -819,6 +1048,12 @@ class OpticalPath(object):
                         length_includes_head=True)
 
     def drawPointsOfInterest(self, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 15% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
         labels = {}  # Regroup labels at same z
         zElement = 0
         for element in self.elements:
@@ -833,11 +1068,11 @@ class OpticalPath(object):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = 4  # FIXME
+        halfHeight = self.largestDiameter()/2
         for zStr, label in labels.items():
             z = float(zStr)
-            plt.annotate(label, xy=(z, 0.0), xytext=(z, halfHeight * 0.2),
-                         xycoords='data', fontsize=14,
+            plt.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.15),
+                         xycoords='data', fontsize=12,
                          ha='center', va='bottom')
 
         (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
@@ -845,7 +1080,7 @@ class OpticalPath(object):
             plt.annotate('AS',
                          xy=(apertureStopPosition, 0.0),
                          xytext=(apertureStopPosition, halfHeight * 1.1),
-                         fontsize=14,
+                         fontsize=18,
                          xycoords='data',
                          ha='center',
                          va='bottom')
@@ -857,20 +1092,14 @@ class OpticalPath(object):
                              0.0),
                          xytext=(fieldStopPosition,
                                  halfHeight * 1.1),
-                         fontsize=14,
+                         fontsize=18,
                          xycoords='data',
                          ha='center',
                          va='bottom')
 
-    def drawOpticalElements(self, axes):
-        z = 0
-        for element in self.elements:
-            element.drawAt(z, axes)
-            element.drawAperture(z, axes)
-
-            if self.showElementLabels:
-                element.drawLabels(z, axes)
-            z += element.L
+    def drawOpticalElements(self, z, axes):
+        print("drawOpticalElements() was renamed drawAt()")
+        self.drawAt(z,axes)
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):
@@ -892,11 +1121,11 @@ class OpticalPath(object):
                 radianMax=halfAngle,
                 N=self.fanNumber)
 
-        rayGroupSequence = self.propagateMany(rayGroup)
+        manyRayTraces = self.traceMany(rayGroup)
 
-        for raySequence in rayGroupSequence:
-            (x, y) = self.rearrangeRaysForPlotting(
-                raySequence, removeBlockedRaysCompletely)
+        for rayTrace in manyRayTraces:
+            (x, y) = self.rearrangeRayTraceForPlotting(
+                rayTrace, removeBlockedRaysCompletely)
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
 
@@ -906,7 +1135,7 @@ class OpticalPath(object):
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
             axes.plot(x, y, color[colorIndex], linewidth=0.4)
 
-    def rearrangeRaysForPlotting(
+    def rearrangeRayTraceForPlotting(
             self,
             rayList,
             removeBlockedRaysCompletely=True):
@@ -922,6 +1151,13 @@ class OpticalPath(object):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
+""" Synonym of Matrix: Element 
+
+We can use a mathematical language (Matrix) or optics terms (Element)
+"""
+Element = Matrix
+Group = MatrixGroup
+OpticalPath = ImagingPath
 
 def installModule():
     directory = subprocess.check_output(
@@ -929,19 +1165,21 @@ def installModule():
     os.system('mkdir -p "`python -m site --user-site`"')
     os.system('cp ABCD.py "`python -m site --user-site`/"')
     os.system('cp Axicon.py "`python -m site --user-site`/"')
-    print('Module ABCD.py and Axicon.py copied to ', directory)
+    os.system('cp Objectives.py "`python -m site --user-site`/"')
+    print('Module ABCD.py, Axicon.py and Objectives.py copied to ', directory)
 
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD
-# See test.py
+# See test.py or examples/*.py
+
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         if sys.argv[1] == 'install':
             installModule()
             exit()
 
-    path = OpticalPath()
-    path.name = "Simple demo: one infinite lens f = 5cm"
+    path = ImagingPath()
+    path.label = "Simple demo: one infinite lens f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=10))
@@ -949,8 +1187,8 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 1.png")
 
-    path = OpticalPath()
-    path.name = "Simple demo: two infinite lenses with f = 5cm"
+    path = ImagingPath()
+    path.label = "Simple demo: two infinite lenses with f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=20))
@@ -960,8 +1198,8 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 2.png")
 
-    path = OpticalPath()
-    path.name = "Simple demo: Aperture behind lens"
+    path = ImagingPath()
+    path.label = "Simple demo: Aperture behind lens"
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=3))
@@ -971,8 +1209,8 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 3.png")
 
-    path = OpticalPath()
-    path.name = "Microscope system"
+    path = ImagingPath()
+    path.label = "Microscope system"
 #   path.objectHeight = 0.1
     path.append(Space(d=4))
     path.append(Lens(f=4, diameter=0.8, label='Obj'))
@@ -984,3 +1222,12 @@ if __name__ == "__main__":
               limitObjectToFieldOfView=True)
     # or
     # path.save("Figure 4.png")
+
+    path = ImagingPath()
+    path.label = "Focussing through a dielectric slab"
+    path.append(Space(d=10))
+    path.append(Lens(f=5))
+    path.append(Space(d=3))
+    path.append(DielectricSlab(n=1.5, thickness=4))
+    path.append(Space(d=10))
+    path.display()
