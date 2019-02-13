@@ -853,15 +853,23 @@ class ImagingPath(MatrixGroup):
 
         Returns the position and diameter of the field stop.
 
-        Strategy: take ray at various height starting at y=0
-        with a finite "dy" from object and aim at center of pupil
-        (i.e. chief ray from that height) until ray is blocked. If
-        it is not blocked, increase dy and increase y by dy.
-        When it is blocked, we turn around and increase by
-        half the dy, then we continue until it is unblocked,
-        turn around, divide dy by 2, etc...  This rapidly converges
-        to the position at which the ray is blocked, which is
-        the field stop half diameter.
+        Strategy: We want to find the exact height from the object
+        where it is blocked by an aperture (which will become the
+        field stop). We look for the point that separates the
+        "unblocked" ray from the "blocked" ray.
+
+        To do so, we take a ray at various heights starting at y=0
+        from object with a finite increment "dy" and aim 
+        at center of pupil (i.e. chief ray from that height) 
+        until ray is blocked. If it is not blocked, increase
+        dy and increase y by dy. When it is blocked, we turn
+        around and increase by only half the dy, then we continue
+        until it is unblocked, turn around, divide dy by 2, etc...
+        This rapidly converges to the position at which the ray
+        is blocked, which is the field stop half diameter. This
+        strategy is better than linearly going through object heights
+        because the precision can be very high without a long calculation
+        time.
 
         It is possible to have finite diameter elements but
         still an infinite field of view and therefore no Field stop.
