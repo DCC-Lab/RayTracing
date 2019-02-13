@@ -1,8 +1,6 @@
-import sys
-import os
 from raytracing import *
 
-path = ImagingGroup()
+path = ImagingPath()
 path.label = "Object at 2f, image at 2f"
 path.append(Space(d=10))
 path.append(Lens(f=5))
@@ -10,7 +8,7 @@ path.append(Space(d=10))
 path.display()
 #path.save('Figure1.png')
 
-path = ImagingGroup()
+path = ImagingPath()
 path.label = "Object at 4f, image at 4f/3"
 path.append(Space(d=20))
 path.append(Lens(f=5))
@@ -18,7 +16,7 @@ path.append(Space(d=10))
 path.display()
 #path.save('Figure2.png')
 
-path = ImagingGroup()
+path = ImagingPath()
 path.label = "Object at 4f, virtual image at"
 path.append(Space(d=2.5))
 path.append(Lens(f=5))
@@ -26,7 +24,7 @@ path.append(Space(d=10))
 path.display()
 #path.save('Figure2.png')
 
-path = ImagingGroup()
+path = ImagingPath()
 path.label = "4f system"
 path.append(Space(d=5))
 path.append(Lens(f=5))
@@ -36,7 +34,7 @@ path.append(Space(d=5))
 path.display()
 #path.save('Figure3.png')
 
-path = ImagingGroup()
+path = ImagingPath()
 path.fanAngle = 0.1
 path.append(Space(d=40))
 path.append(Lens(f=-10, label='Div'))
@@ -47,7 +45,7 @@ focal = -1.0/path.transferMatrix().C
 path.label = "Retrofocus system with f={0:.2f} cm".format(focal)
 path.display()
 
-path = ImagingGroup()
+path = ImagingPath()
 path.label = "Thick diverging lens"
 path.objectHeight = 20
 path.append(Space(d=50))
@@ -55,7 +53,7 @@ path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='L
 path.append(Space(d=50))
 path.display(onlyChiefAndMarginalRays=True)
 
-path = ImagingGroup()
+path = ImagingPath()
 path.label = "Thick diverging lens, made with individual elements"
 path.objectHeight = 20
 path.append(Space(d=50))
@@ -65,7 +63,7 @@ path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'
 path.append(Space(d=50))
 path.display(onlyChiefAndMarginalRays=True)
 
-path = ImagingGroup()
+path = ImagingPath()
 path.label = "Microscope system"
 path.objectHeight = 0.1
 path.append(Space(d=1))
