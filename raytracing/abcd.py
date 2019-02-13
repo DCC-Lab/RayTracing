@@ -163,7 +163,7 @@ class Matrix(object):
 
     In addition finite apertures are considered: if the apertureDiameter
     is not infinite (default), then the object is assumed to limit the
-    ray height to ± apertureDiameter/2 from the front edge to the back
+    ray height to plus or minus apertureDiameter/2 from the front edge to the back
     edge of the element.
     """
 
@@ -780,7 +780,7 @@ class ImagingPath(MatrixGroup):
 
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
-        (which we are looking for) will end at y=±diameter/2 at the
+        (which we are looking for) will end at y= plus/minus diameter/2 at the
         aperture stop. We return the largest angle first, for
         convenience.
         """

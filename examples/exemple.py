@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath('../'))
 
 from raytracing import *
 
-path = OpticalPath()
+path = ImagingPath()
 path.name = "Scanning system"
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=2.5))

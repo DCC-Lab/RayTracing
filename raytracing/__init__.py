@@ -7,4 +7,4 @@ from .axicon import *
 
 __version__ = "1.0.0"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
-__all__ = []
+#__all__ = ['abcd', 'objectives', 'axicon']
