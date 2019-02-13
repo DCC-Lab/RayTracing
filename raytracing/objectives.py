@@ -1,5 +1,5 @@
 try:
-    from ABCD import *
+    from .abcd import *
     from math import  *
     import matplotlib.transforms as transforms
 

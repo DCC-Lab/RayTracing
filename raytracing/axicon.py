@@ -1,4 +1,4 @@
-from ABCD import *
+from .abcd import *
 import matplotlib.pyplot as plt
 
 """
