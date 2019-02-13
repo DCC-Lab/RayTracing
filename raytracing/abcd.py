@@ -629,6 +629,7 @@ class MatrixGroup(Matrix):
     def __init__(self, elements=[], label=""):
         super(MatrixGroup, self).__init__(1,0,0,1,label=label)
         self.elements = []
+
         for element in elements:
             self.append(element)
 
@@ -748,6 +749,10 @@ class ImagingPath(MatrixGroup):
         self.fanNumber = 9         # number of rays in fan
         self.rayNumber = 3         # number of points on object
 
+        # Constants when calculating field stop
+        self.precision = 0.001
+        self.maxHeight = 10000.0
+
         # Display properties
         self.showObject = True
         self.showImages = True
@@ -851,17 +856,18 @@ class ImagingPath(MatrixGroup):
         Strategy: take ray at various height starting at y=0
         with a finite "dy" from object and aim at center of pupil
         (i.e. chief ray from that height) until ray is blocked. If
-        it is not blocked, increase y by dy. When it is blocked,
-        we turn around and increase by half the dy, then we continue until
-        it is unblocked, turn around, divide dy by 2, etc... 
-        This rapidly converges to the position at which the
-        ray is blocked, which is the field stop half diameter.
+        it is not blocked, increase dy and increase y by dy.
+        When it is blocked, we turn around and increase by
+        half the dy, then we continue until it is unblocked,
+        turn around, divide dy by 2, etc...  This rapidly converges
+        to the position at which the ray is blocked, which is
+        the field stop half diameter.
 
         It is possible to have finite diameter elements but
         still an infinite field of view and therefore no Field stop.
         In fact, if only a single element has a finite diameter,
         there is no field stop (only an aperture stop). The limit
-        is arbitrarily set to 1000.
+        is arbitrarily set to maxHeight.
 
         If there are no elements of finite diameter (i.e. all
         optical elements are infinite in diameters), then there
@@ -872,11 +878,11 @@ class ImagingPath(MatrixGroup):
         fieldStopPosition = None
         fieldStopDiameter = float('+Inf')
         if self.hasFiniteApertureDiameter():            
-            dy = 1.0
+            dy = self.precision * 100
             y = 0.0
             chiefRay = Ray(y=0, theta=0)
             wasBlocked = False
-            while abs(dy) > 0.0001 or not wasBlocked:
+            while abs(dy) > self.precision or not wasBlocked:
                 y += dy
                 chiefRay = self.chiefRay(y=y)
                 chiefRayTrace = self.trace(chiefRay)
@@ -885,10 +891,10 @@ class ImagingPath(MatrixGroup):
                 if outputChiefRay.isBlocked != wasBlocked:
                     dy = -dy/2.0
                 else:
-                    dy = dy*2.0
+                    dy = dy*1.5 # Don't use 2.0: could bounce forever
 
                 wasBlocked = outputChiefRay.isBlocked
-                if abs(y) > 1000:
+                if abs(y) > self.maxHeight:
                     return (fieldStopPosition, fieldStopDiameter)
             
             for ray in chiefRayTrace:
