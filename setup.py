@@ -11,16 +11,15 @@ setuptools.setup(
     (lenses positions and sizes, focal lengths).",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    py_modules=['abcd', 'objectives', 'axicon'],
     license='MIT',
     keywords='optics lenses ray matrices aperture field stop',
- 
- #   py_modules=['abcd.py', 'objectives.py', 'axicon.py'],
+    packages=setuptools.find_packages(),
     install_requires=['matplotlib'],
     python_requires='>=3',
-    package_data={
-    'documentation': ['assets/*.png'],
-    },  
+    package_data = {
+        # If any package contains *.txt or *.rst files, include them:
+        '': ['*.png'],
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         # Indicate who your project is intended for

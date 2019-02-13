@@ -1,8 +1,6 @@
 import sys
 import os
-sys.path.insert(0, os.path.abspath('../'))
-
-from ABCD import *
+from raytracing import *
 
 path = ImagingGroup()
 path.label = "Object at 2f, image at 2f"

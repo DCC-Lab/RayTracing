@@ -2,10 +2,10 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath('../'))
 
-from ABCD import *
+from raytracing import *
 
 path = OpticalPath()
-path.name = "Systeme balayage"
+path.name = "Scanning system"
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=2.5))
 path.append(Space(d=15))

@@ -2,9 +2,9 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath('../'))
 
-from ABCD import *
+from raytracing import *
 
-path = OpticalPath()
+path = ImagingPath()
 path.name = "Kohler illumination with 1 cm wide lamp and 0.5 NA"
 path.objectHeight = 1.0
 path.fanAngle = 0.5

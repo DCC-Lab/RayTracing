@@ -13,7 +13,7 @@ if sys.version_info[0] < 3:
 """A simple module for ray tracing with ABCD matrices.
 https://github.com/DCC-Lab/RayTracing
 
-Create an ImagingGroup(), append matrices (optical elements or other
+Create an ImagingPath(), append matrices (optical elements or other
 group of elements), and then display(). This helps determine of
 course simple things like focal distance of compound systems,
 object-image, etc... but also the aperture stop, field stop, field
@@ -21,7 +21,7 @@ of view and any clipping issues that may occur.
 
 When displaying the result, the  objectHeight, fanAngle, and fanNumber
 are used if the field of view is not defined. You may adjust the values
-to suit your needs in ImagingGroup().
+to suit your needs in ImagingPath().
 
 The class hierarchy can be seen on http://webgraphviz.com with the
 following description:
@@ -30,12 +30,12 @@ digraph G {
 
     subgraph mathview {
         "Matrix" -> "MatrixGroup"
-        "MatrixGroup" -> ImagingGroup
+        "MatrixGroup" -> ImagingPath
     }
 
     subgraph opticsview {
         "Element" -> "Group"
-        "Group" -> ImagingGroup
+        "Group" -> ImagingPath
     }
 }
 
@@ -727,12 +727,12 @@ class MatrixGroup(Matrix):
             z += element.L
 
 
-class ImagingGroup(MatrixGroup):
-    """ImagingGroup: the main class of the module, allowing
+class ImagingPath(MatrixGroup):
+    """ImagingPath: the main class of the module, allowing
     the combination of Matrix() or MatrixGroup() to be used 
     as an imaging group with an object at the beginning.
 
-    Usage is to create the ImagingGroup(), then append() elements
+    Usage is to create the ImagingPath(), then append() elements
     and display(). You may change objectHeight, fanAngle, fanNumber
     and rayNumber.
     """
@@ -751,7 +751,7 @@ class ImagingGroup(MatrixGroup):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
-        super(ImagingGroup, self).__init__(elements=elements, label=label)
+        super(ImagingPath, self).__init__(elements=elements, label=label)
 
     def chiefRay(self, y):
         """ Chief ray for a height y (i.e., the ray that goes
@@ -1141,7 +1141,7 @@ We can use a mathematical language (Matrix) or optics terms (Element)
 """
 Element = Matrix
 Group = MatrixGroup
-OpticalPath = ImagingGroup
+OpticalPath = ImagingPath
 
 def installModule():
     directory = subprocess.check_output(
@@ -1163,7 +1163,7 @@ if __name__ == "__main__":
             installModule()
             exit()
 
-    path = ImagingGroup()
+    path = ImagingPath()
     path.label = "Simple demo: one infinite lens f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
@@ -1172,7 +1172,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 1.png")
 
-    path = ImagingGroup()
+    path = ImagingPath()
     path.label = "Simple demo: two infinite lenses with f = 5cm"
     path.append(Space(d=10))
     path.append(Lens(f=5))
@@ -1183,7 +1183,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 2.png")
 
-    path = ImagingGroup()
+    path = ImagingPath()
     path.label = "Simple demo: Aperture behind lens"
     path.append(Space(d=10))
     path.append(Lens(f=5))
@@ -1194,7 +1194,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 3.png")
 
-    path = ImagingGroup()
+    path = ImagingPath()
     path.label = "Microscope system"
 #   path.objectHeight = 0.1
     path.append(Space(d=4))
@@ -1208,7 +1208,7 @@ if __name__ == "__main__":
     # or
     # path.save("Figure 4.png")
 
-    path = ImagingGroup()
+    path = ImagingPath()
     path.label = "Focussing through a dielectric slab"
     path.append(Space(d=10))
     path.append(Lens(f=5))
