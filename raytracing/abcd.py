@@ -882,6 +882,7 @@ class ImagingPath(MatrixGroup):
             y = 0.0
             chiefRay = Ray(y=0, theta=0)
             wasBlocked = False
+            chiefRayTrace = []
             while abs(dy) > self.precision or not wasBlocked:
                 y += dy
                 chiefRay = self.chiefRay(y=y)
