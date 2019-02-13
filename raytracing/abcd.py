@@ -153,7 +153,7 @@ class Matrix(object):
     The general properties (A,B,C,D) are defined here. The operator "*" is
     overloaded to allow simple statements such as:
 
-    M2 = M1 * ray
+    ray2 = M1 * ray
     or
     M3 = M2 * M1
 
