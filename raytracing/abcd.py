@@ -892,7 +892,6 @@ class ImagingPath(MatrixGroup):
             wasBlocked = False
             chiefRayTrace = []
             while abs(dy) > self.precision or not wasBlocked:
-                y += dy
                 chiefRay = self.chiefRay(y=y)
                 chiefRayTrace = self.trace(chiefRay)
                 outputChiefRay = chiefRayTrace[-1]
@@ -902,6 +901,7 @@ class ImagingPath(MatrixGroup):
                 else:
                     dy = dy*1.5 # Don't use 2.0: could bounce forever
 
+                y += dy
                 wasBlocked = outputChiefRay.isBlocked
                 if abs(y) > self.maxHeight and not wasBlocked:
                     return (fieldStopPosition, fieldStopDiameter)
@@ -924,25 +924,33 @@ class ImagingPath(MatrixGroup):
         diameter elements but still an infinite field of view
         and therefore no Field stop.
         """
-        halfFieldOfView = float('+Inf')
+
         (stopPosition, stopDiameter) = self.fieldStop()
         if stopPosition is None:
-            return halfFieldOfView
+            return float('+Inf')
 
         transferMatrixToFieldStop = self.transferMatrix(upTo=stopPosition)
-        # FIXME: This is not that great.
-        deltaHeight = self.objectHeight / 10000.0
-        # FIXME: When do we stop? Currently 10.0 (arbitrary).
-        for i in range(10000):
-            height = float(i) * deltaHeight
-            chiefRay = self.chiefRay(y=height)
-            outputRayAtFieldStop = transferMatrixToFieldStop * chiefRay
-            if abs(outputRayAtFieldStop.y) > stopDiameter / 2.0:
-                break  # Last height was the last one to not be blocked
-            else:
-                halfFieldOfView = height
 
-        return halfFieldOfView * 2.0
+        dy = self.precision * 100
+        y = 0.0
+        chiefRay = Ray(y=0, theta=0)
+        wasBlocked = False
+        while abs(dy) > self.precision or not wasBlocked:
+            chiefRay = self.chiefRay(y=y)
+            chiefRayTrace = self.trace(chiefRay)
+            outputChiefRay = chiefRayTrace[-1]
+
+            if outputChiefRay.isBlocked != wasBlocked:
+                dy = -dy/2.0
+            else:
+                dy = dy*1.5 # Don't use 2.0: could bounce forever
+
+            y += dy
+            wasBlocked = outputChiefRay.isBlocked
+            if abs(y) > self.maxHeight and not wasBlocked:
+                return float("+Inf")
+        
+        return chiefRay.y * 2.0
 
     def imageSize(self):
         """ The image size is the object field of view
