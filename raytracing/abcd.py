@@ -903,7 +903,7 @@ class ImagingPath(MatrixGroup):
                     dy = dy*1.5 # Don't use 2.0: could bounce forever
 
                 wasBlocked = outputChiefRay.isBlocked
-                if abs(y) > self.maxHeight:
+                if abs(y) > self.maxHeight and not wasBlocked:
                     return (fieldStopPosition, fieldStopDiameter)
             
             for ray in chiefRayTrace:
