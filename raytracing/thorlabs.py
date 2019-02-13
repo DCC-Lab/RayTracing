@@ -1,10 +1,6 @@
-try:
-    from ABCD import *
-    from math import  *
-    import matplotlib.transforms as transforms
-
-except ImportError:
-    raise ImportError('You must have ABCD.py installed. run "python ABCD.py install"')
+from .abcd import *
+from math import  *
+import matplotlib.transforms as transforms
 
 class ThorlabsAchromatLens(MatrixGroup):
     """ From https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 
@@ -30,12 +26,13 @@ class ThorlabsAchromatLens(MatrixGroup):
         super(ThorlabsAchromatLens, self).__init__(elements=elements)
 
 
-if __name__ == "__main__":
-    fexpected = 50.2
-    lens = ThorlabsAchromatLens(fa=fexpected,fb=43.4, R1=33.3,R2=-22.28, R3=-291.07, 
-                                tc1=9, tc2=2.5, n1=1.6700, n2=1.7283, diameter=25.4)
+class AC254_050_A(ThorlabsAchromatLens):
+    def __init__(self):
+        fexpected = 50.2
+        super(AC254_050_A,self).__init__(fa=fexpected,fb=43.4, R1=33.3,R2=-22.28, R3=-291.07, 
+                                    tc1=9, tc2=2.5, n1=1.6700, n2=1.7283, diameter=25.4)
 
-    (factual, factual) = lens.focalDistances()
-    (p1, p2) = lens.principalPlanePositions(z=0)
-    print("actual f = {0:.2f}".format(factual))
-    print("expected f = {0:.2f}".format(fexpected))
+        (factual, factual) = self.focalDistances()
+        (p1, p2) = self.principalPlanePositions(z=0)
+        print("actual f = {0:.2f}".format(factual))
+        print("expected f = {0:.2f}".format(fexpected))

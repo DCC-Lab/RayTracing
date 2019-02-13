@@ -1,10 +1,6 @@
-try:
-    from .abcd import *
-    from math import  *
-    import matplotlib.transforms as transforms
-
-except ImportError:
-    raise ImportError('You must have ABCD.py installed. run "python ABCD.py install"')
+from .abcd import *
+from math import  *
+import matplotlib.transforms as transforms
 
 class Objective(MatrixGroup):
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, label=''):
@@ -110,32 +106,3 @@ class XLUMPlanFLN20X(Objective):
                                          backAperture=22,
                                          workingDistance=2,
                                          label='XLUMPlanFLN20X')
-
-if __name__ == "__main__":
-    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
-    print("Focal distances: ", obj.focalDistances())
-    print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
-    print("Focal spots positions: ", obj.focusPositions(z=0))
-    print("Distance between entrance and exit planes: ", obj.L)
-
-    path1 = OpticalPath()
-    path1.fanAngle = 0.0
-    path1.fanNumber = 1
-    path1.rayNumber = 15
-    path1.objectHeight = 10.0
-    path1.label = "Path with objective"
-    path1.append(Space(180))
-    path1.append(obj)
-    path1.append(Space(10))
-    path1.display()
-
-    path2 = OpticalPath()
-    path2.fanAngle = 0.0
-    path2.fanNumber = 1
-    path2.rayNumber = 15
-    path2.objectHeight = 10.0
-    path2.label = "Path with LUMPLFL40X"
-    path2.append(Space(180))
-    path2.append(LUMPLFL40X())
-    path2.append(Space(10))
-    path2.display()
