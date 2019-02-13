@@ -11,18 +11,24 @@ setuptools.setup(
     (lenses positions and sizes, focal lengths).",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    packages=['abcd', 'objectives', 'axicon'],
-    install_requires=[],
+    py_modules=['abcd', 'objectives', 'axicon'],
     license='MIT',
     keywords='optics lenses ray matrices aperture field stop',
-    py_modules=['abcd', 'objectives', 'axicon'],
+ 
+ #   py_modules=['abcd.py', 'objectives.py', 'axicon.py'],
     install_requires=['matplotlib'],
     python_requires='>=3',
+    package_data={
+    'documentation': ['assets/*.png'],
+    },  
     classifiers=[
         'Development Status :: 4 - Beta',
         # Indicate who your project is intended for
-        'Intended Audience :: Scientists',
-        'Topic :: Optics :: Design Tools',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: Education',
+        'Topic :: Scientific/Engineering :: Physics',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Topic :: Education',
 
         # Pick your license as you wish (should match "license" above)
          'License :: OSI Approved :: MIT License',
@@ -32,5 +38,7 @@ setuptools.setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
+
+        'Operating System :: OS Independent'
     ],
 )
