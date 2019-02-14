@@ -15,13 +15,13 @@ https://github.com/DCC-Lab/RayTracing
 
 Create an ImagingPath(), append matrices (optical elements or other
 group of elements), and then display(). This helps determine of
-course simple things like focal distance of compound systems,
+course simple things like focal length of compound systems,
 object-image, etc... but also the aperture stop, field stop, field
 of view and any clipping issues that may occur.
 
-When displaying the result, the  objectHeight, fanAngle, and fanNumber
-are used if the field of view is not defined. You may adjust the values
-to suit your needs in ImagingPath().
+When displaying the result with an ImagingPath(), the  objectHeight,
+fanAngle, and fanNumber are used if the field of view is not
+defined. You may adjust the values to suit your needs in ImagingPath().
 
 The class hierarchy can be seen on http://webgraphviz.com with the
 following description:
@@ -39,16 +39,12 @@ digraph G {
     }
 }
 
-To install a local copy that can be used from any directory, either:
-1) python ABCD.py install
+To use the package, either:
+1) pip install raytracing
 or
-2) copy to the directory pointed to by the command: python -m site --user-site
-such as:
-
-mkdir -p "`python -m site --user-site`"
-cp ABCD.py "`python -m site --user-site`/"
-
-or the Windows equivalent.
+2) copy to the raytracing package to the directory where you want to use it
+or
+3) python setup.py install from the source code directory
 """
 
 
