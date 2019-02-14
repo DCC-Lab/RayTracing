@@ -473,7 +473,7 @@ class Matrix(object):
         """
         halfHeight = self.displayHalfHeight()
         center = z + self.L / 2.0
-        plt.annotate(self.label, xy=(center, 0.0),
+        axes.annotate(self.label, xy=(center, 0.0),
                      xytext=(center, halfHeight * 1.3),
                      fontsize=12, xycoords='data', ha='center',
                      va='bottom')
@@ -552,9 +552,9 @@ class Lens(Matrix):
     def drawAt(self, z, axes, showLabels=False):
         """ Draw a thin lens at z """
         halfHeight = self.displayHalfHeight()
-        plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
+        axes.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
                   head_length=0.25, head_width=0.25, length_includes_head=True)
-        plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',
+        axes.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',
                   head_length=0.25, head_width=0.25, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
