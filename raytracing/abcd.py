@@ -670,8 +670,6 @@ class DielectricSlab(ThickLens):
                                              R2=float("+Inf"),
                                              thickness=thickness,
                                              diameter=diameter,
-                                             frontVertex=0,
-                                             backVertex=thickness,
                                              label=label)
 
     def drawAt(self, z, axes, showLabels=False):
@@ -982,7 +980,6 @@ class ImagingPath(MatrixGroup):
         if self.hasFiniteApertureDiameter():            
             dy = self.precision * 100
             y = 0.0
-            chiefRay = Ray(y=0, theta=0)
             wasBlocked = False
             chiefRayTrace = []
             while abs(dy) > self.precision or not wasBlocked:
@@ -991,9 +988,9 @@ class ImagingPath(MatrixGroup):
                 outputChiefRay = chiefRayTrace[-1]
 
                 if outputChiefRay.isBlocked != wasBlocked:
-                    dy = -dy/2.0
+                    dy = -dy/2.0 # Go back, reduce increment
                 else:
-                    dy = dy*1.5 # Don't use 2.0: could bounce forever
+                    dy = dy*1.5 # Keep going, go faster (different factor)
 
                 y += dy
                 wasBlocked = outputChiefRay.isBlocked
