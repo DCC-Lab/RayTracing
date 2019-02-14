@@ -1062,11 +1062,9 @@ class ImagingPath(MatrixGroup):
         return fieldOfView * magnification
 
     def createRayTracePlot(
-            self,
+            self, axes,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False):
-        fig, axes = plt.subplots(figsize=(10, 7))
-
         displayRange = 1.4 * self.largestDiameter()
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
@@ -1115,26 +1113,45 @@ class ImagingPath(MatrixGroup):
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(axes)
 
-        return (fig, axes)
+        return axes
 
     def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False):
-        (fig, axes) = self.createRayTracePlot(
+                onlyChiefAndMarginalRays=False, comments=None):
+        
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2,1,figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+            fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
+
+        self.createRayTracePlot(axes=axes,
             limitObjectToFieldOfView=limitObjectToFieldOfView,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
+
         plt.ioff()
         plt.show()
 
     def save(self, filepath,
             limitObjectToFieldOfView=False,
-            onlyChiefAndMarginalRays=False):
-        (fig, axes) = self.createRayTracePlot(
+            onlyChiefAndMarginalRays=False, comments=None):
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2,1,figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+            fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
+
+        self.createRayTracePlot(axes=axes,
             limitObjectToFieldOfView=limitObjectToFieldOfView,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
+
         fig.savefig(filepath, dpi=600)
 
     def drawObject(self, axes):
-        plt.arrow(
+        axes.arrow(
             self.objectPosition,
             -self.objectHeight / 2,
             0,
@@ -1156,7 +1173,7 @@ class ImagingPath(MatrixGroup):
                 imagePosition = transferMatrix.L + distance
                 if imagePosition != 0:
                     magnification = conjugate.A
-                    plt.arrow(
+                    axes.arrow(
                         imagePosition,
                         -magnification * self.objectHeight / 2,
                         0,
@@ -1171,7 +1188,7 @@ class ImagingPath(MatrixGroup):
     def drawPointsOfInterest(self, axes):
         """
         Labels of general points of interest are drawn below the
-        axis, at 15% of the largest diameter.
+        axis, at 25% of the largest diameter.
 
         AS and FS are drawn at 110% of the largest diameter
         """
@@ -1192,13 +1209,13 @@ class ImagingPath(MatrixGroup):
         halfHeight = self.largestDiameter()/2
         for zStr, label in labels.items():
             z = float(zStr)
-            plt.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.15),
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.25),
                          xycoords='data', fontsize=12,
                          ha='center', va='bottom')
 
         (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
         if apertureStopPosition is not None:
-            plt.annotate('AS',
+            axes.annotate('AS',
                          xy=(apertureStopPosition, 0.0),
                          xytext=(apertureStopPosition, halfHeight * 1.1),
                          fontsize=18,
@@ -1208,7 +1225,7 @@ class ImagingPath(MatrixGroup):
 
         (fieldStopPosition, fieldStopDiameter) = self.fieldStop()
         if fieldStopPosition is not None:
-            plt.annotate('FS',
+            axes.annotate('FS',
                          xy=(fieldStopPosition,
                              0.0),
                          xytext=(fieldStopPosition,
