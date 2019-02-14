@@ -15,13 +15,13 @@ https://github.com/DCC-Lab/RayTracing
 
 Create an ImagingPath(), append matrices (optical elements or other
 group of elements), and then display(). This helps determine of
-course simple things like focal distance of compound systems,
+course simple things like focal length of compound systems,
 object-image, etc... but also the aperture stop, field stop, field
 of view and any clipping issues that may occur.
 
-When displaying the result, the  objectHeight, fanAngle, and fanNumber
-are used if the field of view is not defined. You may adjust the values
-to suit your needs in ImagingPath().
+When displaying the result with an ImagingPath(), the  objectHeight,
+fanAngle, and fanNumber are used if the field of view is not
+defined. You may adjust the values to suit your needs in ImagingPath().
 
 The class hierarchy can be seen on http://webgraphviz.com with the
 following description:
@@ -39,16 +39,12 @@ digraph G {
     }
 }
 
-To install a local copy that can be used from any directory, either:
-1) python ABCD.py install
+To use the package, either:
+1) pip install raytracing
 or
-2) copy to the directory pointed to by the command: python -m site --user-site
-such as:
-
-mkdir -p "`python -m site --user-site`"
-cp ABCD.py "`python -m site --user-site`/"
-
-or the Windows equivalent.
+2) copy to the raytracing package to the directory where you want to use it
+or
+3) python setup.py install from the source code directory
 """
 
 
@@ -77,7 +73,8 @@ class Ray:
         self.y = y
         self.theta = theta
 
-        # Position of this ray and the diameter of the aperture
+        # Position of this ray and the diameter of the aperture at that 
+        # position
         self.z = z
         self.apertureDiameter = float("+Inf")
         self.isBlocked = isBlocked
@@ -176,8 +173,11 @@ class Matrix(object):
             C,
             D,
             physicalLength=0,
+            frontVertex=None,
+            backVertex=None,
             apertureDiameter=float('+Inf'),
-            label=''):
+            label=''
+            ):
         # Ray matrix formalism
         self.A = float(A)
         self.B = float(B)
@@ -186,6 +186,10 @@ class Matrix(object):
 
         # Length of this element
         self.L = float(physicalLength)
+
+        # First and last interfaces. Used for BFL and FFL
+        self.frontVertex = frontVertex
+        self.backVertex = backVertex
 
         # Aperture
         self.apertureDiameter = apertureDiameter
@@ -212,7 +216,8 @@ class Matrix(object):
 
     def mul_matrix(self, rightSideMatrix):
         """ Multiplication of two matrices.  Total length of the
-        elements is calculated. Apertures are lost.
+        elements is calculated. Apertures are lost. We compute
+        the first and last vertices.
 
         """
 
@@ -222,7 +227,28 @@ class Matrix(object):
         d = self.C * rightSideMatrix.B + self.D * rightSideMatrix.D
         L = self.L + rightSideMatrix.L
 
-        return Matrix(a, b, c, d, physicalLength=L)
+        # The front vertex of the combination is the front vertex
+        # of the rightSideMatrix (occuring first) if the vertex exists.
+        # If it does not, it will be the front vertex of the self element.
+        # If neither element has a front vertex, then the combination has no
+        # front vertex. This occurs when we have Space()*Space().
+
+        # The back vertex of the combination is the back vertex of the self
+        # element, occuring last, if it exists. If it does not, it is the
+        # back vertex of the rightSideMatrix (which may or may not exist).
+        # Vertices are measured with respect to the front edge of the
+        # combined element.
+
+        fv = rightSideMatrix.frontVertex
+        if fv is None and self.frontVertex is not None:
+            fv = rightSideMatrix.L + self.frontVertex
+
+        if self.backVertex is not None:
+            bv = rightSideMatrix.L + self.backVertex
+        else:
+            bv = rightSideMatrix.backVertex
+
+        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L)
 
     def mul_ray(self, rightSideRay):
         """ Multiplication of a ray by a matrix.  New position of
@@ -294,18 +320,79 @@ class Matrix(object):
         """ Any points of interest for this matrix (focal points,
         principal planes etc...)
         """
+
+        # ptsOfInterest = []
+        # if self.frontVertex is not None:
+        #     ptsOfInterest.append({'z': self.frontVertex, 'label': '$V_f$'})
+        # if self.backVertex is not None:
+        #     ptsOfInterest.append({'z': self.backVertex, 'label': '$V_b$'})
+        
         return []
 
     def focalDistances(self):
-        """ The equivalent focal distance calculated from the power (C)
+        return self.effectiveFocalLengths()
+
+    def effectiveFocalLengths(self):
+        """ The effective focal lengths calculated from the power (C)
         of the matrix.
+
+        Currently, it is assumed the index is n=1 on either side and
+        both focal lengths are the same.
+        """
+
+        focalLength = -1.0 / self.C  # FIXME: Assumes n=1 on either side
+        return (focalLength, focalLength)
+
+    def backFocalLength(self):
+        """ The focal lengths measured from the back vertex.
+        This is the distance between the surface and the focal point.
+        When the principal plane is not at the surface (which is usually
+        the case in anything except a thin lens), the back and front focal
+        lengths will be different from effective focal lengths. The effective
+        focal lengths is always measured from the principal planes, but the
+        BFL and FFL are measured from the vertex.
+
+        If the matrix is the result of the product of several matrices,
+        we may not know where the front and back vertices are. In that case,
+        we return None (or undefined).
 
         Currently, it is assumed the index is n=1 on either side and
         both focal distances are the same.
         """
 
-        focalDistance = -1.0 / self.C  # FIXME: Assumes n=1 on either side
-        return (focalDistance, focalDistance)
+        if self.backVertex is not None:
+            (f1, f2) = self.effectiveFocalLengths()
+            (p1, p2) = self.principalPlanePositions(z=0)
+
+            return (p2 + f2 - self.backVertex)
+        else:
+            return None
+
+    def frontFocalLength(self):
+        """ The focal lengths measured from the front vertex.
+        This is the distance between the surface and the focal point.
+        When the principal plane is not at the surface (which is usually
+        the case in anything except a thin lens), the back and front focal
+        lengths will be different from effective focal lengths. The effective
+        focal lengths is always measured from the principal planes, but the
+        BFL and FFL are measured from the vertices.
+
+        If the matrix is the result of the product of several matrices,
+        we may not know where the front and back vertices are. In that case,
+        we return None (or undefined).
+        
+        Currently, it is assumed the index is n=1 on either side and
+        both focal distances are the same.
+        """
+
+        if self.frontVertex is not None:
+            (f1, f2) = self.effectiveFocalLengths()
+            (p1, p2) = self.principalPlanePositions(z=0)
+
+            return -(p1 - f1 - self.frontVertex)
+        else:
+            return None
+
 
     def focusPositions(self, z):
         """ Positions of both focal points on either side of the element.
@@ -313,9 +400,9 @@ class Matrix(object):
         Currently, it is assumed the index is n=1 on either side and both focal
         distances are the same.
         """
-        (frontFocal, backFocal) = self.focalDistances()
+        (f1, f2) = self.focalDistances()
         (p1, p2) = self.principalPlanePositions(z)
-        return (p1 - frontFocal, p2 + backFocal)
+        return (p1 - f1, p2 + f2)
 
     def principalPlanePositions(self, z):
         """ Positions of the input and output principal planes.
@@ -458,6 +545,8 @@ class Lens(Matrix):
         super(Lens, self).__init__(A=1, B=0, C=-1 / float(f), D=1,
                                    physicalLength=0,
                                    apertureDiameter=diameter,
+                                   frontVertex=0,
+                                   backVertex=0,
                                    label=label)
 
     def drawAt(self, z, axes, showLabels=False):
@@ -489,6 +578,8 @@ class Space(Matrix):
                                     C=0,
                                     D=1,
                                     physicalLength=d,
+                                    frontVertex=None,
+                                    backVertex=None,
                                     apertureDiameter=diameter,
                                     label=label)
 
@@ -521,6 +612,8 @@ class DielectricInterface(Matrix):
         super(DielectricInterface, self).__init__(A=a, B=b, C=c, D=d,
                                                   physicalLength=0,
                                                   apertureDiameter=diameter,
+                                                  frontVertex=0,
+                                                  backVertex=0,
                                                   label=label)
 
 
@@ -545,6 +638,8 @@ class ThickLens(Matrix):
         super(ThickLens, self).__init__(A=a, B=b, C=c, D=d,
                                         physicalLength=thickness,
                                         apertureDiameter=diameter,
+                                        frontVertex=0,
+                                        backVertex=thickness,
                                         label=label)
 
     def drawAt(self, z, axes, showLabels=False):
@@ -629,6 +724,7 @@ class MatrixGroup(Matrix):
     def __init__(self, elements=[], label=""):
         super(MatrixGroup, self).__init__(1,0,0,1,label=label)
         self.elements = []
+
         for element in elements:
             self.append(element)
 
@@ -641,6 +737,8 @@ class MatrixGroup(Matrix):
         self.C = transferMatrix.C
         self.D = transferMatrix.D
         self.L = transferMatrix.L
+        self.frontVertex = transferMatrix.frontVertex
+        self.backVertex = transferMatrix.backVertex
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
@@ -671,11 +769,17 @@ class MatrixGroup(Matrix):
         return transferMatrices
 
     def propagate(self, inputRay):
-        print("propagate() was renamed trace().")
+        if not warningPrinted:
+            print("propagate() was renamed trace().")
+            warningPrinted = True
+
         return self.trace(inputRay)
 
     def propagateMany(self, inputRays):
-        print("propagateMany() was renamed traceMany().")
+        if not warningPrinted:
+            print("propagateMany() was renamed traceMany().")
+            warningPrinted = True
+
         return self.traceMany(inputRays)
 
     def trace(self, inputRay):
@@ -743,6 +847,10 @@ class ImagingPath(MatrixGroup):
         self.fanAngle = 0.5        # full fan angle for rays
         self.fanNumber = 9         # number of rays in fan
         self.rayNumber = 3         # number of points on object
+
+        # Constants when calculating field stop
+        self.precision = 0.001
+        self.maxHeight = 10000.0
 
         # Display properties
         self.showObject = True
@@ -844,17 +952,29 @@ class ImagingPath(MatrixGroup):
 
         Returns the position and diameter of the field stop.
 
-        Strategy: take ray at various height from object and aim
-        at center of pupil (i.e. chief ray from that height)
-        until ray is blocked. When it is blocked, the position
-        at which it was blocked is the field stop. To obtain
-        the diameter we must go back to the last ray that was
-        not blocked and calculate the diameter.
+        Strategy: We want to find the exact height from the object
+        where it is blocked by an aperture (which will become the
+        field stop). We look for the point that separates the
+        "unblocked" ray from the "blocked" ray.
+
+        To do so, we take a ray at various heights starting at y=0
+        from object with a finite increment "dy" and aim 
+        at center of pupil (i.e. chief ray from that height) 
+        until ray is blocked. If it is not blocked, increase
+        dy and increase y by dy. When it is blocked, we turn
+        around and increase by only half the dy, then we continue
+        until it is unblocked, turn around, divide dy by 2, etc...
+        This rapidly converges to the position at which the ray
+        is blocked, which is the field stop half diameter. This
+        strategy is better than linearly going through object heights
+        because the precision can be very high without a long calculation
+        time.
 
         It is possible to have finite diameter elements but
         still an infinite field of view and therefore no Field stop.
         In fact, if only a single element has a finite diameter,
-        there is no field stop (only an aperture stop).
+        there is no field stop (only an aperture stop). The limit
+        is arbitrarily set to maxHeight.
 
         If there are no elements of finite diameter (i.e. all
         optical elements are infinite in diameters), then there
@@ -862,26 +982,35 @@ class ImagingPath(MatrixGroup):
         and their sizes are infinite.
         """
 
-        if not self.hasFiniteApertureDiameter():
-            return (None, float('+Inf'))
-        else:
-            deltaHeight = 0.001
-            fieldStopPosition = None
-            fieldStopDiameter = float('+Inf')
-            for i in range(10000):
-                chiefRay = self.chiefRay(y=i * deltaHeight)
-                rayTrace = self.trace(chiefRay)
-                for ray in reversed(rayTrace):
-                    if not ray.isBlocked:
-                        break
-                    else:
-                        fieldStopPosition = ray.z
-                        fieldStopDiameter = ray.apertureDiameter
+        fieldStopPosition = None
+        fieldStopDiameter = float('+Inf')
+        if self.hasFiniteApertureDiameter():            
+            dy = self.precision * 100
+            y = 0.0
+            wasBlocked = False
+            chiefRayTrace = []
+            while abs(dy) > self.precision or not wasBlocked:
+                chiefRay = self.chiefRay(y=y)
+                chiefRayTrace = self.trace(chiefRay)
+                outputChiefRay = chiefRayTrace[-1]
 
-                if fieldStopPosition is not None:
+                if outputChiefRay.isBlocked != wasBlocked:
+                    dy = -dy/2.0 # Go back, reduce increment
+                else:
+                    dy = dy*1.5 # Keep going, go faster (different factor)
+
+                y += dy
+                wasBlocked = outputChiefRay.isBlocked
+                if abs(y) > self.maxHeight and not wasBlocked:
                     return (fieldStopPosition, fieldStopDiameter)
+            
+            for ray in chiefRayTrace:
+                if ray.isBlocked:
+                    fieldStopPosition = ray.z
+                    fieldStopDiameter = ray.apertureDiameter
+                    break
 
-            return (fieldStopPosition, fieldStopDiameter)
+        return (fieldStopPosition, fieldStopDiameter)
 
     def fieldOfView(self):
         """ The field of view is the maximum object height
@@ -893,25 +1022,33 @@ class ImagingPath(MatrixGroup):
         diameter elements but still an infinite field of view
         and therefore no Field stop.
         """
-        halfFieldOfView = float('+Inf')
+
         (stopPosition, stopDiameter) = self.fieldStop()
         if stopPosition is None:
-            return halfFieldOfView
+            return float('+Inf')
 
         transferMatrixToFieldStop = self.transferMatrix(upTo=stopPosition)
-        # FIXME: This is not that great.
-        deltaHeight = self.objectHeight / 10000.0
-        # FIXME: When do we stop? Currently 10.0 (arbitrary).
-        for i in range(10000):
-            height = float(i) * deltaHeight
-            chiefRay = self.chiefRay(y=height)
-            outputRayAtFieldStop = transferMatrixToFieldStop * chiefRay
-            if abs(outputRayAtFieldStop.y) > stopDiameter / 2.0:
-                break  # Last height was the last one to not be blocked
-            else:
-                halfFieldOfView = height
 
-        return halfFieldOfView * 2.0
+        dy = self.precision * 100
+        y = 0.0
+        chiefRay = Ray(y=0, theta=0)
+        wasBlocked = False
+        while abs(dy) > self.precision or not wasBlocked:
+            chiefRay = self.chiefRay(y=y)
+            chiefRayTrace = self.trace(chiefRay)
+            outputChiefRay = chiefRayTrace[-1]
+
+            if outputChiefRay.isBlocked != wasBlocked:
+                dy = -dy/2.0
+            else:
+                dy = dy*1.5 # Don't use 2.0: could bounce forever
+
+            y += dy
+            wasBlocked = outputChiefRay.isBlocked
+            if abs(y) > self.maxHeight and not wasBlocked:
+                return float("+Inf")
+        
+        return chiefRay.y * 2.0
 
     def imageSize(self):
         """ The image size is the object field of view
@@ -1151,7 +1288,6 @@ def installModule():
     os.system('cp Axicon.py "`python -m site --user-site`/"')
     os.system('cp Objectives.py "`python -m site --user-site`/"')
     print('Module ABCD.py, Axicon.py and Objectives.py copied to ', directory)
-
 
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD

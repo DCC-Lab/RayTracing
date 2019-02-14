@@ -34,7 +34,10 @@ class Objective(MatrixGroup):
                     Space(d=workingDistance)]
 
         super(Objective, self).__init__(elements=elements, label=label)
-    
+        
+        self.frontVertex = 0
+        self.backVertex = focusToFocusLength - workingDistance
+
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
         'z':position
