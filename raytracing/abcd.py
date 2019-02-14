@@ -88,7 +88,7 @@ class Ray:
         return not self.isBlocked
 
     @staticmethod
-    def fan(self, y, radianMin, radianMax, N):
+    def fan(y, radianMin, radianMax, N):
         """A list of rays spanning from radianMin to radianMax to be used
         with Matrix.trace() or Matrix.traceMany()
 
