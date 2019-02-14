@@ -3,7 +3,7 @@ This code aims to provide a simple ray tracing module for calculating various pr
 
 The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. I have made no attempts at making high performance code.  Readability and simplicity of usage is the key here. It is a single module with only a few files, and only `matplotlib` as a dependent module.
 
-The module defines `Ray` ,  `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
+The module defines `Ray` ,  `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
 ## Installing
 
@@ -24,7 +24,7 @@ The simplest way to import the package in your own scripts after installing it:
 from raytracing import *
 ```
 
-This will import `Ray` , and several `Matrix` elements such as `Space`, `Lens`, `ThickLens`, `Aperture`, `DielectricInterface`, but also `MatrixGroup` (to group elements together) and `ImagingPath` (to ray trace with an object at the front edge) and a few predefined other such as `Objective` (to create a very thick lens that mimicks an objective).
+This will import `Ray` , and several `Matrix` elements such as `Space`, `Lens`, `ThickLens`, `Aperture`, `DielectricInterface`, but also `MatrixGroup` (to group elements together) and `ImagingPath` (to ray trace with an object at the front edge) and a few predefined other such as `Objective` (to create a very thick lens that mimicks an objective).
 
 You create an `ImagingPath`, which you then populate with optical elements such as Space, Lens or Aperture. You can then adjust the imaging path properties (object height for instance) and display in matplotlib.
 
@@ -107,9 +107,199 @@ class Matrix(builtins.object)
 
 ## Examples
 
-You can run the module directly with `python -m raytracing` or look at the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) directory.
+In the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) director, you can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view. However, you can also run the module directly with `python -m raytracing`, which will run the following code:
 
-You can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view.
+```python
+from .abcd import *
+from .objectives import *
+from .axicon import *
+
+# Demo #1: lens with f=5 cm, infinite diameter
+# An object at z=0 (front edge) is used. It is shown in blue.
+# The image (or any intermediate images) are shown in red.
+# This will use the default objectHeight and fanAngle
+# but they can be changed with:
+# path.objectHeight = 1.0
+# path.fanAngle = 0.5
+# path.fanNumber = 5
+# path.rayNumber = 3
+path = ImagingPath()
+path.label = "Demo #1: lens f = 5cm, infinite diameter"
+path.append(Space(d=10))
+path.append(Lens(f=5))
+path.append(Space(d=10))
+path.display()
+# or
+# path.save("Figure 1.png")
+
+# Demo #2: Two lenses, infinite diameters
+# An object at z=0 (front edge) is used with default
+# properties (see Demo #1)
+path = ImagingPath()
+path.label = "Demo #2: Two lenses, infinite diameters"
+path.append(Space(d=10))
+path.append(Lens(f=5))
+path.append(Space(d=20))
+path.append(Lens(f=5))
+path.append(Space(d=10))
+path.display()
+# or
+#path.save("Figure 2.pdf")
+
+# Demo #3: A finite lens
+# An object at z=0 (front edge) is used with default
+# properties (see Demo #1).
+# Notice the aperture stop (AS) identified at the lens
+# which blocks the cone of light.  There is no field
+# stop to restrict the field of view, which is
+# why we must use the default object and cannot restrict
+# the field of view. Notice how the default rays are blocked.
+# The current defaults are:
+# self.objectHeight = 1.0    # object height (full).
+# self.objectPosition = 0.0  # always at z=0 for now.
+# self.fanAngle = 0.5        # full fan angle for rays
+# self.fanNumber = 9         # number of rays in fan
+# self.rayNumber = 3         # number of points on object
+
+path = ImagingPath()
+path.label = "Demo #3: Finite lens"
+path.append(Space(d=10))
+path.append(Lens(f=5, diameter=2.5))
+path.append(Space(d=3))
+path.append(Space(d=17))
+path.display()
+
+# Demo #4: Aperture behind lens 
+# Notice the aperture stop (AS) identified after the 
+# lens, not at the lens. Again, since there is no field
+# stop, we cannot restrict the object to the field
+# of view because it is infinite
+path = ImagingPath()
+path.label = "Demo #4: Aperture behind lens"
+path.append(Space(d=10))
+path.append(Lens(f=5, diameter=3))
+path.append(Space(d=3))
+path.append(Aperture(diameter=3))
+path.append(Space(d=17))
+path.display()
+
+# Demo #5: Simple microscope system
+# The aperture stop (AS) is at the entrance of the objective 
+# lens, and the tube lens, in this particular microscope, is 
+# the field stop (FS) and limits the field of view.
+# Because the field stop exists, we can use limitObjectToFieldOfView=True
+# when displaying, which will set the objectHeight to the field of view, but
+# will still trace all the rays using our parameters.
+path = ImagingPath()
+path.label = "Demo #5: Simple microscope system"
+path.fanAngle = 0.1        # full fan angle for rays
+path.fanNumber = 5         # number of rays in fan
+path.rayNumber = 5         # number of points on object
+path.append(Space(d=4))
+path.append(Lens(f=4, diameter=0.8, label='Obj'))
+path.append(Space(d=4 + 18))
+path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
+path.append(Space(d=18))
+path.display(limitObjectToFieldOfView=True)
+
+# Demo #6: Simple microscope system, only principal rays
+# The aperture stop (AS) is at the entrance of the objective 
+# lens, and the tube lens, in this particular microscope, is 
+# the field stop (FS) and limits the field of view.
+# Because the field stop exists, we can use limitObjectToFieldOfView=True
+# when displaying, which will set the objectHeight to the field of view. We
+# can also require that only the principal rays are drawn: chief ray
+# marginal ray (or axial ray).
+path = ImagingPath()
+path.label = "Demo #6: Simple microscope system, only principal rays"
+path.append(Space(d=4))
+path.append(Lens(f=4, diameter=0.8, label='Obj'))
+path.append(Space(d=4 + 18))
+path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
+path.append(Space(d=18))
+path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
+
+
+# Demo #7: Focussing through a dielectric slab
+path = ImagingPath()
+path.label = "Demo #7: Focussing through a dielectric slab"
+path.append(Space(d=10))
+path.append(Lens(f=5))
+path.append(Space(d=3))
+path.append(DielectricSlab(n=1.5, thickness=4))
+path.append(Space(d=10))
+path.display()
+
+# Demo #8: Virtual image
+path = ImagingPath()
+path.label = "Demo #8: Virtual image at -2f with object at f/2"
+path.append(Space(d=2.5))
+path.append(Lens(f=5))
+path.append(Space(d=10))
+path.display()
+
+# Demo #9: Infinite telecentric 4f telescope
+path = ImagingPath()
+path.label = "Demo #9: Infinite telecentric 4f telescope"
+path.append(Space(d=5))
+path.append(Lens(f=5))
+path.append(Space(d=10))
+path.append(Lens(f=5))
+path.append(Space(d=5))
+path.display()
+
+# Demo #10: Retrofocus
+# A retrofocus has a back focal length longer than the effective
+# focal length. It comes from a diverging lens followed by a converging
+# lens. We can always obtain the effective focal lengths and the back
+# focal length of a system.
+path = ImagingPath()
+path.fanAngle = 0.05
+path.append(Space(d=20))
+path.append(Lens(f=-10, label='Div'))
+path.append(Space(d=7))
+path.append(Lens(f=10, label='Foc'))
+path.append(Space(d=40))
+(focal,focal) = path.effectiveFocalLengths()
+bfl = path.backFocalLength()
+path.label = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}".format(focal, bfl)
+path.display()
+
+# Demo #11: Thick diverging lens
+path = ImagingPath()
+path.label = "Demo #11: Thick diverging lens"
+path.objectHeight = 20
+path.append(Space(d=50))
+path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
+path.append(Space(d=50))
+path.display(onlyChiefAndMarginalRays=True)
+
+# Demo #12: Thick diverging lens built from individual elements
+path = ImagingPath()
+path.label = "Demo #12: Thick diverging lens built from individual elements"
+path.objectHeight = 20
+path.append(Space(d=50))
+path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
+path.append(Space(d=10, diameter=25, label='Lens'))
+path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
+path.append(Space(d=50))
+path.display(onlyChiefAndMarginalRays=True)
+
+
+# Demo #13, forward and backward conjugates
+# We can obtain the position of the image for any matrix
+# by using forwardConjugate(): it calculates the distance 
+# after the element where the image is, assuming an object 
+# at the front surface.
+M1 = Space(d=10)
+M2 = Lens(f=5)
+M3 = M2*M1
+print(M3.forwardConjugate())
+print(M3.backwardConjugate())
+
+```
+
+
 
 ![Figure1](assets/Figure1.png)
 ![Microscope](assets/Microscope.png)

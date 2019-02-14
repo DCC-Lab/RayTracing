@@ -320,6 +320,13 @@ class Matrix(object):
         """ Any points of interest for this matrix (focal points,
         principal planes etc...)
         """
+
+        # ptsOfInterest = []
+        # if self.frontVertex is not None:
+        #     ptsOfInterest.append({'z': self.frontVertex, 'label': '$V_f$'})
+        # if self.backVertex is not None:
+        #     ptsOfInterest.append({'z': self.backVertex, 'label': '$V_b$'})
+        
         return []
 
     def focalDistances(self):
