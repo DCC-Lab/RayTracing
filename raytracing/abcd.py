@@ -297,7 +297,8 @@ class Matrix(object):
         It can be blocked at the entrance, at the exit, or anywhere in between.
         The aperture diameter for a finite-length element is constant across the length
         of the element. We therefore check before entering the element and after having
-        propagated through the element. If the length is null, the ray is traced in a single step
+        propagated through the element. For now, this will suffice.
+        If the length is null, the ray is traced in a single step
         """
 
         rayTrace = []
