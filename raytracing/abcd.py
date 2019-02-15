@@ -264,7 +264,7 @@ class Matrix(object):
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(rightSideRay.y) > self.apertureDiameter / 2:
+        if abs(outputRay.y) > self.apertureDiameter / 2:
             outputRay.isBlocked = True
         else:
             outputRay.isBlocked = rightSideRay.isBlocked
@@ -1087,7 +1087,7 @@ class ImagingPath(MatrixGroup):
             displayRange = self.objectHeight * 2
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-displayRange / 2, displayRange / 2])
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
         note1 = ""
         note2 = ""
@@ -1113,8 +1113,8 @@ class ImagingPath(MatrixGroup):
                     are not defined.")
             note2 = "Only chief and marginal rays shown"
 
-        axes.text(0.05, 0.1, note1 + "\n" + note2, transform=axes.transAxes,
-                  fontsize=14, verticalalignment='top')
+        axes.text(0.05, 0.15, note1 + "\n" + note2, transform=axes.transAxes,
+                  fontsize=12, verticalalignment='top')
 
         self.drawRayTraces(
             axes,
