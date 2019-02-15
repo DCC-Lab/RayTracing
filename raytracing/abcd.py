@@ -264,7 +264,7 @@ class Matrix(object):
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(rightSideRay.y) > outputRay.apertureDiameter / 2:
+        if abs(rightSideRay.y) > self.apertureDiameter / 2:
             outputRay.isBlocked = True
         else:
             outputRay.isBlocked = rightSideRay.isBlocked
@@ -284,13 +284,31 @@ class Matrix(object):
         elif self.L <= distance:
             return self
         else:
-            raise TypeError("Subclass of non-null physical length must override")
+            raise TypeError("Subclass of non-null physical length must override transferMatrix()")
 
     def transferMatrices(self):
         return [self]
 
     def trace(self, ray):
-        return [self.mul_ray(ray)]
+        """Returns a list of rays (i.e. a ray trace) for the input ray through the matrix.
+        
+        Because we want to manage blockage by apertures, we need to perform a two-step process
+        for elements that have a finite, non-null length: where is the ray blocked exactly?
+        It can be blocked at the entrance, at the exit, or anywhere in between.
+        The aperture diameter for a finite-length element is constant across the length
+        of the element. We therefore check before entering the element and after having
+        propagated through the element. If the length is null, the ray is traced in a single step
+        """
+
+        rayTrace = []
+        if self.L > 0:
+            if ray.y > self.apertureDiameter/2:
+                ray.isBlocked = True
+            rayTrace.append(ray)                            
+
+        rayTrace.append(self.mul_ray(ray))
+
+        return rayTrace
 
     def traceMany(self, inputRays):
         """ Trace each ray from a list from front edge of element to
@@ -783,13 +801,11 @@ class MatrixGroup(Matrix):
         return self.traceMany(inputRays)
 
     def trace(self, inputRay):
-        """ Starting with inputRay, ray trace from first element
-        until after the last element
+        """Trace the input ray from first element until after the last element
 
-        Returns a ray trace (i.e. [Ray()])
-        starting with inputRay, followed by the ray after
-        each element. If an element is composed of sub-elements,
-        the ray will also be traced in several steps.
+        Returns a ray trace (i.e. [Ray()]) starting with inputRay, followed by the ray after
+        each element. If an element is composed of sub-elements, the ray will also be
+        traced in several steps.
         """
         ray = inputRay
         rayTrace = [ray]
