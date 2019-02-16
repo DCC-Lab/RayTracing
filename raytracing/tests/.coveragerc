@@ -2,6 +2,15 @@
 [run]
 branch = True
 
+omit =
+    # omit anything in a .local directory anywhere
+    */.local/*
+    # omit everything in /usr
+    /usr/*
+    # omit this single file
+    utils/tirefire.py
+    tests/*
+
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =
