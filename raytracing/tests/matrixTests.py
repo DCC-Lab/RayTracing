@@ -109,6 +109,44 @@ class TestMatrix(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             m2.transferMatrix(upTo=0.5)
 
+    def testTransferMatrices(self):   
+        m1 = Matrix(A=1, B=2, C=3, D=4)
+        self.assertEqual(m1.transferMatrices(), [m1])
+
+    def testIsImaging(self):
+        m1 = Matrix(A=1, B=0, C=3, D=4)
+        self.assertTrue(m1.isImaging)
+        m2 = Matrix(A=1, B=1, C=3, D=4)
+        self.assertFalse(m2.isImaging)
+
+    def testFiniteForwardConjugate(self):
+        m1 = Lens(f=5)*Space(d=10)
+        (d,m2) = m1.forwardConjugate()
+        self.assertTrue(m2.isImaging)
+        self.assertEqual(d, 10)
+
+        m1 = Space(d=5)*Lens(f=5)*Space(d=10)
+        (d,m2) = m1.forwardConjugate()
+        self.assertTrue(m2.isImaging)
+        self.assertEqual(d, 5)
+
+    def testInfiniteForwardConjugate(self):
+        m1 = Lens(f=5)*Space(d=5)
+        (d,m2) = m1.forwardConjugate()
+        self.assertTrue(m2.isImaging)
+        self.assertEqual(d, float("+inf"))
+
+    def testFiniteBackConjugate(self):
+        m1 = Space(d=10)*Lens(f=5)
+        (d,m2) = m1.backwardConjugate()
+        self.assertTrue(m2.isImaging)
+        self.assertEqual(d, 10)
+
+        m1 = Space(d=10)*Lens(f=5)*Space(d=5)
+        (d,m2) = m1.backwardConjugate()
+        self.assertTrue(m2.isImaging)
+        self.assertEqual(d, 5)
+
 
 
 if __name__ == '__main__':

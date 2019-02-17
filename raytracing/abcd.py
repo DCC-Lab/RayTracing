@@ -453,9 +453,11 @@ class Matrix(object):
         """
 
         if self.D == 0:
-            return (None, None)
-        distance = -self.B / self.D
-        conjugateMatrix = Space(d=distance) * self
+            distance = float("+inf")
+            conjugateMatrix = Space(d=distance) * self
+        else:
+            distance = -self.B / self.D
+            conjugateMatrix = Space(d=distance) * self
         return (distance, conjugateMatrix)
 
     def backwardConjugate(self):
@@ -600,7 +602,7 @@ class Space(Matrix):
 
     def __init__(self, d, diameter=float('+Inf'), label=''):
         super(Space, self).__init__(A=1,
-                                    B=float(d),
+                                    B=d,
                                     C=0,
                                     D=1,
                                     physicalLength=d,
