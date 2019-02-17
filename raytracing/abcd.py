@@ -204,6 +204,10 @@ class Matrix(object):
         self.label = label
         super(Matrix, self).__init__()
 
+    @property
+    def determinant(self):
+        return self.A*self.D - self.B*self.C
+
     def __mul__(self, rightSide):
         """Operator overloading allowing easy to read matrix multiplication
 

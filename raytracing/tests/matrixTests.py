@@ -125,39 +125,53 @@ class TestMatrix(unittest.TestCase):
         (d,m2) = m1.forwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 10)
+        self.assertEqual(m1.determinant, 1)
+        self.assertEqual(m2.determinant, 1)
 
         m1 = Space(d=5)*Lens(f=5)*Space(d=10)
         (d,m2) = m1.forwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 5)
+        self.assertEqual(m2.determinant, 1)
 
     def testInfiniteForwardConjugate(self):
         m1 = Lens(f=5)*Space(d=5)
         (d,m2) = m1.forwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, float("+inf"))
+        self.assertEqual(m1.determinant, 1)
+        self.assertEqual(m2.determinant, 1)
 
     def testFiniteBackConjugate(self):
         m1 = Space(d=10)*Lens(f=5)
         (d,m2) = m1.backwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 10)
+        self.assertEqual(m1.determinant, 1)
+        self.assertEqual(m2.determinant, 1)
 
         m1 = Space(d=10)*Lens(f=5)*Space(d=5)
         (d,m2) = m1.backwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 5)
+        self.assertEqual(m1.determinant, 1)
+        self.assertEqual(m2.determinant, 1)
 
     def testSpaceMatrix(self):
         s = Space(d=10)
         self.assertEqual(s.B, 10)
         self.assertEqual(s.L, 10)
+        self.assertEqual(s.determinant, 1)
+
         s = Space(d=-10)
         self.assertEqual(s.B, -10)
         self.assertEqual(s.L, -10)
+        self.assertEqual(s.determinant, 1)
+
         s = Space(d=10)*Space(d=5)
         self.assertEqual(s.B, 15)
         self.assertEqual(s.L, 15)
+        self.assertEqual(s.determinant, 1)
 
     def testInfiniteSpaceMatrix(self):
         s = Space(d=inf)
@@ -165,6 +179,7 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.B, inf)
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
+        self.assertEqual(s.determinant, 1)
 
     def testInfiniteSpaceMatrixMultiplication(self):
         # This should work, not sure how to deal
@@ -175,19 +190,35 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.B, inf)
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
+        self.assertEqual(s.determinant, 1)
 
         s = Space(d=inf)*Space(d=1)
         self.assertEqual(s.A, 1)
         self.assertEqual(s.B, inf)
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
+        self.assertEqual(s.determinant, 1)
 
         s = Space(d=inf)*Space(d=inf)
         self.assertEqual(s.A, 1)
         self.assertEqual(s.B, inf)
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
+        self.assertEqual(s.determinant, 1)
 
+    def testLensMatrix(self):
+        s = Lens(f=10)
+        self.assertEqual(s.C, -1/10)
+        self.assertEqual(s.determinant, 1)
+
+    def testApertureMatrix(self):
+        s = Aperture(diameter=25)
+        self.assertEqual(s.apertureDiameter, 25)
+        self.assertEqual(s.A, 1)
+        self.assertEqual(s.B, 0)
+        self.assertEqual(s.C, 0)
+        self.assertEqual(s.D, 1)
+        self.assertEqual(s.determinant, 1)
 
 
 if __name__ == '__main__':
