@@ -1201,7 +1201,7 @@ class ImagingPath(MatrixGroup):
             (distance, conjugate) = transferMatrix.forwardConjugate()
             if distance is not None:
                 imagePosition = transferMatrix.L + distance
-                if imagePosition != 0:
+                if imagePosition != 0 and conjugate is not None:
                     magnification = conjugate.A
                     axes.arrow(
                         imagePosition,
