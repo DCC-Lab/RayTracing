@@ -162,16 +162,22 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.B, 10)
         self.assertEqual(s.L, 10)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
 
         s = Space(d=-10)
         self.assertEqual(s.B, -10)
         self.assertEqual(s.L, -10)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
 
         s = Space(d=10)*Space(d=5)
         self.assertEqual(s.B, 15)
         self.assertEqual(s.L, 15)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
 
     def testInfiniteSpaceMatrix(self):
         s = Space(d=inf)
@@ -180,6 +186,8 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
 
     def testInfiniteSpaceMatrixMultiplication(self):
         # This should work, not sure how to deal
@@ -191,6 +199,8 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
 
         s = Space(d=inf)*Space(d=1)
         self.assertEqual(s.A, 1)
@@ -198,6 +208,8 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
 
         s = Space(d=inf)*Space(d=inf)
         self.assertEqual(s.A, 1)
@@ -205,11 +217,15 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
 
     def testLensMatrix(self):
         s = Lens(f=10)
         self.assertEqual(s.C, -1/10)
         self.assertEqual(s.determinant, 1)
+        self.assertEqual(s.frontVertex, 0)
+        self.assertEqual(s.backVertex, 0)
 
     def testApertureMatrix(self):
         s = Aperture(diameter=25)
@@ -219,6 +235,30 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(s.C, 0)
         self.assertEqual(s.D, 1)
         self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
+
+    def testDielectricInterface(self):
+        m = DielectricInterface(n1=1, n2=1.5, R=10)
+        self.assertEqual(m.determinant, 1/1.5)
+        self.assertEqual(m.frontVertex, 0)
+        self.assertEqual(m.backVertex, 0)
+
+    def testLensFocalLengths(self):
+        m = Lens(f=5)
+        self.assertEqual(m.effectiveFocalLengths(), (5,5))
+        self.assertEqual(m.backFocalLength(), 5)
+        self.assertEqual(m.frontFocalLength(), 5)
+
+    def testThickLensFocalLengths(self):
+        m = ThickLens(n=1.55, R1=100, R2=-100, thickness=3)
+        print(m.effectiveFocalLengths())
+        print(m.principalPlanePositions(z=0))
+
+        self.assertEqual(m.backFocalLength(), 5)
+        self.assertEqual(m.frontFocalLength(), 5)
+
+
 
 
 if __name__ == '__main__':
