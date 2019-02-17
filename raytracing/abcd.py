@@ -95,8 +95,10 @@ class Ray:
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
-        else:
+        elif N == 1:
             deltaRadian = 0.0
+        else:
+            raise ValueError("N must be 1 or larger.")
 
         rays = []
         for i in range(N):
@@ -112,12 +114,17 @@ class Ray:
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
-        else:
+        elif N == 1:
             deltaRadian = 0.0
+        else:
+            raise ValueError("N must be 1 or larger.")
+
         if M >= 2:
             deltaHeight = (yMax - yMin) / (M - 1)
-        else:
+        elif M == 1:
             deltaHeight = 0.0
+        else:
+            raise ValueError("M must be 1 or larger.")
 
         rays = []
         for j in range(M):
@@ -168,11 +175,11 @@ class Matrix(object):
 
     def __init__(
             self,
-            A,
-            B,
-            C,
-            D,
-            physicalLength=0,
+            A:float=1,
+            B:float=0,
+            C:float=0,
+            D:float=1,
+            physicalLength:float=0,
             frontVertex=None,
             backVertex=None,
             apertureDiameter=float('+Inf'),
