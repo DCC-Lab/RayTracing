@@ -88,8 +88,28 @@ class TestMatrix(unittest.TestCase):
     def testApertureDiameter(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=2)
         self.assertTrue(m1.hasFiniteApertureDiameter())
+        self.assertEqual(m1.largestDiameter(), 2.0)
         m2 = Matrix(A=1, B=2, C=3, D=4)
         self.assertFalse(m2.hasFiniteApertureDiameter())
+        self.assertEqual(m2.largestDiameter(), float("+inf"))
+
+    def testTransferMatrix(self):   
+        m1 = Matrix(A=1, B=2, C=3, D=4)
+        # Null length returns self
+        self.assertEqual(m1.transferMatrix(), m1)
+
+        # Length == 1 returns self if upTo >= 1
+        m2 = Matrix(A=1, B=2, C=3, D=4, physicalLength=1)
+        self.assertEqual(m2.transferMatrix(upTo=1), m2)
+        self.assertEqual(m2.transferMatrix(upTo=2), m2)
+        
+        # Length == 1 raises exception if upTo<1: can't do partial
+        # Subclasses Space() and DielectricSlab() can handle this
+        # (not the generic matrix).
+        with self.assertRaises(Exception) as context:
+            m2.transferMatrix(upTo=0.5)
+
+
 
 if __name__ == '__main__':
     unittest.main()
