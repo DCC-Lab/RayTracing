@@ -4,6 +4,7 @@ from raytracing import *
 
 inf = float("+inf")
 
+
 class TestMatrix(unittest.TestCase):
     def testMatrix(self):
         m = Matrix()
@@ -146,6 +147,46 @@ class TestMatrix(unittest.TestCase):
         (d,m2) = m1.backwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 5)
+
+    def testSpaceMatrix(self):
+        s = Space(d=10)
+        self.assertEqual(s.B, 10)
+        self.assertEqual(s.L, 10)
+        s = Space(d=-10)
+        self.assertEqual(s.B, -10)
+        self.assertEqual(s.L, -10)
+        s = Space(d=10)*Space(d=5)
+        self.assertEqual(s.B, 15)
+        self.assertEqual(s.L, 15)
+
+    def testInfiniteSpaceMatrix(self):
+        s = Space(d=inf)
+        self.assertEqual(s.A, 1)
+        self.assertEqual(s.B, inf)
+        self.assertEqual(s.C, 0)
+        self.assertEqual(s.D, 1)
+
+    def testInfiniteSpaceMatrixMultiplication(self):
+        # This should work, not sure how to deal
+        # with this failed test: C is identically
+        # zero and 0 * d->inf == 0 (I think).
+        s = Space(d=1)*Space(d=inf)
+        self.assertEqual(s.A, 1)
+        self.assertEqual(s.B, inf)
+        self.assertEqual(s.C, 0)
+        self.assertEqual(s.D, 1)
+
+        s = Space(d=inf)*Space(d=1)
+        self.assertEqual(s.A, 1)
+        self.assertEqual(s.B, inf)
+        self.assertEqual(s.C, 0)
+        self.assertEqual(s.D, 1)
+
+        s = Space(d=inf)*Space(d=inf)
+        self.assertEqual(s.A, 1)
+        self.assertEqual(s.B, inf)
+        self.assertEqual(s.C, 0)
+        self.assertEqual(s.D, 1)
 
 
 

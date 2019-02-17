@@ -454,10 +454,11 @@ class Matrix(object):
 
         if self.D == 0:
             distance = float("+inf")
-            conjugateMatrix = Space(d=distance) * self
+            conjugateMatrix = None # Unable to compute with inf
         else:
             distance = -self.B / self.D
             conjugateMatrix = Space(d=distance) * self
+
         return (distance, conjugateMatrix)
 
     def backwardConjugate(self):
@@ -602,7 +603,7 @@ class Space(Matrix):
 
     def __init__(self, d, diameter=float('+Inf'), label=''):
         super(Space, self).__init__(A=1,
-                                    B=d,
+                                    B=float(d),
                                     C=0,
                                     D=1,
                                     physicalLength=d,
@@ -621,7 +622,6 @@ class Space(Matrix):
             return Space(distance)
         else:
             return self
-
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
