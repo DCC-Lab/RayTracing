@@ -95,8 +95,10 @@ class Ray:
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
-        else:
+        elif N == 1:
             deltaRadian = 0.0
+        else:
+            raise ValueError("N must be 1 or larger.")
 
         rays = []
         for i in range(N):
@@ -112,12 +114,17 @@ class Ray:
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
-        else:
+        elif N == 1:
             deltaRadian = 0.0
+        else:
+            raise ValueError("N must be 1 or larger.")
+
         if M >= 2:
             deltaHeight = (yMax - yMin) / (M - 1)
-        else:
+        elif M == 1:
             deltaHeight = 0.0
+        else:
+            raise ValueError("M must be 1 or larger.")
 
         rays = []
         for j in range(M):
@@ -168,11 +175,11 @@ class Matrix(object):
 
     def __init__(
             self,
-            A,
-            B,
-            C,
-            D,
-            physicalLength=0,
+            A:float=1,
+            B:float=0,
+            C:float=0,
+            D:float=1,
+            physicalLength:float=0,
             frontVertex=None,
             backVertex=None,
             apertureDiameter=float('+Inf'),
@@ -196,6 +203,10 @@ class Matrix(object):
 
         self.label = label
         super(Matrix, self).__init__()
+
+    @property
+    def determinant(self):
+        return self.A*self.D - self.B*self.C
 
     def __mul__(self, rightSide):
         """Operator overloading allowing easy to read matrix multiplication
@@ -446,9 +457,12 @@ class Matrix(object):
         """
 
         if self.D == 0:
-            return (None, None)
-        distance = -self.B / self.D
-        conjugateMatrix = Space(d=distance) * self
+            distance = float("+inf")
+            conjugateMatrix = None # Unable to compute with inf
+        else:
+            distance = -self.B / self.D
+            conjugateMatrix = Space(d=distance) * self
+
         return (distance, conjugateMatrix)
 
     def backwardConjugate(self):
@@ -612,7 +626,6 @@ class Space(Matrix):
             return Space(distance)
         else:
             return self
-
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
