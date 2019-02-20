@@ -1,6 +1,7 @@
 from .abcd import *
 from .objectives import *
 from .axicon import *
+from .thorlabs import *
 
 path = ImagingPath()
 path.label = "Demo #1: lens f = 5cm, infinite diameter"
@@ -272,3 +273,35 @@ M2 = Lens(f=5)
 M3 = M2*M1
 print(M3.forwardConjugate())
 print(M3.backwardConjugate())
+
+
+obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
+print("Focal distances: ", obj.focalDistances())
+print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
+print("Focal spots positions: ", obj.focusPositions(z=0))
+print("Distance between entrance and exit planes: ", obj.L)
+
+path1 = ImagingPath()
+path1.fanAngle = 0.0
+path1.fanNumber = 1
+path1.rayNumber = 15
+path1.objectHeight = 10.0
+path1.label = "Path with objective"
+path1.append(Space(180))
+path1.append(obj)
+path1.append(Space(10))
+path1.display()
+
+path2 = ImagingPath()
+path2.fanAngle = 0.0
+path2.fanNumber = 1
+path2.rayNumber = 15
+path2.objectHeight = 10.0
+path2.label = "Path with LUMPLFL40X"
+path2.append(Space(180))
+path2.append(LUMPLFL40X())
+path2.append(Space(10))
+path2.display()
+
+print(AC254_050_A())
+print(AC254_045_A())

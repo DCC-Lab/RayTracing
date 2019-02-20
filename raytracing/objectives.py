@@ -1,10 +1,6 @@
-try:
-    from .abcd import *
-    from math import  *
-    import matplotlib.transforms as transforms
-
-except ImportError:
-    raise ImportError('You must have ABCD.py installed. run "python ABCD.py install"')
+from .abcd import *
+from math import  *
+import matplotlib.transforms as transforms
 
 class Objective(MatrixGroup):
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, label=''):
