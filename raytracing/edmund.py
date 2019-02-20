@@ -2,8 +2,8 @@ from .abcd import *
 from math import  *
 import matplotlib.transforms as transforms
 
-class ThorlabsAchromatLens(MatrixGroup):
-    """ From https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 
+class EdmundAchromatLens(MatrixGroup):
+    """ From https://www.edmundoptics.com/f/VIS-0-Coated-Achromatic-Lenses/13135/
 
     """
 
@@ -23,7 +23,7 @@ class ThorlabsAchromatLens(MatrixGroup):
         elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
         elements.append(Space(d=tc2))
         elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
-        super(ThorlabsAchromatLens, self).__init__(elements=elements)
+        super(EdmundAchromatLens, self).__init__(elements=elements)
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
@@ -33,13 +33,13 @@ class ThorlabsAchromatLens(MatrixGroup):
                 expected {1:.4}".format(f, fa))
 
 
-class AC75_100(ThorlabsAchromatLens):
+class AC75_100(EdmundAchromatLens):
     # Stock number #33-921 
     def __init__(self):
         super(AC75_100,self).__init__(fa=100.00,fb=78.32, R1=64.67,R2=-64.67, R3=-343.59, 
                                     tc1=26.00, tc2=12.7, n1=1.6700, n2=1.8467, diameter=75)
 
-class AC75_200(ThorlabsAchromatLens):
+class AC75_200(EdmundAchromatLens):
     # Stock number #88-593  
     def __init__(self):
         super(AC75_200,self).__init__(fa=200.00,fb=187.69, R1=118.81, R2=-96.37, R3=-288.97, 
