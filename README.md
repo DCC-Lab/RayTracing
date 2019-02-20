@@ -107,7 +107,7 @@ class Matrix(builtins.object)
 
 ## Examples
 
-In the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) director, you can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view. However, you can also run the module directly with `python -m raytracing`, which will run the following code (`__main__.py`):
+In the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) directory, you can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view. However, you can also run the module directly with `python -m raytracing`, which will run the following code (`__main__.py`) to give you a flavour of what is possible:
 
 ```python
 from .abcd import *
@@ -392,6 +392,16 @@ print(M3.backwardConjugate())
 ![Figure1](assets/Figure1.png)
 ![Microscope](assets/Microscope.png)
 ![Illumination](assets/Illumination.png)
+
+## Known limitations
+
+There are no known bugs in the actual calculations, but there are bugs or limitations in the display:
+
+1. It is not easy to put several labels on a graph without any overlap.  I am still working on it.
+2. It is also not easy to figure out what "the right size" should be for an arrow head, the font, the position of a label, the size of the "ticks" on the aperture.
+3. Labelling focal points with appropriate secondary labels should be possible, maybe a superscript?
+4. I would like to have a mode where an element is drawn with its prinicpal planes, nodal planes, focal planes, etc...
+5. The y-scale is not always set appropriately when the elements have infinite diameters: the rays will go beyond the element drawn on the figure.
 
 ## Licence
 

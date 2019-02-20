@@ -88,15 +88,17 @@ class Ray:
         return not self.isBlocked
 
     @staticmethod
-    def fan(self, y, radianMin, radianMax, N):
+    def fan(y, radianMin, radianMax, N):
         """A list of rays spanning from radianMin to radianMax to be used
         with Matrix.trace() or Matrix.traceMany()
 
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
-        else:
+        elif N == 1:
             deltaRadian = 0.0
+        else:
+            raise ValueError("N must be 1 or larger.")
 
         rays = []
         for i in range(N):
@@ -112,12 +114,17 @@ class Ray:
         """
         if N >= 2:
             deltaRadian = (radianMax - radianMin) / (N - 1)
-        else:
+        elif N == 1:
             deltaRadian = 0.0
+        else:
+            raise ValueError("N must be 1 or larger.")
+
         if M >= 2:
             deltaHeight = (yMax - yMin) / (M - 1)
-        else:
+        elif M == 1:
             deltaHeight = 0.0
+        else:
+            raise ValueError("M must be 1 or larger.")
 
         rays = []
         for j in range(M):
@@ -168,11 +175,11 @@ class Matrix(object):
 
     def __init__(
             self,
-            A,
-            B,
-            C,
-            D,
-            physicalLength=0,
+            A:float=1,
+            B:float=0,
+            C:float=0,
+            D:float=1,
+            physicalLength:float=0,
             frontVertex=None,
             backVertex=None,
             apertureDiameter=float('+Inf'),
@@ -196,6 +203,10 @@ class Matrix(object):
 
         self.label = label
         super(Matrix, self).__init__()
+
+    @property
+    def determinant(self):
+        return self.A*self.D - self.B*self.C
 
     def __mul__(self, rightSide):
         """Operator overloading allowing easy to read matrix multiplication
@@ -264,7 +275,7 @@ class Matrix(object):
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(rightSideRay.y) > outputRay.apertureDiameter / 2:
+        if abs(outputRay.y) > self.apertureDiameter / 2:
             outputRay.isBlocked = True
         else:
             outputRay.isBlocked = rightSideRay.isBlocked
@@ -284,13 +295,32 @@ class Matrix(object):
         elif self.L <= distance:
             return self
         else:
-            raise TypeError("Subclass of non-null physical length must override")
+            raise TypeError("Subclass of non-null physical length must override transferMatrix()")
 
     def transferMatrices(self):
         return [self]
 
     def trace(self, ray):
-        return [self.mul_ray(ray)]
+        """Returns a list of rays (i.e. a ray trace) for the input ray through the matrix.
+        
+        Because we want to manage blockage by apertures, we need to perform a two-step process
+        for elements that have a finite, non-null length: where is the ray blocked exactly?
+        It can be blocked at the entrance, at the exit, or anywhere in between.
+        The aperture diameter for a finite-length element is constant across the length
+        of the element. We therefore check before entering the element and after having
+        propagated through the element. For now, this will suffice.
+        If the length is null, the ray is traced in a single step
+        """
+
+        rayTrace = []
+        if self.L > 0:
+            if ray.y > self.apertureDiameter/2:
+                ray.isBlocked = True
+            rayTrace.append(ray)                            
+
+        rayTrace.append(self.mul_ray(ray))
+
+        return rayTrace
 
     def traceMany(self, inputRays):
         """ Trace each ray from a list from front edge of element to
@@ -427,9 +457,12 @@ class Matrix(object):
         """
 
         if self.D == 0:
-            return (None, None)
-        distance = -self.B / self.D
-        conjugateMatrix = Space(d=distance) * self
+            distance = float("+inf")
+            conjugateMatrix = None # Unable to compute with inf
+        else:
+            distance = -self.B / self.D
+            conjugateMatrix = Space(d=distance) * self
+
         return (distance, conjugateMatrix)
 
     def backwardConjugate(self):
@@ -593,7 +626,6 @@ class Space(Matrix):
             return Space(distance)
         else:
             return self
-
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
@@ -783,13 +815,11 @@ class MatrixGroup(Matrix):
         return self.traceMany(inputRays)
 
     def trace(self, inputRay):
-        """ Starting with inputRay, ray trace from first element
-        until after the last element
+        """Trace the input ray from first element until after the last element
 
-        Returns a ray trace (i.e. [Ray()])
-        starting with inputRay, followed by the ray after
-        each element. If an element is composed of sub-elements,
-        the ray will also be traced in several steps.
+        Returns a ray trace (i.e. [Ray()]) starting with inputRay, followed by the ray after
+        each element. If an element is composed of sub-elements, the ray will also be
+        traced in several steps.
         """
         ray = inputRay
         rayTrace = [ray]
@@ -1070,7 +1100,7 @@ class ImagingPath(MatrixGroup):
             displayRange = self.objectHeight * 2
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-displayRange / 2, displayRange / 2])
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
         note1 = ""
         note2 = ""
@@ -1096,8 +1126,8 @@ class ImagingPath(MatrixGroup):
                     are not defined.")
             note2 = "Only chief and marginal rays shown"
 
-        axes.text(0.05, 0.1, note1 + "\n" + note2, transform=axes.transAxes,
-                  fontsize=14, verticalalignment='top')
+        axes.text(0.05, 0.15, note1 + "\n" + note2, transform=axes.transAxes,
+                  fontsize=12, verticalalignment='top')
 
         self.drawRayTraces(
             axes,
@@ -1171,7 +1201,7 @@ class ImagingPath(MatrixGroup):
             (distance, conjugate) = transferMatrix.forwardConjugate()
             if distance is not None:
                 imagePosition = transferMatrix.L + distance
-                if imagePosition != 0:
+                if imagePosition != 0 and conjugate is not None:
                     magnification = conjugate.A
                     axes.arrow(
                         imagePosition,
