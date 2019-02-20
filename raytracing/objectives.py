@@ -114,6 +114,19 @@ class XLUMPlanFLN20X(Objective):
                                          workingDistance=2,
                                          label='XLUMPlanFLN20X')
 
+class MVPlapo2XC(Objective):
+    """ Olympus MVPlapo2XC 0.5 NA with large 
+    back aperture.
+
+    """
+    def __init__(self):
+        super(MVPlapo2XC, self).__init__(f=90/2,
+                                         NA=0.5,
+                                         focusToFocusLength=137,
+                                         backAperture=48,
+                                         workingDistance=20,
+                                         label='MVPlapo2XC')
+
 if __name__ == "__main__":
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
     print("Focal distances: ", obj.focalDistances())
@@ -142,3 +155,14 @@ if __name__ == "__main__":
     path2.append(LUMPLFL40X())
     path2.append(Space(10))
     path2.display()
+
+    path3 = OpticalPath()
+    path3.fanAngle = 0.0
+    path3.fanNumber = 1
+    path3.rayNumber = 15
+    path3.objectHeight = 10.0
+    path3.label = "Path with MVPlapo2XC"
+    path3.append(Space(180))
+    path3.append(MVPlapo2XC())
+    path3.append(Space(10))
+    path3.display()
