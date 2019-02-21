@@ -1,7 +1,4 @@
 from raytracing import *
-import raytracing.thorlabs as th
-import raytracing.edmundoptics as eo
-import raytracing.olympus as olymp
 
 lens = Lens(f=5)
 path = MatrixGroup()
@@ -21,14 +18,14 @@ print("V2", path.backVertex)
 
 
 
-obj = olymp.LUMPLFL40X()
+obj = olympus.LUMPlanFL40X()
 print("EFL", obj.effectiveFocalLengths())
 print("PP1 PP2" , obj.principalPlanePositions(z=0))
 print("BFL", obj.backFocalLength())
 print("FFL", obj.frontFocalLength())
 
 
-lens = eo.PN_33_921()
+lens = edmundoptics.PN_33_921()
 print("EFL", lens.effectiveFocalLengths())
 print("PP1 PP2" , lens.principalPlanePositions(z=0))
 print("BFL", lens.backFocalLength())

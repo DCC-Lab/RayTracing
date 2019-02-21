@@ -1,19 +1,20 @@
 from .abcd import *
 from .lens import *
 
-class LUMPLFL40X(Objective):
+class LUMPlanFL40X(Objective):
     """ Olympus 40x immersion objective
 
     Immersion not considered at this point.
     """
 
     def __init__(self):
-        super(LUMPLFL40X, self).__init__(f=180/40,
+        super(LUMPlanFL40X, self).__init__(f=180/40,
                                          NA=0.8,
                                          focusToFocusLength=40,
                                          backAperture=7,
                                          workingDistance=2,
-                                         label='LUMPLFL40X')
+                                         label='LUMPLFL40X',
+                                         url="https://www.edmundoptics.com/p/olympus-lumplfln-40xw-objective/3901/")
 
 class XLUMPlanFLN20X(Objective):
     """ Olympus XLUMPlanFLN20X (Super 20X) 1.0 NA with large 
@@ -27,7 +28,8 @@ class XLUMPlanFLN20X(Objective):
                                          focusToFocusLength=80,
                                          backAperture=22,
                                          workingDistance=2,
-                                         label='XLUMPlanFLN20X')
+                                         label='XLUMPlanFLN20X',
+                                         url="https://www.olympus-lifescience.com/en/objectives/xlumplfln-w/")
 
 class MVPlapo2XC(Objective):
     """ Olympus MVPlapo2XC 0.5 NA with large 
@@ -40,7 +42,8 @@ class MVPlapo2XC(Objective):
                                          focusToFocusLength=137,
                                          backAperture=48,
                                          workingDistance=20,
-                                         label='MVPlapo2XC')
+                                         label='MVPlapo2XC',
+                                         url="")
 
 if __name__ == "__main__":
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
