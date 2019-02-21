@@ -1,4 +1,5 @@
 from raytracing import *
+from raytracing.edmund import *
 
 lens = Lens(f=5)
 path = MatrixGroup()
@@ -24,3 +25,9 @@ print("PP1 PP2" , obj.principalPlanePositions(z=0))
 print("BFL", obj.backFocalLength())
 print("FFL", obj.frontFocalLength())
 
+
+lens = EO_33_921()
+print("EFL", lens.effectiveFocalLengths())
+print("PP1 PP2" , lens.principalPlanePositions(z=0))
+print("BFL", lens.backFocalLength())
+print("FFL", lens.frontFocalLength())
