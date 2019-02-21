@@ -40,7 +40,7 @@ class AchromatDoubletLens(MatrixGroup):
 
 
 class Objective(MatrixGroup):
-    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
         """ General microscope objective, approximately correct.
 
         We model the objective as an ideal lens with back focal point at the entrance
@@ -61,7 +61,9 @@ class Objective(MatrixGroup):
         self.workingDistance = workingDistance
         self.frontAperture = 1.2 * (2.0 * NA * workingDistance)  # 20% larger
         self.isFlipped = False
-
+        self.url = url
+        self.label = label
+        
         elements = [Aperture(diameter=backAperture),
                     Space(d=f),
                     Matrix(1,0,0,1, physicalLength=focusToFocusLength-2*f),
