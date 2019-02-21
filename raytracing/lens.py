@@ -1,13 +1,62 @@
-try:
-    from .abcd import *
-    from math import  *
-    import matplotlib.transforms as transforms
+from .abcd import *
+from math import  *
+import matplotlib.transforms as transforms
 
-except ImportError:
-    raise ImportError('You must have ABCD.py installed. run "python ABCD.py install"')
+"""
+General classes for making special lenses: achromat doublet lenses
+and objective lenses. Each of these remain an approximation of the
+actual optical element: for instance, achromats are approximated
+and do not exhibit chromatic aberrations because there is a single
+index of refraction (at the design wavelength). Similarly, objectives
+are approximated to have the same physical characteristics but do not
+exhibit field curvature, aberrations and all.
+
+Each class is the base class for specific manufacturers class:
+for instance, thorlabs achromats or edmund optics achromats both 
+derive from AchromatDoubletLens(). Olympus objectives derive from
+the Objective() class.
+
+"""
+
+class AchromatDoubletLens(MatrixGroup):
+    """ 
+    General Achromat doublet lens with an effective focal length of fa, back focal
+    length of fb
+
+    Nomenclature from Thorlabs:
+    https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 
+
+    """
+
+    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, url=None, label=''):
+        self.fa = fa
+        self.fb = fb
+        self.R1 = R1
+        self.R2 = R2
+        self.R3 = R3
+        self.tc1 = tc1
+        self.tc1 = tc2
+        self.apertureDiameter = diameter
+        self.url = url
+
+        elements = []
+        elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
+        elements.append(Space(d=tc1))
+        elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
+        elements.append(Space(d=tc2))
+        elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
+        super(AchromatDoubletLens, self).__init__(elements=elements)
+
+        # After having built the lens, we confirm that the expected effective
+        # focal length (fa) is actually within 1% of the calculated focal length
+        (f, f) = self.focalDistances()
+        if abs((f-fa)/fa) > 0.01:
+            print("Obtained focal distance {0:.4} is not within 1%% of\
+                expected {1:.4}".format(f, fa))
+
 
 class Objective(MatrixGroup):
-    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
         """ General microscope objective, approximately correct.
 
         We model the objective as an ideal lens with back focal point at the entrance
@@ -28,6 +77,8 @@ class Objective(MatrixGroup):
         self.workingDistance = workingDistance
         self.frontAperture = 1.2 * (2.0 * NA * workingDistance)  # 20% larger
         self.isFlipped = False
+        self.url = url
+        self.label = label
 
         elements = [Aperture(diameter=backAperture),
                     Space(d=f),
@@ -85,60 +136,3 @@ class Objective(MatrixGroup):
             element.drawAperture(z, axes)
             z += L
 
-
-class LUMPLFL40X(Objective):
-    """ Olympus 40x immersion objective
-
-    Immersion not considered at this point.
-    """
-
-    def __init__(self):
-        super(LUMPLFL40X, self).__init__(f=180/40,
-                                         NA=0.8,
-                                         focusToFocusLength=40,
-                                         backAperture=7,
-                                         workingDistance=2,
-                                         label='LUMPLFL40X')
-
-class XLUMPlanFLN20X(Objective):
-    """ Olympus XLUMPlanFLN20X (Super 20X) 1.0 NA with large 
-    back aperture.
-
-    Immersion not considered at this point.
-    """
-    def __init__(self):
-        super(XLUMPlanFLN20X, self).__init__(f=180/20,
-                                         NA=1.0,
-                                         focusToFocusLength=80,
-                                         backAperture=22,
-                                         workingDistance=2,
-                                         label='XLUMPlanFLN20X')
-
-if __name__ == "__main__":
-    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
-    print("Focal distances: ", obj.focalDistances())
-    print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
-    print("Focal spots positions: ", obj.focusPositions(z=0))
-    print("Distance between entrance and exit planes: ", obj.L)
-
-    path1 = OpticalPath()
-    path1.fanAngle = 0.0
-    path1.fanNumber = 1
-    path1.rayNumber = 15
-    path1.objectHeight = 10.0
-    path1.label = "Path with objective"
-    path1.append(Space(180))
-    path1.append(obj)
-    path1.append(Space(10))
-    path1.display()
-
-    path2 = OpticalPath()
-    path2.fanAngle = 0.0
-    path2.fanNumber = 1
-    path2.rayNumber = 15
-    path2.objectHeight = 10.0
-    path2.label = "Path with LUMPLFL40X"
-    path2.append(Space(180))
-    path2.append(LUMPLFL40X())
-    path2.append(Space(10))
-    path2.display()

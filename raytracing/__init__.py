@@ -2,10 +2,13 @@
 # because it is simpler for everyone
 
 from .abcd import *
-from .objectives import *
+from .lens import *
 from .axicon import *
+import raytracing.thorlabs as thorlabs
+import raytracing.eo as eo
+import raytracing.olympus as olympus
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 print("Main documentation at https://github.com/DCC-Lab/RayTracing")
 
