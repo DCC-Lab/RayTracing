@@ -25,7 +25,7 @@ print("BFL", obj.backFocalLength())
 print("FFL", obj.frontFocalLength())
 
 
-lens = edmundoptics.PN_33_921()
+lens = eo.PN_33_921()
 print("EFL", lens.effectiveFocalLengths())
 print("PP1 PP2" , lens.principalPlanePositions(z=0))
 print("BFL", lens.backFocalLength())

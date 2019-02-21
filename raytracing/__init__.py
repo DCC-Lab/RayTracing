@@ -5,7 +5,7 @@ from .abcd import *
 from .lens import *
 from .axicon import *
 import raytracing.thorlabs
-import raytracing.edmundoptics 
+import raytracing.eo 
 import raytracing.olympus
 
 __version__ = "1.0.7"
