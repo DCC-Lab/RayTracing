@@ -2,6 +2,22 @@ from .abcd import *
 from math import  *
 import matplotlib.transforms as transforms
 
+"""
+General classes for making special lenses: achromat doublet lenses
+and objective lenses. Each of these remain an approximation of the
+actual optical element: for instance, achromats are approximated
+and do not exhibit chromatic aberrations because there is a single
+index of refraction (at the design wavelength). Similarly, objectives
+are approximated to have the same physical characteristics but do not
+exhibit field curvature, aberrations and all.
+
+Each class is the base class for specific manufacturers class:
+for instance, thorlabs achromats or edmund optics achromats both 
+derive from AchromatDoubletLens(). Olympus objectives derive from
+the Objective() class.
+
+"""
+
 class AchromatDoubletLens(MatrixGroup):
     """ 
     General Achromat doublet lens with an effective focal length of fa, back focal
@@ -63,7 +79,7 @@ class Objective(MatrixGroup):
         self.isFlipped = False
         self.url = url
         self.label = label
-        
+
         elements = [Aperture(diameter=backAperture),
                     Space(d=f),
                     Matrix(1,0,0,1, physicalLength=focusToFocusLength-2*f),

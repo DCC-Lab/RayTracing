@@ -1,7 +1,9 @@
 from .abcd import *
-from .objectives import *
+from .lens import *
 from .axicon import *
-from .thorlabs import *
+import thorlabs as th
+import edmundoptics as eo
+import olympus as olymp
 
 path = ImagingPath()
 path.label = "Demo #1: lens f = 5cm, infinite diameter"

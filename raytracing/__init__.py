@@ -2,7 +2,7 @@
 # because it is simpler for everyone
 
 from .abcd import *
-from .objectives import *
+from .lens import *
 from .axicon import *
 
 __version__ = "1.0.6"
