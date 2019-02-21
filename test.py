@@ -1,5 +1,4 @@
 from raytracing import *
-from raytracing.edmund import *
 import raytracing.thorlabs as th
 import raytracing.edmundoptics as eo
 import raytracing.olympus as olymp
