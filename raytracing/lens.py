@@ -54,6 +54,31 @@ class AchromatDoubletLens(MatrixGroup):
             print("Obtained focal distance {0:.4} is not within 1%% of\
                 expected {1:.4}".format(f, fa))
 
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw a faint blue box with slightly curved interfaces
+        of length 'thickness' starting at 'z'.
+
+        """
+        halfHeight = self.largestDiameter()/2.0
+        apexHeight = self.L * 0.2
+        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
+        backVertex = z + self.L + apexHeight * (-self.R3/abs(self.R3))
+
+        Path = mpath.Path
+        p = patches.PathPatch(
+            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
+                  (z+self.L, halfHeight), (backVertex, 0),
+                  (z+self.L, -halfHeight), (z, -halfHeight)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            facecolor=[0.85, 0.95, 0.95],
+            edgecolor = [0.5, 0.5, 0.5],
+            fill=True,
+            transform=axes.transData)
+
+        axes.add_patch(p)
+        self.drawAperture(z, axes)
 
 class Objective(MatrixGroup):
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):

@@ -258,8 +258,14 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m.backFocalLength(), 5)
         self.assertEqual(m.frontFocalLength(), 5)
 
+    def testOlympusLens(self):
+        l = olympus.LUMPlanFL40X()
 
+    def testThorlabsLens(self):
+        l = thorlabs.AC254_045_A()
 
+    def testEdmundLens(self):
+        l = eo.PN_33_921()
 
 if __name__ == '__main__':
     unittest.main()
