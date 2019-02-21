@@ -488,7 +488,7 @@ class Matrix(object):
 
         Default is a black box of appropriate length.
         """
-        halfHeight = self.displayHalfHeight()
+        halfHeight = self.largestDiameter()
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color='k', fill=False,
                               transform=axes.transData, clip_on=True)
@@ -697,6 +697,8 @@ class ThickLens(Matrix):
             transform=axes.transData)
 
         axes.add_patch(p)
+        if showLabels:
+            self.drawLabels(z,axes)
 
 
 class DielectricSlab(ThickLens):

@@ -35,8 +35,7 @@ class AchromatDoubletLens(MatrixGroup):
         self.R2 = R2
         self.R3 = R3
         self.tc1 = tc1
-        self.tc1 = tc2
-        self.apertureDiameter = diameter
+        self.tc2 = tc2
         self.url = url
 
         elements = []
@@ -45,7 +44,12 @@ class AchromatDoubletLens(MatrixGroup):
         elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
         elements.append(Space(d=tc2))
         elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
-        super(AchromatDoubletLens, self).__init__(elements=elements)
+        super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
+        self.apertureDiameter = diameter
+
+        if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
+            print("Obtained focal distance {0:.4} is not within 1%% of\
+                expected {1:.4}".format(f, fa))
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
@@ -59,16 +63,19 @@ class AchromatDoubletLens(MatrixGroup):
         of length 'thickness' starting at 'z'.
 
         """
+        tc1 = self.tc1
+
         halfHeight = self.largestDiameter()/2.0
         apexHeight = self.L * 0.2
         frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
+        middleVertex = z + self.tc1 + tc1/3 * (-self.R2/abs(self.R2))
         backVertex = z + self.L + apexHeight * (-self.R3/abs(self.R3))
 
         Path = mpath.Path
-        p = patches.PathPatch(
+        p1 = patches.PathPatch(
             Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
-                  (z+self.L, halfHeight), (backVertex, 0),
-                  (z+self.L, -halfHeight), (z, -halfHeight)],
+                  (z+tc1, halfHeight), (middleVertex, 0),
+                  (z+tc1, -halfHeight), (z, -halfHeight)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
@@ -76,8 +83,23 @@ class AchromatDoubletLens(MatrixGroup):
             edgecolor = [0.5, 0.5, 0.5],
             fill=True,
             transform=axes.transData)
+        p2 = patches.PathPatch(
+            Path([(z+tc1, -halfHeight), (middleVertex, 0), (z+tc1, halfHeight),
+                  (z+self.L, halfHeight), (backVertex, 0),
+                  (z+self.L, -halfHeight), (z, -halfHeight)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            facecolor=[0.80, 0.90, 0.95],
+            edgecolor = [0.5, 0.5, 0.5],
+            fill=True,
+            transform=axes.transData)
 
-        axes.add_patch(p)
+        axes.add_patch(p1)
+        axes.add_patch(p2)
+        if showLabels:
+            self.drawLabels(z,axes)
+
         self.drawAperture(z, axes)
 
 class Objective(MatrixGroup):
@@ -103,7 +125,6 @@ class Objective(MatrixGroup):
         self.frontAperture = 1.2 * (2.0 * NA * workingDistance)  # 20% larger
         self.isFlipped = False
         self.url = url
-        self.label = label
 
         elements = [Aperture(diameter=backAperture),
                     Space(d=f),
