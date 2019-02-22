@@ -126,12 +126,12 @@ class Objective(MatrixGroup):
         self.isFlipped = False
         self.url = url
 
-        elements = [Aperture(diameter=backAperture),
+        elements = [Aperture(diameter=backAperture,label="frontVertex"),
                     Space(d=f),
                     Matrix(1,0,0,1, physicalLength=focusToFocusLength-2*f),
                     Lens(f=f),
                     Space(d=f-workingDistance),
-                    Aperture(diameter=self.frontAperture),
+                    Aperture(diameter=self.frontAperture,label="backVertex"),
                     Space(d=workingDistance)]
 
         super(Objective, self).__init__(elements=elements, label=label)
@@ -152,6 +152,13 @@ class Objective(MatrixGroup):
     def flipOrientation(self):
         self.isFlipped = not self.isFlipped
         self.elements.reverse()
+        z = 0
+        for element in self.elements:
+            if element.label == "frontVertex":
+                self.frontVertex = z
+            elif element.label == "backVertex":
+                self.backVertex = z
+            z = z + element.L
 
     def drawAt(self, z, axes, showLabels=False):
         L = self.focusToFocusLength
@@ -178,7 +185,8 @@ class Objective(MatrixGroup):
 
         self.drawCardinalPoints(z, axes)
 
+
         for element in self.elements:
             element.drawAperture(z, axes)
-            z += L
+            z += element.L
 
