@@ -517,25 +517,19 @@ class Matrix(object):
 
             center = z + self.L/2
             if self.L == 0:
-                width = 0.5
+                width = 3
             else:
                 width = self.L/2
 
             axes.add_patch(patches.Polygon(
                            [[center - width, halfHeight],
-                            [center + width, halfHeight],
-                            [center, halfHeight],
-                            [center, halfHeight + width],
-                            [center, halfHeight]],
+                            [center + width, halfHeight]],
                            linewidth=3,
                            closed=False,
                            color='0.7'))
             axes.add_patch(patches.Polygon(
                            [[center - width, -halfHeight],
-                            [center + width, -halfHeight],
-                            [center, -halfHeight],
-                            [center, -halfHeight - width],
-                            [center, -halfHeight]],
+                            [center + width, -halfHeight]],
                            linewidth=3,
                            closed=False,
                            color='0.7'))
@@ -843,13 +837,13 @@ class MatrixGroup(Matrix):
         """ Largest finite diameter in all elements """
 
         maxDiameter = 0.0
-        for element in self.elements:
-            diameter = element.largestDiameter()
-            if diameter == float('+Inf'):
-                diameter = element.displayHalfHeight() * 2
-
-            if diameter > maxDiameter:
-                maxDiameter = diameter
+        if self.hasFiniteApertureDiameter():
+            for element in self.elements:
+                diameter = element.largestDiameter()
+                if diameter != float('+Inf') and diameter > maxDiameter:
+                    maxDiameter = diameter
+        else:
+            diameter = element.displayHalfHeight() * 2
 
         return maxDiameter
 
