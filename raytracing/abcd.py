@@ -502,13 +502,13 @@ class Matrix(object):
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
 
-        Labels are drawn 30% above the display height
+        Labels are drawn 50% above the display height
         """
         halfHeight = self.displayHalfHeight()
         center = z + self.L / 2.0
         axes.annotate(self.label, xy=(center, 0.0),
-                     xytext=(center, halfHeight * 1.3),
-                     fontsize=12, xycoords='data', ha='center',
+                     xytext=(center, halfHeight * 1.5),
+                     fontsize=8, xycoords='data', ha='center',
                      va='bottom')
 
     def drawAperture(self, z, axes):
@@ -1097,12 +1097,12 @@ class ImagingPath(MatrixGroup):
             self, axes,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False):
-        displayRange = 1.4 * self.largestDiameter()
+        displayRange = 2 * self.largestDiameter()
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
+        axes.set_ylim([-displayRange /2 * 1.2, displayRange / 2 * 1.2])
 
         note1 = ""
         note2 = ""
@@ -1241,7 +1241,7 @@ class ImagingPath(MatrixGroup):
         halfHeight = self.largestDiameter()/2
         for zStr, label in labels.items():
             z = float(zStr)
-            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.25),
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
                          xycoords='data', fontsize=12,
                          ha='center', va='bottom')
 
