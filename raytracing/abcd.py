@@ -94,7 +94,7 @@ class Ray:
 
         """
         if N >= 2:
-            deltaRadian = (radianMax - radianMin) / (N - 1)
+            deltaRadian = float(radianMax - radianMin) / (N - 1)
         elif N == 1:
             deltaRadian = 0.0
         else:
@@ -102,7 +102,7 @@ class Ray:
 
         rays = []
         for i in range(N):
-            theta = radianMin + i * deltaRadian
+            theta = radianMin + float(i) * deltaRadian
             rays.append(Ray(y, theta, z=0))
 
         return rays
@@ -113,14 +113,14 @@ class Ray:
         radianMax to be used with Matrix.trace() or Matrix.traceMany()
         """
         if N >= 2:
-            deltaRadian = (radianMax - radianMin) / (N - 1)
+            deltaRadian = float(radianMax - radianMin) / (N - 1)
         elif N == 1:
             deltaRadian = 0.0
         else:
             raise ValueError("N must be 1 or larger.")
 
         if M >= 2:
-            deltaHeight = (yMax - yMin) / (M - 1)
+            deltaHeight = float(yMax - yMin) / (M - 1)
         elif M == 1:
             deltaHeight = 0.0
         else:
@@ -129,8 +129,8 @@ class Ray:
         rays = []
         for j in range(M):
             for i in range(N):
-                theta = radianMin + i * deltaRadian
-                y = yMin + j * deltaHeight
+                theta = radianMin + float(i) * deltaRadian
+                y = yMin + float(j) * deltaHeight
                 rays.append(Ray(y, theta, z=0))
 
         return rays
@@ -843,7 +843,7 @@ class MatrixGroup(Matrix):
                 if diameter != float('+Inf') and diameter > maxDiameter:
                     maxDiameter = diameter
         else:
-            diameter = element.displayHalfHeight() * 2
+            maxDiameter = self.elements[0].displayHalfHeight() * 2
 
         return maxDiameter
 
@@ -1090,7 +1090,8 @@ class ImagingPath(MatrixGroup):
     def createRayTracePlot(
             self, axes,
             limitObjectToFieldOfView=False,
-            onlyChiefAndMarginalRays=False):
+            onlyChiefAndMarginalRays=False,
+            removeBlockedRaysCompletely=False):
         displayRange = 2 * self.largestDiameter()
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
@@ -1128,7 +1129,7 @@ class ImagingPath(MatrixGroup):
         self.drawRayTraces(
             axes,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-            removeBlockedRaysCompletely=False)
+            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
         if self.showObject:
             self.drawObject(axes)
 
@@ -1142,7 +1143,7 @@ class ImagingPath(MatrixGroup):
         return axes
 
     def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, comments=None):
+                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):
         
         if comments is not None:
             fig, (axes, axesComments) = plt.subplots(2,1,figsize=(10, 7))
@@ -1154,14 +1155,17 @@ class ImagingPath(MatrixGroup):
 
         self.createRayTracePlot(axes=axes,
             limitObjectToFieldOfView=limitObjectToFieldOfView,
-            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
+            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         plt.ioff()
         plt.show()
 
     def save(self, filepath,
             limitObjectToFieldOfView=False,
-            onlyChiefAndMarginalRays=False, comments=None):
+            onlyChiefAndMarginalRays=False, 
+            removeBlockedRaysCompletely=False,
+            comments=None):
         if comments is not None:
             fig, (axes, axesComments) = plt.subplots(2,1,figsize=(10, 7))
             axesComments.axis('off')
@@ -1172,7 +1176,8 @@ class ImagingPath(MatrixGroup):
 
         self.createRayTracePlot(axes=axes,
             limitObjectToFieldOfView=limitObjectToFieldOfView,
-            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
+            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         fig.savefig(filepath, dpi=600)
 
@@ -1274,6 +1279,7 @@ class ImagingPath(MatrixGroup):
             chiefRay = self.chiefRay(y=halfHeight - 0.01)
             (marginalUp, marginalDown) = self.marginalRays(y=0)
             rayGroup = (chiefRay, marginalUp)
+            linewidth = 1.5
         else:
             halfAngle = self.fanAngle / 2.0
             halfHeight = self.objectHeight / 2.0
@@ -1284,6 +1290,7 @@ class ImagingPath(MatrixGroup):
                 radianMin=-halfAngle,
                 radianMax=halfAngle,
                 N=self.fanNumber)
+            linewidth = 0.5
 
         manyRayTraces = self.traceMany(rayGroup)
 
@@ -1297,7 +1304,7 @@ class ImagingPath(MatrixGroup):
             binSize = 2.0 * halfHeight / (len(color) - 1)
             colorIndex = int(
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-            axes.plot(x, y, color[colorIndex], linewidth=0.4)
+            axes.plot(x, y, color[colorIndex], linewidth=linewidth)
 
     def rearrangeRayTraceForPlotting(
             self,
