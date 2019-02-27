@@ -1,4 +1,5 @@
 from .abcd import *
+from .materials import *
 from math import  *
 import matplotlib.transforms as transforms
 
@@ -21,7 +22,10 @@ the Objective() class.
 class AchromatDoubletLens(MatrixGroup):
     """ 
     General Achromat doublet lens with an effective focal length of fa, back focal
-    length of fb
+    length of fb.  The values fa and fb are used to validate the final focal lengths
+    and back focal lengths that are obtained from the combination of elements.
+    Most manufacturer's specifiy 1% tolerance, so if fa is more than 1% different
+    from the final focal length, a warning is raised.
 
     Nomenclature from Thorlabs:
     https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 

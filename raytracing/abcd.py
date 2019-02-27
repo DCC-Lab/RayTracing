@@ -517,7 +517,7 @@ class Matrix(object):
 
             center = z + self.L/2
             if self.L == 0:
-                width = 3
+                width = 1
             else:
                 width = self.L/2
 
