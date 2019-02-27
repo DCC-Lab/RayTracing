@@ -5,11 +5,11 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 
 The module defines `Ray` ,  `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
-## Installing
+## Installing and upgrading
 
 There are several ways to install the module:
 
-1. Simplest: `pip install raytracing`
+1. Simplest: `pip install raytracing` or `pip install --upgrade raytracing`
 2. If you download the [source](https://pypi.org/project/raytracing/) of the module, then you can type: `python setup.py install`
 3. From GitHub, you can get the latest version (including bugs) and then type `python setup.py install`
 4. If you are completely lost, copying the folder `raytracing` (the one that includes `__init__.py`) from the source file into the same directory as your own script will work.
