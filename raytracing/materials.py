@@ -14,6 +14,15 @@ class BK7:
         n=(1+1.03961212/(1-0.00600069867/x**2)+0.231792344/(1-0.0200179144/x**2)+1.01046945/(1-103.560653/x**2))**.5
         return n
 
+class SF2:
+    @classmethod
+    def n(self, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(1+1.40301821/(1-0.0105795466/x**2)+0.231767504/(1-0.0493226978/x**2)+0.939056586/(1-112.405955/x**2))**.5
+        return n
+        
 class SF5:
     @classmethod
     def n(self, wavelength):
@@ -22,6 +31,25 @@ class SF5:
         x = wavelength
         n=(1+1.52481889/(1-0.011254756/x**2)+0.187085527/(1-0.0588995392/x**2)+1.42729015/(1-129.141675/x**2))**.5
         return n
+
+class SF6:
+    @classmethod
+    def n(self, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(1+1.77931763/(1-0.0133714182/x**2)+0.338149866/(1-0.0617533621/x**2)+2.08734474/(1-174.01759/x**2))**.5
+        return n
+
+class N_BAK4:
+    @classmethod
+    def n(self, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(1+1.28834642/(1-0.00779980626/x**2)+0.132817724/(1-0.0315631177/x**2)+0.945395373/(1-105.965875/x**2))**.5
+        return n
+
 
 class SF10:
     """ https://refractiveindex.info/tmp/data/glass/schott/N-SF10.html
