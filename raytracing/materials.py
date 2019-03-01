@@ -185,6 +185,18 @@ class N_SSK5(Material):
         n=(1+1.59222659/(1-0.00920284626/x**2)+0.103520774/(1-0.0423530072/x**2)+1.05174016/(1-106.927374/x**2))**.5
         return n
 
+class E_FD10(Material):
+    """ https://refractiveindex.info/tmp/data/glass/hoya/E-FD10.html """
+    @classmethod
+    def n(self, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(2.881518-0.013228312*x**2+0.03145559*x**-2+0.0026851666*x**-4-0.00022577544*x**-6+2.4693268e-05*x**-8)**.5
+        return n
+
+
+
 class FusedSilica(Material):
     """ https://refractiveindex.info/tmp/data/main/SiO2/Malitson.html """
     @classmethod

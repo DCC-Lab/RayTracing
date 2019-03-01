@@ -56,14 +56,14 @@ class AchromatDoubletLens(MatrixGroup):
         self.apertureDiameter = diameter
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
-            print("Obtained focal distance {0:.4} is not within 1%% of\
-                expected {1:.4}".format(f, fa))
+            print("Obtained thickness {0:.4} is not within 2%% of\
+                expected {1:.4}".format(self.tc1 + self.tc2, self.L))
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
         (f, f) = self.focalDistances()
         if abs((f-fa)/fa) > 0.01:
-            print("Obtained focal distance {0:.4} is not within 1%% of\
+            raise ValueError("Obtained focal distance {0:.4} is not within 1%% of\
                 expected {1:.4}".format(f, fa))
 
     def drawAt(self, z, axes, showLabels=False):
