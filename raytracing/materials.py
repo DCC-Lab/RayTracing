@@ -1,4 +1,6 @@
-""" Everything here comes from the excellent site http://refractiveindex.info.
+""" Materials and their indices of refraction
+
+Everything here comes from the excellent site http://refractiveindex.info.
 The link with the Python formulas is in the Data section, [Expressions for n]
 """
 
@@ -119,8 +121,7 @@ class E_BAF11(Material):
         return n
 
 class N_BAK1(Material):
-    """
-
+    """ https://refractiveindex.info/tmp/data/glass/schott/N-BAK1.html
     """
     @classmethod
     def n(self, wavelength):
@@ -131,6 +132,7 @@ class N_BAK1(Material):
         return n
 
 class N_BAK4(Material):
+    """ https://refractiveindex.info/tmp/data/glass/schott/N-BAK4.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -140,7 +142,7 @@ class N_BAK4(Material):
         return n
 
 class FK51A(Material):
-
+    """ https://refractiveindex.info/tmp/data/glass/schott/N-FK51A.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
