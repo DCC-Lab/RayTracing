@@ -9,7 +9,7 @@ The module defines `Ray` ,  `Matrix`, `MatrixGroup` and `ImagingPath` as the mai
 
 There are several ways to install the module:
 
-1. Simplest: `pip install raytracing` or `pip install --upgrade raytracing`
+1. Simplest: `pip install raytracing` or `pip install --upgrade raytracing`
 2. If you download the [source](https://pypi.org/project/raytracing/) of the module, then you can type: `python setup.py install`
 3. From GitHub, you can get the latest version (including bugs) and then type `python setup.py install`
 4. If you are completely lost, copying the folder `raytracing` (the one that includes `__init__.py`) from the source file into the same directory as your own script will work.
@@ -40,15 +40,21 @@ In your code, (such as the `test.py` or `demo.py`  files included in the [source
 from raytracing import *
 
 path = ImagingPath()
-path.append(Space(d=10))
-path.append(Lens(f=5, diameter=2.5))
-path.append(Space(d=12))
-path.append(Lens(f=7))
-path.append(Space(d=10))
+path.append(Space(d=100))
+path.append(Lens(f=50, diameter=25))
+path.append(Space(d=120))
+path.append(Lens(f=70))
+path.append(Space(d=100))
 path.display()
 ```
 
-You may obtain help by typing (interactively): `help(Matrix)`, `help(Ray)`,`help(ImagingPath)`
+## Documentation
+
+Documentation is sparse at best.   You may obtain help by 
+
+1. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
+2. look at the examples with `python -m raytracing` 
+3. simply look at the code.
 
 ```python
 python

@@ -1,4 +1,5 @@
 from .abcd import *
+from .materials import *
 from math import  *
 import matplotlib.transforms as transforms
 
@@ -21,14 +22,17 @@ the Objective() class.
 class AchromatDoubletLens(MatrixGroup):
     """ 
     General Achromat doublet lens with an effective focal length of fa, back focal
-    length of fb
+    length of fb.  The values fa and fb are used to validate the final focal lengths
+    and back focal lengths that are obtained from the combination of elements.
+    Most manufacturer's specifiy 1% tolerance, so if fa is more than 1% different
+    from the final focal length, a warning is raised.
 
     Nomenclature from Thorlabs:
     https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 
 
     """
 
-    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, url=None, label=''):
+    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -36,6 +40,10 @@ class AchromatDoubletLens(MatrixGroup):
         self.R3 = R3
         self.tc1 = tc1
         self.tc2 = tc2
+        self.n1 = n1
+        self.n2 = n2
+        self.mat1 = mat1
+        self.mat2 = mat2
         self.url = url
 
         elements = []
@@ -48,14 +56,14 @@ class AchromatDoubletLens(MatrixGroup):
         self.apertureDiameter = diameter
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
-            print("Obtained focal distance {0:.4} is not within 1%% of\
-                expected {1:.4}".format(f, fa))
+            print("Obtained thickness {0:.4} is not within 2%% of\
+                expected {1:.4}".format(self.tc1 + self.tc2, self.L))
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
         (f, f) = self.focalDistances()
         if abs((f-fa)/fa) > 0.01:
-            print("Obtained focal distance {0:.4} is not within 1%% of\
+            raise ValueError("Obtained focal distance {0:.4} is not within 1%% of\
                 expected {1:.4}".format(f, fa))
 
     def drawAt(self, z, axes, showLabels=False):
