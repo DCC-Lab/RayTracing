@@ -12,13 +12,13 @@ class AC254_050_A(AchromatDoubletLens):
 class AC254_045_A(AchromatDoubletLens):
     def __init__(self):
         super(AC254_045_A,self).__init__(fa=45.0,fb=40.2, R1=31.2, R2=-25.90, R3=-130.6, 
-                                    tc1=7, tc2=2.0, n1=N_BAF10.n(0.5876), n2=N_SF6.n(0.5876), diameter=25.4,
+                                    tc1=7, tc2=2.0, n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-045-A")
 
 class AC254_030_A(AchromatDoubletLens):
     def __init__(self):
         super(AC254_030_A,self).__init__(fa=30.0,fb=22.9, R1=20.9, R2=-16.7, R3=-79.8, 
-                                    tc1=12, tc2=2.0, n1=N_BAF10.n(0.5876), n2=N_SF6.n(0.5876), diameter=25.4,
+                                    tc1=12, tc2=2.0, n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-030-A")
