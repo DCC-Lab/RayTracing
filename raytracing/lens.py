@@ -32,7 +32,7 @@ class AchromatDoubletLens(MatrixGroup):
 
     """
 
-    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, url=None, label=''):
+    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -40,6 +40,10 @@ class AchromatDoubletLens(MatrixGroup):
         self.R3 = R3
         self.tc1 = tc1
         self.tc2 = tc2
+        self.n1 = n1
+        self.n2 = n2
+        self.mat1 = mat1
+        self.mat2 = mat2
         self.url = url
 
         elements = []
