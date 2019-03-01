@@ -40,15 +40,21 @@ In your code, (such as the `test.py` or `demo.py`  files included in the [source
 from raytracing import *
 
 path = ImagingPath()
-path.append(Space(d=10))
-path.append(Lens(f=5, diameter=2.5))
-path.append(Space(d=12))
-path.append(Lens(f=7))
-path.append(Space(d=10))
+path.append(Space(d=100))
+path.append(Lens(f=50, diameter=25))
+path.append(Space(d=120))
+path.append(Lens(f=70))
+path.append(Space(d=100))
 path.display()
 ```
 
-You may obtain help by typing (interactively): `help(Matrix)`, `help(Ray)`,`help(ImagingPath)`
+## Documentation
+
+Documentation is sparse at best.   You may obtain help by 
+
+1. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
+2. look at the examples with `python -m raytracing` 
+3. simply look at the code.
 
 ```python
 python
