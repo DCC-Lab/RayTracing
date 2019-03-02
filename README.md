@@ -51,13 +51,13 @@ path.display()
 Documentation is sparse at best.   You may obtain help by:
 
 1. Reading an automatically generated documentation from the code (not that good-looking, but at least it is *some* documentation):
-   1. [Core:](./docs/raytracing.abcd.html) `Ray`, `Matrix`, `MatrixGroup` and `ImagingPath`
-   2. [Optical elements:](./docs/raytracing.abcd.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
-   3. [Specialty lenses:](./docs/raytracing.lens.html) Defines a general achromat and objective lens
-   4. [Thorlabs lenses:](./docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs
-   5. [Edmund Optics lenses:](./docs/raytracing.eo.html) Achromat doublet lenses from Edmund Optics
-   6. [Olympus objectives:](./docs/raytracing.olympus.html) A few objectives from Olympus.
-   7. [Glasses:](./docs/raytracing.materials.html) A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
+   1. [Core:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.abcd.html) `Ray`, `Matrix`, `MatrixGroup` and `ImagingPath`
+   2. [Optical elements:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.abcd.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
+   3. [Specialty lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.lens.html) Defines a general achromat and objective lens
+   4. [Thorlabs lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs
+   5. [Edmund Optics lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.eo.html) Achromat doublet lenses from Edmund Optics
+   6. [Olympus objectives:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.olympus.html) A few objectives from Olympus.
+   7. [Glasses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.materials.html) A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
 2. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
 3. look at the examples with `python -m raytracing` 
 4. simply look at the code.
