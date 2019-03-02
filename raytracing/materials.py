@@ -11,7 +11,7 @@ class Material:
 
 
 class N_BK7(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-BK7.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BK7.html
     """
     @classmethod
     def n(self, wavelength):
@@ -23,7 +23,7 @@ class N_BK7(Material):
         return n
 
 class N_SF2(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-SF2.html """
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF2.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -33,7 +33,7 @@ class N_SF2(Material):
         return n
 
 class SF2(Material):
-    """  https://refractiveindex.info/tmp/data/glass/schott/SF2.html """
+    """  All data from https://refractiveindex.info/tmp/data/glass/schott/SF2.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -43,7 +43,7 @@ class SF2(Material):
         return n
 
 class SF5(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/SF5.html """
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/SF5.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -53,7 +53,7 @@ class SF5(Material):
         return n
         
 class N_SF5(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-SF5.html """
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF5.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -63,7 +63,7 @@ class N_SF5(Material):
         return n
 
 class N_SF6HT(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-SF6HT.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF6HT.html
     """
     @classmethod
     def n(self, wavelength):
@@ -74,7 +74,7 @@ class N_SF6HT(Material):
         return n
 
 class N_SF10(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-SF10.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF10.html
     """
 
     @classmethod
@@ -86,7 +86,7 @@ class N_SF10(Material):
         return n
 
 class N_SF11(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-SF11.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF11.html
     """
     @classmethod
     def n(self, wavelength):
@@ -97,7 +97,7 @@ class N_SF11(Material):
         return n
 
 class N_BAF10(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-BAF10.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BAF10.html
 
     """
     @classmethod
@@ -109,7 +109,7 @@ class N_BAF10(Material):
         return n
 
 class E_BAF11(Material):
-    """ https://refractiveindex.info/tmp/data/glass/hikari/E-BAF11.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/hikari/E-BAF11.html
 
     """
     @classmethod
@@ -121,7 +121,7 @@ class E_BAF11(Material):
         return n
 
 class N_BAK1(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-BAK1.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BAK1.html
     """
     @classmethod
     def n(self, wavelength):
@@ -132,7 +132,7 @@ class N_BAK1(Material):
         return n
 
 class N_BAK4(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-BAK4.html """
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BAK4.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -142,7 +142,7 @@ class N_BAK4(Material):
         return n
 
 class FK51A(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-FK51A.html """
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-FK51A.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -152,7 +152,7 @@ class FK51A(Material):
         return n
 
 class LAFN7(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/LAFN7.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/LAFN7.html
     """
 
     @classmethod
@@ -165,7 +165,7 @@ class LAFN7(Material):
 
 
 class N_LASF9(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-LASF9.html
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-LASF9.html
     """
 
     @classmethod
@@ -177,7 +177,7 @@ class N_LASF9(Material):
         return n
 
 class N_SSK5(Material):
-    """ https://refractiveindex.info/tmp/data/glass/schott/N-SSK5.html """
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SSK5.html """
 
     @classmethod
     def n(self, wavelength):
@@ -188,7 +188,7 @@ class N_SSK5(Material):
         return n
 
 class E_FD10(Material):
-    """ https://refractiveindex.info/tmp/data/glass/hoya/E-FD10.html """
+    """ All data from https://refractiveindex.info/tmp/data/glass/hoya/E-FD10.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:
@@ -200,7 +200,7 @@ class E_FD10(Material):
 
 
 class FusedSilica(Material):
-    """ https://refractiveindex.info/tmp/data/main/SiO2/Malitson.html """
+    """ All data from https://refractiveindex.info/tmp/data/main/SiO2/Malitson.html """
     @classmethod
     def n(self, wavelength):
         if wavelength > 10 or wavelength < 0.01:

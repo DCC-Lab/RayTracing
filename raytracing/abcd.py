@@ -289,6 +289,13 @@ class Matrix(object):
         return self.apertureDiameter != float("+Inf")
 
     def transferMatrix(self, upTo=float('+Inf')):
+        """ The Matrix() that corresponds to propagation from the edge
+        of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is 
+        provided, the transfer matrix will be from the front edge to the back edge.
+        If the element has a null thickness, the matrix representing the element
+        is returned.
+        """
+
         distance = upTo
         if self.L == 0:
             return self
@@ -298,6 +305,12 @@ class Matrix(object):
             raise TypeError("Subclass of non-null physical length must override transferMatrix()")
 
     def transferMatrices(self):
+        """ The list of Matrix() that corresponds to the propagation through 
+        this element (or group). For a Matrix(), it simply returns a list 
+        with a single element [self].
+        For a MatrixGroup(), it returns the transferMatrices for 
+        each individual element and appends each element to a list for this group."""
+
         return [self]
 
     def trace(self, ray):
@@ -360,6 +373,8 @@ class Matrix(object):
         return []
 
     def focalDistances(self):
+        """ Synonym of effectiveFocalLengths() """
+
         return self.effectiveFocalLengths()
 
     def effectiveFocalLengths(self):
@@ -512,6 +527,10 @@ class Matrix(object):
                      va='bottom')
 
     def drawAperture(self, z, axes):
+        """ Draw the aperture size for this element.  Any element may 
+        have a finite aperture size, so this function is general for all elements.
+        """
+
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0
 
@@ -615,6 +634,8 @@ class Space(Matrix):
         return
 
     def transferMatrix(self, upTo=float('+Inf')):
+        """ Returns a Matrix() corresponding to a partial propagation
+        if the requested distance is smaller than the length of this element"""
         distance = upTo
         if distance < self.L:
             return Space(distance)
@@ -790,6 +811,12 @@ class MatrixGroup(Matrix):
         return transferMatrix
 
     def transferMatrices(self):
+        """ The list of Matrix() that corresponds to the propagation through 
+        this element (or group). For a Matrix(), it simply returns a list 
+        with a single element [self].
+        For a MatrixGroup(), it returns the transferMatrices for 
+        each individual element and appends them to a list for this group."""
+
         transferMatrices = []
         for element in self.elements:
             elementTransferMatrices = element.transferMatrices()
@@ -797,6 +824,7 @@ class MatrixGroup(Matrix):
         return transferMatrices
 
     def propagate(self, inputRay):
+        """ Deprecated function: use trace() """
         if not warningPrinted:
             print("propagate() was renamed trace().")
             warningPrinted = True
@@ -804,6 +832,7 @@ class MatrixGroup(Matrix):
         return self.trace(inputRay)
 
     def propagateMany(self, inputRays):
+        """ Deprecated function: use traceMany() """
         if not warningPrinted:
             print("propagateMany() was renamed traceMany().")
             warningPrinted = True
@@ -848,6 +877,7 @@ class MatrixGroup(Matrix):
         return maxDiameter
 
     def drawAt(self, z, axes, showLabels=True):
+        """ Draw each element of this group """
         for element in self.elements:
             element.drawAt(z, axes)
             element.drawAperture(z, axes)
@@ -1092,6 +1122,18 @@ class ImagingPath(MatrixGroup):
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False,
             removeBlockedRaysCompletely=False):
+        """ Create a matplotlib plot to draw the rays and the elements.
+            
+        Three optional parameters:
+            limitObjectToFieldOfView=False, to use the calculated field of view
+            instead of the objectHeight
+
+            onlyChiefAndMarginalRays=False, to only show principal rays
+
+            removeBlockedRaysCompletely=False to remove rays that are blocked.
+
+         """
+
         displayRange = 2 * self.largestDiameter()
         if displayRange == float('+Inf'):
             displayRange = self.objectHeight * 2
@@ -1144,7 +1186,11 @@ class ImagingPath(MatrixGroup):
 
     def display(self, limitObjectToFieldOfView=False,
                 onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):
-        
+        """ Display the optical system and trace the rays. If comments are included
+        they will be displayed on a graph in the bottom half of the plot.
+
+        """
+
         if comments is not None:
             fig, (axes, axesComments) = plt.subplots(2,1,figsize=(10, 7))
             axesComments.axis('off')
@@ -1182,6 +1228,7 @@ class ImagingPath(MatrixGroup):
         fig.savefig(filepath, dpi=600)
 
     def drawObject(self, axes):
+        """ Draw the object as defined by objectPosition, objectHeight """
         axes.arrow(
             self.objectPosition,
             -self.objectHeight / 2,
@@ -1195,6 +1242,9 @@ class ImagingPath(MatrixGroup):
             length_includes_head=True)
 
     def drawImages(self, axes):
+        """ Draw all images (real and virtual) of the object defined by 
+        objectPosition, objectHeight """
+
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
         matrices = self.transferMatrices()
         for element in matrices:
@@ -1223,7 +1273,7 @@ class ImagingPath(MatrixGroup):
 
         AS and FS are drawn at 110% of the largest diameter
         """
-        labels = {}  # Regroup labels at same z
+        labels = {}  # Gather labels at same z
         zElement = 0
         for element in self.elements:
             pointsOfInterest = element.pointsOfInterest(zElement)
@@ -1267,11 +1317,16 @@ class ImagingPath(MatrixGroup):
                          va='bottom')
 
     def drawOpticalElements(self, z, axes):
+        """ Deprecated. Use drawAt() """
         print("drawOpticalElements() was renamed drawAt()")
         self.drawAt(z,axes)
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):
+        """ Draw all ray traces corresponding to either 
+        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber) 
+        2. the principal rays (chief and marginal) """
+        
         color = ['b', 'r', 'g']
 
         if onlyChiefAndMarginalRays:

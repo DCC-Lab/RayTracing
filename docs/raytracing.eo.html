@@ -1,0 +1,549 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module raytracing.eo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="raytracing.html"><font color="#ffffff">raytracing</font></a>.eo</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/dccote/GitHub/RayTracing/raytracing/eo.py">/Users/dccote/GitHub/RayTracing/raytracing/eo.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="math.html">math</a><br>
+<a href="matplotlib.path.html">matplotlib.path</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<a href="matplotlib.patches.html">matplotlib.patches</a><br>
+</td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+<a href="subprocess.html">subprocess</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="matplotlib.transforms.html">matplotlib.transforms</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>(<a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="raytracing.eo.html#PN_33_921">PN_33_921</a>
+</font></dt><dt><font face="helvetica, arial"><a href="raytracing.eo.html#PN_88_593">PN_88_593</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PN_33_921">class <strong>PN_33_921</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
+length&nbsp;of&nbsp;fb.&nbsp;&nbsp;The&nbsp;values&nbsp;fa&nbsp;and&nbsp;fb&nbsp;are&nbsp;used&nbsp;to&nbsp;validate&nbsp;the&nbsp;final&nbsp;focal&nbsp;lengths<br>
+and&nbsp;back&nbsp;focal&nbsp;lengths&nbsp;that&nbsp;are&nbsp;obtained&nbsp;from&nbsp;the&nbsp;combination&nbsp;of&nbsp;elements.<br>
+Most&nbsp;manufacturer's&nbsp;specifiy&nbsp;1%&nbsp;tolerance,&nbsp;so&nbsp;if&nbsp;fa&nbsp;is&nbsp;more&nbsp;than&nbsp;1%&nbsp;different<br>
+from&nbsp;the&nbsp;final&nbsp;focal&nbsp;length,&nbsp;a&nbsp;warning&nbsp;is&nbsp;raised.<br>
+&nbsp;<br>
+Nomenclature&nbsp;from&nbsp;Thorlabs:<br>
+https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="raytracing.eo.html#PN_33_921">PN_33_921</a></dd>
+<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
+<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="PN_33_921-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+<dl><dt><a name="PN_33_921-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;a&nbsp;faint&nbsp;blue&nbsp;box&nbsp;with&nbsp;slightly&nbsp;curved&nbsp;interfaces<br>
+of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+<dl><dt><a name="PN_33_921-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-propagate"><strong>propagate</strong></a>(self, inputRay)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#PN_33_921-trace">trace</a>()</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-propagateMany"><strong>propagateMany</strong></a>(self, inputRays)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#PN_33_921-traceMany">traceMany</a>()</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-trace"><strong>trace</strong></a>(self, inputRay)</dt><dd><tt>Trace&nbsp;the&nbsp;input&nbsp;ray&nbsp;from&nbsp;first&nbsp;element&nbsp;until&nbsp;after&nbsp;the&nbsp;last&nbsp;element<br>
+&nbsp;<br>
+Returns&nbsp;a&nbsp;ray&nbsp;trace&nbsp;(i.e.&nbsp;[Ray()])&nbsp;starting&nbsp;with&nbsp;inputRay,&nbsp;followed&nbsp;by&nbsp;the&nbsp;ray&nbsp;after<br>
+each&nbsp;element.&nbsp;If&nbsp;an&nbsp;element&nbsp;is&nbsp;composed&nbsp;of&nbsp;sub-elements,&nbsp;the&nbsp;ray&nbsp;will&nbsp;also&nbsp;be<br>
+traced&nbsp;in&nbsp;several&nbsp;steps.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-transferMatrices"><strong>transferMatrices</strong></a>(self)</dt><dd><tt>The&nbsp;list&nbsp;of&nbsp;Matrix()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;the&nbsp;propagation&nbsp;through&nbsp;<br>
+this&nbsp;element&nbsp;(or&nbsp;group).&nbsp;For&nbsp;a&nbsp;Matrix(),&nbsp;it&nbsp;simply&nbsp;returns&nbsp;a&nbsp;list&nbsp;<br>
+with&nbsp;a&nbsp;single&nbsp;element&nbsp;[self].<br>
+For&nbsp;a&nbsp;MatrixGroup(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
+each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;them&nbsp;to&nbsp;a&nbsp;list&nbsp;for&nbsp;this&nbsp;group.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-transferMatrix"><strong>transferMatrix</strong></a>(self, upTo=inf)</dt><dd><tt>The&nbsp;transfer&nbsp;matrix&nbsp;between&nbsp;front&nbsp;edge&nbsp;and&nbsp;distance=upTo<br>
+&nbsp;<br>
+If&nbsp;"upTo"&nbsp;falls&nbsp;inside&nbsp;an&nbsp;element&nbsp;of&nbsp;finite&nbsp;length,&nbsp;then&nbsp;<br>
+it&nbsp;will&nbsp;request&nbsp;from&nbsp;that&nbsp;element&nbsp;a&nbsp;"partial"&nbsp;transfer&nbsp;matrix<br>
+for&nbsp;a&nbsp;fraction&nbsp;of&nbsp;the&nbsp;length.&nbsp;&nbsp;It&nbsp;is&nbsp;up&nbsp;to&nbsp;the&nbsp;Matrix()&nbsp;or&nbsp;<br>
+MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matrix&nbsp;when&nbsp;possible.<br>
+Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+<dl><dt><a name="PN_33_921-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
+&nbsp;<br>
+For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
+M3&nbsp;=&nbsp;M1*M2.&nbsp;With&nbsp;r&nbsp;=&nbsp;Ray(),&nbsp;one&nbsp;can&nbsp;apply&nbsp;the&nbsp;M1&nbsp;transform&nbsp;to&nbsp;a&nbsp;ray<br>
+with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(Matrix())</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
+This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
+When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
+the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
+lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
+focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
+BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertex.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
+we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
+we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-backwardConjugate"><strong>backwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,<br>
+where&nbsp;is&nbsp;the&nbsp;object&nbsp;?&nbsp;Distance&nbsp;before&nbsp;the&nbsp;element&nbsp;by<br>
+which&nbsp;a&nbsp;ray&nbsp;must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;at<br>
+the&nbsp;back&nbsp;of&nbsp;the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the<br>
+object&nbsp;is&nbsp;"distance"&nbsp;in&nbsp;front&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the<br>
+left,&nbsp;or&nbsp;before).<br>
+&nbsp;<br>
+M2&nbsp;=&nbsp;M1*Space(distance)<br>
+#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
+an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;element&nbsp;is&nbsp;infinite,&nbsp;currently&nbsp;the&nbsp;half-height<br>
+will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureDiameter/2.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
+have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
+&nbsp;<br>
+Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
+of&nbsp;the&nbsp;matrix.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#PN_33_921-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and&nbsp;both&nbsp;focal<br>
+distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-forwardConjugate"><strong>forwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,&nbsp;where<br>
+is&nbsp;the&nbsp;image?&nbsp;Distance&nbsp;after&nbsp;the&nbsp;element&nbsp;by&nbsp;which&nbsp;a&nbsp;ray<br>
+must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;of&nbsp;the&nbsp;front&nbsp;of<br>
+the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the&nbsp;image&nbsp;is&nbsp;"distance"<br>
+beyond&nbsp;the&nbsp;back&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the&nbsp;right,&nbsp;or&nbsp;after).<br>
+&nbsp;<br>
+M2&nbsp;=&nbsp;Space(distance)*M1<br>
+#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-frontFocalLength"><strong>frontFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;front&nbsp;vertex.<br>
+This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
+When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
+the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
+lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
+focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
+BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertices.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
+we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
+we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
+elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
+the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-mul_ray"><strong>mul_ray</strong></a>(self, rightSideRay)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;ray&nbsp;by&nbsp;a&nbsp;matrix.&nbsp;&nbsp;New&nbsp;position&nbsp;of<br>
+ray&nbsp;is&nbsp;updated&nbsp;by&nbsp;the&nbsp;physical&nbsp;length&nbsp;of&nbsp;the&nbsp;matrix.<br>
+If&nbsp;the&nbsp;ray&nbsp;is&nbsp;beyond&nbsp;the&nbsp;aperture&nbsp;diameter&nbsp;it&nbsp;is&nbsp;labelled<br>
+as&nbsp;"isBlocked&nbsp;=&nbsp;True"&nbsp;but&nbsp;can&nbsp;still&nbsp;propagate.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>Any&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;matrix&nbsp;(focal&nbsp;points,<br>
+principal&nbsp;planes&nbsp;etc...)</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-principalPlanePositions"><strong>principalPlanePositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;the&nbsp;input&nbsp;and&nbsp;output&nbsp;principal&nbsp;planes.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side.</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-traceMany"><strong>traceMany</strong></a>(self, inputRays)</dt><dd><tt>Trace&nbsp;each&nbsp;ray&nbsp;from&nbsp;a&nbsp;list&nbsp;from&nbsp;front&nbsp;edge&nbsp;of&nbsp;element&nbsp;to<br>
+the&nbsp;back&nbsp;edge.<br>
+&nbsp;<br>
+Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;input&nbsp;ray.<br>
+See&nbsp;<a href="#PN_33_921-trace">trace</a>().</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>isImaging</strong></dt>
+<dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
+(i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
+&nbsp;<br>
+In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D&nbsp;=&nbsp;angular&nbsp;magnification<br>
+As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+<dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PN_88_593">class <strong>PN_88_593</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
+length&nbsp;of&nbsp;fb.&nbsp;&nbsp;The&nbsp;values&nbsp;fa&nbsp;and&nbsp;fb&nbsp;are&nbsp;used&nbsp;to&nbsp;validate&nbsp;the&nbsp;final&nbsp;focal&nbsp;lengths<br>
+and&nbsp;back&nbsp;focal&nbsp;lengths&nbsp;that&nbsp;are&nbsp;obtained&nbsp;from&nbsp;the&nbsp;combination&nbsp;of&nbsp;elements.<br>
+Most&nbsp;manufacturer's&nbsp;specifiy&nbsp;1%&nbsp;tolerance,&nbsp;so&nbsp;if&nbsp;fa&nbsp;is&nbsp;more&nbsp;than&nbsp;1%&nbsp;different<br>
+from&nbsp;the&nbsp;final&nbsp;focal&nbsp;length,&nbsp;a&nbsp;warning&nbsp;is&nbsp;raised.<br>
+&nbsp;<br>
+Nomenclature&nbsp;from&nbsp;Thorlabs:<br>
+https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="raytracing.eo.html#PN_88_593">PN_88_593</a></dd>
+<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
+<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="PN_88_593-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+<dl><dt><a name="PN_88_593-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;a&nbsp;faint&nbsp;blue&nbsp;box&nbsp;with&nbsp;slightly&nbsp;curved&nbsp;interfaces<br>
+of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+<dl><dt><a name="PN_88_593-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-propagate"><strong>propagate</strong></a>(self, inputRay)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#PN_88_593-trace">trace</a>()</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-propagateMany"><strong>propagateMany</strong></a>(self, inputRays)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#PN_88_593-traceMany">traceMany</a>()</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-trace"><strong>trace</strong></a>(self, inputRay)</dt><dd><tt>Trace&nbsp;the&nbsp;input&nbsp;ray&nbsp;from&nbsp;first&nbsp;element&nbsp;until&nbsp;after&nbsp;the&nbsp;last&nbsp;element<br>
+&nbsp;<br>
+Returns&nbsp;a&nbsp;ray&nbsp;trace&nbsp;(i.e.&nbsp;[Ray()])&nbsp;starting&nbsp;with&nbsp;inputRay,&nbsp;followed&nbsp;by&nbsp;the&nbsp;ray&nbsp;after<br>
+each&nbsp;element.&nbsp;If&nbsp;an&nbsp;element&nbsp;is&nbsp;composed&nbsp;of&nbsp;sub-elements,&nbsp;the&nbsp;ray&nbsp;will&nbsp;also&nbsp;be<br>
+traced&nbsp;in&nbsp;several&nbsp;steps.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-transferMatrices"><strong>transferMatrices</strong></a>(self)</dt><dd><tt>The&nbsp;list&nbsp;of&nbsp;Matrix()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;the&nbsp;propagation&nbsp;through&nbsp;<br>
+this&nbsp;element&nbsp;(or&nbsp;group).&nbsp;For&nbsp;a&nbsp;Matrix(),&nbsp;it&nbsp;simply&nbsp;returns&nbsp;a&nbsp;list&nbsp;<br>
+with&nbsp;a&nbsp;single&nbsp;element&nbsp;[self].<br>
+For&nbsp;a&nbsp;MatrixGroup(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
+each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;them&nbsp;to&nbsp;a&nbsp;list&nbsp;for&nbsp;this&nbsp;group.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-transferMatrix"><strong>transferMatrix</strong></a>(self, upTo=inf)</dt><dd><tt>The&nbsp;transfer&nbsp;matrix&nbsp;between&nbsp;front&nbsp;edge&nbsp;and&nbsp;distance=upTo<br>
+&nbsp;<br>
+If&nbsp;"upTo"&nbsp;falls&nbsp;inside&nbsp;an&nbsp;element&nbsp;of&nbsp;finite&nbsp;length,&nbsp;then&nbsp;<br>
+it&nbsp;will&nbsp;request&nbsp;from&nbsp;that&nbsp;element&nbsp;a&nbsp;"partial"&nbsp;transfer&nbsp;matrix<br>
+for&nbsp;a&nbsp;fraction&nbsp;of&nbsp;the&nbsp;length.&nbsp;&nbsp;It&nbsp;is&nbsp;up&nbsp;to&nbsp;the&nbsp;Matrix()&nbsp;or&nbsp;<br>
+MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matrix&nbsp;when&nbsp;possible.<br>
+Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+<dl><dt><a name="PN_88_593-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
+&nbsp;<br>
+For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
+M3&nbsp;=&nbsp;M1*M2.&nbsp;With&nbsp;r&nbsp;=&nbsp;Ray(),&nbsp;one&nbsp;can&nbsp;apply&nbsp;the&nbsp;M1&nbsp;transform&nbsp;to&nbsp;a&nbsp;ray<br>
+with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(Matrix())</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
+This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
+When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
+the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
+lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
+focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
+BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertex.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
+we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
+we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-backwardConjugate"><strong>backwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,<br>
+where&nbsp;is&nbsp;the&nbsp;object&nbsp;?&nbsp;Distance&nbsp;before&nbsp;the&nbsp;element&nbsp;by<br>
+which&nbsp;a&nbsp;ray&nbsp;must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;at<br>
+the&nbsp;back&nbsp;of&nbsp;the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the<br>
+object&nbsp;is&nbsp;"distance"&nbsp;in&nbsp;front&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the<br>
+left,&nbsp;or&nbsp;before).<br>
+&nbsp;<br>
+M2&nbsp;=&nbsp;M1*Space(distance)<br>
+#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
+an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;element&nbsp;is&nbsp;infinite,&nbsp;currently&nbsp;the&nbsp;half-height<br>
+will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureDiameter/2.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
+have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
+&nbsp;<br>
+Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
+of&nbsp;the&nbsp;matrix.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#PN_88_593-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and&nbsp;both&nbsp;focal<br>
+distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-forwardConjugate"><strong>forwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,&nbsp;where<br>
+is&nbsp;the&nbsp;image?&nbsp;Distance&nbsp;after&nbsp;the&nbsp;element&nbsp;by&nbsp;which&nbsp;a&nbsp;ray<br>
+must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;of&nbsp;the&nbsp;front&nbsp;of<br>
+the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the&nbsp;image&nbsp;is&nbsp;"distance"<br>
+beyond&nbsp;the&nbsp;back&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the&nbsp;right,&nbsp;or&nbsp;after).<br>
+&nbsp;<br>
+M2&nbsp;=&nbsp;Space(distance)*M1<br>
+#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-frontFocalLength"><strong>frontFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;front&nbsp;vertex.<br>
+This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
+When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
+the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
+lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
+focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
+BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertices.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
+we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
+we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
+elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
+the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-mul_ray"><strong>mul_ray</strong></a>(self, rightSideRay)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;ray&nbsp;by&nbsp;a&nbsp;matrix.&nbsp;&nbsp;New&nbsp;position&nbsp;of<br>
+ray&nbsp;is&nbsp;updated&nbsp;by&nbsp;the&nbsp;physical&nbsp;length&nbsp;of&nbsp;the&nbsp;matrix.<br>
+If&nbsp;the&nbsp;ray&nbsp;is&nbsp;beyond&nbsp;the&nbsp;aperture&nbsp;diameter&nbsp;it&nbsp;is&nbsp;labelled<br>
+as&nbsp;"isBlocked&nbsp;=&nbsp;True"&nbsp;but&nbsp;can&nbsp;still&nbsp;propagate.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>Any&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;matrix&nbsp;(focal&nbsp;points,<br>
+principal&nbsp;planes&nbsp;etc...)</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-principalPlanePositions"><strong>principalPlanePositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;the&nbsp;input&nbsp;and&nbsp;output&nbsp;principal&nbsp;planes.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-traceMany"><strong>traceMany</strong></a>(self, inputRays)</dt><dd><tt>Trace&nbsp;each&nbsp;ray&nbsp;from&nbsp;a&nbsp;list&nbsp;from&nbsp;front&nbsp;edge&nbsp;of&nbsp;element&nbsp;to<br>
+the&nbsp;back&nbsp;edge.<br>
+&nbsp;<br>
+Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;input&nbsp;ray.<br>
+See&nbsp;<a href="#PN_88_593-trace">trace</a>().</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>isImaging</strong></dt>
+<dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
+(i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
+&nbsp;<br>
+In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D&nbsp;=&nbsp;angular&nbsp;magnification<br>
+As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+<dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-acos"><strong>acos</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;cosine&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-acosh"><strong>acosh</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;inverse&nbsp;hyperbolic&nbsp;cosine&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-asin"><strong>asin</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;sine&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-asinh"><strong>asinh</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;inverse&nbsp;hyperbolic&nbsp;sine&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-atan"><strong>atan</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
+&nbsp;<br>
+Unlike&nbsp;<a href="#-atan">atan</a>(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbsp;y&nbsp;are&nbsp;considered.</tt></dd></dl>
+ <dl><dt><a name="-atanh"><strong>atanh</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;inverse&nbsp;hyperbolic&nbsp;tangent&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-ceil"><strong>ceil</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;smallest&nbsp;integer&nbsp;&gt;=&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-copysign"><strong>copysign</strong></a>(x, y, /)</dt><dd><tt>Return&nbsp;a&nbsp;float&nbsp;with&nbsp;the&nbsp;magnitude&nbsp;(absolute&nbsp;value)&nbsp;of&nbsp;x&nbsp;but&nbsp;the&nbsp;sign&nbsp;of&nbsp;y.<br>
+&nbsp;<br>
+On&nbsp;platforms&nbsp;that&nbsp;support&nbsp;signed&nbsp;zeros,&nbsp;<a href="#-copysign">copysign</a>(1.0,&nbsp;-0.0)<br>
+returns&nbsp;-1.0.</tt></dd></dl>
+ <dl><dt><a name="-cos"><strong>cos</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;cosine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+ <dl><dt><a name="-cosh"><strong>cosh</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;hyperbolic&nbsp;cosine&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-degrees"><strong>degrees</strong></a>(x, /)</dt><dd><tt>Convert&nbsp;angle&nbsp;x&nbsp;from&nbsp;radians&nbsp;to&nbsp;degrees.</tt></dd></dl>
+ <dl><dt><a name="-erf"><strong>erf</strong></a>(x, /)</dt><dd><tt>Error&nbsp;function&nbsp;at&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-erfc"><strong>erfc</strong></a>(x, /)</dt><dd><tt>Complementary&nbsp;error&nbsp;function&nbsp;at&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-exp"><strong>exp</strong></a>(x, /)</dt><dd><tt>Return&nbsp;e&nbsp;raised&nbsp;to&nbsp;the&nbsp;power&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-expm1"><strong>expm1</strong></a>(x, /)</dt><dd><tt>Return&nbsp;<a href="#-exp">exp</a>(x)-1.<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;avoids&nbsp;the&nbsp;loss&nbsp;of&nbsp;precision&nbsp;involved&nbsp;in&nbsp;the&nbsp;direct&nbsp;evaluation&nbsp;of&nbsp;<a href="#-exp">exp</a>(x)-1&nbsp;for&nbsp;small&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-fabs"><strong>fabs</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;absolute&nbsp;value&nbsp;of&nbsp;the&nbsp;float&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-factorial"><strong>factorial</strong></a>(x, /)</dt><dd><tt>Find&nbsp;x!.<br>
+&nbsp;<br>
+Raise&nbsp;a&nbsp;ValueError&nbsp;if&nbsp;x&nbsp;is&nbsp;negative&nbsp;or&nbsp;non-integral.</tt></dd></dl>
+ <dl><dt><a name="-floor"><strong>floor</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;floor&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;largest&nbsp;integer&nbsp;&lt;=&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-fmod"><strong>fmod</strong></a>(x, y, /)</dt><dd><tt>Return&nbsp;<a href="#-fmod">fmod</a>(x,&nbsp;y),&nbsp;according&nbsp;to&nbsp;platform&nbsp;C.<br>
+&nbsp;<br>
+x&nbsp;%&nbsp;y&nbsp;may&nbsp;differ.</tt></dd></dl>
+ <dl><dt><a name="-frexp"><strong>frexp</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;mantissa&nbsp;and&nbsp;exponent&nbsp;of&nbsp;x,&nbsp;as&nbsp;pair&nbsp;(m,&nbsp;e).<br>
+&nbsp;<br>
+m&nbsp;is&nbsp;a&nbsp;float&nbsp;and&nbsp;e&nbsp;is&nbsp;an&nbsp;int,&nbsp;such&nbsp;that&nbsp;x&nbsp;=&nbsp;m&nbsp;*&nbsp;2.**e.<br>
+If&nbsp;x&nbsp;is&nbsp;0,&nbsp;m&nbsp;and&nbsp;e&nbsp;are&nbsp;both&nbsp;0.&nbsp;&nbsp;Else&nbsp;0.5&nbsp;&lt;=&nbsp;abs(m)&nbsp;&lt;&nbsp;1.0.</tt></dd></dl>
+ <dl><dt><a name="-fsum"><strong>fsum</strong></a>(seq, /)</dt><dd><tt>Return&nbsp;an&nbsp;accurate&nbsp;floating&nbsp;point&nbsp;sum&nbsp;of&nbsp;values&nbsp;in&nbsp;the&nbsp;iterable&nbsp;seq.<br>
+&nbsp;<br>
+Assumes&nbsp;IEEE-754&nbsp;floating&nbsp;point&nbsp;arithmetic.</tt></dd></dl>
+ <dl><dt><a name="-gamma"><strong>gamma</strong></a>(x, /)</dt><dd><tt>Gamma&nbsp;function&nbsp;at&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-gcd"><strong>gcd</strong></a>(x, y, /)</dt><dd><tt>greatest&nbsp;common&nbsp;divisor&nbsp;of&nbsp;x&nbsp;and&nbsp;y</tt></dd></dl>
+ <dl><dt><a name="-hypot"><strong>hypot</strong></a>(x, y, /)</dt><dd><tt>Return&nbsp;the&nbsp;Euclidean&nbsp;distance,&nbsp;<a href="#-sqrt">sqrt</a>(x*x&nbsp;+&nbsp;y*y).</tt></dd></dl>
+ <dl><dt><a name="-isclose"><strong>isclose</strong></a>(a, b, *, rel_tol=1e-09, abs_tol=0.0)</dt><dd><tt>Determine&nbsp;whether&nbsp;two&nbsp;floating&nbsp;point&nbsp;numbers&nbsp;are&nbsp;close&nbsp;in&nbsp;value.<br>
+&nbsp;<br>
+&nbsp;&nbsp;rel_tol<br>
+&nbsp;&nbsp;&nbsp;&nbsp;maximum&nbsp;difference&nbsp;for&nbsp;being&nbsp;considered&nbsp;"close",&nbsp;relative&nbsp;to&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;magnitude&nbsp;of&nbsp;the&nbsp;input&nbsp;values<br>
+&nbsp;&nbsp;abs_tol<br>
+&nbsp;&nbsp;&nbsp;&nbsp;maximum&nbsp;difference&nbsp;for&nbsp;being&nbsp;considered&nbsp;"close",&nbsp;regardless&nbsp;of&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;magnitude&nbsp;of&nbsp;the&nbsp;input&nbsp;values<br>
+&nbsp;<br>
+Return&nbsp;True&nbsp;if&nbsp;a&nbsp;is&nbsp;close&nbsp;in&nbsp;value&nbsp;to&nbsp;b,&nbsp;and&nbsp;False&nbsp;otherwise.<br>
+&nbsp;<br>
+For&nbsp;the&nbsp;values&nbsp;to&nbsp;be&nbsp;considered&nbsp;close,&nbsp;the&nbsp;difference&nbsp;between&nbsp;them<br>
+must&nbsp;be&nbsp;smaller&nbsp;than&nbsp;at&nbsp;least&nbsp;one&nbsp;of&nbsp;the&nbsp;tolerances.<br>
+&nbsp;<br>
+-inf,&nbsp;inf&nbsp;and&nbsp;NaN&nbsp;behave&nbsp;similarly&nbsp;to&nbsp;the&nbsp;IEEE&nbsp;754&nbsp;Standard.&nbsp;&nbsp;That<br>
+is,&nbsp;NaN&nbsp;is&nbsp;not&nbsp;close&nbsp;to&nbsp;anything,&nbsp;even&nbsp;itself.&nbsp;&nbsp;inf&nbsp;and&nbsp;-inf&nbsp;are<br>
+only&nbsp;close&nbsp;to&nbsp;themselves.</tt></dd></dl>
+ <dl><dt><a name="-isfinite"><strong>isfinite</strong></a>(x, /)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;x&nbsp;is&nbsp;neither&nbsp;an&nbsp;infinity&nbsp;nor&nbsp;a&nbsp;NaN,&nbsp;and&nbsp;False&nbsp;otherwise.</tt></dd></dl>
+ <dl><dt><a name="-isinf"><strong>isinf</strong></a>(x, /)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;x&nbsp;is&nbsp;a&nbsp;positive&nbsp;or&nbsp;negative&nbsp;infinity,&nbsp;and&nbsp;False&nbsp;otherwise.</tt></dd></dl>
+ <dl><dt><a name="-isnan"><strong>isnan</strong></a>(x, /)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;x&nbsp;is&nbsp;a&nbsp;NaN&nbsp;(not&nbsp;a&nbsp;number),&nbsp;and&nbsp;False&nbsp;otherwise.</tt></dd></dl>
+ <dl><dt><a name="-ldexp"><strong>ldexp</strong></a>(x, i, /)</dt><dd><tt>Return&nbsp;x&nbsp;*&nbsp;(2**i).<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;essentially&nbsp;the&nbsp;inverse&nbsp;of&nbsp;<a href="#-frexp">frexp</a>().</tt></dd></dl>
+ <dl><dt><a name="-lgamma"><strong>lgamma</strong></a>(x, /)</dt><dd><tt>Natural&nbsp;logarithm&nbsp;of&nbsp;absolute&nbsp;value&nbsp;of&nbsp;Gamma&nbsp;function&nbsp;at&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-log"><strong>log</strong></a>(...)</dt><dd><tt><a href="#-log">log</a>(x,&nbsp;[base=math.e])<br>
+Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-log10"><strong>log10</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;base&nbsp;10&nbsp;logarithm&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-log1p"><strong>log1p</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;of&nbsp;1+x&nbsp;(base&nbsp;e).<br>
+&nbsp;<br>
+The&nbsp;result&nbsp;is&nbsp;computed&nbsp;in&nbsp;a&nbsp;way&nbsp;which&nbsp;is&nbsp;accurate&nbsp;for&nbsp;x&nbsp;near&nbsp;zero.</tt></dd></dl>
+ <dl><dt><a name="-log2"><strong>log2</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;base&nbsp;2&nbsp;logarithm&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-modf"><strong>modf</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;fractional&nbsp;and&nbsp;integer&nbsp;parts&nbsp;of&nbsp;x.<br>
+&nbsp;<br>
+Both&nbsp;results&nbsp;carry&nbsp;the&nbsp;sign&nbsp;of&nbsp;x&nbsp;and&nbsp;are&nbsp;floats.</tt></dd></dl>
+ <dl><dt><a name="-pow"><strong>pow</strong></a>(x, y, /)</dt><dd><tt>Return&nbsp;x**y&nbsp;(x&nbsp;to&nbsp;the&nbsp;power&nbsp;of&nbsp;y).</tt></dd></dl>
+ <dl><dt><a name="-radians"><strong>radians</strong></a>(x, /)</dt><dd><tt>Convert&nbsp;angle&nbsp;x&nbsp;from&nbsp;degrees&nbsp;to&nbsp;radians.</tt></dd></dl>
+ <dl><dt><a name="-remainder"><strong>remainder</strong></a>(x, y, /)</dt><dd><tt>Difference&nbsp;between&nbsp;x&nbsp;and&nbsp;the&nbsp;closest&nbsp;integer&nbsp;multiple&nbsp;of&nbsp;y.<br>
+&nbsp;<br>
+Return&nbsp;x&nbsp;-&nbsp;n*y&nbsp;where&nbsp;n*y&nbsp;is&nbsp;the&nbsp;closest&nbsp;integer&nbsp;multiple&nbsp;of&nbsp;y.<br>
+In&nbsp;the&nbsp;case&nbsp;where&nbsp;x&nbsp;is&nbsp;exactly&nbsp;halfway&nbsp;between&nbsp;two&nbsp;multiples&nbsp;of<br>
+y,&nbsp;the&nbsp;nearest&nbsp;even&nbsp;value&nbsp;of&nbsp;n&nbsp;is&nbsp;used.&nbsp;The&nbsp;result&nbsp;is&nbsp;always&nbsp;exact.</tt></dd></dl>
+ <dl><dt><a name="-sin"><strong>sin</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;sine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+ <dl><dt><a name="-sinh"><strong>sinh</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;hyperbolic&nbsp;sine&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-sqrt"><strong>sqrt</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;square&nbsp;root&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-tan"><strong>tan</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;tangent&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+ <dl><dt><a name="-tanh"><strong>tanh</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;hyperbolic&nbsp;tangent&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-trunc"><strong>trunc</strong></a>(x, /)</dt><dd><tt>Truncates&nbsp;the&nbsp;Real&nbsp;x&nbsp;to&nbsp;the&nbsp;nearest&nbsp;Integral&nbsp;toward&nbsp;0.<br>
+&nbsp;<br>
+Uses&nbsp;the&nbsp;__trunc__&nbsp;magic&nbsp;method.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>degPerRad</strong> = 57.29577951308232<br>
+<strong>e</strong> = 2.718281828459045<br>
+<strong>inf</strong> = inf<br>
+<strong>nan</strong> = nan<br>
+<strong>pi</strong> = 3.141592653589793<br>
+<strong>radPerDeg</strong> = 0.017453292519943295<br>
+<strong>tau</strong> = 6.283185307179586</td></tr></table>
+</body></html>

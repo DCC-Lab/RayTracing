@@ -1,11 +1,21 @@
 import setuptools
 
+# To document:
+# pydoc -w raytracing.abcd
+# pydoc -w raytracing.lens
+# pydoc -w raytracing.materials
+# pydoc -w raytracing.thorlabs
+# pydoc -w raytracing.eo
+# pydoc -w raytracing.olympus
+
+
+# To dsitrbute:
 # python setup.py sdist bdist_wheel
 # python -m twine upload dist/* 
 
 setuptools.setup(
     name="raytracing",
-    version="1.0.8",
+    version="1.0.9",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",
@@ -22,6 +32,7 @@ setuptools.setup(
     package_data = {
         # If any package contains *.txt or *.rst files, include them:
         '': ['*.png'],
+        "doc": ['*.html']
     },
     classifiers=[
         'Development Status :: 4 - Beta',

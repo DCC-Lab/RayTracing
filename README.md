@@ -7,7 +7,7 @@ The module defines `Ray` ,  `Matrix`, `MatrixGroup` and `ImagingPath` as the mai
 
 ## Installing and upgrading
 
-There are several ways to install the module:
+You need `matplotlib`, which is a fairly standard Python module. If you do not have it,  installing [Anaconda](https://www.anaconda.com/download/) is your best option. You should choose Python 3.7 or later. There are several ways to install the module:
 
 1. Simplest: `pip install raytracing` or `pip install --upgrade raytracing`
 2. If you download the [source](https://pypi.org/project/raytracing/) of the module, then you can type: `python setup.py install`
@@ -15,8 +15,6 @@ There are several ways to install the module:
 4. If you are completely lost, copying the folder `raytracing` (the one that includes `__init__.py`) from the source file into the same directory as your own script will work.
 
 ## Getting started
-
-You need `matplotlib`, which is a fairly standard Python module. If you do not have it,  installing [Anaconda](https://www.anaconda.com/download/) is your best option. You should choose Python 3.7 or later.
 
 The simplest way to import the package in your own scripts after installing it:
 
@@ -50,11 +48,19 @@ path.display()
 
 ## Documentation
 
-Documentation is sparse at best.   You may obtain help by 
+Documentation is sparse at best.   You may obtain help by:
 
-1. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
-2. look at the examples with `python -m raytracing` 
-3. simply look at the code.
+1. Reading an automatically generated documentation from the code (not that good-looking, but at least it is *some* documentation):
+   1. [Core:](./docs/raytracing.abcd.html) `Ray`, `Matrix`, `MatrixGroup` and `ImagingPath`
+   2. [Optical elements:](./docs/raytracing.abcd.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
+   3. [Specialty lenses:](./docs/raytracing.lens.html) Defines a general achromat and objective lens
+   4. [Thorlabs lenses:](./docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs
+   5. [Edmund Optics lenses:](./docs/raytracing.eo.html) Achromat doublet lenses from Edmund Optics
+   6. [Olympus objectives:](./docs/raytracing.olympus.html) A few objectives from Olympus.
+   7. [Glasses:](./docs/raytracing.materials.html) A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
+2. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
+3. look at the examples with `python -m raytracing` 
+4. simply look at the code.
 
 ```python
 python
