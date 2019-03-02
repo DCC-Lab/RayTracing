@@ -283,9 +283,11 @@ class Matrix(object):
         return outputRay
 
     def largestDiameter(self):
+        """ Largest diameter of the element or group of elements """
         return self.apertureDiameter
 
     def hasFiniteApertureDiameter(self):
+        """ True if the element or group of elements have a finite aperture size """
         return self.apertureDiameter != float("+Inf")
 
     def transferMatrix(self, upTo=float('+Inf')):
@@ -856,7 +858,7 @@ class MatrixGroup(Matrix):
         return rayTrace
 
     def hasFiniteApertureDiameter(self):
-        """ True if OpticalPath has at least one element of finite diameter """
+        """ True if ImagingPath has at least one element of finite diameter """
         for element in self.elements:
             if element.hasFiniteApertureDiameter():
                 return True
@@ -1326,7 +1328,7 @@ class ImagingPath(MatrixGroup):
         """ Draw all ray traces corresponding to either 
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber) 
         2. the principal rays (chief and marginal) """
-        
+
         color = ['b', 'r', 'g']
 
         if onlyChiefAndMarginalRays:
