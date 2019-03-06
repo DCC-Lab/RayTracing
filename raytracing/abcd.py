@@ -164,6 +164,7 @@ class GaussianBeam(object):
         self.wavelength = wavelength
         self.z = z
         self.n = n
+        self.isClipped = False
 
     def R(self):
         return 1/(1/self.q).real
@@ -326,6 +327,11 @@ class Matrix(object):
         outputBeam.q = (self.A * q + self.B ) / (self.C*q + self.D)
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
+
+        if abs(outputBeam.w) > self.apertureDiameter / 2:
+            outputBeam.isClipped = True
+        else:
+            outputBeam.isClipped = rightSideBeam.isClipped
 
         return outputBeam
 
