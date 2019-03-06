@@ -939,6 +939,34 @@ class MatrixGroup(Matrix):
                 element.drawLabels(z, axes)
             z += element.L
 
+    def drawPointsOfInterest(self, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
+        labels = {}  # Gather labels at same z
+        zElement = 0
+        for element in self.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                label = pointOfInterest['label']
+                if zStr in labels:
+                    labels[zStr] = labels[zStr] + ", " + label
+                else:
+                    labels[zStr] = label
+            zElement += element.L
+
+        halfHeight = self.largestDiameter()/2
+        for zStr, label in labels.items():
+            z = float(zStr)
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                         xycoords='data', fontsize=12,
+                         ha='center', va='bottom')
+
 
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
@@ -983,6 +1011,10 @@ class ImagingPath(MatrixGroup):
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
+
+        if B == 0:
+            return None
+
         return Ray(y=y, theta=-A * y / B)
 
     def marginalRays(self, y=0):
@@ -1090,10 +1122,11 @@ class ImagingPath(MatrixGroup):
         is no field stop and no aperture stop in the system
         and their sizes are infinite.
         """
+        (apertureStopPosition, dummy) = self.apertureStop()
 
         fieldStopPosition = None
         fieldStopDiameter = float('+Inf')
-        if self.hasFiniteApertureDiameter():            
+        if self.hasFiniteApertureDiameter() and apertureStopPosition != 0:
             dy = self.precision * 100
             y = 0.0
             wasBlocked = False
@@ -1234,23 +1267,7 @@ class ImagingPath(MatrixGroup):
         self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(axes)
-
-        return axes
-
-    def createBeamTracePlot(self, axes, beam):
-        """ Create a matplotlib plot to draw the laser beam and the elements.
-         """
-
-        displayRange = 2 * self.largestDiameter()
-        if displayRange == float('+Inf'):
-            displayRange = self.objectHeight * 2
-
-        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
-
-        self.drawBeamTraces(axes, beam)
-
-        self.drawAt(z=0, axes=axes)
+            self.drawStops(axes)
 
         return axes
 
@@ -1273,25 +1290,6 @@ class ImagingPath(MatrixGroup):
             limitObjectToFieldOfView=limitObjectToFieldOfView,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        plt.ioff()
-        plt.show()
-
-    def displayGaussian(self, beam, comments=None):
-        """ Display the optical system and trace the laser beam. If comments are included
-        they will be displayed on a graph in the bottom half of the plot.
-
-        """
-
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
-
-        self.createBeamTracePlot(axes=axes, beam=beam)
 
         plt.ioff()
         plt.show()
@@ -1355,33 +1353,11 @@ class ImagingPath(MatrixGroup):
                         head_width=0.25,
                         length_includes_head=True)
 
-    def drawPointsOfInterest(self, axes):
+    def drawStops(self, axes):
         """
-        Labels of general points of interest are drawn below the
-        axis, at 25% of the largest diameter.
-
         AS and FS are drawn at 110% of the largest diameter
         """
-        labels = {}  # Gather labels at same z
-        zElement = 0
-        for element in self.elements:
-            pointsOfInterest = element.pointsOfInterest(zElement)
-
-            for pointOfInterest in pointsOfInterest:
-                zStr = "{0:3.3f}".format(pointOfInterest['z'])
-                label = pointOfInterest['label']
-                if zStr in labels:
-                    labels[zStr] = labels[zStr] + ", " + label
-                else:
-                    labels[zStr] = label
-            zElement += element.L
-
         halfHeight = self.largestDiameter()/2
-        for zStr, label in labels.items():
-            z = float(zStr)
-            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                         xycoords='data', fontsize=12,
-                         ha='center', va='bottom')
 
         (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
         if apertureStopPosition is not None:
@@ -1450,24 +1426,6 @@ class ImagingPath(MatrixGroup):
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
             axes.plot(x, y, color[colorIndex], linewidth=linewidth)
 
-    def drawBeamTraces(self, axes, beam):
-        """ Draw all ray traces corresponding to either"""
-
-
-        highResolution = ImagingPath()
-        for element in self.elements:
-            if isinstance(element, Space):
-                for i in range(100):
-                    highResolution.append(Space(d=element.L/100))
-            else:
-                highResolution.append(element)
-
-
-        beamTrace = highResolution.trace(beam)
-        (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
-        axes.plot(x, y, 'r', linewidth=1)
-        axes.plot(x, [-v for v in y], 'r', linewidth=1)
-
     def rearrangeRayTraceForPlotting(
             self,
             rayList,
@@ -1484,6 +1442,52 @@ class ImagingPath(MatrixGroup):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
+
+class LaserPath(MatrixGroup):
+    def __init__(self, elements=[], label=""):
+        self.inputBeam = None
+        self.showElementLabels = True
+        self.showPointsOfInterest = True
+        self.showPointsOfInterestLabels = True
+        self.showPlanesAcrossPointsOfInterest = True
+        super(LaserPath, self).__init__(elements=elements, label=label)
+
+    def display(self, beam=None, comments=None):
+        """ Display the optical system and trace the laser beam. If comments are included
+        they will be displayed on a graph in the bottom half of the plot.
+
+        """
+
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+                              fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
+
+        self.createBeamTracePlot(axes=axes, beam=beam)
+
+        plt.ioff()
+        plt.show()
+
+    def createBeamTracePlot(self, axes, beam):
+        """ Create a matplotlib plot to draw the laser beam and the elements.
+         """
+
+        displayRange = 2 * self.largestDiameter()
+        if displayRange == float('+Inf'):
+            displayRange = self.objectHeight * 2
+
+        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
+
+        self.drawBeamTraces(axes, beam)
+
+        self.drawAt(z=0, axes=axes)
+
+        return axes
+
     def rearrangeBeamTraceForPlotting(self, rayList):
         x = []
         y = []
@@ -1492,6 +1496,26 @@ class ImagingPath(MatrixGroup):
             y.append(ray.w())
             # else: # ray will simply stop drawing from here
         return (x, y)
+
+    def drawBeamTraces(self, axes, beam):
+        """ Draw beam trace corresponding to input beam """
+
+        highResolution = ImagingPath()
+        for element in self.elements:
+            if isinstance(element, Space):
+                for i in range(100):
+                    highResolution.append(Space(d=element.L/100, 
+                                                n=element.frontIndex))
+            else:
+                highResolution.append(element)
+
+
+        beamTrace = highResolution.trace(beam)
+        (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
+        axes.plot(x, y, 'r', linewidth=1)
+        axes.plot(x, [-v for v in y], 'r', linewidth=1)
+
+
 
 """ Synonym of Matrix: Element 
 
