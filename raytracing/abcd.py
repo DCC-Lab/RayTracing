@@ -152,9 +152,14 @@ class Ray:
 
 class GaussianBeam(object):
     """A gaussian laser beam using the ABCD formalism for propagation
+
+    w is the 1/e beam size in electric field.
+    R is the radius of curvature (positive means diverging)
+    n is index in which the beam is. Necessary to compute beam size
+    wavelength is in the same units
     """
 
-    def __init__(self, w=None, R=float("+Inf"), n=1.0, wavelength=0.6328, z=0):
+    def __init__(self, w=None, R=float("+Inf"), n=1.0, wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
 
         if w is not None:
@@ -196,7 +201,7 @@ class GaussianBeam(object):
         description = "Complex radius: {0:.3}\n".format(self.q)
         description += "Size: {0:.3f} ".format(self.w())
         description += "Radius: {0:.3f} ".format(self.R())
-        description += "Wavelength: {0:.3f} ".format(self.wavelength)
+        description += "Wavelength: {0:.3f} nm".format(self.wavelength*1e6)
         description += "zo: {0:.3f} ".format(self.zo())
         return description
 
@@ -328,6 +333,7 @@ class Matrix(object):
         outputRay = Ray()
         outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
@@ -346,7 +352,7 @@ class Matrix(object):
         if rightSideBeam.n != self.frontIndex:
             print("Warning: the gaussian beam is not tracking the index of refraction properly")
 
-        outputBeam = GaussianBeam()
+        outputBeam = GaussianBeam(wavelength=rightSideBeam.wavelength)
         outputBeam.q = (self.A * q + self.B ) / (self.C*q + self.D)
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
