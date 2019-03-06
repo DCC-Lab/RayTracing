@@ -16,4 +16,4 @@ path.append(Space(180))
 path.append(olympus.LUMPlanFL40X())
 path.append(Space(10))
 path.display(beam=GaussianBeam(w=1))
-
+print(GaussianBeam(w=1))

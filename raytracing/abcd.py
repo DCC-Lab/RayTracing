@@ -167,15 +167,38 @@ class GaussianBeam(object):
         self.isClipped = False
 
     def R(self):
-        return 1/(1/self.q).real
+        if abs(self.q) == 0:
+            return float("+Inf")
+
+        invQReal = (1/self.q).real
+        if invQReal == 0:
+            return float("+Inf")
+
+        return 1/invQReal
 
     def w(self):
+        if (-1/self.q).imag == 0:
+            return float("+Inf")
+
         return math.sqrt( self.wavelength/self.n/(math.pi * (-1/self.q).imag))
+
+    def zo(self):
+        return self.q.imag
+
+    def confocalParameter(self):
+        return self.zo()
+
+    def rayleighRange(self):
+        return self.zo()
 
     def __str__(self):
         """ String description that allows the use of print(Ray()) """
-
-        return "{0:.3}".format(self.q)
+        description = "Complex radius: {0:.3}\n".format(self.q)
+        description += "Size: {0:.3f} ".format(self.w())
+        description += "Radius: {0:.3f} ".format(self.R())
+        description += "Wavelength: {0:.3f} ".format(self.wavelength)
+        description += "zo: {0:.3f} ".format(self.zo())
+        return description
 
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
@@ -328,7 +351,7 @@ class Matrix(object):
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
 
-        if abs(outputBeam.w) > self.apertureDiameter / 2:
+        if abs(outputBeam.w()) > self.apertureDiameter / 2:
             outputBeam.isClipped = True
         else:
             outputBeam.isClipped = rightSideBeam.isClipped
