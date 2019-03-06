@@ -150,6 +150,31 @@ class Ray:
 
         return description
 
+class GaussianBeam(object):
+    """A gaussian laser beam using the ABCD formalism for propagation
+    """
+
+    def __init__(self, w=None, R=float("+Inf"), wavelength=0.6328, z=0):
+        # Gaussian beam matrix formalism
+
+        if w is not None:
+            self.q = 1/( 1.0/R - complex(0,1)*wavelength/(math.pi*w*w))
+        else:
+            self.q = complex(0,0)
+        self.wavelength = wavelength
+        self.z = z
+
+    def R(self):
+        return 1/(1/self.q).real
+
+    def w(self):
+        return math.sqrt( self.wavelength/(math.pi * (-1/self.q).imag))
+
+    def __str__(self):
+        """ String description that allows the use of print(Ray()) """
+
+        return "{0:.3}".format(self.q)
+
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
     matrix.
@@ -220,6 +245,8 @@ class Matrix(object):
             return self.mul_matrix(rightSide)
         elif isinstance(rightSide, Ray):
             return self.mul_ray(rightSide)
+        elif isinstance(rightSide, GaussianBeam):
+            return self.mul_beam(rightSide)
         else:
             raise TypeError(
                 "Unrecognized right side element in multiply: '{0}'\
@@ -282,6 +309,18 @@ class Matrix(object):
 
         return outputRay
 
+    def mul_beam(self, rightSideBeam):
+        """ Multiplication of a coherent beam by a matrix.
+
+        """
+        q = rightSideBeam.q
+
+        outputBeam = GaussianBeam()
+        outputBeam.q = (self.A * q + self.B ) / (self.C*q + self.D)
+        outputBeam.z = self.L + rightSideBeam.z
+
+        return outputBeam
+
     def largestDiameter(self):
         """ Largest diameter of the element or group of elements """
         return self.apertureDiameter
@@ -328,12 +367,14 @@ class Matrix(object):
         """
 
         rayTrace = []
-        if self.L > 0:
-            if ray.y > self.apertureDiameter/2:
-                ray.isBlocked = True
-            rayTrace.append(ray)                            
+        rayTrace.append(self*ray)
 
-        rayTrace.append(self.mul_ray(ray))
+        if isinstance(ray, Ray):
+            if self.L > 0:
+                if ray.y > self.apertureDiameter/2:
+                    ray.isBlocked = True
+                rayTrace.append(ray)
+
 
         return rayTrace
 
@@ -1186,6 +1227,25 @@ class ImagingPath(MatrixGroup):
 
         return axes
 
+    def createBeamTracePlot(self, axes, beam):
+        """ Create a matplotlib plot to draw the laser beam and the elements.
+         """
+
+        displayRange = 2 * self.largestDiameter()
+        if displayRange == float('+Inf'):
+            displayRange = self.objectHeight * 2
+
+        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
+
+        self.drawBeamTraces(axes, beam)
+
+        self.drawAt(z=0, axes=axes)
+        if self.showPointsOfInterest:
+            self.drawPointsOfInterest(axes)
+
+        return axes
+
     def display(self, limitObjectToFieldOfView=False,
                 onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):
         """ Display the optical system and trace the rays. If comments are included
@@ -1205,6 +1265,25 @@ class ImagingPath(MatrixGroup):
             limitObjectToFieldOfView=limitObjectToFieldOfView,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+        plt.ioff()
+        plt.show()
+
+    def displayGaussian(self, beam, comments=None):
+        """ Display the optical system and trace the laser beam. If comments are included
+        they will be displayed on a graph in the bottom half of the plot.
+
+        """
+
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+                              fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
+
+        self.createBeamTracePlot(axes=axes, beam=beam)
 
         plt.ioff()
         plt.show()
@@ -1363,6 +1442,24 @@ class ImagingPath(MatrixGroup):
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
             axes.plot(x, y, color[colorIndex], linewidth=linewidth)
 
+    def drawBeamTraces(self, axes, beam):
+        """ Draw all ray traces corresponding to either"""
+
+
+        highResolution = ImagingPath()
+        for element in self.elements:
+            if isinstance(element, Space):
+                for i in range(100):
+                    highResolution.append(Space(d=element.L/100))
+            else:
+                highResolution.append(element)
+
+
+        beamTrace = highResolution.trace(beam)
+        (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
+        axes.plot(x, y, 'r', linewidth=1)
+        axes.plot(x, [-v for v in y], 'r', linewidth=1)
+
     def rearrangeRayTraceForPlotting(
             self,
             rayList,
@@ -1379,6 +1476,15 @@ class ImagingPath(MatrixGroup):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
+    def rearrangeBeamTraceForPlotting(self, rayList):
+        x = []
+        y = []
+        for ray in rayList:
+            x.append(ray.z)
+            y.append(ray.w())
+            # else: # ray will simply stop drawing from here
+        return (x, y)
+
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)
@@ -1386,15 +1492,6 @@ We can use a mathematical language (Matrix) or optics terms (Element)
 Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
-
-def installModule():
-    directory = subprocess.check_output(
-        'python -m site --user-site', shell=True)
-    os.system('mkdir -p "`python -m site --user-site`"')
-    os.system('cp ABCD.py "`python -m site --user-site`/"')
-    os.system('cp Axicon.py "`python -m site --user-site`/"')
-    os.system('cp Objectives.py "`python -m site --user-site`/"')
-    print('Module ABCD.py, Axicon.py and Objectives.py copied to ', directory)
 
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD

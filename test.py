@@ -1,10 +1,13 @@
+import math as m
 from raytracing import *
+from raytracing.thorlabs import *
 
-path = MatrixGroup()
-path.append(Lens(f=50))
-path.append(Space(3))
-path.append(lens)
-path.append(Space(0.1))
-path.append(lens)
-path.append(Space(3))
+path = ImagingPath()
+path.label = "Demo #1: lens f = 5cm, infinite diameter"
+
+path.append(Space(d=0.5))
+path.append(Lens(f=5))
+path.append(Space(d=10))
+path.display()
+path.displayGaussian(beam=GaussianBeam(w=1))
 
