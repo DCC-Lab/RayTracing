@@ -163,12 +163,13 @@ class GaussianBeam(object):
             self.q = complex(0,0)
         self.wavelength = wavelength
         self.z = z
+        self.n = 1
 
     def R(self):
         return 1/(1/self.q).real
 
     def w(self):
-        return math.sqrt( self.wavelength/(math.pi * (-1/self.q).imag))
+        return math.sqrt( self.wavelength/self.n/(math.pi * (-1/self.q).imag))
 
     def __str__(self):
         """ String description that allows the use of print(Ray()) """
@@ -207,6 +208,8 @@ class Matrix(object):
             physicalLength:float=0,
             frontVertex=None,
             backVertex=None,
+            frontIndex=1.0,
+            backIndex=1.0,
             apertureDiameter=float('+Inf'),
             label=''
             ):
@@ -222,6 +225,8 @@ class Matrix(object):
         # First and last interfaces. Used for BFL and FFL
         self.frontVertex = frontVertex
         self.backVertex = backVertex
+        self.frontIndex = frontIndex
+        self.backIndex = backIndex
 
         # Aperture
         self.apertureDiameter = apertureDiameter
@@ -318,6 +323,7 @@ class Matrix(object):
         outputBeam = GaussianBeam()
         outputBeam.q = (self.A * q + self.B ) / (self.C*q + self.D)
         outputBeam.z = self.L + rightSideBeam.z
+        outputBeam.n = self.backIndex
 
         return outputBeam
 
@@ -661,7 +667,7 @@ class Space(Matrix):
 
     """
 
-    def __init__(self, d, diameter=float('+Inf'), label=''):
+    def __init__(self, d, n=1, diameter=float('+Inf'), label=''):
         super(Space, self).__init__(A=1,
                                     B=float(d),
                                     C=0,
@@ -669,6 +675,8 @@ class Space(Matrix):
                                     physicalLength=d,
                                     frontVertex=None,
                                     backVertex=None,
+                                    frontIndex=n,
+                                    backIndex=n, 
                                     apertureDiameter=diameter,
                                     label=label)
 
@@ -704,6 +712,8 @@ class DielectricInterface(Matrix):
                                                   apertureDiameter=diameter,
                                                   frontVertex=0,
                                                   backVertex=0,
+                                                  frontIndex=n1,
+                                                  backIndex=n2,
                                                   label=label)
 
 
@@ -1241,8 +1251,6 @@ class ImagingPath(MatrixGroup):
         self.drawBeamTraces(axes, beam)
 
         self.drawAt(z=0, axes=axes)
-        if self.showPointsOfInterest:
-            self.drawPointsOfInterest(axes)
 
         return axes
 
