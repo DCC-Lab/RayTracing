@@ -373,14 +373,15 @@ class Matrix(object):
         """
 
         rayTrace = []
-        rayTrace.append(self*ray)
-
         if isinstance(ray, Ray):
             if self.L > 0:
-                if ray.y > self.apertureDiameter/2:
+                if ray.y > self.apertureDiameter / 2:
                     ray.isBlocked = True
                 rayTrace.append(ray)
 
+            rayTrace.append(self.mul_ray(ray))
+        else:
+            rayTrace.append(self.mul_beam(ray))
 
         return rayTrace
 

@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="aec5cff6-0bd8-4f6b-9922-e1715897ccc5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/raytracing/abcd.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/abcd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -79,8 +78,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/raytracing/abcd.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="1124" column="36" selection-start-line="1124" selection-start-column="36" selection-end-line="1124" selection-end-column="36" />
+            <state relative-caret-position="97">
+              <caret line="383" column="42" selection-start-line="383" selection-start-column="42" selection-end-line="383" selection-end-column="42" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -158,6 +157,8 @@
       <find>imag</find>
       <find>gaussian</find>
       <find>fieldstops</find>
+      <find>.z</find>
+      <find>traceMany</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -338,23 +339,23 @@
       <updated>1550679759047</updated>
       <workItem from="1550679760474" duration="1084000" />
       <workItem from="1550720018983" duration="4155000" />
-      <workItem from="1551898653487" duration="2596000" />
+      <workItem from="1551898653487" duration="3100000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7840000" />
+    <option name="totallyTimeSpent" value="8344000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="168" y="23" width="1345" height="877" extended-state="0" />
+    <frame x="166" y="23" width="1345" height="877" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26784343" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26784343" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2700637" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2700637" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3987261" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -386,12 +387,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/raytracing/abcd.py</url>
-          <line>1428</line>
+          <line>1429</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/raytracing/abcd.py</url>
-          <line>1154</line>
+          <line>1155</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
@@ -486,8 +487,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/raytracing/abcd.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="1124" column="36" selection-start-line="1124" selection-start-column="36" selection-end-line="1124" selection-end-column="36" />
+        <state relative-caret-position="97">
+          <caret line="383" column="42" selection-start-line="383" selection-start-column="42" selection-end-line="383" selection-end-column="42" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
