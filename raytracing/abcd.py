@@ -154,16 +154,16 @@ class GaussianBeam(object):
     """A gaussian laser beam using the ABCD formalism for propagation
     """
 
-    def __init__(self, w=None, R=float("+Inf"), wavelength=0.6328, z=0):
+    def __init__(self, w=None, R=float("+Inf"), n=1.0, wavelength=0.6328, z=0):
         # Gaussian beam matrix formalism
 
         if w is not None:
-            self.q = 1/( 1.0/R - complex(0,1)*wavelength/(math.pi*w*w))
+            self.q = 1/( 1.0/R - complex(0,1)*wavelength/n/(math.pi*w*w))
         else:
             self.q = complex(0,0)
         self.wavelength = wavelength
         self.z = z
-        self.n = 1
+        self.n = n
 
     def R(self):
         return 1/(1/self.q).real
@@ -319,6 +319,8 @@ class Matrix(object):
 
         """
         q = rightSideBeam.q
+        if rightSideBeam.n != self.frontIndex:
+            print("Warning: the gaussian beam is not tracking the index of refraction properly")
 
         outputBeam = GaussianBeam()
         outputBeam.q = (self.A * q + self.B ) / (self.C*q + self.D)
@@ -379,9 +381,7 @@ class Matrix(object):
                     ray.isBlocked = True
                 rayTrace.append(ray)
 
-            rayTrace.append(self.mul_ray(ray))
-        else:
-            rayTrace.append(self.mul_beam(ray))
+        rayTrace.append(self*ray)
 
         return rayTrace
 
@@ -1483,7 +1483,7 @@ class LaserPath(MatrixGroup):
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
-        self.drawBeamTraces(axes, beam)
+        self.drawBeamTrace(axes, beam)
 
         self.drawAt(z=0, axes=axes)
 
@@ -1498,7 +1498,7 @@ class LaserPath(MatrixGroup):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
-    def drawBeamTraces(self, axes, beam):
+    def drawBeamTrace(self, axes, beam):
         """ Draw beam trace corresponding to input beam """
 
         highResolution = ImagingPath()
@@ -1531,10 +1531,6 @@ OpticalPath = ImagingPath
 # See test.py or examples/*.py
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 2:
-        if sys.argv[1] == 'install':
-            installModule()
-            exit()
 
     path = ImagingPath()
     path.label = "Simple demo: one infinite lens f = 5cm"
