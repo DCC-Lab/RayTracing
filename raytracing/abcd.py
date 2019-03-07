@@ -164,7 +164,8 @@ class GaussianBeam(object):
         if w is not None:
             self.q = 1/( 1.0/R - complex(0,1)*wavelength/n/(math.pi*w*w))
         else:
-            self.q = complex(0,0)
+            self.q = None 
+
         self.wavelength = wavelength
         self.z = z
         self.n = n
@@ -172,9 +173,6 @@ class GaussianBeam(object):
 
     @property
     def R(self):
-        if abs(self.q) == 0:
-            return float("+Inf")
-
         invQReal = (1/self.q).real
         if invQReal == 0:
             return float("+Inf")
@@ -183,9 +181,6 @@ class GaussianBeam(object):
 
     @property
     def w(self):
-        if (-1/self.q).imag == 0:
-            return float("+Inf")
-
         return math.sqrt( self.wavelength/self.n/(math.pi * (-1/self.q).imag))
 
     @property
