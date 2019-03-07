@@ -355,6 +355,7 @@ path.append(olympus.LUMPlanFL40X())
 path.append(Space(10))
 path.display()""")
 
+# Demo #17: Laser beam and vendor lenses
 path = LaserPath()
 path.label = "Demo #17: Laser beam and vendor lenses"
 path.append(Space(d=50))
