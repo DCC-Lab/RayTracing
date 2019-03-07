@@ -604,6 +604,13 @@ class Matrix(object):
         """
 
         fig, axes = plt.subplots(figsize=(10, 7))
+        displayRange = 2 * self.largestDiameter()
+        if displayRange == float('+Inf'):
+            displayRange = self.displayHalfHeight * 4
+
+        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
+        axes.set_ylim([-displayRange /2 * 1.2, displayRange / 2 * 1.2])
+
         self.drawAt(z=0, axes=axes)
         self.drawCardinalPoints(z=0, axes=axes)
         self.drawLabels(z=0, axes=axes)
@@ -643,31 +650,29 @@ class Matrix(object):
         BFL = self.backFocalLength()
         (F1, F2) = self.focusPositions(z=z)
 
+        h = halfHeight * 0.4
         # Front principal plane to front focal spot (effective focal length)
-        axes.annotate("", xy=(p1, halfHeight * 0.5),
-                     xytext=(F1, halfHeight * 0.5),
+        axes.annotate("", xy=(p1, h), xytext=(F1, h),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.text(p1-f1/2, halfHeight * 0.5, 'EFL = {0:0.1f}'.format(f1),
+        axes.text(p1-f1/2, h, 'EFL = {0:0.1f}'.format(f1),
             ha='center', va='bottom')
         # Back principal plane to back focal spot (effective focal length)
-        axes.annotate("", xy=(p2, halfHeight * 0.5),
-                     xytext=(F2, halfHeight * 0.5),
+        axes.annotate("", xy=(p2, h), xytext=(F2, h),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.text(p2+f2/2, halfHeight * 0.5, 'EFL = {0:0.1f}'.format(f1),
+        axes.text(p2+f2/2, h, 'EFL = {0:0.1f}'.format(f1),
             ha='center', va='bottom')
 
         # Front vertex to front focal spot (front focal length or FFL)
-        axes.annotate("", xy=(self.frontVertex, halfHeight * 0.6),
-                     xytext=(F1, halfHeight * 0.6),
+        h = halfHeight * 0.7
+        axes.annotate("", xy=(self.frontVertex, h), xytext=(F1, h),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.text((self.frontVertex+F1)/2, halfHeight * 0.6, 'FFL = {0:0.1f}'.format(FFL),
+        axes.text((self.frontVertex+F1)/2, h, 'FFL = {0:0.1f}'.format(FFL),
             ha='center', va='bottom')
 
         # Back vertex to back focal spot (back focal length or BFL)
-        axes.annotate("", xy=(self.backVertex, halfHeight * 0.6),
-                     xytext=(F2, halfHeight * 0.6),
+        axes.annotate("", xy=(self.backVertex, h), xytext=(F2, h),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.text((self.backVertex+F2)/2, halfHeight * 0.6, 'BFL = {0:0.1f}'.format(BFL),
+        axes.text((self.backVertex+F2)/2, h, 'BFL = {0:0.1f}'.format(BFL),
             ha='center', va='bottom')
 
     def drawLabels(self, z, axes):
@@ -687,13 +692,11 @@ class Matrix(object):
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
 
-        AS and FS are drawn at 110% of the largest diameter
         """
         labels = {}  # Gather labels at same z
         for pointOfInterest in self.pointsOfInterest(z=z):
             zStr = "{0:3.3f}".format(pointOfInterest['z'])
             label = pointOfInterest['label']
-            print(label)
             if zStr in labels:
                 labels[zStr] = labels[zStr] + ", " + label
             else:
