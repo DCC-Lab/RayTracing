@@ -598,6 +598,20 @@ class Matrix(object):
         conjugateMatrix = self * Space(d=distance)
         return (distance, conjugateMatrix)
 
+    def display(self):
+        """ Display this component, without any ray tracing.
+        """
+
+        fig, axes = plt.subplots(figsize=(10, 7))
+        self.drawAt(z=0, axes=axes)
+        self.drawCardinalPoints(z=0, axes=axes)
+        self.drawLabels(z=0, axes=axes)
+        self.drawPointsOfInterest(axes=axes)
+        self.drawPrincipalPlanes(z=0, axes=axes)
+
+        plt.ioff()
+        plt.show()
+
     def drawAt(self, z, axes, showLabels=False):
         """ Draw element on plot with starting edge at 'z'.
 
@@ -614,6 +628,28 @@ class Matrix(object):
         (f1, f2) = self.focusPositions(z)
         axes.plot([f1, f2], [0, 0], 'ko', color='k', linewidth=0.4)
 
+    def drawPrincipalPlanes(self, z, axes):
+        """ Draw the principal planes """
+        halfHeight = self.displayHalfHeight()
+        (p1, p2) = self.principalPlanePositions(z=z)
+
+        axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
+        axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
+
+        (F1, F2) = self.focusPositions(z=z)
+        axes.annotate("", xy=(p1, halfHeight*0.5),
+                     xytext=(F1, halfHeight * 0.5),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
+        axes.annotate("", xy=(p2, halfHeight*0.5),
+                     xytext=(F2, halfHeight * 0.5),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
+        axes.annotate("", xy=(self.frontVertex, halfHeight*0.6),
+                     xytext=(F1, halfHeight * 0.6),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
+        axes.annotate("", xy=(self.backVertex, halfHeight*0.6),
+                     xytext=(F2, halfHeight * 0.6),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
+
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
 
@@ -625,6 +661,33 @@ class Matrix(object):
                      xytext=(center, halfHeight * 1.5),
                      fontsize=8, xycoords='data', ha='center',
                      va='bottom')
+
+    def drawPointsOfInterest(self, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
+        labels = {}  # Gather labels at same z
+        zElement = 0
+        pointsOfInterest = self.pointsOfInterest(zElement)
+
+        for pointOfInterest in pointsOfInterest:
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+        zElement += element.L
+
+        halfHeight = self.largestDiameter()/2
+        for zStr, label in labels.items():
+            z = float(zStr)
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                         xycoords='data', fontsize=12,
+                         ha='center', va='bottom')
 
     def drawAperture(self, z, axes):
         """ Draw the aperture size for this element.  Any element may 
