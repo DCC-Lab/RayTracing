@@ -79,17 +79,18 @@ expected {1:.4}".format(BFL, fb, self.label))
         tc1 = self.tc1
         tc2 = self.tc2
         te = self.te
+
         halfHeight = self.largestDiameter()/2.0
         apexHeight = self.L * 0.2
-        frontHeight = apexHeight * (self.R1/abs(self.R1))
-        middleHeight = apexHeight * (self.R2/abs(self.R2))
-        backHeight = apexHeight * (self.R3/abs(self.R3))
+        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
+        middleVertex = z + self.tc1 + tc1/3 * (-self.R2/abs(self.R2))
+        backVertex = z + self.L + apexHeight * (-self.R3/abs(self.R3))
 
         Path = mpath.Path
         p1 = patches.PathPatch(
-            Path([(z+frontHeight, -halfHeight), (z-frontHeight, 0), (z+frontHeight, halfHeight),
-                  (z+tc1+middleHeight,  halfHeight), (z+tc1, 0),
-                  (z+tc1+middleHeight, -halfHeight), (z+frontHeight, -halfHeight)],
+            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
+                  (z+tc1, halfHeight), (middleVertex, 0),
+                  (z+tc1, -halfHeight), (z, -halfHeight)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
@@ -98,9 +99,9 @@ expected {1:.4}".format(BFL, fb, self.label))
             fill=True,
             transform=axes.transData)
         p2 = patches.PathPatch(
-            Path([(z+tc1+middleHeight, -halfHeight), (z+tc1, 0), (z+tc1+middleHeight, halfHeight),
-                  (z+self.L+backHeight, halfHeight), (z+self.L*1.2, 0),
-                  (z+self.L+backHeight, -halfHeight), (z+tc1+middleHeight, -halfHeight)],
+            Path([(z+tc1, -halfHeight), (middleVertex, 0), (z+tc1, halfHeight),
+                  (z+self.L, halfHeight), (backVertex, 0),
+                  (z+self.L, -halfHeight), (z, -halfHeight)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
@@ -109,31 +110,13 @@ expected {1:.4}".format(BFL, fb, self.label))
             fill=True,
             transform=axes.transData)
 
+
         axes.add_patch(p1)
         axes.add_patch(p2)
         if showLabels:
             self.drawLabels(z,axes)
 
         self.drawAperture(z, axes)
-
-    def drawApertures(self,z):
-        halfHeight = self.apertureDiameter / 2.0
-
-        center = z + self.L/2
-        width = self.te
-
-        axes.add_patch(patches.Polygon(
-                       [[center - width, halfHeight],
-                        [center + width, halfHeight]],
-                       linewidth=3,
-                       closed=False,
-                       color='0.7'))
-        axes.add_patch(patches.Polygon(
-                       [[center - width, -halfHeight],
-                        [center + width, -halfHeight]],
-                       linewidth=3,
-                       closed=False,
-                       color='0.7'))
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:

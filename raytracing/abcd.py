@@ -655,27 +655,32 @@ class Matrix(object):
         h = halfHeight * 0.4
         # Front principal plane to front focal spot (effective focal length)
         axes.annotate("", xy=(p1, h), xytext=(F1, h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
         axes.text(p1-f1/2, h, 'EFL = {0:0.1f}'.format(f1),
-            ha='center', va='bottom')
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
         # Back principal plane to back focal spot (effective focal length)
-        axes.annotate("", xy=(p2, h), xytext=(F2, h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.text(p2+f2/2, h, 'EFL = {0:0.1f}'.format(f1),
-            ha='center', va='bottom')
+        axes.annotate("", xy=(p2, -h), xytext=(F2, -h),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text(p2+f2/2, -h, 'EFL = {0:0.1f}'.format(f1),
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
         # Front vertex to front focal spot (front focal length or FFL)
-        h = 0
+        h = 0.5
+
         axes.annotate("", xy=(self.frontVertex, h), xytext=(F1, h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
         axes.text((self.frontVertex+F1)/2, h, 'FFL = {0:0.1f}'.format(FFL),
-            ha='center', va='bottom')
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
         # Back vertex to back focal spot (back focal length or BFL)
-        axes.annotate("", xy=(self.backVertex, h), xytext=(F2, h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.text((self.backVertex+F2)/2, h, 'BFL = {0:0.1f}'.format(BFL),
-            ha='center', va='bottom')
+        axes.annotate("", xy=(self.backVertex, -h), xytext=(F2, -h),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text((self.backVertex+F2)/2, -h, 'BFL = {0:0.1f}'.format(BFL),
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
