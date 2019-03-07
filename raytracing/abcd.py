@@ -606,14 +606,14 @@ class Matrix(object):
         fig, axes = plt.subplots(figsize=(10, 7))
         displayRange = 2 * self.largestDiameter()
         if displayRange == float('+Inf'):
-            displayRange = self.displayHalfHeight * 4
+            displayRange = self.displayHalfHeight() * 4
 
-        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
+        axes.set(xlabel='Distance', ylabel='Height', title="Cardinal points for {0}".format(self.label))
         axes.set_ylim([-displayRange /2 * 1.2, displayRange / 2 * 1.2])
 
         self.drawAt(z=0, axes=axes)
-        self.drawCardinalPoints(z=0, axes=axes)
         self.drawLabels(z=0, axes=axes)
+        self.drawCardinalPoints(z=0, axes=axes)
         self.drawPointsOfInterest(z=0, axes=axes)
         self.drawPrincipalPlanes(z=0, axes=axes)
 
@@ -643,6 +643,8 @@ class Matrix(object):
 
         axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
+        axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom')
+        axes.text(p2, halfHeight*1.2, '$P_b$',ha='center', va='bottom')
 
 
         (f1, f2) = self.effectiveFocalLengths()
@@ -663,7 +665,7 @@ class Matrix(object):
             ha='center', va='bottom')
 
         # Front vertex to front focal spot (front focal length or FFL)
-        h = halfHeight * 0.7
+        h = 0
         axes.annotate("", xy=(self.frontVertex, h), xytext=(F1, h),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
         axes.text((self.frontVertex+F1)/2, h, 'FFL = {0:0.1f}'.format(FFL),

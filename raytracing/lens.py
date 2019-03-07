@@ -32,7 +32,7 @@ class AchromatDoubletLens(MatrixGroup):
 
     """
 
-    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
+    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -40,6 +40,7 @@ class AchromatDoubletLens(MatrixGroup):
         self.R3 = R3
         self.tc1 = tc1
         self.tc2 = tc2
+        self.te = te
         self.n1 = n1
         self.n2 = n2
         self.mat1 = mat1
@@ -76,18 +77,19 @@ expected {1:.4}".format(BFL, fb, self.label))
 
         """
         tc1 = self.tc1
-
+        tc2 = self.tc2
+        te = self.te
         halfHeight = self.largestDiameter()/2.0
         apexHeight = self.L * 0.2
-        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
-        middleVertex = z + self.tc1 + tc1/3 * (-self.R2/abs(self.R2))
-        backVertex = z + self.L + apexHeight * (-self.R3/abs(self.R3))
+        frontHeight = apexHeight * (self.R1/abs(self.R1))
+        middleHeight = apexHeight * (self.R2/abs(self.R2))
+        backHeight = apexHeight * (self.R3/abs(self.R3))
 
         Path = mpath.Path
         p1 = patches.PathPatch(
-            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
-                  (z+tc1, halfHeight), (middleVertex, 0),
-                  (z+tc1, -halfHeight), (z, -halfHeight)],
+            Path([(z+frontHeight, -halfHeight), (z-frontHeight, 0), (z+frontHeight, halfHeight),
+                  (z+tc1+middleHeight,  halfHeight), (z+tc1, 0),
+                  (z+tc1+middleHeight, -halfHeight), (z+frontHeight, -halfHeight)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
@@ -96,9 +98,9 @@ expected {1:.4}".format(BFL, fb, self.label))
             fill=True,
             transform=axes.transData)
         p2 = patches.PathPatch(
-            Path([(z+tc1, -halfHeight), (middleVertex, 0), (z+tc1, halfHeight),
-                  (z+self.L, halfHeight), (backVertex, 0),
-                  (z+self.L, -halfHeight), (z, -halfHeight)],
+            Path([(z+tc1+middleHeight, -halfHeight), (z+tc1, 0), (z+tc1+middleHeight, halfHeight),
+                  (z+self.L+backHeight, halfHeight), (z+self.L*1.2, 0),
+                  (z+self.L+backHeight, -halfHeight), (z+tc1+middleHeight, -halfHeight)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
@@ -113,6 +115,25 @@ expected {1:.4}".format(BFL, fb, self.label))
             self.drawLabels(z,axes)
 
         self.drawAperture(z, axes)
+
+    def drawApertures(self,z):
+        halfHeight = self.apertureDiameter / 2.0
+
+        center = z + self.L/2
+        width = self.te
+
+        axes.add_patch(patches.Polygon(
+                       [[center - width, halfHeight],
+                        [center + width, halfHeight]],
+                       linewidth=3,
+                       closed=False,
+                       color='0.7'))
+        axes.add_patch(patches.Polygon(
+                       [[center - width, -halfHeight],
+                        [center + width, -halfHeight]],
+                       linewidth=3,
+                       closed=False,
+                       color='0.7'))
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
