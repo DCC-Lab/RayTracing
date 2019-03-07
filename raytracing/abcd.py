@@ -1540,7 +1540,7 @@ class LaserPath(MatrixGroup):
 
         if inputBeam is None:
             inputBeam = self.inputBeam
-            
+
         self.createBeamTracePlot(axes=axes, inputBeam=inputBeam)
 
         plt.ioff()
@@ -1552,7 +1552,7 @@ class LaserPath(MatrixGroup):
 
         displayRange = 2 * self.largestDiameter()
         if displayRange == float('+Inf'):
-            displayRange = self.objectHeight * 2
+            displayRange = self.inputBeam.w * 6
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
