@@ -193,6 +193,14 @@ class GaussianBeam(object):
         return math.sqrt( self.zo * self.wavelength/math.pi )
 
     @property
+    def waist(self):
+        return self.wo
+
+    @property
+    def waistPosition(self):
+        return -self.q.real
+
+    @property
     def zo(self):
         return self.q.imag
 
@@ -212,7 +220,7 @@ class GaussianBeam(object):
         description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
         description += "zo: {0:.3f}, ".format(self.zo)
         description += "wo: {0:.3f}, ".format(self.wo)
-        description += "wo position: {0:.3f} ".format(-self.q.real)
+        description += "wo position: {0:.3f} ".format(self.waistPosition)
         return description
 
 class Matrix(object):
@@ -260,15 +268,16 @@ class Matrix(object):
 
         # Length of this element
         self.L = float(physicalLength)
+        # Aperture
+        self.apertureDiameter = apertureDiameter
 
         # First and last interfaces. Used for BFL and FFL
         self.frontVertex = frontVertex
         self.backVertex = backVertex
+
+        # Index of refraction at entrance and exit.
         self.frontIndex = frontIndex
         self.backIndex = backIndex
-
-        # Aperture
-        self.apertureDiameter = apertureDiameter
 
         self.label = label
         super(Matrix, self).__init__()
@@ -355,7 +364,8 @@ class Matrix(object):
         return outputRay
 
     def mul_beam(self, rightSideBeam):
-        """ Multiplication of a coherent beam by a matrix.
+        """ Multiplication of a coherent beam with complex radius
+        of curvature q by a matrix.
 
         """
         q = rightSideBeam.q
@@ -1490,6 +1500,19 @@ class ImagingPath(MatrixGroup):
 
 
 class LaserPath(MatrixGroup):
+    """LaserPath: the main class of the module for coherent
+    laser beams: it is the combination of Matrix() or MatrixGroup()
+    to be used as an laser path with a laser beam at the entrance.
+
+    Usage is to create the LaserPath(), then append() elements
+    and display(). You may change the inputBeam to any GaussianBeam().
+
+    Gaussian laser beams are not "blocked" by aperture. The formalism
+    does not explicitly allow that.  However, if it appears that a 
+    GaussianBeam() would be clipped by  finite aperture, a property 
+    is set to indicate it, but it will propagate nevertheless
+    and without diffraction due to that aperture.
+    """
     def __init__(self, elements=[], label=""):
         self.inputBeam = None
         self.showElementLabels = True
@@ -1499,8 +1522,9 @@ class LaserPath(MatrixGroup):
         super(LaserPath, self).__init__(elements=elements, label=label)
 
     def display(self, beam=None, comments=None):
-        """ Display the optical system and trace the laser beam. If comments are included
-        they will be displayed on a graph in the bottom half of the plot.
+        """ Display the optical system and trace the laser beam. 
+        If comments are included they will be displayed on a
+        graph in the bottom half of the plot.
 
         """
 
@@ -1519,7 +1543,7 @@ class LaserPath(MatrixGroup):
 
     def createBeamTracePlot(self, axes, beam):
         """ Create a matplotlib plot to draw the laser beam and the elements.
-         """
+        """
 
         displayRange = 2 * self.largestDiameter()
         if displayRange == float('+Inf'):
@@ -1540,11 +1564,18 @@ class LaserPath(MatrixGroup):
         for ray in rayList:
             x.append(ray.z)
             y.append(ray.w)
-            # else: # ray will simply stop drawing from here
         return (x, y)
 
     def drawBeamTrace(self, axes, beam):
-        """ Draw beam trace corresponding to input beam """
+        """ Draw beam trace corresponding to input beam 
+        Because the laser beam diffracts through space, we cannot
+        simply propagate the beam over large distances and trace it
+        (as opposed to rays, where we can). We must split Space() 
+        elements into sub elements to watch the beam size expand.
+        
+        We arbitrarily split Space() elements into 100 sub elements
+        before plotting.
+        """
 
         highResolution = ImagingPath()
         for element in self.elements:
@@ -1560,7 +1591,6 @@ class LaserPath(MatrixGroup):
         (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
         axes.plot(x, y, 'r', linewidth=1)
         axes.plot(x, [-v for v in y], 'r', linewidth=1)
-
 
 
 """ Synonym of Matrix: Element 
