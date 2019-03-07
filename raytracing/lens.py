@@ -110,6 +110,15 @@ class AchromatDoubletLens(MatrixGroup):
 
         self.drawAperture(z, axes)
 
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
+
+
 class Objective(MatrixGroup):
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
         """ General microscope objective, approximately correct.

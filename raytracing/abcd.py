@@ -599,14 +599,15 @@ class Matrix(object):
         return (distance, conjugateMatrix)
 
     def display(self):
-        """ Display this component, without any ray tracing.
+        """ Display this component, without any ray tracing but with 
+        all of its cardinal points and planes
         """
 
         fig, axes = plt.subplots(figsize=(10, 7))
         self.drawAt(z=0, axes=axes)
         self.drawCardinalPoints(z=0, axes=axes)
         self.drawLabels(z=0, axes=axes)
-        self.drawPointsOfInterest(axes=axes)
+        self.drawPointsOfInterest(z=0, axes=axes)
         self.drawPrincipalPlanes(z=0, axes=axes)
 
         plt.ioff()
@@ -636,19 +637,38 @@ class Matrix(object):
         axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
 
+
+        (f1, f2) = self.effectiveFocalLengths()
+        FFL = self.frontFocalLength()
+        BFL = self.backFocalLength()
         (F1, F2) = self.focusPositions(z=z)
-        axes.annotate("", xy=(p1, halfHeight*0.5),
+
+        # Front principal plane to front focal spot (effective focal length)
+        axes.annotate("", xy=(p1, halfHeight * 0.5),
                      xytext=(F1, halfHeight * 0.5),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.annotate("", xy=(p2, halfHeight*0.5),
+        axes.text(p1-f1/2, halfHeight * 0.5, 'EFL = {0:0.1f}'.format(f1),
+            ha='center', va='bottom')
+        # Back principal plane to back focal spot (effective focal length)
+        axes.annotate("", xy=(p2, halfHeight * 0.5),
                      xytext=(F2, halfHeight * 0.5),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.annotate("", xy=(self.frontVertex, halfHeight*0.6),
+        axes.text(p2+f2/2, halfHeight * 0.5, 'EFL = {0:0.1f}'.format(f1),
+            ha='center', va='bottom')
+
+        # Front vertex to front focal spot (front focal length or FFL)
+        axes.annotate("", xy=(self.frontVertex, halfHeight * 0.6),
                      xytext=(F1, halfHeight * 0.6),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
-        axes.annotate("", xy=(self.backVertex, halfHeight*0.6),
+        axes.text((self.frontVertex+F1)/2, halfHeight * 0.6, 'FFL = {0:0.1f}'.format(FFL),
+            ha='center', va='bottom')
+
+        # Back vertex to back focal spot (back focal length or BFL)
+        axes.annotate("", xy=(self.backVertex, halfHeight * 0.6),
                      xytext=(F2, halfHeight * 0.6),
                      xycoords='data', arrowprops=dict(arrowstyle='<->'))
+        axes.text((self.backVertex+F2)/2, halfHeight * 0.6, 'BFL = {0:0.1f}'.format(BFL),
+            ha='center', va='bottom')
 
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
@@ -662,7 +682,7 @@ class Matrix(object):
                      fontsize=8, xycoords='data', ha='center',
                      va='bottom')
 
-    def drawPointsOfInterest(self, axes):
+    def drawPointsOfInterest(self, z, axes):
         """
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
@@ -670,19 +690,16 @@ class Matrix(object):
         AS and FS are drawn at 110% of the largest diameter
         """
         labels = {}  # Gather labels at same z
-        zElement = 0
-        pointsOfInterest = self.pointsOfInterest(zElement)
-
-        for pointOfInterest in pointsOfInterest:
+        for pointOfInterest in self.pointsOfInterest(z=z):
             zStr = "{0:3.3f}".format(pointOfInterest['z'])
             label = pointOfInterest['label']
+            print(label)
             if zStr in labels:
                 labels[zStr] = labels[zStr] + ", " + label
             else:
                 labels[zStr] = label
-        zElement += element.L
 
-        halfHeight = self.largestDiameter()/2
+        halfHeight = self.displayHalfHeight()
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
@@ -1053,7 +1070,7 @@ class MatrixGroup(Matrix):
                 element.drawLabels(z, axes)
             z += element.L
 
-    def drawPointsOfInterest(self, axes):
+    def drawPointsOfInterest(self, z, axes):
         """
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
@@ -1061,7 +1078,19 @@ class MatrixGroup(Matrix):
         AS and FS are drawn at 110% of the largest diameter
         """
         labels = {}  # Gather labels at same z
+
         zElement = 0
+        # For the group as a whole, then each element
+        for pointOfInterest in self.pointsOfInterest(z=zElement):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+
+        # Points of interest for each element
         for element in self.elements:
             pointsOfInterest = element.pointsOfInterest(zElement)
 
@@ -1380,8 +1409,8 @@ class ImagingPath(MatrixGroup):
 
         self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
-            self.drawPointsOfInterest(axes)
-            self.drawStops(axes)
+            self.drawPointsOfInterest(z=0, axes=axes)
+            self.drawStops(z=0, axes=axes)
 
         return axes
 
@@ -1467,7 +1496,7 @@ class ImagingPath(MatrixGroup):
                         head_width=0.25,
                         length_includes_head=True)
 
-    def drawStops(self, axes):
+    def drawStops(self, z, axes):
         """
         AS and FS are drawn at 110% of the largest diameter
         """

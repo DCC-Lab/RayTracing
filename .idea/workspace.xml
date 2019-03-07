@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aec5cff6-0bd8-4f6b-9922-e1715897ccc5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raytracing/abcd.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/abcd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raytracing/lens.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/lens.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,7 +15,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/RayTracing$raytracing.coverage" NAME="raytracing Coverage Results" MODIFIED="1551905605985" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
     <SUITE FILE_PATH="coverage/RayTracing$abcd.coverage" NAME="raytracing Coverage Results" MODIFIED="1550680836479" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
-    <SUITE FILE_PATH="coverage/RayTracing$test.coverage" NAME="test Coverage Results" MODIFIED="1551900485567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
+    <SUITE FILE_PATH="coverage/RayTracing$test.coverage" NAME="test Coverage Results" MODIFIED="1551991884223" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
     <SUITE FILE_PATH="coverage/RayTracing$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1550720031646" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
   </component>
   <component name="FileEditorManager">
@@ -69,8 +71,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/raytracing/lens.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2130">
-              <caret line="145" column="8" selection-start-line="145" selection-start-column="8" selection-end-line="145" selection-end-column="8" />
+            <state relative-caret-position="334">
+              <caret line="100" column="33" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -78,8 +80,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/raytracing/abcd.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="393" column="11" selection-start-line="393" selection-start-column="11" selection-end-line="393" selection-end-column="11" />
+            <state relative-caret-position="117">
+              <caret line="700" lean-forward="true" selection-start-line="700" selection-end-line="700" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -102,11 +104,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="45">
+              <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -159,6 +158,8 @@
       <find>fieldstops</find>
       <find>.z</find>
       <find>traceMany</find>
+      <find>drawPointso</find>
+      <find>drawpointsof</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -177,8 +178,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="286" />
-    <option name="y" value="27" />
+    <option name="x" value="23" />
+    <option name="y" value="23" />
     <option name="width" value="1345" />
     <option name="height" value="877" />
   </component>
@@ -226,7 +227,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.raytracing">
+  <component name="RunManager" selected="Python.test">
     <configuration name="__main__" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="RayTracing" />
       <option name="INTERPRETER_OPTIONS" value="-m" />
@@ -341,21 +342,23 @@
       <workItem from="1550720018983" duration="4155000" />
       <workItem from="1551898653487" duration="3223000" />
       <workItem from="1551906425543" duration="273000" />
+      <workItem from="1551991439273" duration="473000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8740000" />
+    <option name="totallyTimeSpent" value="9213000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="286" y="27" width="1345" height="877" extended-state="0" />
+    <frame x="23" y="23" width="1345" height="877" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27168074" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27551803" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2700637" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2700637" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3987261" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -370,7 +373,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="right" id="SciView" order="3" visible="true" weight="0.13584037" />
+      <window_info anchor="right" id="SciView" order="3" weight="0.13584037" />
       <window_info anchor="right" id="Database" order="4" />
     </layout>
   </component>
@@ -381,19 +384,24 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/raytracing/lens.py</url>
-          <line>102</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/raytracing/abcd.py</url>
-          <line>1429</line>
+          <line>1441</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/raytracing/abcd.py</url>
-          <line>1155</line>
+          <line>1167</line>
           <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/raytracing/abcd.py</url>
+          <line>609</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/raytracing/abcd.py</url>
+          <line>701</line>
+          <option name="timeStamp" value="17" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -439,13 +447,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raytracing/lens.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2130">
-          <caret line="145" column="8" selection-start-line="145" selection-start-column="8" selection-end-line="145" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/raytracing/tests/env.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -458,11 +459,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="45">
+          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -485,10 +483,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/raytracing/lens.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="334">
+          <caret line="100" column="33" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/raytracing/abcd.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="393" column="11" selection-start-line="393" selection-start-column="11" selection-end-line="393" selection-end-column="11" />
+        <state relative-caret-position="117">
+          <caret line="700" lean-forward="true" selection-start-line="700" selection-end-line="700" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
