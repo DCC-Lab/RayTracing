@@ -77,7 +77,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="PN_33_921-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="PN_33_921-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="PN_33_921-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="PN_33_921-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -192,6 +197,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="PN_33_921-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="PN_33_921-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -271,7 +279,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="PN_88_593-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="PN_88_593-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="PN_88_593-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="PN_88_593-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -385,6 +398,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 &nbsp;<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
 <dl><dt><a name="PN_88_593-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>

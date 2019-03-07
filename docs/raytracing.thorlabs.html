@@ -95,7 +95,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_030_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_030_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_030_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_030_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_030_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -210,6 +215,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_030_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_030_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -289,7 +297,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_035_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_035_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_035_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_035_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_035_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -404,6 +417,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_035_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_035_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -483,7 +499,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_040_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_040_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_040_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_040_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_040_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -598,6 +619,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_040_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_040_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -677,7 +701,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_045_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_045_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_045_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_045_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_045_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -792,6 +821,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_045_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_045_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -871,7 +903,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_050_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_050_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_050_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_050_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_050_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -986,6 +1023,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_050_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_050_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -1065,7 +1105,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_060_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_060_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_060_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_060_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_060_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -1180,6 +1225,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_060_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_060_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -1259,7 +1307,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_075_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_075_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_075_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_075_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_075_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -1374,6 +1427,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_075_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_075_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -1453,7 +1509,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_080_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_080_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_080_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_080_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_080_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -1568,6 +1629,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_080_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_080_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -1647,7 +1711,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_100_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_100_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_100_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_100_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_100_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -1762,6 +1831,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_100_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_100_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -1841,7 +1913,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_125_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_125_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_125_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_125_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_125_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -1956,6 +2033,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_125_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_125_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -2035,7 +2115,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_150_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_150_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_150_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_150_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_150_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -2150,6 +2235,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_150_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_150_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -2229,7 +2317,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_200_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_200_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_200_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_200_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_200_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -2344,6 +2437,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_200_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_200_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -2423,7 +2519,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_250_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_250_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_250_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_250_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_250_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -2538,6 +2639,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_250_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_250_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -2617,7 +2721,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_300_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_300_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_300_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_300_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_300_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -2732,6 +2841,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_300_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_300_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -2811,7 +2923,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_400_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_400_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_400_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_400_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_400_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -2926,6 +3043,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_400_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_400_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -3005,7 +3125,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_500_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AC254_500_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="AC254_500_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_500_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="AC254_500_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -3120,6 +3245,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AC254_500_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="AC254_500_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -3199,7 +3327,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_040_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="ACN254_040_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="ACN254_040_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_040_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="ACN254_040_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -3314,6 +3447,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="ACN254_040_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="ACN254_040_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -3393,7 +3529,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_050_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="ACN254_050_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="ACN254_050_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_050_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="ACN254_050_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -3508,6 +3649,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="ACN254_050_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="ACN254_050_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -3587,7 +3731,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_075_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="ACN254_075_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="ACN254_075_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_075_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="ACN254_075_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -3702,6 +3851,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="ACN254_075_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
 <dl><dt><a name="ACN254_075_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
 the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
@@ -3781,7 +3933,12 @@ of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_100_A-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="ACN254_100_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;OpticalPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="ACN254_100_A-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
+&nbsp;<br>
+AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_100_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="ACN254_100_A-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
@@ -3895,6 +4052,9 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 &nbsp;<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="ACN254_100_A-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_100_A-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
 elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>

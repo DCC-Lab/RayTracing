@@ -1,10 +1,30 @@
 from raytracing import *
+from raytracing.thorlabs import *
 
-path = MatrixGroup()
-path.append(Lens(f=50))
-path.append(Space(3))
-path.append(lens)
-path.append(Space(0.1))
-path.append(lens)
-path.append(Space(3))
-
+path = LaserPath()
+path.label = "Demo #16: Gaussian beam and  vendor lenses"
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=150))
+path.append(eo.PN_33_921())
+path.append(Space(d=50))
+path.append(eo.PN_88_593())
+path.append(Space(d=180))
+path.append(olympus.LUMPlanFL40X())
+path.append(Space(d=10))
+path.display(inputBeam=GaussianBeam(w=0.001), comments="""
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=150))
+path.append(eo.PN_33_921())
+path.append(Space(d=50))
+path.append(eo.PN_88_593())
+path.append(Space(d=180))
+path.append(olympus.LUMPlanFL40X())
+path.append(Space(d=10))
+path.display()""")
+print(GaussianBeam(w=0.001))

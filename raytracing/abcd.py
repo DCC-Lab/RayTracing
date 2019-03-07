@@ -150,6 +150,74 @@ class Ray:
 
         return description
 
+class GaussianBeam(object):
+    """A gaussian laser beam using the ABCD formalism for propagation
+
+    w is the 1/e beam size in electric field.
+    R is the radius of curvature (positive means diverging)
+    n is index in which the beam is. Necessary to compute beam size
+    wavelength is in the same units
+    """
+
+    def __init__(self, w=None, R=float("+Inf"), n=1.0, wavelength=632.8e-6, z=0):
+        # Gaussian beam matrix formalism
+        if w is not None:
+            self.q = 1/( 1.0/R - complex(0,1)*wavelength/n/(math.pi*w*w))
+        else:
+            self.q = None 
+
+        self.wavelength = wavelength
+        self.z = z
+        self.n = n
+        self.isClipped = False
+
+    @property
+    def R(self):
+        invQReal = (1/self.q).real
+        if invQReal == 0:
+            return float("+Inf")
+
+        return 1/invQReal
+
+    @property
+    def w(self):
+        return math.sqrt( self.wavelength/self.n/(math.pi * (-1/self.q).imag))
+
+    @property
+    def wo(self):
+        return math.sqrt( self.zo * self.wavelength/math.pi )
+
+    @property
+    def waist(self):
+        return self.wo
+
+    @property
+    def waistPosition(self):
+        return -self.q.real
+
+    @property
+    def zo(self):
+        return self.q.imag
+
+    @property
+    def confocalParameter(self):
+        return self.zo
+
+    @property
+    def rayleighRange(self):
+        return self.zo
+
+    def __str__(self):
+        """ String description that allows the use of print(Ray()) """
+        description = "Complex radius: {0:.3}\n".format(self.q)
+        description += "w(z): {0:.3f}, ".format(self.w)
+        description += "R(z): {0:.3f}, ".format(self.R)
+        description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
+        description += "zo: {0:.3f}, ".format(self.zo)
+        description += "wo: {0:.3f}, ".format(self.wo)
+        description += "wo position: {0:.3f} ".format(self.waistPosition)
+        return description
+
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
     matrix.
@@ -182,6 +250,8 @@ class Matrix(object):
             physicalLength:float=0,
             frontVertex=None,
             backVertex=None,
+            frontIndex=1.0,
+            backIndex=1.0,
             apertureDiameter=float('+Inf'),
             label=''
             ):
@@ -193,13 +263,16 @@ class Matrix(object):
 
         # Length of this element
         self.L = float(physicalLength)
+        # Aperture
+        self.apertureDiameter = apertureDiameter
 
         # First and last interfaces. Used for BFL and FFL
         self.frontVertex = frontVertex
         self.backVertex = backVertex
 
-        # Aperture
-        self.apertureDiameter = apertureDiameter
+        # Index of refraction at entrance and exit.
+        self.frontIndex = frontIndex
+        self.backIndex = backIndex
 
         self.label = label
         super(Matrix, self).__init__()
@@ -220,6 +293,8 @@ class Matrix(object):
             return self.mul_matrix(rightSide)
         elif isinstance(rightSide, Ray):
             return self.mul_ray(rightSide)
+        elif isinstance(rightSide, GaussianBeam):
+            return self.mul_beam(rightSide)
         else:
             raise TypeError(
                 "Unrecognized right side element in multiply: '{0}'\
@@ -272,6 +347,7 @@ class Matrix(object):
         outputRay = Ray()
         outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
@@ -281,6 +357,27 @@ class Matrix(object):
             outputRay.isBlocked = rightSideRay.isBlocked
 
         return outputRay
+
+    def mul_beam(self, rightSideBeam):
+        """ Multiplication of a coherent beam with complex radius
+        of curvature q by a matrix.
+
+        """
+        q = rightSideBeam.q
+        if rightSideBeam.n != self.frontIndex:
+            print("Warning: the gaussian beam is not tracking the index of refraction properly")
+
+        outputBeam = GaussianBeam(wavelength=rightSideBeam.wavelength)
+        outputBeam.q = (self.A * q + self.B ) / (self.C*q + self.D)
+        outputBeam.z = self.L + rightSideBeam.z
+        outputBeam.n = self.backIndex
+
+        if abs(outputBeam.w) > self.apertureDiameter / 2:
+            outputBeam.isClipped = True
+        else:
+            outputBeam.isClipped = rightSideBeam.isClipped
+
+        return outputBeam
 
     def largestDiameter(self):
         """ Largest diameter of the element or group of elements """
@@ -328,12 +425,13 @@ class Matrix(object):
         """
 
         rayTrace = []
-        if self.L > 0:
-            if ray.y > self.apertureDiameter/2:
-                ray.isBlocked = True
-            rayTrace.append(ray)                            
+        if isinstance(ray, Ray):
+            if self.L > 0:
+                if ray.y > self.apertureDiameter / 2:
+                    ray.isBlocked = True
+                rayTrace.append(ray)
 
-        rayTrace.append(self.mul_ray(ray))
+        rayTrace.append(self*ray)
 
         return rayTrace
 
@@ -620,7 +718,7 @@ class Space(Matrix):
 
     """
 
-    def __init__(self, d, diameter=float('+Inf'), label=''):
+    def __init__(self, d, n=1, diameter=float('+Inf'), label=''):
         super(Space, self).__init__(A=1,
                                     B=float(d),
                                     C=0,
@@ -628,6 +726,8 @@ class Space(Matrix):
                                     physicalLength=d,
                                     frontVertex=None,
                                     backVertex=None,
+                                    frontIndex=n,
+                                    backIndex=n, 
                                     apertureDiameter=diameter,
                                     label=label)
 
@@ -663,6 +763,8 @@ class DielectricInterface(Matrix):
                                                   apertureDiameter=diameter,
                                                   frontVertex=0,
                                                   backVertex=0,
+                                                  frontIndex=n1,
+                                                  backIndex=n2,
                                                   label=label)
 
 
@@ -888,6 +990,34 @@ class MatrixGroup(Matrix):
                 element.drawLabels(z, axes)
             z += element.L
 
+    def drawPointsOfInterest(self, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
+        labels = {}  # Gather labels at same z
+        zElement = 0
+        for element in self.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                label = pointOfInterest['label']
+                if zStr in labels:
+                    labels[zStr] = labels[zStr] + ", " + label
+                else:
+                    labels[zStr] = label
+            zElement += element.L
+
+        halfHeight = self.largestDiameter()/2
+        for zStr, label in labels.items():
+            z = float(zStr)
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                         xycoords='data', fontsize=12,
+                         ha='center', va='bottom')
+
 
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
@@ -932,6 +1062,10 @@ class ImagingPath(MatrixGroup):
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
+
+        if B == 0:
+            return None
+
         return Ray(y=y, theta=-A * y / B)
 
     def marginalRays(self, y=0):
@@ -1039,10 +1173,11 @@ class ImagingPath(MatrixGroup):
         is no field stop and no aperture stop in the system
         and their sizes are infinite.
         """
+        (apertureStopPosition, dummy) = self.apertureStop()
 
         fieldStopPosition = None
         fieldStopDiameter = float('+Inf')
-        if self.hasFiniteApertureDiameter():            
+        if self.hasFiniteApertureDiameter() and apertureStopPosition != 0:
             dy = self.precision * 100
             y = 0.0
             wasBlocked = False
@@ -1183,6 +1318,7 @@ class ImagingPath(MatrixGroup):
         self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(axes)
+            self.drawStops(axes)
 
         return axes
 
@@ -1268,33 +1404,11 @@ class ImagingPath(MatrixGroup):
                         head_width=0.25,
                         length_includes_head=True)
 
-    def drawPointsOfInterest(self, axes):
+    def drawStops(self, axes):
         """
-        Labels of general points of interest are drawn below the
-        axis, at 25% of the largest diameter.
-
         AS and FS are drawn at 110% of the largest diameter
         """
-        labels = {}  # Gather labels at same z
-        zElement = 0
-        for element in self.elements:
-            pointsOfInterest = element.pointsOfInterest(zElement)
-
-            for pointOfInterest in pointsOfInterest:
-                zStr = "{0:3.3f}".format(pointOfInterest['z'])
-                label = pointOfInterest['label']
-                if zStr in labels:
-                    labels[zStr] = labels[zStr] + ", " + label
-                else:
-                    labels[zStr] = label
-            zElement += element.L
-
         halfHeight = self.largestDiameter()/2
-        for zStr, label in labels.items():
-            z = float(zStr)
-            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                         xycoords='data', fontsize=12,
-                         ha='center', va='bottom')
 
         (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
         if apertureStopPosition is not None:
@@ -1379,6 +1493,106 @@ class ImagingPath(MatrixGroup):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
+
+class LaserPath(MatrixGroup):
+    """LaserPath: the main class of the module for coherent
+    laser beams: it is the combination of Matrix() or MatrixGroup()
+    to be used as a laser path with a laser beam (GaussianBeam)
+    at the entrance.
+
+    Usage is to create the LaserPath(), then append() elements
+    and display(). You may change the inputBeam to any GaussianBeam(),
+    or provide one to display(beam=GaussianBeam())
+
+    Gaussian laser beams are not "blocked" by aperture. The formalism
+    does not explicitly allow that.  However, if it appears that a 
+    GaussianBeam() would be clipped by  finite aperture, a property 
+    is set to indicate it, but it will propagate nevertheless
+    and without diffraction due to that aperture.
+    """
+    def __init__(self, elements=[], label=""):
+        self.inputBeam = None
+        self.showElementLabels = True
+        self.showPointsOfInterest = True
+        self.showPointsOfInterestLabels = True
+        self.showPlanesAcrossPointsOfInterest = True
+        super(LaserPath, self).__init__(elements=elements, label=label)
+
+    def display(self, inputBeam=None, comments=None):
+        """ Display the optical system and trace the laser beam. 
+        If comments are included they will be displayed on a
+        graph in the bottom half of the plot.
+
+        """
+
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+                              fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
+
+        if inputBeam is None:
+            inputBeam = self.inputBeam
+
+        self.createBeamTracePlot(axes=axes, inputBeam=inputBeam)
+
+        plt.ioff()
+        plt.show()
+
+    def createBeamTracePlot(self, axes, inputBeam):
+        """ Create a matplotlib plot to draw the laser beam and the elements.
+        """
+
+        displayRange = 2 * self.largestDiameter()
+        if displayRange == float('+Inf'):
+            displayRange = self.inputBeam.w * 6
+
+        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
+
+        self.drawBeamTrace(axes, inputBeam)
+
+        self.drawAt(z=0, axes=axes)
+
+        return axes
+
+    def rearrangeBeamTraceForPlotting(self, rayList):
+        x = []
+        y = []
+        for ray in rayList:
+            x.append(ray.z)
+            y.append(ray.w)
+        return (x, y)
+
+    def drawBeamTrace(self, axes, beam):
+        """ Draw beam trace corresponding to input beam 
+        Because the laser beam diffracts through space, we cannot
+        simply propagate the beam over large distances and trace it
+        (as opposed to rays, where we can). We must split Space() 
+        elements into sub elements to watch the beam size expand.
+        
+        We arbitrarily split Space() elements into 100 sub elements
+        before plotting.
+        """
+
+        highResolution = ImagingPath()
+        for element in self.elements:
+            if isinstance(element, Space):
+                for i in range(100):
+                    highResolution.append(Space(d=element.L/100, 
+                                                n=element.frontIndex))
+            else:
+                highResolution.append(element)
+
+
+        beamTrace = highResolution.trace(beam)
+        (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
+        axes.plot(x, y, 'r', linewidth=1)
+        axes.plot(x, [-v for v in y], 'r', linewidth=1)
+
+
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)
@@ -1387,24 +1601,11 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-def installModule():
-    directory = subprocess.check_output(
-        'python -m site --user-site', shell=True)
-    os.system('mkdir -p "`python -m site --user-site`"')
-    os.system('cp ABCD.py "`python -m site --user-site`/"')
-    os.system('cp Axicon.py "`python -m site --user-site`/"')
-    os.system('cp Objectives.py "`python -m site --user-site`/"')
-    print('Module ABCD.py, Axicon.py and Objectives.py copied to ', directory)
-
 # This is an example for the module.
 # Don't modify this: create a new script that imports ABCD
 # See test.py or examples/*.py
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 2:
-        if sys.argv[1] == 'install':
-            installModule()
-            exit()
 
     path = ImagingPath()
     path.label = "Simple demo: one infinite lens f = 5cm"

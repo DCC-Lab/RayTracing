@@ -48,9 +48,9 @@ class AchromatDoubletLens(MatrixGroup):
 
         elements = []
         elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
-        elements.append(Space(d=tc1))
+        elements.append(Space(d=tc1,n=n1))
         elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
-        elements.append(Space(d=tc2))
+        elements.append(Space(d=tc2,n=n2))
         elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
         super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter

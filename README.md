@@ -1,9 +1,13 @@
 # RayTracing
 This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider aberrations (spherical or chromatic). It is not a package to do "Rendering in 3D with raytracing".  
 
+Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays but also gaussian laser beams.
+
 The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. I have made no attempts at making high performance code.  Readability and simplicity of usage is the key here. It is a single module with only a few files, and only `matplotlib` as a dependent module.
 
-The module defines `Ray` ,  `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
+The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
+
+If you want to perform calculation with coherent laser beams, then you use `GaussianBeam` and `LaserPath`. Everything is essentially the same, except that the formalism does not allow for the gaussian beam to be "blocked", hence any calculation of stops with aperture are not available in `LaserPath`.
 
 ## Installing and upgrading
 
@@ -22,9 +26,9 @@ The simplest way to import the package in your own scripts after installing it:
 from raytracing import *
 ```
 
-This will import `Ray` , and several `Matrix` elements such as `Space`, `Lens`, `ThickLens`, `Aperture`, `DielectricInterface`, but also `MatrixGroup` (to group elements together) and `ImagingPath` (to ray trace with an object at the front edge) and a few predefined other such as `Objective` (to create a very thick lens that mimicks an objective).
+This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as `Space`, `Lens`, `ThickLens`, `Aperture`, `DielectricInterface`, but also `MatrixGroup` (to group elements together),  `ImagingPath` (to ray trace with an object at the front edge), `LaserPath` (to trace a gaussian laser beam from the front edge) and a few predefined other such as `Objective` (to create a very thick lens that mimicks an objective).
 
-You create an `ImagingPath`, which you then populate with optical elements such as Space, Lens or Aperture. You can then adjust the imaging path properties (object height for instance) and display in matplotlib.
+You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib.
 
 This will show you a few examples of things you can do:
 
@@ -51,7 +55,7 @@ path.display()
 Documentation is sparse at best.   You may obtain help by:
 
 1. Reading an automatically generated documentation from the code (not that good-looking, but at least it is *some* documentation):
-   1. [Core:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.abcd.html) `Ray`, `Matrix`, `MatrixGroup` and `ImagingPath`
+   1. [Core:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.abcd.html) `Ray`,`GaussianBeam`, `Matrix`, `MatrixGroup`, `ImagingPath` and `LaserPath`
    2. [Optical elements:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.abcd.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
    3. [Specialty lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.lens.html) Defines a general achromat and objective lens
    4. [Thorlabs lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs
@@ -123,8 +127,11 @@ In the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) di
 
 ```python
 from .abcd import *
-from .objectives import *
+from .lens import *
 from .axicon import *
+import raytracing.thorlabs as thorlabs
+import raytracing.eo as eo
+import raytracing.olympus as olympus
 
 path = ImagingPath()
 path.label = "Demo #1: lens f = 5cm, infinite diameter"
@@ -232,7 +239,7 @@ path.append(Space(d=4 + 18))
 path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
 path.append(Space(d=18))
 path.display(limitObjectToFieldOfView=True, comments="""# Demo #5: Simple microscope system
-The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is 
+The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
 the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
 when displaying, which will set the objectHeight to the field of view, but will still trace all the rays using our parameters.
 
@@ -256,9 +263,9 @@ path.append(Lens(f=4, diameter=0.8, label='Obj'))
 path.append(Space(d=4 + 18))
 path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
 path.append(Space(d=18))
-path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True, 
+path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True,
 	comments="""# Demo #6: Simple microscope system, only principal rays
-The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is 
+The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
 the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
 when displaying, which will set the objectHeight to the field of view. We can also require that only the principal rays are drawn: chief ray
 marginal ray (or axial ray).
@@ -388,14 +395,122 @@ path.display()""")
 
 # Demo #13, forward and backward conjugates
 # We can obtain the position of the image for any matrix
-# by using forwardConjugate(): it calculates the distance 
-# after the element where the image is, assuming an object 
+# by using forwardConjugate(): it calculates the distance
+# after the element where the image is, assuming an object
 # at the front surface.
 M1 = Space(d=10)
 M2 = Lens(f=5)
 M3 = M2*M1
 print(M3.forwardConjugate())
 print(M3.backwardConjugate())
+
+# Demo #14: Generic objectives
+obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
+print("Focal distances: ", obj.focalDistances())
+print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
+print("Focal spots positions: ", obj.focusPositions(z=0))
+print("Distance between entrance and exit planes: ", obj.L)
+
+path = ImagingPath()
+path.fanAngle = 0.0
+path.fanNumber = 1
+path.rayNumber = 15
+path.objectHeight = 10.0
+path.label = "Demo #14 Path with generic objective"
+path.append(Space(180))
+path.append(obj)
+path.append(Space(10))
+path.display(comments=path.label+"""
+path = ImagingPath()
+path.fanAngle = 0.0
+path.fanNumber = 1
+path.rayNumber = 15
+path.objectHeight = 10.0
+path.label = "Path with generic objective"
+path.append(Space(180))
+path.append(obj)
+path.append(Space(10))
+path.display()""")
+
+# Demo #15: Olympus objective LUMPlanFL40X
+path = ImagingPath()
+path.fanAngle = 0.0
+path.fanNumber = 1
+path.rayNumber = 15
+path.objectHeight = 10.0
+path.label = "Demo #15 Path with LUMPlanFL40X"
+path.append(Space(180))
+path.append(olympus.LUMPlanFL40X())
+path.display(comments=path.label+"""
+path = ImagingPath()
+path.fanAngle = 0.0
+path.fanNumber = 1
+path.rayNumber = 15
+path.objectHeight = 10.0
+path.label = "Path with LUMPlanFL40X"
+path.append(Space(180))
+path.append(olympus.LUMPlanFL40X())
+path.append(Space(10))
+path.display()""")
+
+# Demo #16: Vendor lenses
+path = ImagingPath()
+path.label = "Demo #16: Vendor Lenses"
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=150))
+path.append(eo.PN_33_921())
+path.append(Space(d=50))
+path.append(eo.PN_88_593())
+path.append(Space(180))
+path.append(olympus.LUMPlanFL40X())
+path.append(Space(10))
+path.display(comments=path.label+"""\n
+path = ImagingPath()
+path.label = "Demo #16: Vendor Lenses"
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=150))
+path.append(eo.PN_33_921())
+path.append(Space(d=50))
+path.append(eo.PN_88_593())
+path.append(Space(180))
+path.append(olympus.LUMPlanFL40X())
+path.append(Space(10))
+path.display()""")
+
+# Demo #17: Laser beam and vendor lenses
+path = LaserPath()
+path.label = "Demo #17: Laser beam and vendor lenses"
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=150))
+path.append(eo.PN_33_921())
+path.append(Space(d=50))
+path.append(eo.PN_88_593())
+path.append(Space(d=180))
+path.append(olympus.LUMPlanFL40X())
+path.append(Space(d=10))
+path.display(inputBeam=GaussianBeam(w=0.001), comments="""
+path.label = "Demo #17: Laser beam and vendor lenses"
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=50))
+path.append(thorlabs.AC254_050_A())
+path.append(Space(d=150))
+path.append(eo.PN_33_921())
+path.append(Space(d=50))
+path.append(eo.PN_88_593())
+path.append(Space(d=180))
+path.append(olympus.LUMPlanFL40X())
+path.append(Space(d=10))
+path.display()""")
 
 ```
 
