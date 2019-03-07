@@ -161,7 +161,6 @@ class GaussianBeam(object):
 
     def __init__(self, w=None, R=float("+Inf"), n=1.0, wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
-
         if w is not None:
             self.q = 1/( 1.0/R - complex(0,1)*wavelength/n/(math.pi*w*w))
         else:
@@ -171,6 +170,7 @@ class GaussianBeam(object):
         self.n = n
         self.isClipped = False
 
+    @property
     def R(self):
         if abs(self.q) == 0:
             return float("+Inf")
@@ -181,28 +181,38 @@ class GaussianBeam(object):
 
         return 1/invQReal
 
+    @property
     def w(self):
         if (-1/self.q).imag == 0:
             return float("+Inf")
 
         return math.sqrt( self.wavelength/self.n/(math.pi * (-1/self.q).imag))
 
+    @property
+    def wo(self):
+        return math.sqrt( self.zo * self.wavelength/math.pi )
+
+    @property
     def zo(self):
         return self.q.imag
 
+    @property
     def confocalParameter(self):
-        return self.zo()
+        return self.zo
 
+    @property
     def rayleighRange(self):
-        return self.zo()
+        return self.zo
 
     def __str__(self):
         """ String description that allows the use of print(Ray()) """
         description = "Complex radius: {0:.3}\n".format(self.q)
-        description += "Size: {0:.3f} ".format(self.w())
-        description += "Radius: {0:.3f} ".format(self.R())
-        description += "Wavelength: {0:.3f} nm".format(self.wavelength*1e6)
-        description += "zo: {0:.3f} ".format(self.zo())
+        description += "w(z): {0:.3f}, ".format(self.w)
+        description += "R(z): {0:.3f}, ".format(self.R)
+        description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
+        description += "zo: {0:.3f}, ".format(self.zo)
+        description += "wo: {0:.3f}, ".format(self.wo)
+        description += "wo position: {0:.3f} ".format(-self.q.real)
         return description
 
 class Matrix(object):
@@ -357,7 +367,7 @@ class Matrix(object):
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
 
-        if abs(outputBeam.w()) > self.apertureDiameter / 2:
+        if abs(outputBeam.w) > self.apertureDiameter / 2:
             outputBeam.isClipped = True
         else:
             outputBeam.isClipped = rightSideBeam.isClipped
@@ -1529,7 +1539,7 @@ class LaserPath(MatrixGroup):
         y = []
         for ray in rayList:
             x.append(ray.z)
-            y.append(ray.w())
+            y.append(ray.w)
             # else: # ray will simply stop drawing from here
         return (x, y)
 
