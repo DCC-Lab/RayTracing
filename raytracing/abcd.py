@@ -1502,10 +1502,12 @@ class ImagingPath(MatrixGroup):
 class LaserPath(MatrixGroup):
     """LaserPath: the main class of the module for coherent
     laser beams: it is the combination of Matrix() or MatrixGroup()
-    to be used as an laser path with a laser beam at the entrance.
+    to be used as a laser path with a laser beam (GaussianBeam)
+    at the entrance.
 
     Usage is to create the LaserPath(), then append() elements
-    and display(). You may change the inputBeam to any GaussianBeam().
+    and display(). You may change the inputBeam to any GaussianBeam(),
+    or provide one to display(beam=GaussianBeam())
 
     Gaussian laser beams are not "blocked" by aperture. The formalism
     does not explicitly allow that.  However, if it appears that a 
@@ -1521,7 +1523,7 @@ class LaserPath(MatrixGroup):
         self.showPlanesAcrossPointsOfInterest = True
         super(LaserPath, self).__init__(elements=elements, label=label)
 
-    def display(self, beam=None, comments=None):
+    def display(self, inputBeam=None, comments=None):
         """ Display the optical system and trace the laser beam. 
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -1536,12 +1538,15 @@ class LaserPath(MatrixGroup):
         else:
             fig, axes = plt.subplots(figsize=(10, 7))
 
-        self.createBeamTracePlot(axes=axes, beam=beam)
+        if inputBeam is None:
+            inputBeam = self.inputBeam
+            
+        self.createBeamTracePlot(axes=axes, inputBeam=inputBeam)
 
         plt.ioff()
         plt.show()
 
-    def createBeamTracePlot(self, axes, beam):
+    def createBeamTracePlot(self, axes, inputBeam):
         """ Create a matplotlib plot to draw the laser beam and the elements.
         """
 
@@ -1552,7 +1557,7 @@ class LaserPath(MatrixGroup):
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
-        self.drawBeamTrace(axes, beam)
+        self.drawBeamTrace(axes, inputBeam)
 
         self.drawAt(z=0, axes=axes)
 
