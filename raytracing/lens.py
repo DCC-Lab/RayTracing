@@ -64,11 +64,11 @@ class AchromatDoubletLens(MatrixGroup):
         # focal length (fa) is actually within 1% of the calculated focal length
         (f, f) = self.focalDistances()
         if abs((f-fa)/fa) > 0.01:
-            raise ValueError("Obtained focal distance {0:.4} is not within 1%% of \
-expected {1:.4}".format(f, fa))
+            print("Warning {2}: Obtained effective focal length {0:.4} is not within 1% of \
+expected {1:.4}".format(f, fa, self.label))
         BFL = self.backFocalLength()
         if abs((BFL-fb)/fb) > 0.01:
-            print("Warning {2}: Obtained back focal distance {0:.4} is not within 1%% of \
+            print("Warning {2}: Obtained back focal length {0:.4} is not within 1% of \
 expected {1:.4}".format(BFL, fb, self.label))
 
     def drawAt(self, z, axes, showLabels=False):

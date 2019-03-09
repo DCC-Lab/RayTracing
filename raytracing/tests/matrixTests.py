@@ -279,6 +279,19 @@ class TestMatrix(unittest.TestCase):
         l = thorlabs.AC254_400_A()
         l = thorlabs.AC254_500_A()
 
+        l = thorlabs.AC508_075_B()
+        l = thorlabs.AC508_080_B()
+        l = thorlabs.AC508_100_B()
+        l = thorlabs.AC508_150_B()
+        l = thorlabs.AC508_200_B()
+        l = thorlabs.AC508_250_B()
+        l = thorlabs.AC508_300_B()
+        l = thorlabs.AC508_400_B()
+        l = thorlabs.AC508_500_B()
+        l = thorlabs.AC508_750_B()
+        l = thorlabs.AC508_1000_B()
+
+
     def testEdmundLens(self):
         l = eo.PN_33_921()
 

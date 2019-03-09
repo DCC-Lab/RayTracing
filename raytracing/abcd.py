@@ -894,7 +894,6 @@ class ThickLens(Matrix):
         https://pomax.github.io/bezierinfo/#circles_cubic
 
         """
-        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
         h = self.displayHalfHeight()
         
         # For simplicity, 1 is front, 2 is back.
