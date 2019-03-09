@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aec5cff6-0bd8-4f6b-9922-e1715897ccc5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/raytracing/abcd.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/abcd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raytracing/lens.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/lens.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -71,7 +69,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/raytracing/lens.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
+            <state relative-caret-position="1455">
               <caret line="100" column="33" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
             </state>
           </provider>
@@ -81,7 +79,7 @@
         <entry file="file://$PROJECT_DIR$/raytracing/abcd.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="117">
-              <caret line="700" lean-forward="true" selection-start-line="700" selection-end-line="700" />
+              <caret line="700" selection-start-line="700" selection-end-line="700" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -104,7 +102,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
+            <state relative-caret-position="60">
               <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
             </state>
           </provider>
@@ -343,17 +341,17 @@
       <workItem from="1551898653487" duration="3223000" />
       <workItem from="1551906425543" duration="273000" />
       <workItem from="1551991439273" duration="473000" />
+      <workItem from="1551991987414" duration="472000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9213000" />
+    <option name="totallyTimeSpent" value="9685000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="23" y="23" width="1345" height="877" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27551803" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27935535" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -447,6 +445,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/raytracing/lens.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1455">
+          <caret line="100" column="33" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/raytracing/tests/env.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -459,7 +464,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
+        <state relative-caret-position="60">
           <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
         </state>
       </provider>
@@ -483,17 +488,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raytracing/lens.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="100" column="33" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/raytracing/abcd.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="117">
-          <caret line="700" lean-forward="true" selection-start-line="700" selection-end-line="700" />
+          <caret line="700" selection-start-line="700" selection-end-line="700" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

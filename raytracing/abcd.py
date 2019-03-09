@@ -887,18 +887,40 @@ class ThickLens(Matrix):
         """ Draw a faint blue box with slightly curved interfaces
         of length 'thickness' starting at 'z'.
 
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
         """
-        halfHeight = self.displayHalfHeight()
-        apexHeight = self.L * 0.2
         frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
-        backVertex = z + self.L + apexHeight * (-self.R2/abs(self.R2))
+        h = self.displayHalfHeight()
+        
+        # For simplicity, 1 is front, 2 is back.
+        # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
+        v1 = self.frontVertex
+        phi1 = math.asin(h/abs(self.R1))
+        delta1 = self.R1*(1.0-math.cos(phi1))
+        ctl1 = (1.0-math.cos(phi1))/math.sin(phi1)*self.R1
+        corner1 = v1 + delta1
+
+        v2 = self.backVertex
+        phi2 = math.asin(h/abs(self.R2))
+        delta2 = self.R2*(1.0-math.cos(phi2))
+        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
+        corner2 = v2 + delta2
 
         Path = mpath.Path
         p = patches.PathPatch(
-            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
-                  (z+self.L, halfHeight), (backVertex, 0),
-                  (z+self.L, -halfHeight), (z, -halfHeight)],
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h), 
+                  (corner1, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
             color=[0.85, 0.95, 0.95],

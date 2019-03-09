@@ -72,44 +72,65 @@ expected {1:.4}".format(f, fa))
 expected {1:.4}".format(BFL, fb, self.label))
 
     def drawAt(self, z, axes, showLabels=False):
-        """ Draw a faint blue box with slightly curved interfaces
-        of length 'thickness' starting at 'z'.
+        """ Draw the doublet as two dielectric of different colours.
+
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
 
         """
-        tc1 = self.tc1
-        tc2 = self.tc2
-        te = self.te
 
-        halfHeight = self.largestDiameter()/2.0
-        apexHeight = self.L * 0.2
-        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
-        middleVertex = z + self.tc1 + tc1/3 * (-self.R2/abs(self.R2))
-        backVertex = z + self.L + apexHeight * (-self.R3/abs(self.R3))
+        h = self.largestDiameter()/2.0
+        v1 = self.frontVertex
+        phi1 = math.asin(h/abs(self.R1))
+        delta1 = self.R1*(1.0-math.cos(phi1))
+        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R1)
+        corner1 = v1 + delta1
+
+        v2 = v1 + self.tc1
+        phi2 = math.asin(h/abs(self.R2))
+        delta2 = self.R2*(1.0-math.cos(phi2))
+        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
+        corner2 = v2 + delta2
+
+        v3 = self.backVertex
+        phi3 = math.asin(h/abs(self.R3))
+        delta3 = self.R3*(1.0-math.cos(phi3))
+        ctl3 = abs((1.0-math.cos(phi3))/math.sin(phi3)*self.R3)
+        corner3 = v3 + delta3
 
         Path = mpath.Path
         p1 = patches.PathPatch(
-            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
-                  (z+tc1, halfHeight), (middleVertex, 0),
-                  (z+tc1, -halfHeight), (z, -halfHeight)],
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h), 
+                  (corner1, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO]),
-            facecolor=[0.85, 0.95, 0.95],
-            edgecolor = [0.5, 0.5, 0.5],
-            fill=True,
-            transform=axes.transData)
-        p2 = patches.PathPatch(
-            Path([(z+tc1, -halfHeight), (middleVertex, 0), (z+tc1, halfHeight),
-                  (z+self.L, halfHeight), (backVertex, 0),
-                  (z+self.L, -halfHeight), (z, -halfHeight)],
-                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
-            facecolor=[0.80, 0.90, 0.95],
-            edgecolor = [0.5, 0.5, 0.5],
+            color=[0.85, 0.95, 0.95],
             fill=True,
             transform=axes.transData)
 
+        p2 = patches.PathPatch(
+            Path([(corner2, -h), (v2, -ctl2), (v2, 0), 
+                  (v2, 0), (v2, ctl2), (corner2, h),
+                  (corner3, h), (v3, ctl3), (v3, 0),
+                  (v3, 0), (v3, -ctl3), (corner3, -h), 
+                  (corner2, -h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.80, 0.90, 0.95],
+            fill=True,
+            transform=axes.transData)
 
         axes.add_patch(p1)
         axes.add_patch(p2)
@@ -117,6 +138,32 @@ expected {1:.4}".format(BFL, fb, self.label))
             self.drawLabels(z,axes)
 
         self.drawAperture(z, axes)
+
+    def drawAperture(self, z, axes):
+        """ Draw the aperture size for this element.
+        The lens requires special care because the corners are not
+        separated by self.L: the curvature makes the edges shorter.
+        We are picky and draw it right.
+        """
+
+        if self.apertureDiameter != float('+Inf'):
+            h = self.largestDiameter()/2.0
+            phi1 = math.asin(h/abs(self.R1))
+            corner1 = self.frontVertex + self.R1*(1.0-math.cos(phi1))
+
+            phi3 = math.asin(h/abs(self.R3))
+            corner3 = self.backVertex + self.R3*(1.0-math.cos(phi3))
+
+            axes.add_patch(patches.Polygon(
+                           [[corner1, h],[corner3, h]],
+                           linewidth=3,
+                           closed=False,
+                           color='0.7'))
+            axes.add_patch(patches.Polygon(
+                           [[corner1, -h],[corner3, -h]],
+                           linewidth=3,
+                           closed=False,
+                           color='0.7'))
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
