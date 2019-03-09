@@ -813,9 +813,9 @@ class Lens(Matrix):
         """ Draw a thin lens at z """
         halfHeight = self.displayHalfHeight()
         axes.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.25, head_width=0.25, length_includes_head=True)
+                  head_length=0.5, head_width=1, length_includes_head=True)
         axes.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.25, head_width=0.25, length_includes_head=True)
+                  head_length=0.5, head_width=1, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
@@ -1074,6 +1074,12 @@ class MatrixGroup(Matrix):
         self.L = transferMatrix.L
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
+
+    def asImagingPath(self):
+        return ImagingPath(elements=self.elements)
+
+    def asLaserPath(self):
+        return LaserPath(elements=self.elements)
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
@@ -1747,7 +1753,7 @@ class LaserPath(MatrixGroup):
         axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
         self.drawBeamTrace(axes, inputBeam)
-
+        self.drawWaists(axes, inputBeam)
         self.drawAt(z=0, axes=axes)
 
         return axes
@@ -1785,6 +1791,33 @@ class LaserPath(MatrixGroup):
         (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
         axes.plot(x, y, 'r', linewidth=1)
         axes.plot(x, [-v for v in y], 'r', linewidth=1)
+
+    def drawWaists(self, axes, beam):
+        """ Draws the expected waist (i.e. the focal spot or the spot where the
+        size is minimum) for all positions of the beam. This will show "waists" that
+        are virtual if there is an additional lens between the beam and the expceted
+        waist.
+
+        It is easy to obtain the waist position from the complex radius of curvature
+        because it is the position where the complex radius is imaginary. The position
+        returned is relative to the position of the beam, which is why we add the actual
+        position of the beam to the relative position. """
+
+        beamTrace = self.trace(beam)
+        for beam in beamTrace:
+            relativePosition = beam.waistPosition
+            position = beam.z + relativePosition
+            size = beam.waist
+
+            arrowSize = 1
+            axes.arrow(position, size+arrowSize, 0, -arrowSize,
+                width=0.1, fc='g', ec='g',
+                head_length=0.5, head_width=2,
+                length_includes_head=True)
+            axes.arrow(position, -size-arrowSize, 0, arrowSize,
+                width=0.1, fc='g', ec='g',
+                head_length=0.5, head_width=2,
+                length_includes_head=True)
 
 
 """ Synonym of Matrix: Element 
