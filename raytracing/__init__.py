@@ -9,6 +9,6 @@ import raytracing.thorlabs as thorlabs
 import raytracing.eo as eo
 import raytracing.olympus as olympus
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 

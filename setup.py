@@ -10,12 +10,12 @@ import setuptools
 
 
 # To distribute:
-# python setup.py sdist bdist_wheel
-# python -m twine upload dist/* 
+# rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/* 
+# 
 
 setuptools.setup(
     name="raytracing",
-    version="1.1.1",
+    version="1.1.2",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",
