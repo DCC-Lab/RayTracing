@@ -144,80 +144,79 @@ class AC254_500_A(AchromatDoubletLens):
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-500-A")
 
-
 class AC508_075_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_075_B,self).__init__(fa=75.0,fb=65.7, R1=51.8,R2=-93.11, R3=-291.07, 
-                                    tc1=12.0, tc2=5.0, te=9.2, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=12.0, tc2=5.0, te=9.2, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-075-B")
 
 class AC508_080_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_080_B,self).__init__(fa=80.0,fb=69.5, R1=51.8,R2=-44.6, R3=-312.6, 
-                                    tc1=16.0, tc2=2.0, te=10.3, n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=16.0, tc2=2.0, te=10.3, n1=N_BAF10.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-080-B")
 
 class AC508_100_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_100_B,self).__init__(fa=100.0,fb=91.5, R1=65.8,R2=-56.0, R3=-280.6, 
-                                    tc1=13.0, tc2=2.0, te=8.7, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=13.0, tc2=2.0, te=8.7, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-100-B")
 
 class AC508_150_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_150_B,self).__init__(fa=150.0,fb=145.3, R1=112.2,R2=-95.9, R3=-325.1, 
-                                    tc1=8.2, tc2=5.0, te=9.3, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=8.2, tc2=5.0, te=9.3, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-150-B")
 
 class AC508_200_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_200_B,self).__init__(fa=200.0,fb=193.2, R1=134.0,R2=-109.2, R3=-515.2, 
-                                    tc1=8.2, tc2=5.0, te=10.1, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=8.2, tc2=5.0, te=10.1, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-200-B")
 
 class AC508_250_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_250_B,self).__init__(fa=250.0,fb=243.2, R1=121.2,R2=-146.1, R3=1235.9, 
-                                    tc1=6.6, tc2=2.6, te=6.8, n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=6.6, tc2=2.6, te=6.8, n1=N_BAF10.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-250-B")
 
 class AC508_300_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_300_B,self).__init__(fa=300.0,fb=295.1, R1=201.8,R2=-161.5, R3=-760.0, 
-                                    tc1=6.6, tc2=2.6, te=7.2, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=6.6, tc2=2.6, te=7.2, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-300-B")
 
 class AC508_400_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_400_B,self).__init__(fa=400.0,fb=393.6, R1=280.6,R2=-208.0, R3=-859.0, 
-                                    tc1=4.5, tc2=2.6, te=5.6, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=4.5, tc2=2.6, te=5.6, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-400-B")
 
 class AC508_500_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_500_B,self).__init__(fa=500.0,fb=497.0, R1=346.7,R2=-259.4, R3=-1132.4, 
-                                    tc1=4.5, tc2=2.6, te=5.9, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=4.5, tc2=2.6, te=5.9, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-500-B")
 
 class AC508_750_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_750_B,self).__init__(fa=750.0,fb=745.0, R1=376.8,R2=-291.1, R3=2910.0, 
-                                    tc1=4.2, tc2=2.5, te=6.0, n1=N_BAF10.n(0.5876), n2=N_SF10.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=4.2, tc2=2.5, te=6.0, n1=N_BAF10.n(0.855), n2=N_SF10.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-750-B")
 
 class AC508_1000_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_1000_B,self).__init__(fa=1000.0,fb=993.0, R1=494.3,R2=-398.1, R3=3440.0, 
-                                    tc1=4.2, tc2=2.8, te=6.4, n1=N_BAF10.n(0.5876), n2=N_SF10.n(0.5876), diameter=50.8,
-                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
+                                    tc1=4.2, tc2=2.8, te=6.4, n1=N_BAF10.n(0.855), n2=N_SF10.n(0.855), diameter=50.8,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-1000-B")
