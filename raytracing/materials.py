@@ -176,6 +176,19 @@ class N_LASF9(Material):
         n=(1+2.00029547/(1-0.0121426017/x**2)+0.298926886/(1-0.0538736236/x**2)+1.80691843/(1-156.530829/x**2))**.5
         return n
 
+class N_LAK22(Material):
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-LAK22.html
+    """
+
+    @classmethod
+    def n(self, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(1+1.14229781/(1-0.00585778594/x**2)+0.535138441/(1-0.0198546147/x**2)+1.04088385/(1-100.834017/x**2))**.5
+        return n
+
+
 class N_SSK5(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SSK5.html """
 

@@ -1,13 +1,13 @@
 # RayTracing
-This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider aberrations (spherical or chromatic). It is not a package to do "Rendering in 3D with raytracing".  
+This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider aberrations (spherical or chromatic). Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays but also gaussian laser beams. 
 
-Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays but also gaussian laser beams.
+It is not a package to do "Rendering in 3D with raytracing".  
 
-The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. I have made no attempts at making high performance code.  Readability and simplicity of usage is the key here. It is a single module with only a few files, and only `matplotlib` as a dependent module.
+The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. I have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with only a few files, and only `matplotlib` as a dependent module.
 
 The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
-If you want to perform calculation with coherent laser beams, then you use `GaussianBeam` and `LaserPath`. Everything is essentially the same, except that the formalism does not allow for the gaussian beam to be "blocked", hence any calculation of stops with aperture are not available in `LaserPath`.
+If you want to perform calculations with coherent laser beams, then you use `GaussianBeam` and `LaserPath`. Everything is essentially the same, except that the formalism does not allow for the gaussian beam to be "blocked", hence any calculation of stops with aperture are not available in `LaserPath`.
 
 ## Installing and upgrading
 
@@ -28,7 +28,7 @@ from raytracing import *
 
 This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as `Space`, `Lens`, `ThickLens`, `Aperture`, `DielectricInterface`, but also `MatrixGroup` (to group elements together),  `ImagingPath` (to ray trace with an object at the front edge), `LaserPath` (to trace a gaussian laser beam from the front edge) and a few predefined other such as `Objective` (to create a very thick lens that mimicks an objective).
 
-You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib.
+You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib.
 
 This will show you a few examples of things you can do:
 
@@ -454,6 +454,11 @@ path.append(Space(10))
 path.display()""")
 
 # Demo #16: Vendor lenses
+thorlabs.AC254_050_A().display()
+eo.PN_33_921().display()
+olympus.LUMPlanFL40X().display()
+
+
 path = ImagingPath()
 path.label = "Demo #16: Vendor Lenses"
 path.append(Space(d=50))

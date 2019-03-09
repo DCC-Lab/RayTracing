@@ -32,7 +32,7 @@ class AchromatDoubletLens(MatrixGroup):
 
     """
 
-    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
+    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -40,6 +40,7 @@ class AchromatDoubletLens(MatrixGroup):
         self.R3 = R3
         self.tc1 = tc1
         self.tc2 = tc2
+        self.te = te
         self.n1 = n1
         self.n2 = n2
         self.mat1 = mat1
@@ -63,43 +64,81 @@ class AchromatDoubletLens(MatrixGroup):
         # focal length (fa) is actually within 1% of the calculated focal length
         (f, f) = self.focalDistances()
         if abs((f-fa)/fa) > 0.01:
-            raise ValueError("Obtained focal distance {0:.4} is not within 1%% of\
-                expected {1:.4}".format(f, fa))
+            print("Warning {2}: Obtained effective focal length {0:.4} is not within 1% of \
+expected {1:.4}".format(f, fa, self.label))
+        BFL = self.backFocalLength()
+        if abs((BFL-fb)/fb) > 0.01:
+            print("Warning {2}: Obtained back focal length {0:.4} is not within 1% of \
+expected {1:.4}".format(BFL, fb, self.label))
+
+        h = self.largestDiameter()/2.0
+        phi1 = math.asin(h/abs(self.R1))
+        corner1 = self.frontVertex + self.R1*(1.0-math.cos(phi1))
+
+        phi3 = math.asin(h/abs(self.R3))
+        corner3 = self.backVertex + self.R3*(1.0-math.cos(phi3))
+        if abs(((corner3-corner1)/self.te)-1.0) > 0.05:
+            print("Warning {2}: obtained thickness {0:.1f} does not match expected \
+{1:0.1f}".format(corner3-corner1, self.te,self.label))
 
     def drawAt(self, z, axes, showLabels=False):
-        """ Draw a faint blue box with slightly curved interfaces
-        of length 'thickness' starting at 'z'.
+        """ Draw the doublet as two dielectric of different colours.
+
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
 
         """
-        tc1 = self.tc1
 
-        halfHeight = self.largestDiameter()/2.0
-        apexHeight = self.L * 0.2
-        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
-        middleVertex = z + self.tc1 + tc1/3 * (-self.R2/abs(self.R2))
-        backVertex = z + self.L + apexHeight * (-self.R3/abs(self.R3))
+        h = self.largestDiameter()/2.0
+        v1 = self.frontVertex
+        phi1 = math.asin(h/abs(self.R1))
+        delta1 = self.R1*(1.0-math.cos(phi1))
+        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R1)
+        corner1 = v1 + delta1
+
+        v2 = v1 + self.tc1
+        phi2 = math.asin(h/abs(self.R2))
+        delta2 = self.R2*(1.0-math.cos(phi2))
+        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
+        corner2 = v2 + delta2
+
+        v3 = self.backVertex
+        phi3 = math.asin(h/abs(self.R3))
+        delta3 = self.R3*(1.0-math.cos(phi3))
+        ctl3 = abs((1.0-math.cos(phi3))/math.sin(phi3)*self.R3)
+        corner3 = v3 + delta3
 
         Path = mpath.Path
         p1 = patches.PathPatch(
-            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
-                  (z+tc1, halfHeight), (middleVertex, 0),
-                  (z+tc1, -halfHeight), (z, -halfHeight)],
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h), 
+                  (corner1, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
-            facecolor=[0.85, 0.95, 0.95],
-            edgecolor = [0.5, 0.5, 0.5],
+            color=[0.85, 0.95, 0.95],
             fill=True,
             transform=axes.transData)
+
         p2 = patches.PathPatch(
-            Path([(z+tc1, -halfHeight), (middleVertex, 0), (z+tc1, halfHeight),
-                  (z+self.L, halfHeight), (backVertex, 0),
-                  (z+self.L, -halfHeight), (z, -halfHeight)],
+            Path([(corner2, -h), (v2, -ctl2), (v2, 0), 
+                  (v2, 0), (v2, ctl2), (corner2, h),
+                  (corner3, h), (v3, ctl3), (v3, 0),
+                  (v3, 0), (v3, -ctl3), (corner3, -h), 
+                  (corner2, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
-            facecolor=[0.80, 0.90, 0.95],
-            edgecolor = [0.5, 0.5, 0.5],
+            color=[0.80, 0.90, 0.95],
             fill=True,
             transform=axes.transData)
 
@@ -109,6 +148,41 @@ class AchromatDoubletLens(MatrixGroup):
             self.drawLabels(z,axes)
 
         self.drawAperture(z, axes)
+
+    def drawAperture(self, z, axes):
+        """ Draw the aperture size for this element.
+        The lens requires special care because the corners are not
+        separated by self.L: the curvature makes the edges shorter.
+        We are picky and draw it right.
+        """
+
+        if self.apertureDiameter != float('+Inf'):
+            h = self.largestDiameter()/2.0
+            phi1 = math.asin(h/abs(self.R1))
+            corner1 = self.frontVertex + self.R1*(1.0-math.cos(phi1))
+
+            phi3 = math.asin(h/abs(self.R3))
+            corner3 = self.backVertex + self.R3*(1.0-math.cos(phi3))
+
+            axes.add_patch(patches.Polygon(
+                           [[corner1, h],[corner3, h]],
+                           linewidth=3,
+                           closed=False,
+                           color='0.7'))
+            axes.add_patch(patches.Polygon(
+                           [[corner1, -h],[corner3, -h]],
+                           linewidth=3,
+                           closed=False,
+                           color='0.7'))
+
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
+
 
 class Objective(MatrixGroup):
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
@@ -192,7 +266,6 @@ class Objective(MatrixGroup):
                color='k', fill=False, transform=trans))
 
         self.drawCardinalPoints(z, axes)
-
 
         for element in self.elements:
             element.drawAperture(z, axes)

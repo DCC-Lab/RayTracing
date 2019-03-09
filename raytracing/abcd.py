@@ -598,6 +598,30 @@ class Matrix(object):
         conjugateMatrix = self * Space(d=distance)
         return (distance, conjugateMatrix)
 
+    def display(self):
+        """ Display this component, without any ray tracing but with 
+        all of its cardinal points and planes. If the component has no
+        power (i.e. C == 0) this will fail.
+        """
+
+        fig, axes = plt.subplots(figsize=(10, 7))
+        displayRange = 2 * self.largestDiameter()
+        if displayRange == float('+Inf'):
+            displayRange = self.displayHalfHeight() * 4
+
+        axes.set(xlabel='Distance', ylabel='Height', title="Properties of {0}".format(self.label))
+        axes.set_ylim([-displayRange /2 * 1.2, displayRange / 2 * 1.2])
+
+        self.drawAt(z=0, axes=axes)
+        self.drawLabels(z=0, axes=axes)
+        self.drawCardinalPoints(z=0, axes=axes)
+        self.drawVertices(z=0, axes=axes)
+        self.drawPointsOfInterest(z=0, axes=axes)
+        self.drawPrincipalPlanes(z=0, axes=axes)
+
+        plt.ioff()
+        plt.show()
+
     def drawAt(self, z, axes, showLabels=False):
         """ Draw element on plot with starting edge at 'z'.
 
@@ -609,10 +633,63 @@ class Matrix(object):
                               transform=axes.transData, clip_on=True)
         axes.add_patch(p)
 
+    def drawVertices(self, z, axes):
+        """ Draw the focal points of a thin lens as black dots """
+        axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
+        halfHeight = self.displayHalfHeight()
+        axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom')
+        axes.text(z+self.backVertex, halfHeight*0.1, '$V_b$',ha='center', va='bottom')
+
     def drawCardinalPoints(self, z, axes):
         """ Draw the focal points of a thin lens as black dots """
         (f1, f2) = self.focusPositions(z)
-        axes.plot([f1, f2], [0, 0], 'ko', color='k', linewidth=0.4)
+        axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
+
+    def drawPrincipalPlanes(self, z, axes):
+        """ Draw the principal planes """
+        halfHeight = self.displayHalfHeight()
+        (p1, p2) = self.principalPlanePositions(z=z)
+
+        axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
+        axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
+        axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom')
+        axes.text(p2, halfHeight*1.2, '$P_b$',ha='center', va='bottom')
+
+
+        (f1, f2) = self.effectiveFocalLengths()
+        FFL = self.frontFocalLength()
+        BFL = self.backFocalLength()
+        (F1, F2) = self.focusPositions(z=z)
+
+        h = halfHeight * 0.4
+        # Front principal plane to front focal spot (effective focal length)
+        axes.annotate("", xy=(p1, h), xytext=(F1, h),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text(p1-f1/2, h, 'EFL = {0:0.1f}'.format(f1),
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        # Back principal plane to back focal spot (effective focal length)
+        axes.annotate("", xy=(p2, -h), xytext=(F2, -h),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text(p2+f2/2, -h, 'EFL = {0:0.1f}'.format(f1),
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+
+        # Front vertex to front focal spot (front focal length or FFL)
+        h = 0.5
+
+        axes.annotate("", xy=(self.frontVertex, h), xytext=(F1, h),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text((self.frontVertex+F1)/2, h, 'FFL = {0:0.1f}'.format(FFL),
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+
+        # Back vertex to back focal spot (back focal length or BFL)
+        axes.annotate("", xy=(self.backVertex, -h), xytext=(F2, -h),
+                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text((self.backVertex+F2)/2, -h, 'BFL = {0:0.1f}'.format(BFL),
+            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
     def drawLabels(self, z, axes):
         """ Draw element labels on plot with starting edge at 'z'.
@@ -625,6 +702,28 @@ class Matrix(object):
                      xytext=(center, halfHeight * 1.5),
                      fontsize=8, xycoords='data', ha='center',
                      va='bottom')
+
+    def drawPointsOfInterest(self, z, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        """
+        labels = {}  # Gather labels at same z
+        for pointOfInterest in self.pointsOfInterest(z=z):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        halfHeight = self.displayHalfHeight()
+        for zStr, label in labels.items():
+            z = float(zStr)
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                         xycoords='data', fontsize=12,
+                         ha='center', va='bottom')
 
     def drawAperture(self, z, axes):
         """ Draw the aperture size for this element.  Any element may 
@@ -797,18 +896,39 @@ class ThickLens(Matrix):
         """ Draw a faint blue box with slightly curved interfaces
         of length 'thickness' starting at 'z'.
 
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
         """
-        halfHeight = self.displayHalfHeight()
-        apexHeight = self.L * 0.2
-        frontVertex = z + apexHeight * (-self.R1/abs(self.R1))
-        backVertex = z + self.L + apexHeight * (-self.R2/abs(self.R2))
+        h = self.displayHalfHeight()
+        
+        # For simplicity, 1 is front, 2 is back.
+        # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
+        v1 = self.frontVertex
+        phi1 = math.asin(h/abs(self.R1))
+        delta1 = self.R1*(1.0-math.cos(phi1))
+        ctl1 = (1.0-math.cos(phi1))/math.sin(phi1)*self.R1
+        corner1 = v1 + delta1
+
+        v2 = self.backVertex
+        phi2 = math.asin(h/abs(self.R2))
+        delta2 = self.R2*(1.0-math.cos(phi2))
+        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
+        corner2 = v2 + delta2
 
         Path = mpath.Path
         p = patches.PathPatch(
-            Path([(z, -halfHeight), (frontVertex, 0), (z, halfHeight),
-                  (z+self.L, halfHeight), (backVertex, 0),
-                  (z+self.L, -halfHeight), (z, -halfHeight)],
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h), 
+                  (corner1, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO]),
             color=[0.85, 0.95, 0.95],
@@ -819,6 +939,13 @@ class ThickLens(Matrix):
         if showLabels:
             self.drawLabels(z,axes)
 
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
@@ -990,7 +1117,7 @@ class MatrixGroup(Matrix):
                 element.drawLabels(z, axes)
             z += element.L
 
-    def drawPointsOfInterest(self, axes):
+    def drawPointsOfInterest(self, z, axes):
         """
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
@@ -998,7 +1125,19 @@ class MatrixGroup(Matrix):
         AS and FS are drawn at 110% of the largest diameter
         """
         labels = {}  # Gather labels at same z
+
         zElement = 0
+        # For the group as a whole, then each element
+        for pointOfInterest in self.pointsOfInterest(z=zElement):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+
+        # Points of interest for each element
         for element in self.elements:
             pointsOfInterest = element.pointsOfInterest(zElement)
 
@@ -1317,8 +1456,8 @@ class ImagingPath(MatrixGroup):
 
         self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
-            self.drawPointsOfInterest(axes)
-            self.drawStops(axes)
+            self.drawPointsOfInterest(z=0, axes=axes)
+            self.drawStops(z=0, axes=axes)
 
         return axes
 
@@ -1404,7 +1543,7 @@ class ImagingPath(MatrixGroup):
                         head_width=0.25,
                         length_includes_head=True)
 
-    def drawStops(self, axes):
+    def drawStops(self, z, axes):
         """
         AS and FS are drawn at 110% of the largest diameter
         """
