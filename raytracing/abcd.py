@@ -459,6 +459,10 @@ class Matrix(object):
 
         return abs(self.B) < Matrix.__epsilon__
 
+    @property
+    def hasPower(self):
+        return self.C != 0
+    
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
         principal planes etc...)
@@ -484,8 +488,11 @@ class Matrix(object):
         Currently, it is assumed the index is n=1 on either side and
         both focal lengths are the same.
         """
+        if self.hasPower:
+            focalLength = -1.0 / self.C  # FIXME: Assumes n=1 on either side
+        else:
+            focalLength = float("+Inf")
 
-        focalLength = -1.0 / self.C  # FIXME: Assumes n=1 on either side
         return (focalLength, focalLength)
 
     def backFocalLength(self):
@@ -505,7 +512,7 @@ class Matrix(object):
         both focal distances are the same.
         """
 
-        if self.backVertex is not None:
+        if self.backVertex is not None and self.hasPower:
             (f1, f2) = self.effectiveFocalLengths()
             (p1, p2) = self.principalPlanePositions(z=0)
 
@@ -530,7 +537,7 @@ class Matrix(object):
         both focal distances are the same.
         """
 
-        if self.frontVertex is not None:
+        if self.frontVertex is not None and self.hasPower:
             (f1, f2) = self.effectiveFocalLengths()
             (p1, p2) = self.principalPlanePositions(z=0)
 
@@ -545,18 +552,26 @@ class Matrix(object):
         Currently, it is assumed the index is n=1 on either side and both focal
         distances are the same.
         """
-        (f1, f2) = self.focalDistances()
-        (p1, p2) = self.principalPlanePositions(z)
-        return (p1 - f1, p2 + f2)
+        if self.hasPower:
+            (f1, f2) = self.focalDistances()
+            (p1, p2) = self.principalPlanePositions(z)
+            return (p1 - f1, p2 + f2)
+        else:
+            return (None, None)
 
     def principalPlanePositions(self, z):
         """ Positions of the input and output principal planes.
 
         Currently, it is assumed the index is n=1 on either side.
         """
-        p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
-        # FIXME: Assumes n=1 on either side
-        p2 = z + self.L + (1 - self.A) / self.C
+        if self.hasPower:
+            p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
+            # FIXME: Assumes n=1 on either side
+            p2 = z + self.L + (1 - self.A) / self.C
+        else:
+            p1 = None
+            p2 = None
+
         return (p1, p2)
 
     def forwardConjugate(self):
@@ -809,7 +824,14 @@ class Lens(Matrix):
         'label':the label to be used.  Can include LaTeX math code.
         """
         (f1, f2) = self.focusPositions(z)
-        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
+
+        pointsOfInterest = []
+        if f1 is not None:
+            pointsOfInterest.append({'z': f1, 'label': '$F_f$'})
+        if f2 is not None:
+            pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
+
+        return pointsOfInterest
 
 
 class Space(Matrix):
@@ -907,13 +929,13 @@ class ThickLens(Matrix):
         
         # For simplicity, 1 is front, 2 is back.
         # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
-        v1 = self.frontVertex
+        v1 = z + self.frontVertex
         phi1 = math.asin(h/abs(self.R1))
         delta1 = self.R1*(1.0-math.cos(phi1))
         ctl1 = (1.0-math.cos(phi1))/math.sin(phi1)*self.R1
         corner1 = v1 + delta1
 
-        v2 = self.backVertex
+        v2 = z + self.backVertex
         phi2 = math.asin(h/abs(self.R2))
         delta2 = self.R2*(1.0-math.cos(phi2))
         ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
@@ -945,7 +967,14 @@ class ThickLens(Matrix):
         'label':the label to be used.  Can include LaTeX math code.
         """
         (f1, f2) = self.focusPositions(z)
-        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
+
+        pointsOfInterest = []
+        if f1 is not None:
+            pointsOfInterest.append({'z': f1, 'label': '$F_f$'})
+        if f2 is not None:
+            pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
+
+        return pointsOfInterest
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces

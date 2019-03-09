@@ -93,7 +93,7 @@ expected {1:.4}".format(BFL, fb, self.label))
         """
 
         h = self.largestDiameter()/2.0
-        v1 = self.frontVertex
+        v1 = z + self.frontVertex
         phi1 = math.asin(h/abs(self.R1))
         delta1 = self.R1*(1.0-math.cos(phi1))
         ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R1)
@@ -105,7 +105,7 @@ expected {1:.4}".format(BFL, fb, self.label))
         ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
         corner2 = v2 + delta2
 
-        v3 = self.backVertex
+        v3 = z + self.backVertex
         phi3 = math.asin(h/abs(self.R3))
         delta3 = self.R3*(1.0-math.cos(phi3))
         ctl3 = abs((1.0-math.cos(phi3))/math.sin(phi3)*self.R3)
@@ -159,10 +159,10 @@ expected {1:.4}".format(BFL, fb, self.label))
         if self.apertureDiameter != float('+Inf'):
             h = self.largestDiameter()/2.0
             phi1 = math.asin(h/abs(self.R1))
-            corner1 = self.frontVertex + self.R1*(1.0-math.cos(phi1))
+            corner1 = z + self.frontVertex + self.R1*(1.0-math.cos(phi1))
 
             phi3 = math.asin(h/abs(self.R3))
-            corner3 = self.backVertex + self.R3*(1.0-math.cos(phi3))
+            corner3 = z + self.backVertex + self.R3*(1.0-math.cos(phi3))
 
             axes.add_patch(patches.Polygon(
                            [[corner1, h],[corner3, h]],
