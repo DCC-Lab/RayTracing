@@ -71,6 +71,16 @@ expected {1:.4}".format(f, fa, self.label))
             print("Warning {2}: Obtained back focal length {0:.4} is not within 1% of \
 expected {1:.4}".format(BFL, fb, self.label))
 
+        h = self.largestDiameter()/2.0
+        phi1 = math.asin(h/abs(self.R1))
+        corner1 = self.frontVertex + self.R1*(1.0-math.cos(phi1))
+
+        phi3 = math.asin(h/abs(self.R3))
+        corner3 = self.backVertex + self.R3*(1.0-math.cos(phi3))
+        if abs(((corner3-corner1)/self.te)-1.0) > 0.05:
+            print("Warning {2}: obtained thickness {0:.1f} does not match expected \
+{1:0.1f}".format(corner3-corner1, self.te,self.label))
+
     def drawAt(self, z, axes, showLabels=False):
         """ Draw the doublet as two dielectric of different colours.
 

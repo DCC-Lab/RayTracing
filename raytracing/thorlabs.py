@@ -162,7 +162,7 @@ class AC508_080_B(AchromatDoubletLens):
 class AC508_100_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_100_B,self).__init__(fa=100.0,fb=91.5, R1=65.8,R2=-56.0, R3=-280.6, 
-                                    tc1=13.0, tc2=5.0, te=8.7, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
+                                    tc1=13.0, tc2=2.0, te=8.7, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC508-100-B")
 
