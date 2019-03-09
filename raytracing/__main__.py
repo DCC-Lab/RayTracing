@@ -325,6 +325,10 @@ path.append(olympus.LUMPlanFL40X())
 path.append(Space(10))
 path.display()""")
 
+# Demo #16-1: Vendor lenses
+thorlabs.AC254_050_A().display()
+eo.PN_33_921().display()
+
 # Demo #16: Vendor lenses
 path = ImagingPath()
 path.label = "Demo #16: Vendor Lenses"

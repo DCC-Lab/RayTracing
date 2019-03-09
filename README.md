@@ -50,6 +50,17 @@ path.append(Space(d=100))
 path.display()
 ```
 
+You can also call display() on an element to see the cardinal points, principal planes, BFL and FFL:
+
+```
+from raytracing import *
+
+thorlabs.AC254_050_A().display()
+eo.PN_33_921().display()
+```
+
+
+
 ## Documentation
 
 Documentation is sparse at best.   You may obtain help by:
@@ -58,7 +69,7 @@ Documentation is sparse at best.   You may obtain help by:
    1. [Core:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.abcd.html) `Ray`,`GaussianBeam`, `Matrix`, `MatrixGroup`, `ImagingPath` and `LaserPath`
    2. [Optical elements:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.abcd.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
    3. [Specialty lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.lens.html) Defines a general achromat and objective lens
-   4. [Thorlabs lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs
+   4. [Thorlabs lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs.
    5. [Edmund Optics lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.eo.html) Achromat doublet lenses from Edmund Optics
    6. [Olympus objectives:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.olympus.html) A few objectives from Olympus.
    7. [Glasses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/unittests/docs/raytracing.materials.html) A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
@@ -453,14 +464,13 @@ path.append(olympus.LUMPlanFL40X())
 path.append(Space(10))
 path.display()""")
 
-# Demo #16: Vendor lenses
+# Demo #16-1: Vendor lenses
 thorlabs.AC254_050_A().display()
 eo.PN_33_921().display()
-olympus.LUMPlanFL40X().display()
 
-
+# Demo #16-2: Vendor lenses
 path = ImagingPath()
-path.label = "Demo #16: Vendor Lenses"
+path.label = "Demo #16-2: Vendor Lenses"
 path.append(Space(d=50))
 path.append(thorlabs.AC254_050_A())
 path.append(Space(d=50))
@@ -474,7 +484,7 @@ path.append(olympus.LUMPlanFL40X())
 path.append(Space(10))
 path.display(comments=path.label+"""\n
 path = ImagingPath()
-path.label = "Demo #16: Vendor Lenses"
+path.label = "Demo #16-2: Vendor Lenses"
 path.append(Space(d=50))
 path.append(thorlabs.AC254_050_A())
 path.append(Space(d=50))
