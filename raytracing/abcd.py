@@ -600,7 +600,8 @@ class Matrix(object):
 
     def display(self):
         """ Display this component, without any ray tracing but with 
-        all of its cardinal points and planes
+        all of its cardinal points and planes. If the component has no
+        power (i.e. C == 0) this will fail.
         """
 
         fig, axes = plt.subplots(figsize=(10, 7))
@@ -608,12 +609,13 @@ class Matrix(object):
         if displayRange == float('+Inf'):
             displayRange = self.displayHalfHeight() * 4
 
-        axes.set(xlabel='Distance', ylabel='Height', title="Cardinal points for {0}".format(self.label))
+        axes.set(xlabel='Distance', ylabel='Height', title="Properties of {0}".format(self.label))
         axes.set_ylim([-displayRange /2 * 1.2, displayRange / 2 * 1.2])
 
         self.drawAt(z=0, axes=axes)
         self.drawLabels(z=0, axes=axes)
         self.drawCardinalPoints(z=0, axes=axes)
+        self.drawVertices(z=0, axes=axes)
         self.drawPointsOfInterest(z=0, axes=axes)
         self.drawPrincipalPlanes(z=0, axes=axes)
 
@@ -631,10 +633,17 @@ class Matrix(object):
                               transform=axes.transData, clip_on=True)
         axes.add_patch(p)
 
+    def drawVertices(self, z, axes):
+        """ Draw the focal points of a thin lens as black dots """
+        axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
+        halfHeight = self.displayHalfHeight()
+        axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom')
+        axes.text(z+self.backVertex, halfHeight*0.1, '$V_b$',ha='center', va='bottom')
+
     def drawCardinalPoints(self, z, axes):
         """ Draw the focal points of a thin lens as black dots """
         (f1, f2) = self.focusPositions(z)
-        axes.plot([f1, f2], [0, 0], 'ko', color='k', linewidth=0.4)
+        axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
 
     def drawPrincipalPlanes(self, z, axes):
         """ Draw the principal planes """
@@ -930,6 +939,13 @@ class ThickLens(Matrix):
         if showLabels:
             self.drawLabels(z,axes)
 
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces

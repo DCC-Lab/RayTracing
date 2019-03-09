@@ -267,7 +267,6 @@ class Objective(MatrixGroup):
 
         self.drawCardinalPoints(z, axes)
 
-
         for element in self.elements:
             element.drawAperture(z, axes)
             z += element.L
