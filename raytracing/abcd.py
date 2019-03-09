@@ -932,7 +932,7 @@ class ThickLens(Matrix):
         v1 = z + self.frontVertex
         phi1 = math.asin(h/abs(self.R1))
         delta1 = self.R1*(1.0-math.cos(phi1))
-        ctl1 = (1.0-math.cos(phi1))/math.sin(phi1)*self.R1
+        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R1)
         corner1 = v1 + delta1
 
         v2 = z + self.backVertex
@@ -960,6 +960,32 @@ class ThickLens(Matrix):
         axes.add_patch(p)
         if showLabels:
             self.drawLabels(z,axes)
+
+    def drawAperture(self, z, axes):
+        """ Draw the aperture size for this element.
+        The lens requires special care because the corners are not
+        separated by self.L: the curvature makes the edges shorter.
+        We are picky and draw it right.
+        """
+
+        if self.apertureDiameter != float('+Inf'):
+            h = self.largestDiameter()/2.0
+            phi1 = math.asin(h/abs(self.R1))
+            corner1 = z + self.frontVertex + self.R1*(1.0-math.cos(phi1))
+
+            phi2 = math.asin(h/abs(self.R2))
+            corner2 = z + self.backVertex + self.R2*(1.0-math.cos(phi2))
+
+            axes.add_patch(patches.Polygon(
+                           [[corner1, h],[corner2, h]],
+                           linewidth=3,
+                           closed=False,
+                           color='0.7'))
+            axes.add_patch(patches.Polygon(
+                           [[corner1, -h],[corner2, -h]],
+                           linewidth=3,
+                           closed=False,
+                           color='0.7'))
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
