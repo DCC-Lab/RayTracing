@@ -15,7 +15,7 @@ import setuptools
 
 setuptools.setup(
     name="raytracing",
-    version="1.1.2",
+    version="1.1.3",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",

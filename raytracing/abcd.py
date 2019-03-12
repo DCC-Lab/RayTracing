@@ -210,6 +210,7 @@ class GaussianBeam(object):
     def __str__(self):
         """ String description that allows the use of print(Ray()) """
         description = "Complex radius: {0:.3}\n".format(self.q)
+        description += "z: {0:.3f}, ".format(self.z)
         description += "w(z): {0:.3f}, ".format(self.w)
         description += "R(z): {0:.3f}, ".format(self.R)
         description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
@@ -643,13 +644,16 @@ class Matrix(object):
         Default is a black box of appropriate length.
         """
         halfHeight = self.largestDiameter()
+        if halfHeight == float("+Inf"):
+            halfHeight = self.displayHalfHeight()
+            
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color='k', fill=False,
                               transform=axes.transData, clip_on=True)
         axes.add_patch(p)
 
     def drawVertices(self, z, axes):
-        """ Draw the focal points of a thin lens as black dots """
+        """ Draw vertices of the system """
         axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
         axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom')
@@ -813,9 +817,9 @@ class Lens(Matrix):
         """ Draw a thin lens at z """
         halfHeight = self.displayHalfHeight()
         axes.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.25, head_width=0.25, length_includes_head=True)
+                  head_length=0.5, head_width=1, length_includes_head=True)
         axes.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.25, head_width=0.25, length_includes_head=True)
+                  head_length=0.5, head_width=1, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
@@ -1074,6 +1078,12 @@ class MatrixGroup(Matrix):
         self.L = transferMatrix.L
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
+
+    def ImagingPath(self):
+        return ImagingPath(elements=self.elements, label=self.label)
+
+    def LaserPath(self):
+        return LaserPath(elements=self.elements, label=self.label)
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
@@ -1747,7 +1757,7 @@ class LaserPath(MatrixGroup):
         axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
         self.drawBeamTrace(axes, inputBeam)
-
+        self.drawWaists(axes, inputBeam)
         self.drawAt(z=0, axes=axes)
 
         return axes
@@ -1785,6 +1795,33 @@ class LaserPath(MatrixGroup):
         (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
         axes.plot(x, y, 'r', linewidth=1)
         axes.plot(x, [-v for v in y], 'r', linewidth=1)
+
+    def drawWaists(self, axes, beam):
+        """ Draws the expected waist (i.e. the focal spot or the spot where the
+        size is minimum) for all positions of the beam. This will show "waists" that
+        are virtual if there is an additional lens between the beam and the expceted
+        waist.
+
+        It is easy to obtain the waist position from the complex radius of curvature
+        because it is the position where the complex radius is imaginary. The position
+        returned is relative to the position of the beam, which is why we add the actual
+        position of the beam to the relative position. """
+
+        beamTrace = self.trace(beam)
+        for beam in beamTrace:
+            relativePosition = beam.waistPosition
+            position = beam.z + relativePosition
+            size = beam.waist
+
+            arrowSize = 1
+            axes.arrow(position, size+arrowSize, 0, -arrowSize,
+                width=0.1, fc='g', ec='g',
+                head_length=0.5, head_width=2,
+                length_includes_head=True)
+            axes.arrow(position, -size-arrowSize, 0, arrowSize,
+                width=0.1, fc='g', ec='g',
+                head_length=0.5, head_width=2,
+                length_includes_head=True)
 
 
 """ Synonym of Matrix: Element 
