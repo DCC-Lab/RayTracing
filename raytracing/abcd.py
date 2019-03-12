@@ -614,6 +614,12 @@ class Matrix(object):
         conjugateMatrix = self * Space(d=distance)
         return (distance, conjugateMatrix)
 
+    def magnification(self):
+        if self.isImaging:
+            return (self.A, self.D)
+        else:
+            return (None, None)
+
     def display(self):
         """ Display this component, without any ray tracing but with 
         all of its cardinal points and planes. If the component has no
@@ -646,7 +652,7 @@ class Matrix(object):
         halfHeight = self.largestDiameter()
         if halfHeight == float("+Inf"):
             halfHeight = self.displayHalfHeight()
-            
+
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color='k', fill=False,
                               transform=axes.transData, clip_on=True)
