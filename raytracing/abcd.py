@@ -210,6 +210,7 @@ class GaussianBeam(object):
     def __str__(self):
         """ String description that allows the use of print(Ray()) """
         description = "Complex radius: {0:.3}\n".format(self.q)
+        description += "z: {0:.3f}, ".format(self.z)
         description += "w(z): {0:.3f}, ".format(self.w)
         description += "R(z): {0:.3f}, ".format(self.R)
         description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
@@ -643,13 +644,16 @@ class Matrix(object):
         Default is a black box of appropriate length.
         """
         halfHeight = self.largestDiameter()
+        if halfHeight == float("+Inf"):
+            halfHeight = self.displayHalfHeight()
+            
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color='k', fill=False,
                               transform=axes.transData, clip_on=True)
         axes.add_patch(p)
 
     def drawVertices(self, z, axes):
-        """ Draw the focal points of a thin lens as black dots """
+        """ Draw vertices of the system """
         axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
         axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom')
@@ -1075,11 +1079,11 @@ class MatrixGroup(Matrix):
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
 
-    def asImagingPath(self):
-        return ImagingPath(elements=self.elements)
+    def ImagingPath(self):
+        return ImagingPath(elements=self.elements, label=self.label)
 
-    def asLaserPath(self):
-        return LaserPath(elements=self.elements)
+    def LaserPath(self):
+        return LaserPath(elements=self.elements, label=self.label)
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
