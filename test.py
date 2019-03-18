@@ -6,14 +6,16 @@ f1 = 150
 f2 = 300
 inputBeam = GaussianBeam(w=1)
 
-path = LaserPath()
+path = ImagingPath()
 path.label = "Relay"
 path.append(Space(d=f1))
 path.append(Lens(f=f1, diameter=25))
 path.append(Space(d=f1+f2+offset))
 path.append(Lens(f=f2, diameter=25))
 path.append(Space(d=f2+10*offset))
-path.display(inputBeam=inputBeam)
+(m1, m2) = path.marginalRays()
+chiefRay = path.chiefRay(path.objectHeight/2)
+
 print(path*inputBeam)
 
 imag = path.ImagingPath()
