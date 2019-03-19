@@ -352,7 +352,7 @@ class Matrix(object):
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(outputRay.y) > self.apertureDiameter / 2:
+        if abs(outputRay.y) > abs(self.apertureDiameter / 2.0):
             outputRay.isBlocked = True
         else:
             outputRay.isBlocked = rightSideRay.isBlocked
@@ -428,7 +428,7 @@ class Matrix(object):
         rayTrace = []
         if isinstance(ray, Ray):
             if self.L > 0:
-                if ray.y > self.apertureDiameter / 2:
+                if abs(ray.y) > self.apertureDiameter / 2:
                     ray.isBlocked = True
                 rayTrace.append(ray)
 
@@ -614,6 +614,12 @@ class Matrix(object):
         conjugateMatrix = self * Space(d=distance)
         return (distance, conjugateMatrix)
 
+    def magnification(self):
+        if self.isImaging:
+            return (self.A, self.D)
+        else:
+            return (None, None)
+
     def display(self):
         """ Display this component, without any ray tracing but with 
         all of its cardinal points and planes. If the component has no
@@ -643,10 +649,10 @@ class Matrix(object):
 
         Default is a black box of appropriate length.
         """
-        halfHeight = self.largestDiameter()
+        halfHeight = self.largestDiameter()/2
         if halfHeight == float("+Inf"):
             halfHeight = self.displayHalfHeight()
-            
+
         p = patches.Rectangle((z, -halfHeight), self.L,
                               2 * halfHeight, color='k', fill=False,
                               transform=axes.transData, clip_on=True)
@@ -715,7 +721,11 @@ class Matrix(object):
 
         Labels are drawn 50% above the display height
         """
-        halfHeight = self.displayHalfHeight()
+        if self.hasFiniteApertureDiameter():
+            halfHeight = self.largestDiameter()/2.0
+        else:
+            halfHeight = self.displayHalfHeight()
+            
         center = z + self.L / 2.0
         axes.annotate(self.label, xy=(center, 0.0),
                      xytext=(center, halfHeight * 1.5),
