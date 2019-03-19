@@ -1257,6 +1257,7 @@ class ImagingPath(MatrixGroup):
         # Display properties
         self.showObject = True
         self.showImages = True
+        self.showEntrancePupil = True
         self.showElementLabels = True
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
@@ -1351,6 +1352,31 @@ class ImagingPath(MatrixGroup):
                     maxRatio = ratio
 
             return (apertureStopPosition, apertureStopDiameter)
+
+    def entrancePupil(self):
+        """ The entrance pupil is the image of the aperture stop
+        as seen from the object. To obtain this image, we simply
+        need to know the tranfer matrix to the aperture stop,
+        then find the "backward" conjugate, which means finding
+        the position of the "image" (the entrance pupil) that would 
+        lead to the "object" (aperture stop) at the end of the transfer
+        matrix. All the terminology is such that it assumes
+        the "object" is at the front and the "image" is at the back,
+        so we need to invert the magnification.
+
+        Returns the pupilPosition relative to input reference plane
+        (positive means to the right) and its diameter.
+        """
+
+        if self.hasFiniteApertureDiameter():
+            (stopPosition, stopDiameter) = self.apertureStop()
+            transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
+            (pupilPosition, matrixToPupil) = transferMatrixToApertureStop.backwardConjugate()
+            (Mt, Ma) = matrixToPupil.magnification()
+            return (-pupilPosition, stopDiameter/Mt)
+        else:
+            return (None, None)
+        
 
     def fieldStop(self):
         """ The field stop is the aperture that limits the image
@@ -1529,6 +1555,9 @@ class ImagingPath(MatrixGroup):
         if self.showImages:
             self.drawImages(axes)
 
+        if self.showEntrancePupil:
+            self.drawEntrancePupil(z=0, axes=axes)
+
         self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(z=0, axes=axes)
@@ -1645,6 +1674,27 @@ class ImagingPath(MatrixGroup):
                          xycoords='data',
                          ha='center',
                          va='bottom')
+
+    def drawEntrancePupil(self, z, axes):
+        (pupilPosition, pupilDiameter) = self.entrancePupil()
+        if pupilPosition is not None:
+            halfHeight = pupilDiameter / 2.0
+            center = z + pupilPosition
+            width = 1
+
+            axes.add_patch(patches.Polygon(
+                           [[center - width, halfHeight],
+                            [center + width, halfHeight]],
+                           linewidth=3,
+                           closed=False,
+                           color='r'))
+            axes.add_patch(patches.Polygon(
+                           [[center - width, -halfHeight],
+                            [center + width, -halfHeight]],
+                           linewidth=3,
+                           closed=False,
+                           color='r'))
+
 
     def drawOpticalElements(self, z, axes):
         """ Deprecated. Use drawAt() """

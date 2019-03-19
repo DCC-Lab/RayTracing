@@ -2,21 +2,27 @@ from raytracing import *
 from raytracing.thorlabs import *
 
 offset = 0
-f1 = 150
-f2 = 300
+f1 = 50
+f2 = 100
 inputBeam = GaussianBeam(w=1)
 
-path = LaserPath()
+path = ImagingPath()
 path.label = "Relay"
 path.append(Space(d=f1))
 path.append(Lens(f=f1, diameter=25))
-path.append(Space(d=f1+f2+offset))
+path.append(Space(d=f1/2))
+path.append(Aperture(diameter=2))
+path.append(Space(d=f1/2))
+path.append(Space(d=f2))
 path.append(Lens(f=f2, diameter=25))
 path.append(Space(d=f2+10*offset))
-path.display(inputBeam=inputBeam)
+(m1, m2) = path.marginalRays()
+chiefRay = path.chiefRay(path.objectHeight/2)
+
 print(path*inputBeam)
 
 imag = path.ImagingPath()
 imag.objectHeight = 3
 imag.fanAngle = 0.15
-imag.display()
+imag.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
+print(imag.entrancePupil())
