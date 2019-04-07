@@ -638,7 +638,8 @@ class Matrix(object):
         self.drawAt(z=0, axes=axes)
         self.drawLabels(z=0, axes=axes)
         self.drawCardinalPoints(z=0, axes=axes)
-        self.drawVertices(z=0, axes=axes)
+        if self.L != 0:
+            self.drawVertices(z=0, axes=axes)
         self.drawPointsOfInterest(z=0, axes=axes)
         self.drawPrincipalPlanes(z=0, axes=axes)
 
@@ -765,7 +766,8 @@ class Matrix(object):
 
             center = z + self.L/2
             if self.L == 0:
-                width = 1
+                (xScaling,_) = self.axesToDataScaling(axes)
+                width = xScaling*0.01/2
             else:
                 width = self.L/2
 
@@ -998,7 +1000,7 @@ class ThickLens(Matrix):
 
     def drawAperture(self, z, axes):
         """ Draw the aperture size for this element.
-        The lens requires special care because the corners are not
+        The thick lens requires special care because the corners are not
         separated by self.L: the curvature makes the edges shorter.
         We are picky and draw it right.
         """
@@ -1709,7 +1711,8 @@ class ImagingPath(MatrixGroup):
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
             center = z + pupilPosition
-            width = 1
+            (xScaling,_) = self.axesToDataScaling(axes)
+            width = xScaling*0.01/2
 
             axes.add_patch(patches.Polygon(
                            [[center - width, halfHeight],
@@ -1920,63 +1923,3 @@ We can use a mathematical language (Matrix) or optics terms (Element)
 Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
-
-# This is an example for the module.
-# Don't modify this: create a new script that imports ABCD
-# See test.py or examples/*.py
-
-if __name__ == "__main__":
-
-    path = ImagingPath()
-    path.label = "Simple demo: one infinite lens f = 5cm"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    # or
-    # path.save("Figure 1.png")
-
-    path = ImagingPath()
-    path.label = "Simple demo: two infinite lenses with f = 5cm"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=20))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    # or
-    # path.save("Figure 2.png")
-
-    path = ImagingPath()
-    path.label = "Simple demo: Aperture behind lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=3))
-    path.append(Aperture(diameter=3))
-    path.append(Space(d=17))
-    path.display()
-    # or
-    # path.save("Figure 3.png")
-
-    path = ImagingPath()
-    path.label = "Microscope system"
-#   path.objectHeight = 0.1
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
-    path.save("MicroscopeSystem.png", onlyChiefAndMarginalRays=True,
-              limitObjectToFieldOfView=True)
-    # or
-    # path.save("Figure 4.png")
-
-    path = ImagingPath()
-    path.label = "Focussing through a dielectric slab"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=3))
-    path.append(DielectricSlab(n=1.5, thickness=4))
-    path.append(Space(d=10))
-    path.display()
