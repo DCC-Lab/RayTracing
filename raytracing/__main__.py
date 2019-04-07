@@ -6,10 +6,12 @@ import raytracing.eo as eo
 import raytracing.olympus as olympus
 
 import argparse
-ap = argparse.ArgumentParser()
-ap.add_argument("-e", "--example", required=False, default='all', help="Specific examples, separated by a comma")
+ap = argparse.ArgumentParser(prog='python -m raytracing')
+ap.add_argument("-e", "--examples", required=False, default='all', help="Specific example numbers, separated by a comma")
+
 args = vars(ap.parse_args())
 examples = args['example']
+
 if examples == 'all':
 	examples = range(1,17)
 else:
