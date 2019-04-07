@@ -3,6 +3,7 @@ import subprocess
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
+import matplotlib.transforms as transforms
 import math
 import sys
 
@@ -662,8 +663,8 @@ class Matrix(object):
         """ Draw vertices of the system """
         axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
-        axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom')
-        axes.text(z+self.backVertex, halfHeight*0.1, '$V_b$',ha='center', va='bottom')
+        axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        axes.text(z+self.backVertex, halfHeight*0.1, '$V_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
     def drawCardinalPoints(self, z, axes):
         """ Draw the focal points of a thin lens as black dots """
@@ -677,8 +678,8 @@ class Matrix(object):
 
         axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
-        axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom')
-        axes.text(p2, halfHeight*1.2, '$P_b$',ha='center', va='bottom')
+        axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        axes.text(p2, halfHeight*1.2, '$P_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
 
         (f1, f2) = self.effectiveFocalLengths()
@@ -794,6 +795,21 @@ class Matrix(object):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
 
+    def axesToDataScaling(self, axes):
+        """ For drawing properly arrows and other things, sometimes 
+        we need to draw along y in real space but in x in relative space 
+        (i.e. relative to the width of the graph, not x coordinates).
+        There are transforms in matplotlib, but only between axes-display, 
+        and data-display, not between data-axes.  Here we obtain the scaling
+        so we can set arrow properties intelligently """
+
+        fromDispToData = axes.transData.inverted()
+        fromAxesToDisp = axes.transAxes
+        scalingFromAxesToData = fromDispToData.transform(fromAxesToDisp.transform([[1,1],[0,0]]))
+        xScaling = abs(scalingFromAxesToData[1][0]-scalingFromAxesToData[0][0])
+        yScaling = abs(scalingFromAxesToData[1][1]-scalingFromAxesToData[0][1])
+        return (xScaling, yScaling)
+
     def __str__(self):
         """ String description that allows the use of print(Matrix())
 
@@ -825,11 +841,16 @@ class Lens(Matrix):
 
     def drawAt(self, z, axes, showLabels=False):
         """ Draw a thin lens at z """
-        halfHeight = self.displayHalfHeight()
-        axes.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.5, head_width=1, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.5, head_width=1, length_includes_head=True)
+
+        halfHeight = self.displayHalfHeight() # real units, i.e. data
+
+        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
+        axes.arrow(z, 0, 0, halfHeight, width=arrowWidth/5, fc='k', ec='k',
+                  head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
+        axes.arrow(z, 0, 0, -halfHeight, width=arrowWidth/5, fc='k', ec='k',
+                  head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
@@ -1257,6 +1278,7 @@ class ImagingPath(MatrixGroup):
         # Display properties
         self.showObject = True
         self.showImages = True
+        self.showEntrancePupil = True
         self.showElementLabels = True
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
@@ -1351,6 +1373,31 @@ class ImagingPath(MatrixGroup):
                     maxRatio = ratio
 
             return (apertureStopPosition, apertureStopDiameter)
+
+    def entrancePupil(self):
+        """ The entrance pupil is the image of the aperture stop
+        as seen from the object. To obtain this image, we simply
+        need to know the tranfer matrix to the aperture stop,
+        then find the "backward" conjugate, which means finding
+        the position of the "image" (the entrance pupil) that would 
+        lead to the "object" (aperture stop) at the end of the transfer
+        matrix. All the terminology is such that it assumes
+        the "object" is at the front and the "image" is at the back,
+        so we need to invert the magnification.
+
+        Returns the pupilPosition relative to input reference plane
+        (positive means to the right) and its diameter.
+        """
+
+        if self.hasFiniteApertureDiameter():
+            (stopPosition, stopDiameter) = self.apertureStop()
+            transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
+            (pupilPosition, matrixToPupil) = transferMatrixToApertureStop.backwardConjugate()
+            (Mt, Ma) = matrixToPupil.magnification()
+            return (-pupilPosition, stopDiameter/Mt)
+        else:
+            return (None, None)
+        
 
     def fieldStop(self):
         """ The field stop is the aperture that limits the image
@@ -1517,7 +1564,7 @@ class ImagingPath(MatrixGroup):
             note2 = "Only chief and marginal rays shown"
 
         axes.text(0.05, 0.15, note1 + "\n" + note2, transform=axes.transAxes,
-                  fontsize=12, verticalalignment='top')
+                  fontsize=12, verticalalignment='top',clip_box=axes.bbox, clip_on=True)
 
         self.drawRayTraces(
             axes,
@@ -1528,6 +1575,9 @@ class ImagingPath(MatrixGroup):
 
         if self.showImages:
             self.drawImages(axes)
+
+        if self.showEntrancePupil:
+            self.drawEntrancePupil(z=0, axes=axes)
 
         self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
@@ -1581,21 +1631,29 @@ class ImagingPath(MatrixGroup):
 
     def drawObject(self, axes):
         """ Draw the object as defined by objectPosition, objectHeight """
+        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
+
         axes.arrow(
             self.objectPosition,
             -self.objectHeight / 2,
             0,
             self.objectHeight,
-            width=0.1,
+            width=arrowWidth/5,
             fc='b',
             ec='b',
-            head_length=0.25,
-            head_width=0.25,
+            head_length=arrowHeight,
+            head_width=arrowWidth,
             length_includes_head=True)
 
     def drawImages(self, axes):
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
+
+        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
 
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
         matrices = self.transferMatrices()
@@ -1611,11 +1669,11 @@ class ImagingPath(MatrixGroup):
                         -magnification * self.objectHeight / 2,
                         0,
                         (magnification) * self.objectHeight,
-                        width=0.1,
+                        width=arrowWidth/5,
                         fc='r',
                         ec='r',
-                        head_length=0.25,
-                        head_width=0.25,
+                        head_length=arrowHeight,
+                        head_width=arrowWidth,
                         length_includes_head=True)
 
     def drawStops(self, z, axes):
@@ -1645,6 +1703,27 @@ class ImagingPath(MatrixGroup):
                          xycoords='data',
                          ha='center',
                          va='bottom')
+
+    def drawEntrancePupil(self, z, axes):
+        (pupilPosition, pupilDiameter) = self.entrancePupil()
+        if pupilPosition is not None:
+            halfHeight = pupilDiameter / 2.0
+            center = z + pupilPosition
+            width = 1
+
+            axes.add_patch(patches.Polygon(
+                           [[center - width, halfHeight],
+                            [center + width, halfHeight]],
+                           linewidth=3,
+                           closed=False,
+                           color='r'))
+            axes.add_patch(patches.Polygon(
+                           [[center - width, -halfHeight],
+                            [center + width, -halfHeight]],
+                           linewidth=3,
+                           closed=False,
+                           color='r'))
+
 
     def drawOpticalElements(self, z, axes):
         """ Deprecated. Use drawAt() """
