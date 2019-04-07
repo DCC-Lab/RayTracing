@@ -1,5 +1,9 @@
 from raytracing import *
 from raytracing.thorlabs import *
+from raytracing.eo import *
+
+PN_85_877().display()
+AC254_050_B().display()
 
 offset = 0
 f1 = 50

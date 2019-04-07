@@ -36,6 +36,12 @@ This will show you a few examples of things you can do:
 python -m raytracing
 ```
 
+or request help with:
+
+```
+python -m raytracing -h
+```
+
 In your code, (such as the `test.py` or `demo.py`  files included in the [source](https://pypi.org/project/raytracing/)), you would do this:
 
 ```python
@@ -58,8 +64,6 @@ from raytracing import *
 thorlabs.AC254_050_A().display()
 eo.PN_33_921().display()
 ```
-
-
 
 ## Documentation
 

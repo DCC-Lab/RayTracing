@@ -664,8 +664,8 @@ class Matrix(object):
         """ Draw vertices of the system """
         axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
-        axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
-        axes.text(z+self.backVertex, halfHeight*0.1, '$V_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        axes.text(z+self.frontVertex, 0, '$V_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        axes.text(z+self.backVertex, 0, '$V_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
     def drawCardinalPoints(self, z, axes):
         """ Draw the focal points of a thin lens as black dots """

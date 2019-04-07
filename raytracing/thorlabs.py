@@ -144,6 +144,14 @@ class AC254_500_A(AchromatDoubletLens):
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-500-A")
 
+class AC254_050_B(AchromatDoubletLens):
+    def __init__(self):
+        super(AC254_050_B,self).__init__(fa=50.0,fb=45.0, R1=33.55,R2=-27.05, R3=-125.60, 
+                                    tc1=7.5, tc2=1.8, te=6.2, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
+                                    url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
+                                    label="AC254-050-B")
+
+
 class AC508_075_B(AchromatDoubletLens):
     def __init__(self):
         super(AC508_075_B,self).__init__(fa=75.0,fb=65.7, R1=51.8,R2=-93.11, R3=-291.07, 
