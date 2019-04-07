@@ -1,9 +1,22 @@
 from raytracing import *
 from raytracing.thorlabs import *
 from raytracing.eo import *
+from raytracing.olympus import *
 
 PN_85_877().display()
+PN_85_877().flipOrientation().display()
 AC254_050_B().display()
+AC254_050_B().flipOrientation().display()
+XLUMPlanFLN20X().display()
+XLUMPlanFLN20X().flipOrientation().display()
+
+
+irRetrofocus = MatrixGroup()
+irRetrofocus.label = "Bliq Axicon Retrofocus"
+irRetrofocus.append(PN_85_877())
+irRetrofocus.append(Space(d=38.85))
+irRetrofocus.append(AC254_050_B())
+irRetrofocus.display()
 
 offset = 0
 f1 = 50
