@@ -24,6 +24,7 @@
 </td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
 <a href="subprocess.html">subprocess</a><br>
 </td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="matplotlib.transforms.html">matplotlib.transforms</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
@@ -97,6 +98,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="Aperture-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="Aperture-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="Aperture-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -122,6 +130,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="Aperture-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="Aperture-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -136,6 +148,13 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 <dl><dt><a name="Aperture-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="Aperture-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="Aperture-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="Aperture-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="Aperture-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -177,6 +196,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 <dl><dt><a name="Aperture-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements&nbsp;have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size</tt></dd></dl>
 
 <dl><dt><a name="Aperture-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="Aperture-magnification"><strong>magnification</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="Aperture-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
@@ -235,6 +256,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -279,6 +302,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="DielectricInterface-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="DielectricInterface-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="DielectricInterface-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -304,6 +334,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="DielectricInterface-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="DielectricInterface-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -322,6 +356,13 @@ Default&nbsp;is&nbsp;a&nbsp;black&nbsp;box&nbsp;of&nbsp;appropriate&nbsp;length.
 <dl><dt><a name="DielectricInterface-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="DielectricInterface-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="DielectricInterface-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="DielectricInterface-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="DielectricInterface-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -363,6 +404,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 <dl><dt><a name="DielectricInterface-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements&nbsp;have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size</tt></dd></dl>
 
 <dl><dt><a name="DielectricInterface-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="DielectricInterface-magnification"><strong>magnification</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="DielectricInterface-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
@@ -421,6 +464,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -456,6 +501,17 @@ Methods defined here:<br>
 <dl><dt><a name="DielectricSlab-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;a&nbsp;faint&nbsp;blue&nbsp;box&nbsp;of&nbsp;length&nbsp;L&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
 
 <hr>
+Methods inherited from <a href="raytracing.abcd.html#ThickLens">ThickLens</a>:<br>
+<dl><dt><a name="DielectricSlab-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
+The&nbsp;thick&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
+separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
+We&nbsp;are&nbsp;picky&nbsp;and&nbsp;draw&nbsp;it&nbsp;right.</tt></dd></dl>
+
+<dl><dt><a name="DielectricSlab-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
+'z':position<br>
+'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
+
+<hr>
 Methods inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>:<br>
 <dl><dt><a name="DielectricSlab-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
@@ -464,6 +520,13 @@ M3&nbsp;=&nbsp;M1*M2.&nbsp;With&nbsp;r&nbsp;=&nbsp;<a href="#Ray">Ray</a>(),&nbs
 with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="DielectricSlab-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
+
+<dl><dt><a name="DielectricSlab-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
 
 <dl><dt><a name="DielectricSlab-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
@@ -490,20 +553,28 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="DielectricSlab-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="DielectricSlab-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
 If&nbsp;the&nbsp;element&nbsp;is&nbsp;infinite,&nbsp;currently&nbsp;the&nbsp;half-height<br>
 will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureDiameter/2.</tt></dd></dl>
 
-<dl><dt><a name="DielectricSlab-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
-have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
-
 <dl><dt><a name="DielectricSlab-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
 
 <dl><dt><a name="DielectricSlab-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="DielectricSlab-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="DielectricSlab-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="DielectricSlab-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="DielectricSlab-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -546,6 +617,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
 <dl><dt><a name="DielectricSlab-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
 
+<dl><dt><a name="DielectricSlab-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="DielectricSlab-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -557,9 +630,6 @@ the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
 ray&nbsp;is&nbsp;updated&nbsp;by&nbsp;the&nbsp;physical&nbsp;length&nbsp;of&nbsp;the&nbsp;matrix.<br>
 If&nbsp;the&nbsp;ray&nbsp;is&nbsp;beyond&nbsp;the&nbsp;aperture&nbsp;diameter&nbsp;it&nbsp;is&nbsp;labelled<br>
 as&nbsp;"isBlocked&nbsp;=&nbsp;True"&nbsp;but&nbsp;can&nbsp;still&nbsp;propagate.</tt></dd></dl>
-
-<dl><dt><a name="DielectricSlab-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>Any&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;matrix&nbsp;(focal&nbsp;points,<br>
-principal&nbsp;planes&nbsp;etc...)</tt></dd></dl>
 
 <dl><dt><a name="DielectricSlab-principalPlanePositions"><strong>principalPlanePositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;the&nbsp;input&nbsp;and&nbsp;output&nbsp;principal&nbsp;planes.<br>
 &nbsp;<br>
@@ -602,6 +672,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
 </dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
@@ -653,6 +725,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="Matrix-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="Matrix-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="Matrix-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -678,6 +757,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="Matrix-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="Matrix-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -696,6 +779,13 @@ Default&nbsp;is&nbsp;a&nbsp;black&nbsp;box&nbsp;of&nbsp;appropriate&nbsp;length.
 <dl><dt><a name="Matrix-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="Matrix-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="Matrix-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="Matrix-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="Matrix-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -737,6 +827,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 <dl><dt><a name="Matrix-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements&nbsp;have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size</tt></dd></dl>
 
 <dl><dt><a name="Matrix-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="Matrix-magnification"><strong>magnification</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="Matrix-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
@@ -794,6 +886,8 @@ Data descriptors defined here:<br>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
 </dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
@@ -871,13 +965,17 @@ whole,&nbsp;or&nbsp;treated&nbsp;explicitly&nbsp;as&nbsp;a&nbsp;sequence&nbsp;wh
 </dl>
 <hr>
 Methods defined here:<br>
+<dl><dt><a name="MatrixGroup-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="MatrixGroup-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="MatrixGroup-__init__"><strong>__init__</strong></a>(self, elements=[], label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=True)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="MatrixGroup-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+<dl><dt><a name="MatrixGroup-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
@@ -920,6 +1018,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="MatrixGroup-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="MatrixGroup-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -945,6 +1050,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="MatrixGroup-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="MatrixGroup-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -959,6 +1068,10 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 <dl><dt><a name="MatrixGroup-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="MatrixGroup-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="MatrixGroup-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -997,6 +1110,8 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="MatrixGroup-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="MatrixGroup-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -1032,6 +1147,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -1050,13 +1167,13 @@ Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">M
 <font color="#000000" face="helvetica, arial"><a name="ImagingPath">class <strong>ImagingPath</strong></a>(<a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#ImagingPath">ImagingPath</a>(elements=[],&nbsp;label='')<br>
+<td colspan=2><tt><a href="#ImagingPath-ImagingPath">ImagingPath</a>(elements=[],&nbsp;label='')<br>
 &nbsp;<br>
 <a href="#ImagingPath">ImagingPath</a>:&nbsp;the&nbsp;main&nbsp;class&nbsp;of&nbsp;the&nbsp;module,&nbsp;allowing<br>
 the&nbsp;combination&nbsp;of&nbsp;<a href="#Matrix">Matrix</a>()&nbsp;or&nbsp;<a href="#MatrixGroup">MatrixGroup</a>()&nbsp;to&nbsp;be&nbsp;used&nbsp;<br>
 as&nbsp;an&nbsp;imaging&nbsp;group&nbsp;with&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;the&nbsp;beginning.<br>
 &nbsp;<br>
-Usage&nbsp;is&nbsp;to&nbsp;create&nbsp;the&nbsp;<a href="#ImagingPath">ImagingPath</a>(),&nbsp;then&nbsp;<a href="#ImagingPath-append">append</a>()&nbsp;elements<br>
+Usage&nbsp;is&nbsp;to&nbsp;create&nbsp;the&nbsp;<a href="#ImagingPath-ImagingPath">ImagingPath</a>(),&nbsp;then&nbsp;<a href="#ImagingPath-append">append</a>()&nbsp;elements<br>
 and&nbsp;<a href="#ImagingPath-display">display</a>().&nbsp;You&nbsp;may&nbsp;change&nbsp;objectHeight,&nbsp;fanAngle,&nbsp;fanNumber<br>
 and&nbsp;rayNumber.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1110,6 +1227,8 @@ Three&nbsp;optional&nbsp;parameters:<br>
 <dl><dt><a name="ImagingPath-display"><strong>display</strong></a>(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None)</dt><dd><tt>Display&nbsp;the&nbsp;optical&nbsp;system&nbsp;and&nbsp;trace&nbsp;the&nbsp;rays.&nbsp;If&nbsp;comments&nbsp;are&nbsp;included<br>
 they&nbsp;will&nbsp;be&nbsp;displayed&nbsp;on&nbsp;a&nbsp;graph&nbsp;in&nbsp;the&nbsp;bottom&nbsp;half&nbsp;of&nbsp;the&nbsp;plot.</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-drawEntrancePupil"><strong>drawEntrancePupil</strong></a>(self, z, axes)</dt></dl>
+
 <dl><dt><a name="ImagingPath-drawImages"><strong>drawImages</strong></a>(self, axes)</dt><dd><tt>Draw&nbsp;all&nbsp;images&nbsp;(real&nbsp;and&nbsp;virtual)&nbsp;of&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;defined&nbsp;by&nbsp;<br>
 objectPosition,&nbsp;objectHeight</tt></dd></dl>
 
@@ -1121,7 +1240,20 @@ objectPosition,&nbsp;objectHeight</tt></dd></dl>
 1.&nbsp;the&nbsp;group&nbsp;of&nbsp;rays&nbsp;defined&nbsp;by&nbsp;the&nbsp;user&nbsp;(fanAngle,&nbsp;fanNumber,&nbsp;rayNumber)&nbsp;<br>
 2.&nbsp;the&nbsp;principal&nbsp;rays&nbsp;(chief&nbsp;and&nbsp;marginal)</tt></dd></dl>
 
-<dl><dt><a name="ImagingPath-drawStops"><strong>drawStops</strong></a>(self, axes)</dt><dd><tt>AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="ImagingPath-drawStops"><strong>drawStops</strong></a>(self, z, axes)</dt><dd><tt>AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ImagingPath-entrancePupil"><strong>entrancePupil</strong></a>(self)</dt><dd><tt>The&nbsp;entrance&nbsp;pupil&nbsp;is&nbsp;the&nbsp;image&nbsp;of&nbsp;the&nbsp;aperture&nbsp;stop<br>
+as&nbsp;seen&nbsp;from&nbsp;the&nbsp;<a href="builtins.html#object">object</a>.&nbsp;To&nbsp;obtain&nbsp;this&nbsp;image,&nbsp;we&nbsp;simply<br>
+need&nbsp;to&nbsp;know&nbsp;the&nbsp;tranfer&nbsp;matrix&nbsp;to&nbsp;the&nbsp;aperture&nbsp;stop,<br>
+then&nbsp;find&nbsp;the&nbsp;"backward"&nbsp;conjugate,&nbsp;which&nbsp;means&nbsp;finding<br>
+the&nbsp;position&nbsp;of&nbsp;the&nbsp;"image"&nbsp;(the&nbsp;entrance&nbsp;pupil)&nbsp;that&nbsp;would&nbsp;<br>
+lead&nbsp;to&nbsp;the&nbsp;"<a href="builtins.html#object">object</a>"&nbsp;(aperture&nbsp;stop)&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;transfer<br>
+matrix.&nbsp;All&nbsp;the&nbsp;terminology&nbsp;is&nbsp;such&nbsp;that&nbsp;it&nbsp;assumes<br>
+the&nbsp;"<a href="builtins.html#object">object</a>"&nbsp;is&nbsp;at&nbsp;the&nbsp;front&nbsp;and&nbsp;the&nbsp;"image"&nbsp;is&nbsp;at&nbsp;the&nbsp;back,<br>
+so&nbsp;we&nbsp;need&nbsp;to&nbsp;invert&nbsp;the&nbsp;magnification.<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;pupilPosition&nbsp;relative&nbsp;to&nbsp;input&nbsp;reference&nbsp;plane<br>
+(positive&nbsp;means&nbsp;to&nbsp;the&nbsp;right)&nbsp;and&nbsp;its&nbsp;diameter.</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-fieldOfView"><strong>fieldOfView</strong></a>(self)</dt><dd><tt>The&nbsp;field&nbsp;of&nbsp;view&nbsp;is&nbsp;the&nbsp;maximum&nbsp;<a href="builtins.html#object">object</a>&nbsp;height<br>
 visible&nbsp;until&nbsp;its&nbsp;chief&nbsp;ray&nbsp;is&nbsp;blocked&nbsp;by&nbsp;the&nbsp;field&nbsp;stop<br>
@@ -1190,11 +1322,15 @@ convenience.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>:<br>
+<dl><dt><a name="ImagingPath-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ImagingPath-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="ImagingPath-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=True)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="ImagingPath-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+<dl><dt><a name="ImagingPath-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
@@ -1237,6 +1373,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="ImagingPath-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -1277,6 +1420,10 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="ImagingPath-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
+
 <dl><dt><a name="ImagingPath-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
 &nbsp;<br>
@@ -1314,6 +1461,8 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="ImagingPath-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -1349,6 +1498,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -1367,14 +1518,14 @@ Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">M
 <font color="#000000" face="helvetica, arial"><a name="LaserPath">class <strong>LaserPath</strong></a>(<a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#LaserPath">LaserPath</a>(elements=[],&nbsp;label='')<br>
+<td colspan=2><tt><a href="#LaserPath-LaserPath">LaserPath</a>(elements=[],&nbsp;label='')<br>
 &nbsp;<br>
 <a href="#LaserPath">LaserPath</a>:&nbsp;the&nbsp;main&nbsp;class&nbsp;of&nbsp;the&nbsp;module&nbsp;for&nbsp;coherent<br>
 laser&nbsp;beams:&nbsp;it&nbsp;is&nbsp;the&nbsp;combination&nbsp;of&nbsp;<a href="#Matrix">Matrix</a>()&nbsp;or&nbsp;<a href="#MatrixGroup">MatrixGroup</a>()<br>
 to&nbsp;be&nbsp;used&nbsp;as&nbsp;a&nbsp;laser&nbsp;path&nbsp;with&nbsp;a&nbsp;laser&nbsp;beam&nbsp;(<a href="#GaussianBeam">GaussianBeam</a>)<br>
 at&nbsp;the&nbsp;entrance.<br>
 &nbsp;<br>
-Usage&nbsp;is&nbsp;to&nbsp;create&nbsp;the&nbsp;<a href="#LaserPath">LaserPath</a>(),&nbsp;then&nbsp;<a href="#LaserPath-append">append</a>()&nbsp;elements<br>
+Usage&nbsp;is&nbsp;to&nbsp;create&nbsp;the&nbsp;<a href="#LaserPath-LaserPath">LaserPath</a>(),&nbsp;then&nbsp;<a href="#LaserPath-append">append</a>()&nbsp;elements<br>
 and&nbsp;<a href="#LaserPath-display">display</a>().&nbsp;You&nbsp;may&nbsp;change&nbsp;the&nbsp;inputBeam&nbsp;to&nbsp;any&nbsp;<a href="#GaussianBeam">GaussianBeam</a>(),<br>
 or&nbsp;provide&nbsp;one&nbsp;to&nbsp;<a href="#LaserPath-display">display</a>(beam=<a href="#GaussianBeam">GaussianBeam</a>())<br>
 &nbsp;<br>
@@ -1409,15 +1560,29 @@ elements&nbsp;into&nbsp;sub&nbsp;elements&nbsp;to&nbsp;watch&nbsp;the&nbsp;beam&
 We&nbsp;arbitrarily&nbsp;split&nbsp;<a href="#Space">Space</a>()&nbsp;elements&nbsp;into&nbsp;100&nbsp;sub&nbsp;elements<br>
 before&nbsp;plotting.</tt></dd></dl>
 
+<dl><dt><a name="LaserPath-drawWaists"><strong>drawWaists</strong></a>(self, axes, beam)</dt><dd><tt>Draws&nbsp;the&nbsp;expected&nbsp;waist&nbsp;(i.e.&nbsp;the&nbsp;focal&nbsp;spot&nbsp;or&nbsp;the&nbsp;spot&nbsp;where&nbsp;the<br>
+size&nbsp;is&nbsp;minimum)&nbsp;for&nbsp;all&nbsp;positions&nbsp;of&nbsp;the&nbsp;beam.&nbsp;This&nbsp;will&nbsp;show&nbsp;"waists"&nbsp;that<br>
+are&nbsp;virtual&nbsp;if&nbsp;there&nbsp;is&nbsp;an&nbsp;additional&nbsp;lens&nbsp;between&nbsp;the&nbsp;beam&nbsp;and&nbsp;the&nbsp;expceted<br>
+waist.<br>
+&nbsp;<br>
+It&nbsp;is&nbsp;easy&nbsp;to&nbsp;obtain&nbsp;the&nbsp;waist&nbsp;position&nbsp;from&nbsp;the&nbsp;complex&nbsp;radius&nbsp;of&nbsp;curvature<br>
+because&nbsp;it&nbsp;is&nbsp;the&nbsp;position&nbsp;where&nbsp;the&nbsp;complex&nbsp;radius&nbsp;is&nbsp;imaginary.&nbsp;The&nbsp;position<br>
+returned&nbsp;is&nbsp;relative&nbsp;to&nbsp;the&nbsp;position&nbsp;of&nbsp;the&nbsp;beam,&nbsp;which&nbsp;is&nbsp;why&nbsp;we&nbsp;add&nbsp;the&nbsp;actual<br>
+position&nbsp;of&nbsp;the&nbsp;beam&nbsp;to&nbsp;the&nbsp;relative&nbsp;position.</tt></dd></dl>
+
 <dl><dt><a name="LaserPath-rearrangeBeamTraceForPlotting"><strong>rearrangeBeamTraceForPlotting</strong></a>(self, rayList)</dt></dl>
 
 <hr>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>:<br>
+<dl><dt><a name="LaserPath-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="LaserPath-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="LaserPath-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
 <dl><dt><a name="LaserPath-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=True)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="LaserPath-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+<dl><dt><a name="LaserPath-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
@@ -1460,6 +1625,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="LaserPath-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="LaserPath-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="LaserPath-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -1500,6 +1672,10 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
 
+<dl><dt><a name="LaserPath-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="LaserPath-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
+
 <dl><dt><a name="LaserPath-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
 &nbsp;<br>
@@ -1537,6 +1713,8 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="LaserPath-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="LaserPath-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -1571,6 +1749,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
 </dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
@@ -1619,6 +1799,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="Lens-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="Lens-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="Lens-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -1644,6 +1831,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="Lens-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="Lens-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -1658,6 +1849,13 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 <dl><dt><a name="Lens-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="Lens-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="Lens-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="Lens-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="Lens-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -1699,6 +1897,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 <dl><dt><a name="Lens-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements&nbsp;have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size</tt></dd></dl>
 
 <dl><dt><a name="Lens-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="Lens-magnification"><strong>magnification</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="Lens-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
@@ -1754,6 +1954,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -1804,6 +2006,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="Matrix-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="Matrix-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="Matrix-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -1829,6 +2038,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="Matrix-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="Matrix-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -1847,6 +2060,13 @@ Default&nbsp;is&nbsp;a&nbsp;black&nbsp;box&nbsp;of&nbsp;appropriate&nbsp;length.
 <dl><dt><a name="Matrix-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="Matrix-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="Matrix-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="Matrix-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="Matrix-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -1888,6 +2108,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 <dl><dt><a name="Matrix-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements&nbsp;have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size</tt></dd></dl>
 
 <dl><dt><a name="Matrix-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="Matrix-magnification"><strong>magnification</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="Matrix-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
@@ -1946,6 +2168,8 @@ Data descriptors defined here:<br>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -1977,13 +2201,17 @@ whole,&nbsp;or&nbsp;treated&nbsp;explicitly&nbsp;as&nbsp;a&nbsp;sequence&nbsp;wh
 </dl>
 <hr>
 Methods defined here:<br>
+<dl><dt><a name="MatrixGroup-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="MatrixGroup-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="MatrixGroup-__init__"><strong>__init__</strong></a>(self, elements=[], label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=True)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="MatrixGroup-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+<dl><dt><a name="MatrixGroup-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
@@ -2026,6 +2254,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="MatrixGroup-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="MatrixGroup-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -2051,6 +2286,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="MatrixGroup-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="MatrixGroup-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -2065,6 +2304,10 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 <dl><dt><a name="MatrixGroup-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="MatrixGroup-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="MatrixGroup-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -2103,6 +2346,8 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="MatrixGroup-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="MatrixGroup-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -2138,6 +2383,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -2162,7 +2409,7 @@ Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">M
 the&nbsp;combination&nbsp;of&nbsp;<a href="#Matrix">Matrix</a>()&nbsp;or&nbsp;<a href="#MatrixGroup">MatrixGroup</a>()&nbsp;to&nbsp;be&nbsp;used&nbsp;<br>
 as&nbsp;an&nbsp;imaging&nbsp;group&nbsp;with&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;the&nbsp;beginning.<br>
 &nbsp;<br>
-Usage&nbsp;is&nbsp;to&nbsp;create&nbsp;the&nbsp;<a href="#ImagingPath">ImagingPath</a>(),&nbsp;then&nbsp;<a href="#OpticalPath-append">append</a>()&nbsp;elements<br>
+Usage&nbsp;is&nbsp;to&nbsp;create&nbsp;the&nbsp;<a href="#OpticalPath-ImagingPath">ImagingPath</a>(),&nbsp;then&nbsp;<a href="#OpticalPath-append">append</a>()&nbsp;elements<br>
 and&nbsp;<a href="#OpticalPath-display">display</a>().&nbsp;You&nbsp;may&nbsp;change&nbsp;objectHeight,&nbsp;fanAngle,&nbsp;fanNumber<br>
 and&nbsp;rayNumber.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -2216,6 +2463,8 @@ Three&nbsp;optional&nbsp;parameters:<br>
 <dl><dt><a name="ImagingPath-display"><strong>display</strong></a>(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None)</dt><dd><tt>Display&nbsp;the&nbsp;optical&nbsp;system&nbsp;and&nbsp;trace&nbsp;the&nbsp;rays.&nbsp;If&nbsp;comments&nbsp;are&nbsp;included<br>
 they&nbsp;will&nbsp;be&nbsp;displayed&nbsp;on&nbsp;a&nbsp;graph&nbsp;in&nbsp;the&nbsp;bottom&nbsp;half&nbsp;of&nbsp;the&nbsp;plot.</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-drawEntrancePupil"><strong>drawEntrancePupil</strong></a>(self, z, axes)</dt></dl>
+
 <dl><dt><a name="ImagingPath-drawImages"><strong>drawImages</strong></a>(self, axes)</dt><dd><tt>Draw&nbsp;all&nbsp;images&nbsp;(real&nbsp;and&nbsp;virtual)&nbsp;of&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;defined&nbsp;by&nbsp;<br>
 objectPosition,&nbsp;objectHeight</tt></dd></dl>
 
@@ -2227,7 +2476,20 @@ objectPosition,&nbsp;objectHeight</tt></dd></dl>
 1.&nbsp;the&nbsp;group&nbsp;of&nbsp;rays&nbsp;defined&nbsp;by&nbsp;the&nbsp;user&nbsp;(fanAngle,&nbsp;fanNumber,&nbsp;rayNumber)&nbsp;<br>
 2.&nbsp;the&nbsp;principal&nbsp;rays&nbsp;(chief&nbsp;and&nbsp;marginal)</tt></dd></dl>
 
-<dl><dt><a name="ImagingPath-drawStops"><strong>drawStops</strong></a>(self, axes)</dt><dd><tt>AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+<dl><dt><a name="ImagingPath-drawStops"><strong>drawStops</strong></a>(self, z, axes)</dt><dd><tt>AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ImagingPath-entrancePupil"><strong>entrancePupil</strong></a>(self)</dt><dd><tt>The&nbsp;entrance&nbsp;pupil&nbsp;is&nbsp;the&nbsp;image&nbsp;of&nbsp;the&nbsp;aperture&nbsp;stop<br>
+as&nbsp;seen&nbsp;from&nbsp;the&nbsp;<a href="builtins.html#object">object</a>.&nbsp;To&nbsp;obtain&nbsp;this&nbsp;image,&nbsp;we&nbsp;simply<br>
+need&nbsp;to&nbsp;know&nbsp;the&nbsp;tranfer&nbsp;matrix&nbsp;to&nbsp;the&nbsp;aperture&nbsp;stop,<br>
+then&nbsp;find&nbsp;the&nbsp;"backward"&nbsp;conjugate,&nbsp;which&nbsp;means&nbsp;finding<br>
+the&nbsp;position&nbsp;of&nbsp;the&nbsp;"image"&nbsp;(the&nbsp;entrance&nbsp;pupil)&nbsp;that&nbsp;would&nbsp;<br>
+lead&nbsp;to&nbsp;the&nbsp;"<a href="builtins.html#object">object</a>"&nbsp;(aperture&nbsp;stop)&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;transfer<br>
+matrix.&nbsp;All&nbsp;the&nbsp;terminology&nbsp;is&nbsp;such&nbsp;that&nbsp;it&nbsp;assumes<br>
+the&nbsp;"<a href="builtins.html#object">object</a>"&nbsp;is&nbsp;at&nbsp;the&nbsp;front&nbsp;and&nbsp;the&nbsp;"image"&nbsp;is&nbsp;at&nbsp;the&nbsp;back,<br>
+so&nbsp;we&nbsp;need&nbsp;to&nbsp;invert&nbsp;the&nbsp;magnification.<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;pupilPosition&nbsp;relative&nbsp;to&nbsp;input&nbsp;reference&nbsp;plane<br>
+(positive&nbsp;means&nbsp;to&nbsp;the&nbsp;right)&nbsp;and&nbsp;its&nbsp;diameter.</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-fieldOfView"><strong>fieldOfView</strong></a>(self)</dt><dd><tt>The&nbsp;field&nbsp;of&nbsp;view&nbsp;is&nbsp;the&nbsp;maximum&nbsp;<a href="builtins.html#object">object</a>&nbsp;height<br>
 visible&nbsp;until&nbsp;its&nbsp;chief&nbsp;ray&nbsp;is&nbsp;blocked&nbsp;by&nbsp;the&nbsp;field&nbsp;stop<br>
@@ -2296,11 +2558,15 @@ convenience.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>:<br>
+<dl><dt><a name="ImagingPath-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ImagingPath-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="ImagingPath-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=True)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="ImagingPath-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+<dl><dt><a name="ImagingPath-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
@@ -2343,6 +2609,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="ImagingPath-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -2383,6 +2656,10 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="ImagingPath-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
+
 <dl><dt><a name="ImagingPath-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
 &nbsp;<br>
@@ -2420,6 +2697,8 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="ImagingPath-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -2454,6 +2733,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
 </dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
@@ -2545,6 +2826,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="Space-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
 
+<dl><dt><a name="Space-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="Space-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -2570,6 +2858,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="Space-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="Space-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -2584,6 +2876,13 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 <dl><dt><a name="Space-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="Space-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="Space-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="Space-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="Space-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -2625,6 +2924,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 <dl><dt><a name="Space-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements&nbsp;have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size</tt></dd></dl>
 
 <dl><dt><a name="Space-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="Space-magnification"><strong>magnification</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="Space-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
@@ -2677,6 +2978,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
 </dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
 (i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
@@ -2711,8 +3014,23 @@ A&nbsp;biconvex&nbsp;lens&nbsp;has&nbsp;R1&nbsp;&gt;&nbsp;0&nbsp;and&nbsp;R2&nbs
 Methods defined here:<br>
 <dl><dt><a name="ThickLens-__init__"><strong>__init__</strong></a>(self, n, R1, R2, thickness, diameter=inf, label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
+<dl><dt><a name="ThickLens-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
+The&nbsp;thick&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
+separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
+We&nbsp;are&nbsp;picky&nbsp;and&nbsp;draw&nbsp;it&nbsp;right.</tt></dd></dl>
+
 <dl><dt><a name="ThickLens-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;a&nbsp;faint&nbsp;blue&nbsp;box&nbsp;with&nbsp;slightly&nbsp;curved&nbsp;interfaces<br>
-of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
+of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.<br>
+&nbsp;<br>
+An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&nbsp;not&nbsp;allow&nbsp;to&nbsp;fill<br>
+an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
+We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
+quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
+https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+
+<dl><dt><a name="ThickLens-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
+'z':position<br>
+'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>:<br>
@@ -2723,6 +3041,13 @@ M3&nbsp;=&nbsp;M1*M2.&nbsp;With&nbsp;r&nbsp;=&nbsp;<a href="#Ray">Ray</a>(),&nbs
 with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="ThickLens-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
+
+<dl><dt><a name="ThickLens-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
 
 <dl><dt><a name="ThickLens-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
@@ -2749,20 +3074,28 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="ThickLens-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="ThickLens-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
 If&nbsp;the&nbsp;element&nbsp;is&nbsp;infinite,&nbsp;currently&nbsp;the&nbsp;half-height<br>
 will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureDiameter/2.</tt></dd></dl>
 
-<dl><dt><a name="ThickLens-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
-have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
-
 <dl><dt><a name="ThickLens-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
 
 <dl><dt><a name="ThickLens-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="ThickLens-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="ThickLens-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="ThickLens-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="ThickLens-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -2805,6 +3138,8 @@ both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
 <dl><dt><a name="ThickLens-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
 
+<dl><dt><a name="ThickLens-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="ThickLens-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -2816,9 +3151,6 @@ the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
 ray&nbsp;is&nbsp;updated&nbsp;by&nbsp;the&nbsp;physical&nbsp;length&nbsp;of&nbsp;the&nbsp;matrix.<br>
 If&nbsp;the&nbsp;ray&nbsp;is&nbsp;beyond&nbsp;the&nbsp;aperture&nbsp;diameter&nbsp;it&nbsp;is&nbsp;labelled<br>
 as&nbsp;"isBlocked&nbsp;=&nbsp;True"&nbsp;but&nbsp;can&nbsp;still&nbsp;propagate.</tt></dd></dl>
-
-<dl><dt><a name="ThickLens-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>Any&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;matrix&nbsp;(focal&nbsp;points,<br>
-principal&nbsp;planes&nbsp;etc...)</tt></dd></dl>
 
 <dl><dt><a name="ThickLens-principalPlanePositions"><strong>principalPlanePositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;the&nbsp;input&nbsp;and&nbsp;output&nbsp;principal&nbsp;planes.<br>
 &nbsp;<br>
@@ -2861,6 +3193,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
 </dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>

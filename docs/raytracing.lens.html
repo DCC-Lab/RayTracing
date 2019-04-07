@@ -48,7 +48,7 @@
 <font color="#000000" face="helvetica, arial"><a name="AchromatDoubletLens">class <strong>AchromatDoubletLens</strong></a>(<a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#AchromatDoubletLens">AchromatDoubletLens</a>(fa,&nbsp;fb,&nbsp;R1,&nbsp;R2,&nbsp;R3,&nbsp;tc1,&nbsp;tc2,&nbsp;n1,&nbsp;n2,&nbsp;diameter,&nbsp;mat1=None,&nbsp;mat2=None,&nbsp;wavelengthRef=None,&nbsp;url=None,&nbsp;label='')<br>
+<td colspan=2><tt><a href="#AchromatDoubletLens">AchromatDoubletLens</a>(fa,&nbsp;fb,&nbsp;R1,&nbsp;R2,&nbsp;R3,&nbsp;tc1,&nbsp;tc2,&nbsp;te,&nbsp;n1,&nbsp;n2,&nbsp;diameter,&nbsp;mat1=None,&nbsp;mat2=None,&nbsp;wavelengthRef=None,&nbsp;url=None,&nbsp;label='')<br>
 &nbsp;<br>
 General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
 length&nbsp;of&nbsp;fb.&nbsp;&nbsp;The&nbsp;values&nbsp;fa&nbsp;and&nbsp;fb&nbsp;are&nbsp;used&nbsp;to&nbsp;validate&nbsp;the&nbsp;final&nbsp;focal&nbsp;lengths<br>
@@ -57,7 +57,10 @@ Most&nbsp;manufacturer's&nbsp;specifiy&nbsp;1%&nbsp;tolerance,&nbsp;so&nbsp;if&n
 from&nbsp;the&nbsp;final&nbsp;focal&nbsp;length,&nbsp;a&nbsp;warning&nbsp;is&nbsp;raised.<br>
 &nbsp;<br>
 Nomenclature&nbsp;from&nbsp;Thorlabs:<br>
-https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120<br>&nbsp;</tt></td></tr>
+https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120&nbsp;<br>
+&nbsp;<br>
+With&nbsp;Edmund&nbsp;optics,&nbsp;the&nbsp;sign&nbsp;of&nbsp;the&nbsp;various&nbsp;radii&nbsp;can&nbsp;change&nbsp;depending&nbsp;on<br>
+some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;instance)<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.lens.html#AchromatDoubletLens">AchromatDoubletLens</a></dd>
@@ -67,16 +70,34 @@ https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120<br>&nbsp;</tt></td
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="AchromatDoubletLens-__init__"><strong>__init__</strong></a>(self, fa, fb, R1, R2, R3, tc1, tc2, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="AchromatDoubletLens-__init__"><strong>__init__</strong></a>(self, fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="AchromatDoubletLens-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;a&nbsp;faint&nbsp;blue&nbsp;box&nbsp;with&nbsp;slightly&nbsp;curved&nbsp;interfaces<br>
-of&nbsp;length&nbsp;'thickness'&nbsp;starting&nbsp;at&nbsp;'z'.</tt></dd></dl>
+<dl><dt><a name="AchromatDoubletLens-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
+The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
+separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
+We&nbsp;are&nbsp;picky&nbsp;and&nbsp;draw&nbsp;it&nbsp;right.</tt></dd></dl>
+
+<dl><dt><a name="AchromatDoubletLens-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;the&nbsp;doublet&nbsp;as&nbsp;two&nbsp;dielectric&nbsp;of&nbsp;different&nbsp;colours.<br>
+&nbsp;<br>
+An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&nbsp;not&nbsp;allow&nbsp;to&nbsp;fill<br>
+an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
+We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
+quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
+https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+
+<dl><dt><a name="AchromatDoubletLens-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
+'z':position<br>
+'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+<dl><dt><a name="AchromatDoubletLens-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="AchromatDoubletLens-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="AchromatDoubletLens-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="AchromatDoubletLens-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+<dl><dt><a name="AchromatDoubletLens-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
@@ -119,6 +140,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="AchromatDoubletLens-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(Matrix())</tt></dd></dl>
 
+<dl><dt><a name="AchromatDoubletLens-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="AchromatDoubletLens-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -144,20 +172,25 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*Space(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="AchromatDoubletLens-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="AchromatDoubletLens-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
 If&nbsp;the&nbsp;element&nbsp;is&nbsp;infinite,&nbsp;currently&nbsp;the&nbsp;half-height<br>
 will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureDiameter/2.</tt></dd></dl>
 
-<dl><dt><a name="AchromatDoubletLens-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
-have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
-
 <dl><dt><a name="AchromatDoubletLens-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
 
 <dl><dt><a name="AchromatDoubletLens-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="AchromatDoubletLens-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="AchromatDoubletLens-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="AchromatDoubletLens-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -196,6 +229,8 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="AchromatDoubletLens-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="AchromatDoubletLens-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -207,9 +242,6 @@ the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
 ray&nbsp;is&nbsp;updated&nbsp;by&nbsp;the&nbsp;physical&nbsp;length&nbsp;of&nbsp;the&nbsp;matrix.<br>
 If&nbsp;the&nbsp;ray&nbsp;is&nbsp;beyond&nbsp;the&nbsp;aperture&nbsp;diameter&nbsp;it&nbsp;is&nbsp;labelled<br>
 as&nbsp;"isBlocked&nbsp;=&nbsp;True"&nbsp;but&nbsp;can&nbsp;still&nbsp;propagate.</tt></dd></dl>
-
-<dl><dt><a name="AchromatDoubletLens-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>Any&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;matrix&nbsp;(focal&nbsp;points,<br>
-principal&nbsp;planes&nbsp;etc...)</tt></dd></dl>
 
 <dl><dt><a name="AchromatDoubletLens-principalPlanePositions"><strong>principalPlanePositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;the&nbsp;input&nbsp;and&nbsp;output&nbsp;principal&nbsp;planes.<br>
 &nbsp;<br>
@@ -230,6 +262,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
 </dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
@@ -285,9 +319,13 @@ The&nbsp;numerical&nbsp;aperture&nbsp;is&nbsp;used&nbsp;to&nbsp;estimate&nbsp;th
 
 <hr>
 Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+<dl><dt><a name="Objective-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Objective-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="Objective-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
 
-<dl><dt><a name="Objective-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+<dl><dt><a name="Objective-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
@@ -330,6 +368,13 @@ with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
 
 <dl><dt><a name="Objective-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(Matrix())</tt></dd></dl>
 
+<dl><dt><a name="Objective-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
 <dl><dt><a name="Objective-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
 This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
 When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
@@ -355,6 +400,10 @@ left,&nbsp;or&nbsp;before).<br>
 M2&nbsp;=&nbsp;M1*Space(distance)<br>
 #&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
 
+<dl><dt><a name="Objective-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
 <dl><dt><a name="Objective-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
 an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
 &nbsp;<br>
@@ -369,6 +418,10 @@ have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function
 <dl><dt><a name="Objective-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
 &nbsp;<br>
 Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="Objective-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="Objective-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
 
 <dl><dt><a name="Objective-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
 of&nbsp;the&nbsp;matrix.<br>
@@ -407,6 +460,8 @@ we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="Objective-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="Objective-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
 of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
 
@@ -438,6 +493,8 @@ Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
 </dl>
 <dl><dt><strong>isImaging</strong></dt>
 <dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
