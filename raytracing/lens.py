@@ -30,6 +30,9 @@ class AchromatDoubletLens(MatrixGroup):
     Nomenclature from Thorlabs:
     https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 
 
+    With Edmund optics, the sign of the various radii can change depending on
+    some of the components (i.e. PN_85_877 for instance)
+
     """
 
     def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
