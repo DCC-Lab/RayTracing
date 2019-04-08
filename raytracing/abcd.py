@@ -277,6 +277,7 @@ class Matrix(object):
         self.backIndex = backIndex
 
         self.label = label
+        self.isFlipped = False
         super(Matrix, self).__init__()
 
     @property
@@ -621,6 +622,25 @@ class Matrix(object):
         else:
             return (None, None)
 
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        This is useful for real elements and for groups. For individual objects,
+        it does not do anything because they are the same either way. However,
+        subclasses can override this function and act accordingly.
+        """
+        self.isFlipped = not self.isFlipped
+        # First and last interfaces. Used for BFL and FFL
+        tempVertex = self.frontVertex
+        self.backVertex = tempVertex
+        self.frontVertex = self.backVertex
+
+        # Index of refraction at entrance and exit.
+        tempIndex = self.frontIndex
+        self.frontIndex = self.backIndex
+        self.backIndex = self.frontIndex
+
+        return self
+
     def display(self):
         """ Display this component, without any ray tracing but with 
         all of its cardinal points and planes. If the component has no
@@ -732,7 +752,7 @@ class Matrix(object):
         axes.annotate(self.label, xy=(center, 0.0),
                      xytext=(center, halfHeight * 1.5),
                      fontsize=8, xycoords='data', ha='center',
-                     va='bottom')
+                     va='bottom',clip_box=axes.bbox, clip_on=True)
 
     def drawPointsOfInterest(self, z, axes):
         """
@@ -911,6 +931,9 @@ class DielectricInterface(Matrix):
 
     def __init__(self, n1, n2, R=float('+Inf'),
                  diameter=float('+Inf'), label=''):
+        self.n1 = n1
+        self.n2 = n2
+        self.R = R
         a = 1.0
         b = 0.0
         c = - (n2-n1)/(n2*R)
@@ -924,6 +947,23 @@ class DielectricInterface(Matrix):
                                                   frontIndex=n1,
                                                   backIndex=n2,
                                                   label=label)
+
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        This is useful for real elements and for groups. For individual objects,
+        it does not do anything because they are the same either way. However,
+        subclasses can override this function and act accordingly.
+        """
+        super(DielectricInterface, self).flipOrientation()
+
+        temp = self.n1
+        self.n1 = self.n2
+        self.n2 = temp
+        self.R = -self.R
+        self.C = - (self.n2-self.n1)/(self.n2*self.R)
+        self.D = self.n1/self.n2
+        
+        return self
 
 
 class ThickLens(Matrix):
@@ -1204,6 +1244,20 @@ class MatrixGroup(Matrix):
             maxDiameter = self.elements[0].displayHalfHeight() * 2
 
         return maxDiameter
+
+    def flipOrientation(self):
+        """ Flip the orientation (forward-backward) of this group of elements.
+        Each element is also flipped individually. """
+
+        allElements = self.elements
+        allElements.reverse()
+        self.elements = []
+
+        for element in allElements:
+            element.flipOrientation()
+            self.append(element)
+
+        return self
 
     def drawAt(self, z, axes, showLabels=True):
         """ Draw each element of this group """

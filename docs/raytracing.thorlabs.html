@@ -114,7 +114,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_030_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_030_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -132,6 +135,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_030_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_030_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -350,7 +356,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_035_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_035_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -368,6 +377,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_035_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_035_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -586,7 +598,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_040_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_040_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -604,6 +619,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_040_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_040_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -822,7 +840,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_045_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_045_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -840,6 +861,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_045_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_045_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -1058,7 +1082,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_050_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_050_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -1076,6 +1103,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_050_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_050_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -1294,7 +1324,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_050_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_050_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -1312,6 +1345,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_050_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_050_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -1530,7 +1566,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_060_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_060_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -1548,6 +1587,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_060_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_060_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -1766,7 +1808,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_075_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_075_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -1784,6 +1829,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_075_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_075_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -2002,7 +2050,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_080_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_080_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -2020,6 +2071,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_080_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_080_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -2238,7 +2292,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_100_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_100_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -2256,6 +2313,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_100_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_100_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -2474,7 +2534,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_125_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_125_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -2492,6 +2555,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_125_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_125_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -2710,7 +2776,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_150_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_150_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -2728,6 +2797,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_150_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_150_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -2946,7 +3018,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_200_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_200_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -2964,6 +3039,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_200_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_200_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -3182,7 +3260,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_250_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_250_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -3200,6 +3281,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_250_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_250_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -3418,7 +3502,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_300_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_300_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -3436,6 +3523,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_300_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_300_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -3654,7 +3744,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_400_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_400_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -3672,6 +3765,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_400_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_400_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -3890,7 +3986,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC254_500_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC254_500_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -3908,6 +4007,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC254_500_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC254_500_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -4126,7 +4228,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_075_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_075_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -4144,6 +4249,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_075_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_075_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -4362,7 +4470,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_080_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_080_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -4380,6 +4491,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_080_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_080_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -4598,7 +4712,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_1000_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_1000_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -4616,6 +4733,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_1000_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_1000_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -4834,7 +4954,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_100_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_100_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -4852,6 +4975,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_100_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_100_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -5070,7 +5196,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_150_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_150_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -5088,6 +5217,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_150_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_150_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -5306,7 +5438,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_200_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_200_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -5324,6 +5459,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_200_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_200_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -5542,7 +5680,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_250_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_250_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -5560,6 +5701,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_250_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_250_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -5778,7 +5922,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_300_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_300_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -5796,6 +5943,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_300_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_300_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -6014,7 +6164,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_400_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_400_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -6032,6 +6185,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_400_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_400_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -6250,7 +6406,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_500_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_500_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -6268,6 +6427,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_500_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_500_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -6486,7 +6648,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#AC508_750_B-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="AC508_750_B-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -6504,6 +6669,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="AC508_750_B-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="AC508_750_B-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -6722,7 +6890,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#ACN254_040_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_040_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -6740,6 +6911,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_040_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_040_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -6958,7 +7132,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#ACN254_050_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_050_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -6976,6 +7153,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_050_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_050_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -7194,7 +7374,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#ACN254_075_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_075_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -7212,6 +7395,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_075_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_075_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -7430,7 +7616,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#ACN254_100_A-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_100_A-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -7448,6 +7637,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="ACN254_100_A-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="ACN254_100_A-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 

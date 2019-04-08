@@ -93,25 +93,32 @@ expected {1:.4}".format(BFL, fb, self.label))
         quadratic bezier curve that looks like an arc, see:
         https://pomax.github.io/bezierinfo/#circles_cubic
 
+        Because the element can be flipped with flipOrientation()
+        we collect information from the list of elements.
         """
+        R1 = self.elements[0].R
+        tc1 = self.elements[1].L
+        R2 = self.elements[2].R
+        tc2 = self.elements[3].L
+        R3 = self.elements[4].R
 
         h = self.largestDiameter()/2.0
-        v1 = z + self.frontVertex
-        phi1 = math.asin(h/abs(self.R1))
-        delta1 = self.R1*(1.0-math.cos(phi1))
-        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R1)
+        v1 = z 
+        phi1 = math.asin(h/abs(R1))
+        delta1 = R1*(1.0-math.cos(phi1))
+        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*R1)
         corner1 = v1 + delta1
 
-        v2 = v1 + self.tc1
-        phi2 = math.asin(h/abs(self.R2))
-        delta2 = self.R2*(1.0-math.cos(phi2))
-        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
+        v2 = v1 + tc1
+        phi2 = math.asin(h/abs(R2))
+        delta2 = R2*(1.0-math.cos(phi2))
+        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*R2)
         corner2 = v2 + delta2
 
-        v3 = z + self.backVertex
-        phi3 = math.asin(h/abs(self.R3))
-        delta3 = self.R3*(1.0-math.cos(phi3))
-        ctl3 = abs((1.0-math.cos(phi3))/math.sin(phi3)*self.R3)
+        v3 = z + tc1 + tc2
+        phi3 = math.asin(h/abs(R3))
+        delta3 = R3*(1.0-math.cos(phi3))
+        ctl3 = abs((1.0-math.cos(phi3))/math.sin(phi3)*R3)
         corner3 = v3 + delta3
 
         Path = mpath.Path
@@ -160,12 +167,18 @@ expected {1:.4}".format(BFL, fb, self.label))
         """
 
         if self.apertureDiameter != float('+Inf'):
-            h = self.largestDiameter()/2.0
-            phi1 = math.asin(h/abs(self.R1))
-            corner1 = z + self.frontVertex + self.R1*(1.0-math.cos(phi1))
+            R1 = self.elements[0].R
+            tc1 = self.elements[1].L
+            R2 = self.elements[2].R
+            tc2 = self.elements[3].L
+            R3 = self.elements[4].R
 
-            phi3 = math.asin(h/abs(self.R3))
-            corner3 = z + self.backVertex + self.R3*(1.0-math.cos(phi3))
+            h = self.largestDiameter()/2.0
+            phi1 = math.asin(h/abs(R1))
+            corner1 = z + R1*(1.0-math.cos(phi1))
+
+            phi3 = math.asin(h/abs(R3))
+            corner3 = z + tc1 + tc2 + R3*(1.0-math.cos(phi3))
 
             axes.add_patch(patches.Polygon(
                            [[corner1, h],[corner3, h]],
@@ -211,12 +224,12 @@ class Objective(MatrixGroup):
         self.isFlipped = False
         self.url = url
 
-        elements = [Aperture(diameter=backAperture,label="frontVertex"),
+        elements = [Aperture(diameter=backAperture,label="backAperture"),
                     Space(d=f),
                     Matrix(1,0,0,1, physicalLength=focusToFocusLength-2*f),
                     Lens(f=f),
                     Space(d=f-workingDistance),
-                    Aperture(diameter=self.frontAperture,label="backVertex"),
+                    Aperture(diameter=self.frontAperture,label="frontAperture"),
                     Space(d=workingDistance)]
 
         super(Objective, self).__init__(elements=elements, label=label)
@@ -235,15 +248,24 @@ class Objective(MatrixGroup):
             return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
 
     def flipOrientation(self):
+        super(Objective,self).flipOrientation()
         self.isFlipped = not self.isFlipped
-        self.elements.reverse()
+
         z = 0
         for element in self.elements:
-            if element.label == "frontVertex":
-                self.frontVertex = z
-            elif element.label == "backVertex":
-                self.backVertex = z
+            if element.label == "frontAperture":
+                if not self.isFlipped:
+                    self.backVertex = z
+                else:
+                    self.frontVertex = z
+            elif element.label == "backAperture":
+                if not self.isFlipped:
+                    self.frontVertex = z
+                else:
+                    self.backVertex = z
+
             z = z + element.L
+        return self
 
     def drawAt(self, z, axes, showLabels=False):
         L = self.focusToFocusLength

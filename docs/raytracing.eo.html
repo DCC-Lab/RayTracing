@@ -85,7 +85,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#PN_33_921-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="PN_33_921-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -103,6 +106,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="PN_33_921-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="PN_33_921-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -321,7 +327,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#PN_85_877-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="PN_85_877-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -339,6 +348,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="PN_85_877-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="PN_85_877-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -557,7 +569,10 @@ An&nbsp;arc&nbsp;would&nbsp;be&nbsp;perfect,&nbsp;but&nbsp;matplotlib&nbsp;does&
 an&nbsp;arc,&nbsp;hence&nbsp;we&nbsp;must&nbsp;use&nbsp;a&nbsp;patch&nbsp;and&nbsp;Bezier&nbsp;curve.<br>
 We&nbsp;might&nbsp;as&nbsp;well&nbsp;draw&nbsp;it&nbsp;properly:&nbsp;it&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
 quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
-https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+https://pomax.github.io/bezierinfo/#circles_cubic<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;element&nbsp;can&nbsp;be&nbsp;flipped&nbsp;with&nbsp;<a href="#PN_88_593-flipOrientation">flipOrientation</a>()<br>
+we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;elements.</tt></dd></dl>
 
 <dl><dt><a name="PN_88_593-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
@@ -575,6 +590,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abc
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="PN_88_593-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="PN_88_593-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 

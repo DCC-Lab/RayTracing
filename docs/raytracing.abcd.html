@@ -162,6 +162,11 @@ of&nbsp;the&nbsp;matrix.<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="Aperture-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
+
 <dl><dt><a name="Aperture-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#Aperture-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
 
 <dl><dt><a name="Aperture-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
@@ -291,6 +296,11 @@ A&nbsp;convex&nbsp;interface&nbsp;from&nbsp;the&nbsp;perspective&nbsp;of&nbsp;th
 <hr>
 Methods defined here:<br>
 <dl><dt><a name="DielectricInterface-__init__"><strong>__init__</strong></a>(self, n1, n2, R=inf, diameter=inf, label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="DielectricInterface-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>:<br>
@@ -582,6 +592,11 @@ of&nbsp;the&nbsp;matrix.<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="DielectricSlab-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
+
 <dl><dt><a name="DielectricSlab-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#DielectricSlab-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
 
 <dl><dt><a name="DielectricSlab-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
@@ -793,6 +808,11 @@ of&nbsp;the&nbsp;matrix.<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="Matrix-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
+
 <dl><dt><a name="Matrix-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#Element-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
 
 <dl><dt><a name="Matrix-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
@@ -979,6 +999,9 @@ Methods defined here:<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="MatrixGroup-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;<a href="#ImagingPath">ImagingPath</a>&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -1335,6 +1358,9 @@ axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
+
 <dl><dt><a name="ImagingPath-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;<a href="#ImagingPath">ImagingPath</a>&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
@@ -1586,6 +1612,9 @@ Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="LaserPath-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="LaserPath-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;<a href="#ImagingPath">ImagingPath</a>&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -1863,6 +1892,11 @@ of&nbsp;the&nbsp;matrix.<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="Lens-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
+
 <dl><dt><a name="Lens-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#Lens-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
 
 <dl><dt><a name="Lens-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
@@ -2074,6 +2108,11 @@ of&nbsp;the&nbsp;matrix.<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="Matrix-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
+
 <dl><dt><a name="Matrix-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#Matrix-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
 
 <dl><dt><a name="Matrix-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
@@ -2215,6 +2254,9 @@ Methods defined here:<br>
 axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
+
+<dl><dt><a name="MatrixGroup-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="MatrixGroup-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;<a href="#ImagingPath">ImagingPath</a>&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
@@ -2571,6 +2613,9 @@ axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
 &nbsp;<br>
 AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
 
+<dl><dt><a name="ImagingPath-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
+
 <dl><dt><a name="ImagingPath-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;<a href="#ImagingPath">ImagingPath</a>&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="ImagingPath-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
@@ -2890,6 +2935,11 @@ of&nbsp;the&nbsp;matrix.<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
 
+<dl><dt><a name="Space-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
+
 <dl><dt><a name="Space-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#Space-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
 
 <dl><dt><a name="Space-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
@@ -3102,6 +3152,11 @@ of&nbsp;the&nbsp;matrix.<br>
 &nbsp;<br>
 Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
 both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="ThickLens-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
 
 <dl><dt><a name="ThickLens-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#ThickLens-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
 
