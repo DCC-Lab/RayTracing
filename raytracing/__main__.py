@@ -13,7 +13,7 @@ args = vars(ap.parse_args())
 examples = args['examples']
 
 if examples == 'all':
-    examples = range(1,17)
+    examples = range(1,19)
 else:
     examples = [ int(y) for y in examples.split(',')]
 
@@ -346,7 +346,7 @@ if 16 in examples:
 if 17 in examples:
     # Demo #17: Vendor lenses
     path = ImagingPath()
-    path.label = "Demo #16: Vendor Lenses"
+    path.label = "Demo #17: Vendor Lenses"
     path.append(Space(d=50))
     path.append(thorlabs.AC254_050_A())
     path.append(Space(d=50))
@@ -389,7 +389,8 @@ if 18 in examples:
     path.append(olympus.LUMPlanFL40X())
     path.append(Space(d=10))
     path.display(inputBeam=GaussianBeam(w=0.001), comments="""
-    path.label = "Demo #17: Laser beam and vendor lenses"
+    path = LaserPath()
+    path.label = "Demo #18: Laser beam and vendor lenses"
     path.append(Space(d=50))
     path.append(thorlabs.AC254_050_A())
     path.append(Space(d=50))
