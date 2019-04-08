@@ -3,6 +3,7 @@ import subprocess
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
+import matplotlib.transforms as transforms
 import math
 import sys
 
@@ -276,6 +277,7 @@ class Matrix(object):
         self.backIndex = backIndex
 
         self.label = label
+        self.isFlipped = False
         super(Matrix, self).__init__()
 
     @property
@@ -620,6 +622,25 @@ class Matrix(object):
         else:
             return (None, None)
 
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        This is useful for real elements and for groups. For individual objects,
+        it does not do anything because they are the same either way. However,
+        subclasses can override this function and act accordingly.
+        """
+        self.isFlipped = not self.isFlipped
+        # First and last interfaces. Used for BFL and FFL
+        tempVertex = self.frontVertex
+        self.backVertex = tempVertex
+        self.frontVertex = self.backVertex
+
+        # Index of refraction at entrance and exit.
+        tempIndex = self.frontIndex
+        self.frontIndex = self.backIndex
+        self.backIndex = self.frontIndex
+
+        return self
+
     def display(self):
         """ Display this component, without any ray tracing but with 
         all of its cardinal points and planes. If the component has no
@@ -637,7 +658,8 @@ class Matrix(object):
         self.drawAt(z=0, axes=axes)
         self.drawLabels(z=0, axes=axes)
         self.drawCardinalPoints(z=0, axes=axes)
-        self.drawVertices(z=0, axes=axes)
+        if self.L != 0:
+            self.drawVertices(z=0, axes=axes)
         self.drawPointsOfInterest(z=0, axes=axes)
         self.drawPrincipalPlanes(z=0, axes=axes)
 
@@ -662,8 +684,8 @@ class Matrix(object):
         """ Draw vertices of the system """
         axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
-        axes.text(z+self.frontVertex, halfHeight*0.1, '$V_f$',ha='center', va='bottom')
-        axes.text(z+self.backVertex, halfHeight*0.1, '$V_b$',ha='center', va='bottom')
+        axes.text(z+self.frontVertex, 0, '$V_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        axes.text(z+self.backVertex, 0, '$V_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
     def drawCardinalPoints(self, z, axes):
         """ Draw the focal points of a thin lens as black dots """
@@ -677,8 +699,8 @@ class Matrix(object):
 
         axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
-        axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom')
-        axes.text(p2, halfHeight*1.2, '$P_b$',ha='center', va='bottom')
+        axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        axes.text(p2, halfHeight*1.2, '$P_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
 
         (f1, f2) = self.effectiveFocalLengths()
@@ -730,7 +752,7 @@ class Matrix(object):
         axes.annotate(self.label, xy=(center, 0.0),
                      xytext=(center, halfHeight * 1.5),
                      fontsize=8, xycoords='data', ha='center',
-                     va='bottom')
+                     va='bottom',clip_box=axes.bbox, clip_on=True)
 
     def drawPointsOfInterest(self, z, axes):
         """
@@ -764,7 +786,8 @@ class Matrix(object):
 
             center = z + self.L/2
             if self.L == 0:
-                width = 1
+                (xScaling,_) = self.axesToDataScaling(axes)
+                width = xScaling*0.01/2
             else:
                 width = self.L/2
 
@@ -793,6 +816,21 @@ class Matrix(object):
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
+
+    def axesToDataScaling(self, axes):
+        """ For drawing properly arrows and other things, sometimes 
+        we need to draw along y in real space but in x in relative space 
+        (i.e. relative to the width of the graph, not x coordinates).
+        There are transforms in matplotlib, but only between axes-display, 
+        and data-display, not between data-axes.  Here we obtain the scaling
+        so we can set arrow properties intelligently """
+
+        fromDispToData = axes.transData.inverted()
+        fromAxesToDisp = axes.transAxes
+        scalingFromAxesToData = fromDispToData.transform(fromAxesToDisp.transform([[1,1],[0,0]]))
+        xScaling = abs(scalingFromAxesToData[1][0]-scalingFromAxesToData[0][0])
+        yScaling = abs(scalingFromAxesToData[1][1]-scalingFromAxesToData[0][1])
+        return (xScaling, yScaling)
 
     def __str__(self):
         """ String description that allows the use of print(Matrix())
@@ -825,11 +863,16 @@ class Lens(Matrix):
 
     def drawAt(self, z, axes, showLabels=False):
         """ Draw a thin lens at z """
-        halfHeight = self.displayHalfHeight()
-        axes.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.5, head_width=1, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k',
-                  head_length=0.5, head_width=1, length_includes_head=True)
+
+        halfHeight = self.displayHalfHeight() # real units, i.e. data
+
+        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
+        axes.arrow(z, 0, 0, halfHeight, width=arrowWidth/5, fc='k', ec='k',
+                  head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
+        axes.arrow(z, 0, 0, -halfHeight, width=arrowWidth/5, fc='k', ec='k',
+                  head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
@@ -888,6 +931,9 @@ class DielectricInterface(Matrix):
 
     def __init__(self, n1, n2, R=float('+Inf'),
                  diameter=float('+Inf'), label=''):
+        self.n1 = n1
+        self.n2 = n2
+        self.R = R
         a = 1.0
         b = 0.0
         c = - (n2-n1)/(n2*R)
@@ -901,6 +947,23 @@ class DielectricInterface(Matrix):
                                                   frontIndex=n1,
                                                   backIndex=n2,
                                                   label=label)
+
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        This is useful for real elements and for groups. For individual objects,
+        it does not do anything because they are the same either way. However,
+        subclasses can override this function and act accordingly.
+        """
+        super(DielectricInterface, self).flipOrientation()
+
+        temp = self.n1
+        self.n1 = self.n2
+        self.n2 = temp
+        self.R = -self.R
+        self.C = - (self.n2-self.n1)/(self.n2*self.R)
+        self.D = self.n1/self.n2
+        
+        return self
 
 
 class ThickLens(Matrix):
@@ -977,7 +1040,7 @@ class ThickLens(Matrix):
 
     def drawAperture(self, z, axes):
         """ Draw the aperture size for this element.
-        The lens requires special care because the corners are not
+        The thick lens requires special care because the corners are not
         separated by self.L: the curvature makes the edges shorter.
         We are picky and draw it right.
         """
@@ -1182,6 +1245,20 @@ class MatrixGroup(Matrix):
 
         return maxDiameter
 
+    def flipOrientation(self):
+        """ Flip the orientation (forward-backward) of this group of elements.
+        Each element is also flipped individually. """
+
+        allElements = self.elements
+        allElements.reverse()
+        self.elements = []
+
+        for element in allElements:
+            element.flipOrientation()
+            self.append(element)
+
+        return self
+
     def drawAt(self, z, axes, showLabels=True):
         """ Draw each element of this group """
         for element in self.elements:
@@ -1257,6 +1334,7 @@ class ImagingPath(MatrixGroup):
         # Display properties
         self.showObject = True
         self.showImages = True
+        self.showEntrancePupil = True
         self.showElementLabels = True
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
@@ -1351,6 +1429,31 @@ class ImagingPath(MatrixGroup):
                     maxRatio = ratio
 
             return (apertureStopPosition, apertureStopDiameter)
+
+    def entrancePupil(self):
+        """ The entrance pupil is the image of the aperture stop
+        as seen from the object. To obtain this image, we simply
+        need to know the tranfer matrix to the aperture stop,
+        then find the "backward" conjugate, which means finding
+        the position of the "image" (the entrance pupil) that would 
+        lead to the "object" (aperture stop) at the end of the transfer
+        matrix. All the terminology is such that it assumes
+        the "object" is at the front and the "image" is at the back,
+        so we need to invert the magnification.
+
+        Returns the pupilPosition relative to input reference plane
+        (positive means to the right) and its diameter.
+        """
+
+        if self.hasFiniteApertureDiameter():
+            (stopPosition, stopDiameter) = self.apertureStop()
+            transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
+            (pupilPosition, matrixToPupil) = transferMatrixToApertureStop.backwardConjugate()
+            (Mt, Ma) = matrixToPupil.magnification()
+            return (-pupilPosition, stopDiameter/Mt)
+        else:
+            return (None, None)
+        
 
     def fieldStop(self):
         """ The field stop is the aperture that limits the image
@@ -1517,7 +1620,7 @@ class ImagingPath(MatrixGroup):
             note2 = "Only chief and marginal rays shown"
 
         axes.text(0.05, 0.15, note1 + "\n" + note2, transform=axes.transAxes,
-                  fontsize=12, verticalalignment='top')
+                  fontsize=12, verticalalignment='top',clip_box=axes.bbox, clip_on=True)
 
         self.drawRayTraces(
             axes,
@@ -1528,6 +1631,9 @@ class ImagingPath(MatrixGroup):
 
         if self.showImages:
             self.drawImages(axes)
+
+        if self.showEntrancePupil:
+            self.drawEntrancePupil(z=0, axes=axes)
 
         self.drawAt(z=0, axes=axes)
         if self.showPointsOfInterest:
@@ -1581,21 +1687,29 @@ class ImagingPath(MatrixGroup):
 
     def drawObject(self, axes):
         """ Draw the object as defined by objectPosition, objectHeight """
+        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
+
         axes.arrow(
             self.objectPosition,
             -self.objectHeight / 2,
             0,
             self.objectHeight,
-            width=0.1,
+            width=arrowWidth/5,
             fc='b',
             ec='b',
-            head_length=0.25,
-            head_width=0.25,
+            head_length=arrowHeight,
+            head_width=arrowWidth,
             length_includes_head=True)
 
     def drawImages(self, axes):
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
+
+        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
 
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
         matrices = self.transferMatrices()
@@ -1611,11 +1725,11 @@ class ImagingPath(MatrixGroup):
                         -magnification * self.objectHeight / 2,
                         0,
                         (magnification) * self.objectHeight,
-                        width=0.1,
+                        width=arrowWidth/5,
                         fc='r',
                         ec='r',
-                        head_length=0.25,
-                        head_width=0.25,
+                        head_length=arrowHeight,
+                        head_width=arrowWidth,
                         length_includes_head=True)
 
     def drawStops(self, z, axes):
@@ -1645,6 +1759,28 @@ class ImagingPath(MatrixGroup):
                          xycoords='data',
                          ha='center',
                          va='bottom')
+
+    def drawEntrancePupil(self, z, axes):
+        (pupilPosition, pupilDiameter) = self.entrancePupil()
+        if pupilPosition is not None:
+            halfHeight = pupilDiameter / 2.0
+            center = z + pupilPosition
+            (xScaling,_) = self.axesToDataScaling(axes)
+            width = xScaling*0.01/2
+
+            axes.add_patch(patches.Polygon(
+                           [[center - width, halfHeight],
+                            [center + width, halfHeight]],
+                           linewidth=3,
+                           closed=False,
+                           color='r'))
+            axes.add_patch(patches.Polygon(
+                           [[center - width, -halfHeight],
+                            [center + width, -halfHeight]],
+                           linewidth=3,
+                           closed=False,
+                           color='r'))
+
 
     def drawOpticalElements(self, z, axes):
         """ Deprecated. Use drawAt() """
@@ -1841,63 +1977,3 @@ We can use a mathematical language (Matrix) or optics terms (Element)
 Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
-
-# This is an example for the module.
-# Don't modify this: create a new script that imports ABCD
-# See test.py or examples/*.py
-
-if __name__ == "__main__":
-
-    path = ImagingPath()
-    path.label = "Simple demo: one infinite lens f = 5cm"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    # or
-    # path.save("Figure 1.png")
-
-    path = ImagingPath()
-    path.label = "Simple demo: two infinite lenses with f = 5cm"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=20))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    # or
-    # path.save("Figure 2.png")
-
-    path = ImagingPath()
-    path.label = "Simple demo: Aperture behind lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=3))
-    path.append(Aperture(diameter=3))
-    path.append(Space(d=17))
-    path.display()
-    # or
-    # path.save("Figure 3.png")
-
-    path = ImagingPath()
-    path.label = "Microscope system"
-#   path.objectHeight = 0.1
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
-    path.save("MicroscopeSystem.png", onlyChiefAndMarginalRays=True,
-              limitObjectToFieldOfView=True)
-    # or
-    # path.save("Figure 4.png")
-
-    path = ImagingPath()
-    path.label = "Focussing through a dielectric slab"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=3))
-    path.append(DielectricSlab(n=1.5, thickness=4))
-    path.append(Space(d=10))
-    path.display()
