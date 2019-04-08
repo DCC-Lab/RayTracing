@@ -70,7 +70,7 @@ eo.PN_33_921().display()
 Documentation is sparse at best.   You may obtain help by:
 
 1. Reading an automatically generated documentation from the code (not that good-looking, but at least it is *some* documentation):
-   1. [Core:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.eo.html) `Ray`,`GaussianBeam`, `Matrix`, `MatrixGroup`, `ImagingPath` and `LaserPath`
+   1. [Core:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.abcd.html) `Ray`,`GaussianBeam`, `Matrix`, `MatrixGroup`, `ImagingPath` and `LaserPath`
    2. [Optical elements:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.abcd.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
    3. [Specialty lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.lens.html) Defines a general achromat and objective lens
    4. [Thorlabs lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs.
