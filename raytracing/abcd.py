@@ -1917,9 +1917,10 @@ class LaserPath(MatrixGroup):
 
     def eigenModes(self):
         """
-        Returns the two complex radii that are identifcal after 
+        Returns the two complex radii that are identical after a
         round trip, assuming the matrix of the LaserPath() is one
-        round trip. 
+        round trip: you will need to duplicate elements in reverse
+        and append them manually. 
         """
         b = self.D - self.A
         sqrtDelta = cmath.sqrt(b*b + 4.0 *self.B *self.C)
@@ -2030,20 +2031,24 @@ class LaserPath(MatrixGroup):
         returned is relative to the position of the beam, which is why we add the actual
         position of the beam to the relative position. """
 
+        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
+        arrowSize = arrowHeight * 3
+
         beamTrace = self.trace(beam)
         for beam in beamTrace:
             relativePosition = beam.waistPosition
             position = beam.z + relativePosition
             size = beam.waist
 
-            arrowSize = 1
             axes.arrow(position, size+arrowSize, 0, -arrowSize,
                 width=0.1, fc='g', ec='g',
-                head_length=0.5, head_width=2,
+                head_length=arrowHeight, head_width=arrowWidth,
                 length_includes_head=True)
             axes.arrow(position, -size-arrowSize, 0, arrowSize,
                 width=0.1, fc='g', ec='g',
-                head_length=0.5, head_width=2,
+                head_length=arrowHeight, head_width=arrowWidth,
                 length_includes_head=True)
 
 
