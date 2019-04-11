@@ -5,6 +5,7 @@ import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
 import math
+import cmath
 import sys
 
 if sys.version_info[0] < 3:
@@ -160,9 +161,11 @@ class GaussianBeam(object):
     wavelength is in the same units
     """
 
-    def __init__(self, w=None, R=float("+Inf"), n=1.0, wavelength=632.8e-6, z=0):
+    def __init__(self, q:complex=None, w:float=None, R:float=float("+Inf"), n:float=1.0, wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
-        if w is not None:
+        if q is not None:
+            self.q = q
+        elif w is not None:
             self.q = 1/( 1.0/R - complex(0,1)*wavelength/n/(math.pi*w*w))
         else:
             self.q = None 
@@ -181,12 +184,23 @@ class GaussianBeam(object):
         return 1/invQReal
 
     @property
+    def isFinite(self):
+        return (-1/self.q).imag > 0
+    
+    @property
     def w(self):
-        return math.sqrt( self.wavelength/self.n/(math.pi * (-1/self.q).imag))
+        qInv = (-1/self.q).imag
+        if qInv > 0:
+            return math.sqrt( self.wavelength/self.n/(math.pi * qInv))
+        else:
+            return float("+Inf")            
 
     @property
     def wo(self):
-        return math.sqrt( self.zo * self.wavelength/math.pi )
+        if self.zo > 0:
+            return math.sqrt( self.zo * self.wavelength/math.pi )
+        else:
+            return None
 
     @property
     def waist(self):
@@ -198,7 +212,7 @@ class GaussianBeam(object):
 
     @property
     def zo(self):
-        return self.q.imag
+        return float(self.q.imag)
 
     @property
     def confocalParameter(self):
@@ -210,15 +224,18 @@ class GaussianBeam(object):
 
     def __str__(self):
         """ String description that allows the use of print(Ray()) """
-        description = "Complex radius: {0:.3}\n".format(self.q)
-        description += "z: {0:.3f}, ".format(self.z)
-        description += "w(z): {0:.3f}, ".format(self.w)
-        description += "R(z): {0:.3f}, ".format(self.R)
-        description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
-        description += "zo: {0:.3f}, ".format(self.zo)
-        description += "wo: {0:.3f}, ".format(self.wo)
-        description += "wo position: {0:.3f} ".format(self.waistPosition)
-        return description
+        if self.wo is not None:
+            description = "Complex radius: {0:.3}\n".format(self.q)
+            description += "w(z): {0:.3f}, ".format(self.w)
+            description += "R(z): {0:.3f}, ".format(self.R)
+            description += "z: {0:.3f}, ".format(self.z)
+            description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
+            description += "zo: {0:.3f}, ".format(self.zo)
+            description += "wo: {0:.3f}, ".format(self.wo)
+            description += "wo position: {0:.3f} ".format(self.waistPosition)
+            return description
+        else:
+            return "Not valid complex radius of curvature"
 
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
@@ -370,8 +387,9 @@ class Matrix(object):
         if rightSideBeam.n != self.frontIndex:
             print("Warning: the gaussian beam is not tracking the index of refraction properly")
 
-        outputBeam = GaussianBeam(wavelength=rightSideBeam.wavelength)
-        outputBeam.q = (self.A * q + self.B ) / (self.C*q + self.D)
+        qprime = (complex(self.A) * q + complex(self.B) ) / (complex(self.C)*q + complex(self.D))
+        
+        outputBeam = GaussianBeam(q=qprime, wavelength=rightSideBeam.wavelength)
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
 
@@ -874,6 +892,35 @@ class Lens(Matrix):
         axes.arrow(z, 0, 0, -halfHeight, width=arrowWidth/5, fc='k', ec='k',
                   head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
+
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+
+        pointsOfInterest = []
+        if f1 is not None:
+            pointsOfInterest.append({'z': f1, 'label': '$F_f$'})
+        if f2 is not None:
+            pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
+
+        return pointsOfInterest
+
+class CurvedMirror(Matrix):
+    """A curved mirror of radius R and infinite or finite diameter
+
+    """
+
+    def __init__(self, R, diameter=float('+Inf'), label=''):
+        super(CurvedMirror, self).__init__(A=1, B=0, C=-2 / float(R), D=1,
+                                   physicalLength=0,
+                                   apertureDiameter=diameter,
+                                   frontVertex=0,
+                                   backVertex=0,
+                                   label=label)
+
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1867,6 +1914,36 @@ class LaserPath(MatrixGroup):
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
         super(LaserPath, self).__init__(elements=elements, label=label)
+
+    def eigenModes(self):
+        """
+        Returns the two complex radii that are identifcal after 
+        round trip, assuming the matrix of the LaserPath() is one
+        round trip. 
+        """
+        b = self.D - self.A
+        sqrtDelta = cmath.sqrt(b*b + 4.0 *self.B *self.C)
+        
+        q1 = (- b + sqrtDelta)/(2.0*self.C)
+        q2 = (- b - sqrtDelta)/(2.0*self.C)
+
+        return (GaussianBeam(q=q1), GaussianBeam(q=q2))
+
+    def laserModes(self):
+        """
+        Returns the laser modes that are physical (finite) when 
+        calculating the eigenmodes. 
+        """
+
+        (q1, q2) = self.eigenModes()
+        q = []
+        if q1.isFinite:
+            q.append(q1)
+
+        if q2.isFinite:
+            q.append(q2)
+
+        return q
 
     def display(self, inputBeam=None, comments=None):
         """ Display the optical system and trace the laser beam. 
