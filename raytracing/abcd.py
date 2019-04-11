@@ -1954,6 +1954,20 @@ class LaserPath(MatrixGroup):
 
         """
 
+        if self.isResonator:
+            beams = self.laserModes()
+            if len(self.label) == "":
+                self.label = "Laser modes as calculated"
+        elif inputBeam is not None:
+            beams = [inputBeam]
+        elif inputBeams is not None:
+            beams = inputBeams
+        else:
+            beams = [self.inputBeam]
+
+        if len(self.label) == "":
+            self.label = "User-specified gaussian beams"
+
         if comments is not None:
             fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             axesComments.axis('off')
@@ -1961,15 +1975,6 @@ class LaserPath(MatrixGroup):
                               fontsize=10, verticalalignment='top')
         else:
             fig, axes = plt.subplots(figsize=(10, 7))
-
-        if self.isResonator:
-            beams = self.laserModes()
-        elif inputBeam is not None:
-            beams = [inputBeam]
-        elif inputBeams is not None:
-            beams = inputBeams
-        else:
-            beams = [self.inputBeam]
 
         self.createBeamTracePlot(axes=axes, beams=beams)
 
