@@ -28,7 +28,7 @@ from raytracing import *
 
 This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as `Space`, `Lens`, `ThickLens`, `Aperture`, `DielectricInterface`, but also `MatrixGroup` (to group elements together),  `ImagingPath` (to ray trace with an object at the front edge), `LaserPath` (to trace a gaussian laser beam from the front edge) and a few predefined other such as `Objective` (to create a very thick lens that mimicks an objective).
 
-You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib.
+You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib. You can create a group of elements with `MatrixGroup` for instance a telescope, a retrofocus or any group of optical elements you would like to treat as a "group".  The Thorlabs and Edmund optics lenses, for instance, are defined as `MatrixGroups`.
 
 This will show you a few examples of things you can do:
 
@@ -56,7 +56,7 @@ path.append(Space(d=100))
 path.display()
 ```
 
-You can also call display() on an element to see the cardinal points, principal planes, BFL and FFL:
+You can also call display() on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
 
 ```
 from raytracing import *
@@ -517,6 +517,7 @@ path.append(Space(d=180))
 path.append(olympus.LUMPlanFL40X())
 path.append(Space(d=10))
 path.display(inputBeam=GaussianBeam(w=0.001), comments="""
+path = LaserPath()
 path.label = "Demo #17: Laser beam and vendor lenses"
 path.append(Space(d=50))
 path.append(thorlabs.AC254_050_A())

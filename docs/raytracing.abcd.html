@@ -17,15 +17,16 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="math.html">math</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cmath.html">cmath</a><br>
+<a href="math.html">math</a><br>
 <a href="matplotlib.path.html">matplotlib.path</a><br>
 </td><td width="25%" valign=top><a href="os.html">os</a><br>
 <a href="matplotlib.patches.html">matplotlib.patches</a><br>
-</td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
-<a href="subprocess.html">subprocess</a><br>
-</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+</td><td width="25%" valign=top><a href="subprocess.html">subprocess</a><br>
+<a href="sys.html">sys</a><br>
 <a href="matplotlib.transforms.html">matplotlib.transforms</a><br>
-</td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -41,6 +42,7 @@
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="raytracing.abcd.html#Aperture">Aperture</a>
+</font></dt><dt><font face="helvetica, arial"><a href="raytracing.abcd.html#CurvedMirror">CurvedMirror</a>
 </font></dt><dt><font face="helvetica, arial"><a href="raytracing.abcd.html#DielectricInterface">DielectricInterface</a>
 </font></dt><dt><font face="helvetica, arial"><a href="raytracing.abcd.html#Lens">Lens</a>
 </font></dt><dt><font face="helvetica, arial"><a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>
@@ -246,6 +248,217 @@ For&nbsp;a&nbsp;<a href="#MatrixGroup">MatrixGroup</a>(),&nbsp;it&nbsp;returns&n
 each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;each&nbsp;element&nbsp;to&nbsp;a&nbsp;list&nbsp;for&nbsp;this&nbsp;group.</tt></dd></dl>
 
 <dl><dt><a name="Aperture-transferMatrix"><strong>transferMatrix</strong></a>(self, upTo=inf)</dt><dd><tt>The&nbsp;<a href="#Matrix">Matrix</a>()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;propagation&nbsp;from&nbsp;the&nbsp;edge<br>
+of&nbsp;the&nbsp;element&nbsp;(z=0)&nbsp;up&nbsp;to&nbsp;distance&nbsp;"upTo"&nbsp;(z=upTo).&nbsp;If&nbsp;no&nbsp;parameter&nbsp;is&nbsp;<br>
+provided,&nbsp;the&nbsp;transfer&nbsp;matrix&nbsp;will&nbsp;be&nbsp;from&nbsp;the&nbsp;front&nbsp;edge&nbsp;to&nbsp;the&nbsp;back&nbsp;edge.<br>
+If&nbsp;the&nbsp;element&nbsp;has&nbsp;a&nbsp;null&nbsp;thickness,&nbsp;the&nbsp;matrix&nbsp;representing&nbsp;the&nbsp;element<br>
+is&nbsp;returned.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>determinant</strong></dt>
+</dl>
+<dl><dt><strong>hasPower</strong></dt>
+</dl>
+<dl><dt><strong>isImaging</strong></dt>
+<dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
+(i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
+&nbsp;<br>
+In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D&nbsp;=&nbsp;angular&nbsp;magnification<br>
+As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>:<br>
+<dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CurvedMirror">class <strong>CurvedMirror</strong></a>(<a href="raytracing.abcd.html#Matrix">Matrix</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#CurvedMirror">CurvedMirror</a>(R,&nbsp;diameter=inf,&nbsp;label='')<br>
+&nbsp;<br>
+A&nbsp;curved&nbsp;mirror&nbsp;of&nbsp;radius&nbsp;R&nbsp;and&nbsp;infinite&nbsp;or&nbsp;finite&nbsp;diameter<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="raytracing.abcd.html#CurvedMirror">CurvedMirror</a></dd>
+<dd><a href="raytracing.abcd.html#Matrix">Matrix</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="CurvedMirror-__init__"><strong>__init__</strong></a>(self, R, diameter=inf, label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
+'z':position<br>
+'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.abcd.html#Matrix">Matrix</a>:<br>
+<dl><dt><a name="CurvedMirror-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
+&nbsp;<br>
+For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;<a href="#Matrix">Matrix</a>()&nbsp;and&nbsp;M2&nbsp;=&nbsp;<a href="#Matrix">Matrix</a>(),&nbsp;one&nbsp;can&nbsp;write<br>
+M3&nbsp;=&nbsp;M1*M2.&nbsp;With&nbsp;r&nbsp;=&nbsp;<a href="#Ray">Ray</a>(),&nbsp;one&nbsp;can&nbsp;apply&nbsp;the&nbsp;M1&nbsp;transform&nbsp;to&nbsp;a&nbsp;ray<br>
+with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Matrix">Matrix</a>())</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
+we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
+(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
+There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
+and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
+so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
+This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
+When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
+the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
+lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
+focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
+BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertex.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
+we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
+we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-backwardConjugate"><strong>backwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,<br>
+where&nbsp;is&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;?&nbsp;Distance&nbsp;before&nbsp;the&nbsp;element&nbsp;by<br>
+which&nbsp;a&nbsp;ray&nbsp;must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;at<br>
+the&nbsp;back&nbsp;of&nbsp;the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the<br>
+<a href="builtins.html#object">object</a>&nbsp;is&nbsp;"distance"&nbsp;in&nbsp;front&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the<br>
+left,&nbsp;or&nbsp;before).<br>
+&nbsp;<br>
+M2&nbsp;=&nbsp;M1*<a href="#Space">Space</a>(distance)<br>
+#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
+all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
+power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
+an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;element&nbsp;is&nbsp;infinite,&nbsp;currently&nbsp;the&nbsp;half-height<br>
+will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureDiameter/2.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
+have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;element&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
+&nbsp;<br>
+Default&nbsp;is&nbsp;a&nbsp;black&nbsp;box&nbsp;of&nbsp;appropriate&nbsp;length.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
+&nbsp;<br>
+Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
+axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
+of&nbsp;the&nbsp;matrix.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
+This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
+it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
+subclasses&nbsp;can&nbsp;override&nbsp;this&nbsp;function&nbsp;and&nbsp;act&nbsp;accordingly.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#CurvedMirror-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and&nbsp;both&nbsp;focal<br>
+distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-forwardConjugate"><strong>forwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,&nbsp;where<br>
+is&nbsp;the&nbsp;image?&nbsp;Distance&nbsp;after&nbsp;the&nbsp;element&nbsp;by&nbsp;which&nbsp;a&nbsp;ray<br>
+must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;of&nbsp;the&nbsp;front&nbsp;of<br>
+the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the&nbsp;image&nbsp;is&nbsp;"distance"<br>
+beyond&nbsp;the&nbsp;back&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the&nbsp;right,&nbsp;or&nbsp;after).<br>
+&nbsp;<br>
+M2&nbsp;=&nbsp;<a href="#Space">Space</a>(distance)*M1<br>
+#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-frontFocalLength"><strong>frontFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;front&nbsp;vertex.<br>
+This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
+When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
+the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
+lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
+focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
+BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertices.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
+we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
+we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
+both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements&nbsp;have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;diameter&nbsp;of&nbsp;the&nbsp;element&nbsp;or&nbsp;group&nbsp;of&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-magnification"><strong>magnification</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="CurvedMirror-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
+of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
+elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
+the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-mul_ray"><strong>mul_ray</strong></a>(self, rightSideRay)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;ray&nbsp;by&nbsp;a&nbsp;matrix.&nbsp;&nbsp;New&nbsp;position&nbsp;of<br>
+ray&nbsp;is&nbsp;updated&nbsp;by&nbsp;the&nbsp;physical&nbsp;length&nbsp;of&nbsp;the&nbsp;matrix.<br>
+If&nbsp;the&nbsp;ray&nbsp;is&nbsp;beyond&nbsp;the&nbsp;aperture&nbsp;diameter&nbsp;it&nbsp;is&nbsp;labelled<br>
+as&nbsp;"isBlocked&nbsp;=&nbsp;True"&nbsp;but&nbsp;can&nbsp;still&nbsp;propagate.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-principalPlanePositions"><strong>principalPlanePositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;the&nbsp;input&nbsp;and&nbsp;output&nbsp;principal&nbsp;planes.<br>
+&nbsp;<br>
+Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-trace"><strong>trace</strong></a>(self, ray)</dt><dd><tt>Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;rays&nbsp;(i.e.&nbsp;a&nbsp;ray&nbsp;trace)&nbsp;for&nbsp;the&nbsp;input&nbsp;ray&nbsp;through&nbsp;the&nbsp;matrix.<br>
+&nbsp;<br>
+Because&nbsp;we&nbsp;want&nbsp;to&nbsp;manage&nbsp;blockage&nbsp;by&nbsp;apertures,&nbsp;we&nbsp;need&nbsp;to&nbsp;perform&nbsp;a&nbsp;two-step&nbsp;process<br>
+for&nbsp;elements&nbsp;that&nbsp;have&nbsp;a&nbsp;finite,&nbsp;non-null&nbsp;length:&nbsp;where&nbsp;is&nbsp;the&nbsp;ray&nbsp;blocked&nbsp;exactly?<br>
+It&nbsp;can&nbsp;be&nbsp;blocked&nbsp;at&nbsp;the&nbsp;entrance,&nbsp;at&nbsp;the&nbsp;exit,&nbsp;or&nbsp;anywhere&nbsp;in&nbsp;between.<br>
+The&nbsp;aperture&nbsp;diameter&nbsp;for&nbsp;a&nbsp;finite-length&nbsp;element&nbsp;is&nbsp;constant&nbsp;across&nbsp;the&nbsp;length<br>
+of&nbsp;the&nbsp;element.&nbsp;We&nbsp;therefore&nbsp;check&nbsp;before&nbsp;entering&nbsp;the&nbsp;element&nbsp;and&nbsp;after&nbsp;having<br>
+propagated&nbsp;through&nbsp;the&nbsp;element.&nbsp;For&nbsp;now,&nbsp;this&nbsp;will&nbsp;suffice.<br>
+If&nbsp;the&nbsp;length&nbsp;is&nbsp;null,&nbsp;the&nbsp;ray&nbsp;is&nbsp;traced&nbsp;in&nbsp;a&nbsp;single&nbsp;step</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-traceMany"><strong>traceMany</strong></a>(self, inputRays)</dt><dd><tt>Trace&nbsp;each&nbsp;ray&nbsp;from&nbsp;a&nbsp;list&nbsp;from&nbsp;front&nbsp;edge&nbsp;of&nbsp;element&nbsp;to<br>
+the&nbsp;back&nbsp;edge.<br>
+&nbsp;<br>
+Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;input&nbsp;ray.<br>
+See&nbsp;<a href="#CurvedMirror-trace">trace</a>().</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-transferMatrices"><strong>transferMatrices</strong></a>(self)</dt><dd><tt>The&nbsp;list&nbsp;of&nbsp;<a href="#Matrix">Matrix</a>()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;the&nbsp;propagation&nbsp;through&nbsp;<br>
+this&nbsp;element&nbsp;(or&nbsp;group).&nbsp;For&nbsp;a&nbsp;<a href="#Matrix">Matrix</a>(),&nbsp;it&nbsp;simply&nbsp;returns&nbsp;a&nbsp;list&nbsp;<br>
+with&nbsp;a&nbsp;single&nbsp;element&nbsp;[self].<br>
+For&nbsp;a&nbsp;<a href="#MatrixGroup">MatrixGroup</a>(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
+each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;each&nbsp;element&nbsp;to&nbsp;a&nbsp;list&nbsp;for&nbsp;this&nbsp;group.</tt></dd></dl>
+
+<dl><dt><a name="CurvedMirror-transferMatrix"><strong>transferMatrix</strong></a>(self, upTo=inf)</dt><dd><tt>The&nbsp;<a href="#Matrix">Matrix</a>()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;propagation&nbsp;from&nbsp;the&nbsp;edge<br>
 of&nbsp;the&nbsp;element&nbsp;(z=0)&nbsp;up&nbsp;to&nbsp;distance&nbsp;"upTo"&nbsp;(z=upTo).&nbsp;If&nbsp;no&nbsp;parameter&nbsp;is&nbsp;<br>
 provided,&nbsp;the&nbsp;transfer&nbsp;matrix&nbsp;will&nbsp;be&nbsp;from&nbsp;the&nbsp;front&nbsp;edge&nbsp;to&nbsp;the&nbsp;back&nbsp;edge.<br>
 If&nbsp;the&nbsp;element&nbsp;has&nbsp;a&nbsp;null&nbsp;thickness,&nbsp;the&nbsp;matrix&nbsp;representing&nbsp;the&nbsp;element<br>
@@ -927,7 +1140,7 @@ Data and other attributes defined here:<br>
 <font color="#000000" face="helvetica, arial"><a name="GaussianBeam">class <strong>GaussianBeam</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#GaussianBeam">GaussianBeam</a>(w=None,&nbsp;R=inf,&nbsp;n=1.0,&nbsp;wavelength=0.0006328,&nbsp;z=0)<br>
+<td colspan=2><tt><a href="#GaussianBeam">GaussianBeam</a>(q:&nbsp;complex&nbsp;=&nbsp;None,&nbsp;w:&nbsp;float&nbsp;=&nbsp;None,&nbsp;R:&nbsp;float&nbsp;=&nbsp;inf,&nbsp;n:&nbsp;float&nbsp;=&nbsp;1.0,&nbsp;wavelength=0.0006328,&nbsp;z=0)<br>
 &nbsp;<br>
 A&nbsp;gaussian&nbsp;laser&nbsp;beam&nbsp;using&nbsp;the&nbsp;ABCD&nbsp;formalism&nbsp;for&nbsp;propagation<br>
 &nbsp;<br>
@@ -937,7 +1150,7 @@ n&nbsp;is&nbsp;index&nbsp;in&nbsp;which&nbsp;the&nbsp;beam&nbsp;is.&nbsp;Necessa
 wavelength&nbsp;is&nbsp;in&nbsp;the&nbsp;same&nbsp;units<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="GaussianBeam-__init__"><strong>__init__</strong></a>(self, w=None, R=inf, n=1.0, wavelength=0.0006328, z=0)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="GaussianBeam-__init__"><strong>__init__</strong></a>(self, q: complex = None, w: float = None, R: float = inf, n: float = 1.0, wavelength=0.0006328, z=0)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="GaussianBeam-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="#Ray">Ray</a>())</tt></dd></dl>
 
@@ -952,6 +1165,8 @@ Data descriptors defined here:<br>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>confocalParameter</strong></dt>
+</dl>
+<dl><dt><strong>isFinite</strong></dt>
 </dl>
 <dl><dt><strong>rayleighRange</strong></dt>
 </dl>
@@ -1571,9 +1786,9 @@ and&nbsp;without&nbsp;diffraction&nbsp;due&nbsp;to&nbsp;that&nbsp;aperture.<br>&
 Methods defined here:<br>
 <dl><dt><a name="LaserPath-__init__"><strong>__init__</strong></a>(self, elements=[], label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="LaserPath-createBeamTracePlot"><strong>createBeamTracePlot</strong></a>(self, axes, inputBeam)</dt><dd><tt>Create&nbsp;a&nbsp;matplotlib&nbsp;plot&nbsp;to&nbsp;draw&nbsp;the&nbsp;laser&nbsp;beam&nbsp;and&nbsp;the&nbsp;elements.</tt></dd></dl>
+<dl><dt><a name="LaserPath-createBeamTracePlot"><strong>createBeamTracePlot</strong></a>(self, axes, beams)</dt><dd><tt>Create&nbsp;a&nbsp;matplotlib&nbsp;plot&nbsp;to&nbsp;draw&nbsp;the&nbsp;laser&nbsp;beam&nbsp;and&nbsp;the&nbsp;elements.</tt></dd></dl>
 
-<dl><dt><a name="LaserPath-display"><strong>display</strong></a>(self, inputBeam=None, comments=None)</dt><dd><tt>Display&nbsp;the&nbsp;optical&nbsp;system&nbsp;and&nbsp;trace&nbsp;the&nbsp;laser&nbsp;beam.&nbsp;<br>
+<dl><dt><a name="LaserPath-display"><strong>display</strong></a>(self, inputBeam=None, inputBeams=None, comments=None)</dt><dd><tt>Display&nbsp;the&nbsp;optical&nbsp;system&nbsp;and&nbsp;trace&nbsp;the&nbsp;laser&nbsp;beam.&nbsp;<br>
 If&nbsp;comments&nbsp;are&nbsp;included&nbsp;they&nbsp;will&nbsp;be&nbsp;displayed&nbsp;on&nbsp;a<br>
 graph&nbsp;in&nbsp;the&nbsp;bottom&nbsp;half&nbsp;of&nbsp;the&nbsp;plot.</tt></dd></dl>
 
@@ -1595,6 +1810,14 @@ It&nbsp;is&nbsp;easy&nbsp;to&nbsp;obtain&nbsp;the&nbsp;waist&nbsp;position&nbsp;
 because&nbsp;it&nbsp;is&nbsp;the&nbsp;position&nbsp;where&nbsp;the&nbsp;complex&nbsp;radius&nbsp;is&nbsp;imaginary.&nbsp;The&nbsp;position<br>
 returned&nbsp;is&nbsp;relative&nbsp;to&nbsp;the&nbsp;position&nbsp;of&nbsp;the&nbsp;beam,&nbsp;which&nbsp;is&nbsp;why&nbsp;we&nbsp;add&nbsp;the&nbsp;actual<br>
 position&nbsp;of&nbsp;the&nbsp;beam&nbsp;to&nbsp;the&nbsp;relative&nbsp;position.</tt></dd></dl>
+
+<dl><dt><a name="LaserPath-eigenModes"><strong>eigenModes</strong></a>(self)</dt><dd><tt>Returns&nbsp;the&nbsp;two&nbsp;complex&nbsp;radii&nbsp;that&nbsp;are&nbsp;identical&nbsp;after&nbsp;a<br>
+round&nbsp;trip,&nbsp;assuming&nbsp;the&nbsp;matrix&nbsp;of&nbsp;the&nbsp;<a href="#LaserPath-LaserPath">LaserPath</a>()&nbsp;is&nbsp;one<br>
+round&nbsp;trip:&nbsp;you&nbsp;will&nbsp;need&nbsp;to&nbsp;duplicate&nbsp;elements&nbsp;in&nbsp;reverse<br>
+and&nbsp;append&nbsp;them&nbsp;manually.</tt></dd></dl>
+
+<dl><dt><a name="LaserPath-laserModes"><strong>laserModes</strong></a>(self)</dt><dd><tt>Returns&nbsp;the&nbsp;laser&nbsp;modes&nbsp;that&nbsp;are&nbsp;physical&nbsp;(finite)&nbsp;when&nbsp;<br>
+calculating&nbsp;the&nbsp;eigenmodes.</tt></dd></dl>
 
 <dl><dt><a name="LaserPath-rearrangeBeamTraceForPlotting"><strong>rearrangeBeamTraceForPlotting</strong></a>(self, rayList)</dt></dl>
 
