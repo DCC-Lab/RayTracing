@@ -1909,6 +1909,7 @@ class LaserPath(MatrixGroup):
     """
     def __init__(self, elements=[], label=""):
         self.inputBeam = None
+        self.isResonator = False
         self.showElementLabels = True
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
@@ -1946,7 +1947,7 @@ class LaserPath(MatrixGroup):
 
         return q
 
-    def display(self, inputBeam=None, comments=None):
+    def display(self, inputBeam=None, inputBeams=None, comments=None):
         """ Display the optical system and trace the laser beam. 
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -1961,15 +1962,21 @@ class LaserPath(MatrixGroup):
         else:
             fig, axes = plt.subplots(figsize=(10, 7))
 
-        if inputBeam is None:
-            inputBeam = self.inputBeam
+        if self.isResonator:
+            beams = self.laserModes()
+        elif inputBeam is not None:
+            beams = [inputBeam]
+        elif inputBeams is not None:
+            beams = inputBeams
+        else:
+            beams = [self.inputBeam]
 
-        self.createBeamTracePlot(axes=axes, inputBeam=inputBeam)
+        self.createBeamTracePlot(axes=axes, beams=beams)
 
         plt.ioff()
         plt.show()
 
-    def createBeamTracePlot(self, axes, inputBeam):
+    def createBeamTracePlot(self, axes, beams):
         """ Create a matplotlib plot to draw the laser beam and the elements.
         """
 
@@ -1980,9 +1987,11 @@ class LaserPath(MatrixGroup):
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
-        self.drawBeamTrace(axes, inputBeam)
-        self.drawWaists(axes, inputBeam)
         self.drawAt(z=0, axes=axes)
+
+        for beam in beams:
+            self.drawBeamTrace(axes, beam)
+            self.drawWaists(axes, beam)
 
         return axes
 
