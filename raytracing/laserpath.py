@@ -125,15 +125,16 @@ class LaserPath(MatrixGroup):
         (as opposed to rays, where we can). We must split Space() 
         elements into sub elements to watch the beam size expand.
         
-        We arbitrarily split Space() elements into 100 sub elements
+        We arbitrarily split Space() elements into N sub elements
         before plotting.
         """
 
+        N = 100
         highResolution = ImagingPath()
         for element in self.elements:
             if isinstance(element, Space):
-                for i in range(100):
-                    highResolution.append(Space(d=element.L/100, 
+                for i in range(N):
+                    highResolution.append(Space(d=element.L/N, 
                                                 n=element.frontIndex))
             else:
                 highResolution.append(element)

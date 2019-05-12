@@ -71,22 +71,6 @@ class MatrixGroup(Matrix):
             transferMatrices.extend(elementTransferMatrices)
         return transferMatrices
 
-    def propagate(self, inputRay):
-        """ Deprecated function: use trace() """
-        if not warningPrinted:
-            print("propagate() was renamed trace().")
-            warningPrinted = True
-
-        return self.trace(inputRay)
-
-    def propagateMany(self, inputRays):
-        """ Deprecated function: use traceMany() """
-        if not warningPrinted:
-            print("propagateMany() was renamed traceMany().")
-            warningPrinted = True
-
-        return self.traceMany(inputRays)
-
     def trace(self, inputRay):
         """Trace the input ray from first element until after the last element
 
