@@ -17,15 +17,13 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="math.html">math</a><br>
-<a href="matplotlib.path.html">matplotlib.path</a><br>
-</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cmath.html">cmath</a><br>
+<a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="matplotlib.path.html">matplotlib.path</a><br>
 <a href="matplotlib.patches.html">matplotlib.patches</a><br>
 </td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
-<a href="subprocess.html">subprocess</a><br>
-</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
 <a href="matplotlib.transforms.html">matplotlib.transforms</a><br>
-</td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -33,7 +31,7 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a>(<a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>)
+<dt><font face="helvetica, arial"><a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a>(<a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>)
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="raytracing.olympus.html#LUMPlanFL40X">LUMPlanFL40X</a>
@@ -46,7 +44,7 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="LUMPlanFL40X">class <strong>LUMPlanFL40X</strong></a>(<a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="LUMPlanFL40X">class <strong>LUMPlanFL40X</strong></a>(<a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>Olympus&nbsp;40x&nbsp;immersion&nbsp;objective<br>
@@ -55,9 +53,9 @@ Immersion&nbsp;not&nbsp;considered&nbsp;at&nbsp;this&nbsp;point.<br>&nbsp;</tt><
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.olympus.html#LUMPlanFL40X">LUMPlanFL40X</a></dd>
-<dd><a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -75,17 +73,18 @@ length&nbsp;of&nbsp;focusToFocusLength-workingDistance.<br>
 The&nbsp;numerical&nbsp;aperture&nbsp;is&nbsp;used&nbsp;to&nbsp;estimate&nbsp;the&nbsp;front&nbsp;aperture.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a>:<br>
 <dl><dt><a name="LUMPlanFL40X-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="LUMPlanFL40X-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt></dl>
+<dl><dt><a name="LUMPlanFL40X-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="LUMPlanFL40X-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="LUMPlanFL40X-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="LUMPlanFL40X-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -126,7 +125,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="LUMPlanFL40X-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -252,7 +251,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#LUMPlanFL40X-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -271,14 +270,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="MVPlapo2XC">class <strong>MVPlapo2XC</strong></a>(<a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="MVPlapo2XC">class <strong>MVPlapo2XC</strong></a>(<a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>Olympus&nbsp;<a href="#MVPlapo2XC">MVPlapo2XC</a>&nbsp;0.5&nbsp;NA&nbsp;with&nbsp;large&nbsp;<br>
@@ -286,9 +285,9 @@ back&nbsp;aperture.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.olympus.html#MVPlapo2XC">MVPlapo2XC</a></dd>
-<dd><a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -306,17 +305,18 @@ length&nbsp;of&nbsp;focusToFocusLength-workingDistance.<br>
 The&nbsp;numerical&nbsp;aperture&nbsp;is&nbsp;used&nbsp;to&nbsp;estimate&nbsp;the&nbsp;front&nbsp;aperture.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a>:<br>
 <dl><dt><a name="MVPlapo2XC-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="MVPlapo2XC-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt></dl>
+<dl><dt><a name="MVPlapo2XC-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="MVPlapo2XC-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="MVPlapo2XC-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="MVPlapo2XC-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -357,7 +357,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="MVPlapo2XC-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -483,7 +483,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#MVPlapo2XC-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -502,14 +502,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="XLUMPlanFLN20X">class <strong>XLUMPlanFLN20X</strong></a>(<a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="XLUMPlanFLN20X">class <strong>XLUMPlanFLN20X</strong></a>(<a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>Olympus&nbsp;<a href="#XLUMPlanFLN20X">XLUMPlanFLN20X</a>&nbsp;(Super&nbsp;20X)&nbsp;1.0&nbsp;NA&nbsp;with&nbsp;large&nbsp;<br>
@@ -519,9 +519,9 @@ Immersion&nbsp;not&nbsp;considered&nbsp;at&nbsp;this&nbsp;point.<br>&nbsp;</tt><
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.olympus.html#XLUMPlanFLN20X">XLUMPlanFLN20X</a></dd>
-<dd><a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -539,17 +539,18 @@ length&nbsp;of&nbsp;focusToFocusLength-workingDistance.<br>
 The&nbsp;numerical&nbsp;aperture&nbsp;is&nbsp;used&nbsp;to&nbsp;estimate&nbsp;the&nbsp;front&nbsp;aperture.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#Objective">raytracing.lens.Objective</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#Objective">raytracing.specialtylenses.Objective</a>:<br>
 <dl><dt><a name="XLUMPlanFLN20X-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
 
-<dl><dt><a name="XLUMPlanFLN20X-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt></dl>
+<dl><dt><a name="XLUMPlanFLN20X-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
+Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
 
 <dl><dt><a name="XLUMPlanFLN20X-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>List&nbsp;of&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;element&nbsp;as&nbsp;a&nbsp;dictionary:<br>
 'z':position<br>
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="XLUMPlanFLN20X-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="XLUMPlanFLN20X-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -590,7 +591,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="XLUMPlanFLN20X-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -716,7 +717,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#XLUMPlanFLN20X-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -735,7 +736,7 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table></td></tr></table><p>
@@ -848,11 +849,9 @@ Uses&nbsp;the&nbsp;__trunc__&nbsp;magic&nbsp;method.</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>degPerRad</strong> = 57.29577951308232<br>
-<strong>e</strong> = 2.718281828459045<br>
+<td width="100%"><strong>e</strong> = 2.718281828459045<br>
 <strong>inf</strong> = inf<br>
 <strong>nan</strong> = nan<br>
 <strong>pi</strong> = 3.141592653589793<br>
-<strong>radPerDeg</strong> = 0.017453292519943295<br>
 <strong>tau</strong> = 6.283185307179586</td></tr></table>
 </body></html>

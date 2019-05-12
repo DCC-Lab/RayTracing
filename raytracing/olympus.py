@@ -1,5 +1,4 @@
-from .abcd import *
-from .lens import *
+from .specialtylenses import *
 
 class LUMPlanFL40X(Objective):
     """ Olympus 40x immersion objective
