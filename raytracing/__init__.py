@@ -18,6 +18,7 @@ The class hierarchy can be seen on http://webgraphviz.com with the
 following description:
 
 digraph G {
+   rankdir="LR";
 
     subgraph elements {
         "Matrix" -> "Space"
@@ -29,21 +30,18 @@ digraph G {
         "Matrix" -> "MatrixGroup"
         "ThickLens" -> "DielectricSlab"
 
-        "MatrixGroup" -> "Objective"
         "MatrixGroup" -> "AchromaticDoubletLens"
-        "AchromaticDoubletLens" -> "thorlabs.ACN254_100_A"
-        "AchromaticDoubletLens" -> "eo.PN_33_921"
+        "AchromaticDoubletLens" -> "thorlabs.part#"
+        "AchromaticDoubletLens" -> "eo.part#"
+        "MatrixGroup" -> "Objective"
+        "Objective" -> "olympus.part#"
     }
 
-	subgraph mathview {
-	    "Matrix" -> "MatrixGroup"
+    subgraph mathview {
+        "Matrix" -> "MatrixGroup"
         "MatrixGroup" -> ImagingPath
-	}
-
-    subgraph opticsview {
-        "Element" -> "Group"
-        "Group" -> ImagingPath
     }
+
 }
 
 To use the package, either:
