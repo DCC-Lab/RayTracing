@@ -1,5 +1,4 @@
-from .abcd import *
-from .lens import *
+from .specialtylenses import *
 
 class PN_33_921(AchromatDoubletLens):
     def __init__(self):

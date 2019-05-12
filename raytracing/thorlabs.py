@@ -1,5 +1,4 @@
-from .abcd import *
-from .lens import *
+from .specialtylenses import *
 from .materials import *
 
 class ACN254_100_A(AchromatDoubletLens):
