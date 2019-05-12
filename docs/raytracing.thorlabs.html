@@ -17,15 +17,13 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="math.html">math</a><br>
-<a href="matplotlib.path.html">matplotlib.path</a><br>
-</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cmath.html">cmath</a><br>
+<a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="matplotlib.path.html">matplotlib.path</a><br>
 <a href="matplotlib.patches.html">matplotlib.patches</a><br>
 </td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
-<a href="subprocess.html">subprocess</a><br>
-</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
 <a href="matplotlib.transforms.html">matplotlib.transforms</a><br>
-</td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -33,7 +31,7 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>(<a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>)
+<dt><font face="helvetica, arial"><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>(<a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>)
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="raytracing.thorlabs.html#AC254_030_A">AC254_030_A</a>
@@ -75,7 +73,7 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_030_A">class <strong>AC254_030_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_030_A">class <strong>AC254_030_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -92,9 +90,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_030_A">AC254_030_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -102,7 +100,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_030_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_030_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -124,7 +122,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_030_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_030_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -168,7 +166,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_030_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -291,7 +289,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_030_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -310,14 +308,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_035_A">class <strong>AC254_035_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_035_A">class <strong>AC254_035_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -334,9 +332,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_035_A">AC254_035_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -344,7 +342,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_035_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_035_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -366,7 +364,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_035_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_035_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -410,7 +408,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_035_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -533,7 +531,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_035_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -552,14 +550,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_040_A">class <strong>AC254_040_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_040_A">class <strong>AC254_040_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -576,9 +574,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_040_A">AC254_040_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -586,7 +584,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_040_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_040_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -608,7 +606,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_040_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_040_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -652,7 +650,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_040_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -775,7 +773,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_040_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -794,14 +792,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_045_A">class <strong>AC254_045_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_045_A">class <strong>AC254_045_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -818,9 +816,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_045_A">AC254_045_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -828,7 +826,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_045_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_045_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -850,7 +848,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_045_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_045_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -894,7 +892,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_045_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -1017,7 +1015,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_045_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -1036,14 +1034,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_050_A">class <strong>AC254_050_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_050_A">class <strong>AC254_050_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -1060,9 +1058,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_050_A">AC254_050_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -1070,7 +1068,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_050_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_050_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -1092,7 +1090,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_050_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_050_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -1136,7 +1134,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_050_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -1259,7 +1257,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_050_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -1278,14 +1276,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_050_B">class <strong>AC254_050_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_050_B">class <strong>AC254_050_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -1302,9 +1300,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_050_B">AC254_050_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -1312,7 +1310,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_050_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_050_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -1334,7 +1332,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_050_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_050_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -1378,7 +1376,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_050_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -1501,7 +1499,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_050_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -1520,14 +1518,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_060_A">class <strong>AC254_060_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_060_A">class <strong>AC254_060_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -1544,9 +1542,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_060_A">AC254_060_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -1554,7 +1552,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_060_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_060_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -1576,7 +1574,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_060_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_060_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -1620,7 +1618,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_060_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -1743,7 +1741,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_060_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -1762,14 +1760,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_075_A">class <strong>AC254_075_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_075_A">class <strong>AC254_075_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -1786,9 +1784,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_075_A">AC254_075_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -1796,7 +1794,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_075_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_075_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -1818,7 +1816,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_075_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_075_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -1862,7 +1860,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_075_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -1985,7 +1983,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_075_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -2004,14 +2002,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_080_A">class <strong>AC254_080_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_080_A">class <strong>AC254_080_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -2028,9 +2026,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_080_A">AC254_080_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -2038,7 +2036,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_080_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_080_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -2060,7 +2058,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_080_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_080_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -2104,7 +2102,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_080_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -2227,7 +2225,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_080_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -2246,14 +2244,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_100_A">class <strong>AC254_100_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_100_A">class <strong>AC254_100_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -2270,9 +2268,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_100_A">AC254_100_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -2280,7 +2278,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_100_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_100_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -2302,7 +2300,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_100_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_100_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -2346,7 +2344,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_100_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -2469,7 +2467,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_100_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -2488,14 +2486,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_125_A">class <strong>AC254_125_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_125_A">class <strong>AC254_125_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -2512,9 +2510,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_125_A">AC254_125_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -2522,7 +2520,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_125_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_125_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -2544,7 +2542,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_125_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_125_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -2588,7 +2586,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_125_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -2711,7 +2709,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_125_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -2730,14 +2728,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_150_A">class <strong>AC254_150_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_150_A">class <strong>AC254_150_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -2754,9 +2752,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_150_A">AC254_150_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -2764,7 +2762,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_150_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_150_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -2786,7 +2784,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_150_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_150_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -2830,7 +2828,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_150_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -2953,7 +2951,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_150_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -2972,14 +2970,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_200_A">class <strong>AC254_200_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_200_A">class <strong>AC254_200_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -2996,9 +2994,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_200_A">AC254_200_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -3006,7 +3004,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_200_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_200_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -3028,7 +3026,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_200_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_200_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -3072,7 +3070,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_200_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -3195,7 +3193,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_200_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -3214,14 +3212,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_250_A">class <strong>AC254_250_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_250_A">class <strong>AC254_250_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -3238,9 +3236,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_250_A">AC254_250_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -3248,7 +3246,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_250_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_250_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -3270,7 +3268,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_250_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_250_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -3314,7 +3312,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_250_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -3437,7 +3435,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_250_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -3456,14 +3454,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_300_A">class <strong>AC254_300_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_300_A">class <strong>AC254_300_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -3480,9 +3478,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_300_A">AC254_300_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -3490,7 +3488,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_300_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_300_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -3512,7 +3510,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_300_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_300_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -3556,7 +3554,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_300_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -3679,7 +3677,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_300_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -3698,14 +3696,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_400_A">class <strong>AC254_400_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_400_A">class <strong>AC254_400_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -3722,9 +3720,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_400_A">AC254_400_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -3732,7 +3730,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_400_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_400_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -3754,7 +3752,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_400_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_400_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -3798,7 +3796,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_400_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -3921,7 +3919,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_400_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -3940,14 +3938,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC254_500_A">class <strong>AC254_500_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC254_500_A">class <strong>AC254_500_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -3964,9 +3962,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC254_500_A">AC254_500_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -3974,7 +3972,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC254_500_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC254_500_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -3996,7 +3994,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC254_500_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC254_500_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -4040,7 +4038,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC254_500_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -4163,7 +4161,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC254_500_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -4182,14 +4180,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_075_B">class <strong>AC508_075_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_075_B">class <strong>AC508_075_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -4206,9 +4204,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_075_B">AC508_075_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -4216,7 +4214,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_075_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_075_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -4238,7 +4236,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_075_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_075_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -4282,7 +4280,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_075_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -4405,7 +4403,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_075_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -4424,14 +4422,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_080_B">class <strong>AC508_080_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_080_B">class <strong>AC508_080_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -4448,9 +4446,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_080_B">AC508_080_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -4458,7 +4456,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_080_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_080_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -4480,7 +4478,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_080_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_080_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -4524,7 +4522,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_080_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -4647,7 +4645,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_080_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -4666,14 +4664,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_1000_B">class <strong>AC508_1000_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_1000_B">class <strong>AC508_1000_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -4690,9 +4688,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_1000_B">AC508_1000_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -4700,7 +4698,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_1000_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_1000_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -4722,7 +4720,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_1000_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_1000_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -4766,7 +4764,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_1000_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -4889,7 +4887,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_1000_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -4908,14 +4906,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_100_B">class <strong>AC508_100_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_100_B">class <strong>AC508_100_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -4932,9 +4930,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_100_B">AC508_100_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -4942,7 +4940,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_100_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_100_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -4964,7 +4962,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_100_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_100_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -5008,7 +5006,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_100_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -5131,7 +5129,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_100_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -5150,14 +5148,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_150_B">class <strong>AC508_150_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_150_B">class <strong>AC508_150_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -5174,9 +5172,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_150_B">AC508_150_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -5184,7 +5182,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_150_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_150_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -5206,7 +5204,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_150_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_150_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -5250,7 +5248,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_150_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -5373,7 +5371,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_150_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -5392,14 +5390,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_200_B">class <strong>AC508_200_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_200_B">class <strong>AC508_200_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -5416,9 +5414,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_200_B">AC508_200_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -5426,7 +5424,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_200_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_200_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -5448,7 +5446,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_200_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_200_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -5492,7 +5490,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_200_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -5615,7 +5613,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_200_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -5634,14 +5632,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_250_B">class <strong>AC508_250_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_250_B">class <strong>AC508_250_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -5658,9 +5656,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_250_B">AC508_250_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -5668,7 +5666,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_250_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_250_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -5690,7 +5688,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_250_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_250_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -5734,7 +5732,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_250_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -5857,7 +5855,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_250_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -5876,14 +5874,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_300_B">class <strong>AC508_300_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_300_B">class <strong>AC508_300_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -5900,9 +5898,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_300_B">AC508_300_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -5910,7 +5908,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_300_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_300_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -5932,7 +5930,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_300_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_300_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -5976,7 +5974,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_300_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -6099,7 +6097,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_300_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -6118,14 +6116,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_400_B">class <strong>AC508_400_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_400_B">class <strong>AC508_400_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -6142,9 +6140,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_400_B">AC508_400_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -6152,7 +6150,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_400_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_400_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -6174,7 +6172,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_400_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_400_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -6218,7 +6216,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_400_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -6341,7 +6339,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_400_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -6360,14 +6358,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_500_B">class <strong>AC508_500_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_500_B">class <strong>AC508_500_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -6384,9 +6382,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_500_B">AC508_500_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -6394,7 +6392,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_500_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_500_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -6416,7 +6414,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_500_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_500_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -6460,7 +6458,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_500_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -6583,7 +6581,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_500_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -6602,14 +6600,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AC508_750_B">class <strong>AC508_750_B</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AC508_750_B">class <strong>AC508_750_B</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -6626,9 +6624,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#AC508_750_B">AC508_750_B</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -6636,7 +6634,7 @@ Methods defined here:<br>
 <dl><dt><a name="AC508_750_B-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="AC508_750_B-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -6658,7 +6656,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AC508_750_B-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AC508_750_B-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -6702,7 +6700,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AC508_750_B-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -6825,7 +6823,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AC508_750_B-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -6844,14 +6842,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="ACN254_040_A">class <strong>ACN254_040_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="ACN254_040_A">class <strong>ACN254_040_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -6868,9 +6866,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#ACN254_040_A">ACN254_040_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -6878,7 +6876,7 @@ Methods defined here:<br>
 <dl><dt><a name="ACN254_040_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="ACN254_040_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -6900,7 +6898,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_040_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="ACN254_040_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -6944,7 +6942,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="ACN254_040_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -7067,7 +7065,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#ACN254_040_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -7086,14 +7084,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="ACN254_050_A">class <strong>ACN254_050_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="ACN254_050_A">class <strong>ACN254_050_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -7110,9 +7108,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#ACN254_050_A">ACN254_050_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -7120,7 +7118,7 @@ Methods defined here:<br>
 <dl><dt><a name="ACN254_050_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="ACN254_050_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -7142,7 +7140,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_050_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="ACN254_050_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -7186,7 +7184,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="ACN254_050_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -7309,7 +7307,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#ACN254_050_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -7328,14 +7326,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="ACN254_075_A">class <strong>ACN254_075_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="ACN254_075_A">class <strong>ACN254_075_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -7352,9 +7350,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#ACN254_075_A">ACN254_075_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -7362,7 +7360,7 @@ Methods defined here:<br>
 <dl><dt><a name="ACN254_075_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="ACN254_075_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -7384,7 +7382,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_075_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="ACN254_075_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -7428,7 +7426,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="ACN254_075_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -7551,7 +7549,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#ACN254_075_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -7570,14 +7568,14 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="ACN254_100_A">class <strong>ACN254_100_A</strong></a>(<a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="ACN254_100_A">class <strong>ACN254_100_A</strong></a>(<a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>General&nbsp;Achromat&nbsp;doublet&nbsp;lens&nbsp;with&nbsp;an&nbsp;effective&nbsp;focal&nbsp;length&nbsp;of&nbsp;fa,&nbsp;back&nbsp;focal<br>
@@ -7594,9 +7592,9 @@ some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;in
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="raytracing.thorlabs.html#ACN254_100_A">ACN254_100_A</a></dd>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -7604,7 +7602,7 @@ Methods defined here:<br>
 <dl><dt><a name="ACN254_100_A-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.lens.html#AchromatDoubletLens">raytracing.lens.AchromatDoubletLens</a>:<br>
+Methods inherited from <a href="raytracing.specialtylenses.html#AchromatDoubletLens">raytracing.specialtylenses.AchromatDoubletLens</a>:<br>
 <dl><dt><a name="ACN254_100_A-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.<br>
 The&nbsp;lens&nbsp;requires&nbsp;special&nbsp;care&nbsp;because&nbsp;the&nbsp;corners&nbsp;are&nbsp;not<br>
 separated&nbsp;by&nbsp;self.<strong>L</strong>:&nbsp;the&nbsp;curvature&nbsp;makes&nbsp;the&nbsp;edges&nbsp;shorter.<br>
@@ -7626,7 +7624,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="ACN254_100_A-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="ACN254_100_A-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -7670,7 +7668,7 @@ MatrixGroup()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matr
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="ACN254_100_A-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -7793,7 +7791,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#ACN254_100_A-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -7812,7 +7810,7 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table></td></tr></table><p>
@@ -7925,11 +7923,9 @@ Uses&nbsp;the&nbsp;__trunc__&nbsp;magic&nbsp;method.</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>degPerRad</strong> = 57.29577951308232<br>
-<strong>e</strong> = 2.718281828459045<br>
+<td width="100%"><strong>e</strong> = 2.718281828459045<br>
 <strong>inf</strong> = inf<br>
 <strong>nan</strong> = nan<br>
 <strong>pi</strong> = 3.141592653589793<br>
-<strong>radPerDeg</strong> = 0.017453292519943295<br>
 <strong>tau</strong> = 6.283185307179586</td></tr></table>
 </body></html>
