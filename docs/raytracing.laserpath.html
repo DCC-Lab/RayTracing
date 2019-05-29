@@ -84,7 +84,7 @@ simply&nbsp;propagate&nbsp;the&nbsp;beam&nbsp;over&nbsp;large&nbsp;distances&nbs
 (as&nbsp;opposed&nbsp;to&nbsp;rays,&nbsp;where&nbsp;we&nbsp;can).&nbsp;We&nbsp;must&nbsp;split&nbsp;Space()&nbsp;<br>
 elements&nbsp;into&nbsp;sub&nbsp;elements&nbsp;to&nbsp;watch&nbsp;the&nbsp;beam&nbsp;size&nbsp;expand.<br>
 &nbsp;<br>
-We&nbsp;arbitrarily&nbsp;split&nbsp;Space()&nbsp;elements&nbsp;into&nbsp;100&nbsp;sub&nbsp;elements<br>
+We&nbsp;arbitrarily&nbsp;split&nbsp;Space()&nbsp;elements&nbsp;into&nbsp;N&nbsp;sub&nbsp;elements<br>
 before&nbsp;plotting.</tt></dd></dl>
 
 <dl><dt><a name="LaserPath-drawWaists"><strong>drawWaists</strong></a>(self, axes, beam)</dt><dd><tt>Draws&nbsp;the&nbsp;expected&nbsp;waist&nbsp;(i.e.&nbsp;the&nbsp;focal&nbsp;spot&nbsp;or&nbsp;the&nbsp;spot&nbsp;where&nbsp;the<br>
@@ -128,10 +128,6 @@ Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></d
 <dl><dt><a name="LaserPath-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
 
 <dl><dt><a name="LaserPath-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
-
-<dl><dt><a name="LaserPath-propagate"><strong>propagate</strong></a>(self, inputRay)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#LaserPath-trace">trace</a>()</tt></dd></dl>
-
-<dl><dt><a name="LaserPath-propagateMany"><strong>propagateMany</strong></a>(self, inputRays)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#LaserPath-traceMany">traceMany</a>()</tt></dd></dl>
 
 <dl><dt><a name="LaserPath-trace"><strong>trace</strong></a>(self, inputRay)</dt><dd><tt>Trace&nbsp;the&nbsp;input&nbsp;ray&nbsp;from&nbsp;first&nbsp;element&nbsp;until&nbsp;after&nbsp;the&nbsp;last&nbsp;element<br>
 &nbsp;<br>
