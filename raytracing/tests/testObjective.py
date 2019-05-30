@@ -18,6 +18,7 @@ class TestObjective(unittest.TestCase):
         path.append(obj)
         path.append(Space(30))
         trace = path.trace(Ray())
+        self.assertTrue(trace.count != 0)
 
 if __name__ == '__main__':
     unittest.main()
