@@ -39,7 +39,7 @@ class MVPlapo2XC(Objective):
         super(MVPlapo2XC, self).__init__(f=90/2,
                                          NA=0.5,
                                          focusToFocusLength=137,
-                                         backAperture=48,
+                                         backAperture=45,
                                          workingDistance=20,
                                          label='MVPlapo2XC',
                                          url="")
