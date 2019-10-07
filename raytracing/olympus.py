@@ -43,3 +43,18 @@ class MVPlapo2XC(Objective):
                                          workingDistance=20,
                                          label='MVPlapo2XC',
                                          url="")
+
+class XLPLN25X(Objective):
+    """ Olympus XLPLN25X 1.05 NA
+
+    Immersion not consided at this point
+    """
+
+    def __init__(self):
+        super(XLPLN25X, self).__init__(f=180/25,
+                                         NA=1.05,
+                                         focusToFocusLength=75,
+                                         backAperture=18,
+                                         workingDistance=2,
+                                         label='XLPLN25X',
+                                         url="https://www.olympus-lifescience.com/en/objectives/multiphoton/")
