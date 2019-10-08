@@ -39,7 +39,7 @@ class MVPlapo2XC(Objective):
         super(MVPlapo2XC, self).__init__(f=90/2,
                                          NA=0.5,
                                          focusToFocusLength=137,
-                                         backAperture=48,
+                                         backAperture=45,
                                          workingDistance=20,
                                          label='MVPlapo2XC',
                                          url="")
@@ -60,6 +60,7 @@ class UMPLFN20XW(Objective):
                                          url="https://www.olympus-lifescience.com/en/objectives/lumplfln-w/#!cms[tab]=%"
                                                  "2Fobjectives%2Flumplfln-w%2F20xw")
 
+
 class XLPLN25X(Objective):
     """ Olympus XLPLN25X 1.05 NA
 
@@ -74,4 +75,3 @@ class XLPLN25X(Objective):
                                          workingDistance=2,
                                          label='XLPLN25X',
                                          url="https://www.olympus-lifescience.com/en/objectives/multiphoton/")
-        
