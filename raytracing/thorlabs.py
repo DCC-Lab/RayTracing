@@ -1,5 +1,4 @@
-from .abcd import *
-from .lens import *
+from .specialtylenses import *
 from .materials import *
 
 class ACN254_100_A(AchromatDoubletLens):
@@ -228,3 +227,45 @@ class AC508_1000_B(AchromatDoubletLens):
                                     tc1=4.2, tc2=2.8, te=6.4, n1=N_BAF10.n(0.855), n2=N_SF10.n(0.855), diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-1000-B")
+
+class LA1608_A(AchromatDoubletLens):
+    def __init__(self):
+        super(LA1608_A,self).__init__(fa=75.0,fb=72.0, R1=100000,R2=-100000, R3=-38.6, 
+                                    tc1=.05, tc2=4.1, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
+                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1608-A',
+                                    label="LA1608_A")
+
+class LA1134_A(AchromatDoubletLens):
+    def __init__(self):
+        super(LA1134_A,self).__init__(fa=60.0,fb=56.7, R1=100000,R2=-100000, R3=-30.9, 
+                                    tc1=.05, tc2=4.7, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
+                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1134-A',
+                                    label="LA1134_A")
+
+class LA1131_A(AchromatDoubletLens):
+    def __init__(self):
+        super(LA1131_A,self).__init__(fa=50.0,fb=46.3, R1=100000,R2=-100000, R3=-25.8, 
+                                    tc1=.05, tc2=5.3, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
+                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1131-A',
+                                    label="LA1131_A")
+
+class LA1422_A(AchromatDoubletLens):
+    def __init__(self):
+        super(LA1422_A,self).__init__(fa=40.0,fb=35.7, R1=100000,R2=-100000, R3=-20.6, 
+                                    tc1=.05, tc2=6.4, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
+                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1422-A',
+                                    label="LA1422_A")
+        
+class LA1805_A(AchromatDoubletLens):
+    def __init__(self):
+        super(LA1805_A,self).__init__(fa=30.0,fb=24.2, R1=100000,R2=-100000, R3=-15.5, 
+                                    tc1=.05, tc2=8.6, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
+                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1805-A',
+                                    label="LA1805_A")
+
+class LA1274_A(AchromatDoubletLens):
+    def __init__(self):
+        super(LA1274_A,self).__init__(fa=40.0,fb=34.0, R1=100000,R2=-100000, R3=-20.6, 
+                                    tc1=.05, tc2=9.0, te=2.5, n1 = 1, n2=N_BK7.n(0.5876), diameter=30.0,
+                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1274-A',
+                                    label="LA1274_A")

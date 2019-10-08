@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module raytracing.lens</title>
+<html><head><title>Python: module raytracing.specialtylenses</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="raytracing.html"><font color="#ffffff">raytracing</font></a>.lens</strong></big></big></font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="raytracing.html"><font color="#ffffff">raytracing</font></a>.specialtylenses</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/dccote/GitHub/RayTracing/raytracing/lens.py">/Users/dccote/GitHub/RayTracing/raytracing/lens.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/dccote/GitHub/RayTracing/raytracing/specialtylenses.py">/Users/dccote/GitHub/RayTracing/raytracing/specialtylenses.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,15 +17,13 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="math.html">math</a><br>
-<a href="matplotlib.path.html">matplotlib.path</a><br>
-</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cmath.html">cmath</a><br>
+<a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="matplotlib.path.html">matplotlib.path</a><br>
 <a href="matplotlib.patches.html">matplotlib.patches</a><br>
 </td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
-<a href="subprocess.html">subprocess</a><br>
-</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
 <a href="matplotlib.transforms.html">matplotlib.transforms</a><br>
-</td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -33,11 +31,11 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>(<a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>)
+<dt><font face="helvetica, arial"><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>(<a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>)
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="raytracing.lens.html#AchromatDoubletLens">AchromatDoubletLens</a>
-</font></dt><dt><font face="helvetica, arial"><a href="raytracing.lens.html#Objective">Objective</a>
+<dt><font face="helvetica, arial"><a href="raytracing.specialtylenses.html#AchromatDoubletLens">AchromatDoubletLens</a>
+</font></dt><dt><font face="helvetica, arial"><a href="raytracing.specialtylenses.html#Objective">Objective</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -45,7 +43,7 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AchromatDoubletLens">class <strong>AchromatDoubletLens</strong></a>(<a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AchromatDoubletLens">class <strong>AchromatDoubletLens</strong></a>(<a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt><a href="#AchromatDoubletLens">AchromatDoubletLens</a>(fa,&nbsp;fb,&nbsp;R1,&nbsp;R2,&nbsp;R3,&nbsp;tc1,&nbsp;tc2,&nbsp;te,&nbsp;n1,&nbsp;n2,&nbsp;diameter,&nbsp;mat1=None,&nbsp;mat2=None,&nbsp;wavelengthRef=None,&nbsp;url=None,&nbsp;label='')<br>
@@ -63,9 +61,9 @@ With&nbsp;Edmund&nbsp;optics,&nbsp;the&nbsp;sign&nbsp;of&nbsp;the&nbsp;various&n
 some&nbsp;of&nbsp;the&nbsp;components&nbsp;(i.e.&nbsp;PN_85_877&nbsp;for&nbsp;instance)<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="raytracing.lens.html#AchromatDoubletLens">AchromatDoubletLens</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#AchromatDoubletLens">AchromatDoubletLens</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -93,7 +91,7 @@ we&nbsp;collect&nbsp;information&nbsp;from&nbsp;the&nbsp;list&nbsp;of&nbsp;eleme
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="AchromatDoubletLens-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="AchromatDoubletLens-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -112,10 +110,6 @@ Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></d
 
 <dl><dt><a name="AchromatDoubletLens-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
-<dl><dt><a name="AchromatDoubletLens-propagate"><strong>propagate</strong></a>(self, inputRay)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#AchromatDoubletLens-trace">trace</a>()</tt></dd></dl>
-
-<dl><dt><a name="AchromatDoubletLens-propagateMany"><strong>propagateMany</strong></a>(self, inputRays)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#AchromatDoubletLens-traceMany">traceMany</a>()</tt></dd></dl>
-
 <dl><dt><a name="AchromatDoubletLens-trace"><strong>trace</strong></a>(self, inputRay)</dt><dd><tt>Trace&nbsp;the&nbsp;input&nbsp;ray&nbsp;from&nbsp;first&nbsp;element&nbsp;until&nbsp;after&nbsp;the&nbsp;last&nbsp;element<br>
 &nbsp;<br>
 Returns&nbsp;a&nbsp;ray&nbsp;trace&nbsp;(i.e.&nbsp;[Ray()])&nbsp;starting&nbsp;with&nbsp;inputRay,&nbsp;followed&nbsp;by&nbsp;the&nbsp;ray&nbsp;after<br>
@@ -125,7 +119,7 @@ traced&nbsp;in&nbsp;several&nbsp;steps.</tt></dd></dl>
 <dl><dt><a name="AchromatDoubletLens-transferMatrices"><strong>transferMatrices</strong></a>(self)</dt><dd><tt>The&nbsp;list&nbsp;of&nbsp;Matrix()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;the&nbsp;propagation&nbsp;through&nbsp;<br>
 this&nbsp;element&nbsp;(or&nbsp;group).&nbsp;For&nbsp;a&nbsp;Matrix(),&nbsp;it&nbsp;simply&nbsp;returns&nbsp;a&nbsp;list&nbsp;<br>
 with&nbsp;a&nbsp;single&nbsp;element&nbsp;[self].<br>
-For&nbsp;a&nbsp;<a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
+For&nbsp;a&nbsp;<a href="raytracing.matrixgroup.html#MatrixGroup">MatrixGroup</a>(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
 each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;them&nbsp;to&nbsp;a&nbsp;list&nbsp;for&nbsp;this&nbsp;group.</tt></dd></dl>
 
 <dl><dt><a name="AchromatDoubletLens-transferMatrix"><strong>transferMatrix</strong></a>(self, upTo=inf)</dt><dd><tt>The&nbsp;transfer&nbsp;matrix&nbsp;between&nbsp;front&nbsp;edge&nbsp;and&nbsp;distance=upTo<br>
@@ -133,11 +127,11 @@ each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;them&nbsp;to&nbsp;a
 If&nbsp;"upTo"&nbsp;falls&nbsp;inside&nbsp;an&nbsp;element&nbsp;of&nbsp;finite&nbsp;length,&nbsp;then&nbsp;<br>
 it&nbsp;will&nbsp;request&nbsp;from&nbsp;that&nbsp;element&nbsp;a&nbsp;"partial"&nbsp;transfer&nbsp;matrix<br>
 for&nbsp;a&nbsp;fraction&nbsp;of&nbsp;the&nbsp;length.&nbsp;&nbsp;It&nbsp;is&nbsp;up&nbsp;to&nbsp;the&nbsp;Matrix()&nbsp;or&nbsp;<br>
-<a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matrix&nbsp;when&nbsp;possible.<br>
+<a href="raytracing.matrixgroup.html#MatrixGroup">MatrixGroup</a>()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matrix&nbsp;when&nbsp;possible.<br>
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="AchromatDoubletLens-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -260,7 +254,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#AchromatDoubletLens-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -279,26 +273,26 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="Objective">class <strong>Objective</strong></a>(<a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="Objective">class <strong>Objective</strong></a>(<a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt><a href="#Objective">Objective</a>(f,&nbsp;NA,&nbsp;focusToFocusLength,&nbsp;backAperture,&nbsp;workingDistance,&nbsp;url=None,&nbsp;label='')<br>
 &nbsp;<br>
-<a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>:&nbsp;A&nbsp;group&nbsp;of&nbsp;Matrix(),&nbsp;allowing<br>
+<a href="raytracing.matrixgroup.html#MatrixGroup">MatrixGroup</a>:&nbsp;A&nbsp;group&nbsp;of&nbsp;Matrix(),&nbsp;allowing<br>
 the&nbsp;combination&nbsp;of&nbsp;several&nbsp;elements&nbsp;to&nbsp;be&nbsp;treated&nbsp;as&nbsp;a&nbsp;<br>
 whole,&nbsp;or&nbsp;treated&nbsp;explicitly&nbsp;as&nbsp;a&nbsp;sequence&nbsp;when&nbsp;needed.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="raytracing.lens.html#Objective">Objective</a></dd>
-<dd><a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a></dd>
-<dd><a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a></dd>
+<dd><a href="raytracing.specialtylenses.html#Objective">Objective</a></dd>
+<dd><a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a></dd>
+<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -325,7 +319,7 @@ Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></d
 'label':the&nbsp;label&nbsp;to&nbsp;be&nbsp;used.&nbsp;&nbsp;Can&nbsp;include&nbsp;LaTeX&nbsp;math&nbsp;code.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#MatrixGroup">raytracing.abcd.MatrixGroup</a>:<br>
+Methods inherited from <a href="raytracing.matrixgroup.html#MatrixGroup">raytracing.matrixgroup.MatrixGroup</a>:<br>
 <dl><dt><a name="Objective-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="Objective-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
@@ -341,10 +335,6 @@ AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;
 
 <dl><dt><a name="Objective-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
 
-<dl><dt><a name="Objective-propagate"><strong>propagate</strong></a>(self, inputRay)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#Objective-trace">trace</a>()</tt></dd></dl>
-
-<dl><dt><a name="Objective-propagateMany"><strong>propagateMany</strong></a>(self, inputRays)</dt><dd><tt>Deprecated&nbsp;function:&nbsp;use&nbsp;<a href="#Objective-traceMany">traceMany</a>()</tt></dd></dl>
-
 <dl><dt><a name="Objective-trace"><strong>trace</strong></a>(self, inputRay)</dt><dd><tt>Trace&nbsp;the&nbsp;input&nbsp;ray&nbsp;from&nbsp;first&nbsp;element&nbsp;until&nbsp;after&nbsp;the&nbsp;last&nbsp;element<br>
 &nbsp;<br>
 Returns&nbsp;a&nbsp;ray&nbsp;trace&nbsp;(i.e.&nbsp;[Ray()])&nbsp;starting&nbsp;with&nbsp;inputRay,&nbsp;followed&nbsp;by&nbsp;the&nbsp;ray&nbsp;after<br>
@@ -354,7 +344,7 @@ traced&nbsp;in&nbsp;several&nbsp;steps.</tt></dd></dl>
 <dl><dt><a name="Objective-transferMatrices"><strong>transferMatrices</strong></a>(self)</dt><dd><tt>The&nbsp;list&nbsp;of&nbsp;Matrix()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;the&nbsp;propagation&nbsp;through&nbsp;<br>
 this&nbsp;element&nbsp;(or&nbsp;group).&nbsp;For&nbsp;a&nbsp;Matrix(),&nbsp;it&nbsp;simply&nbsp;returns&nbsp;a&nbsp;list&nbsp;<br>
 with&nbsp;a&nbsp;single&nbsp;element&nbsp;[self].<br>
-For&nbsp;a&nbsp;<a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
+For&nbsp;a&nbsp;<a href="raytracing.matrixgroup.html#MatrixGroup">MatrixGroup</a>(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
 each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;them&nbsp;to&nbsp;a&nbsp;list&nbsp;for&nbsp;this&nbsp;group.</tt></dd></dl>
 
 <dl><dt><a name="Objective-transferMatrix"><strong>transferMatrix</strong></a>(self, upTo=inf)</dt><dd><tt>The&nbsp;transfer&nbsp;matrix&nbsp;between&nbsp;front&nbsp;edge&nbsp;and&nbsp;distance=upTo<br>
@@ -362,11 +352,11 @@ each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;them&nbsp;to&nbsp;a
 If&nbsp;"upTo"&nbsp;falls&nbsp;inside&nbsp;an&nbsp;element&nbsp;of&nbsp;finite&nbsp;length,&nbsp;then&nbsp;<br>
 it&nbsp;will&nbsp;request&nbsp;from&nbsp;that&nbsp;element&nbsp;a&nbsp;"partial"&nbsp;transfer&nbsp;matrix<br>
 for&nbsp;a&nbsp;fraction&nbsp;of&nbsp;the&nbsp;length.&nbsp;&nbsp;It&nbsp;is&nbsp;up&nbsp;to&nbsp;the&nbsp;Matrix()&nbsp;or&nbsp;<br>
-<a href="raytracing.abcd.html#MatrixGroup">MatrixGroup</a>()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matrix&nbsp;when&nbsp;possible.<br>
+<a href="raytracing.matrixgroup.html#MatrixGroup">MatrixGroup</a>()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matrix&nbsp;when&nbsp;possible.<br>
 Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><a name="Objective-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
 &nbsp;<br>
 For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;Matrix()&nbsp;and&nbsp;M2&nbsp;=&nbsp;Matrix(),&nbsp;one&nbsp;can&nbsp;write<br>
@@ -492,7 +482,7 @@ Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;ray&nbsp;traces&nbsp;for&nbsp;each&nbsp;in
 See&nbsp;<a href="#Objective-trace">trace</a>().</tt></dd></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -511,7 +501,7 @@ In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D
 As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.abcd.html#Matrix">raytracing.abcd.Matrix</a>:<br>
+Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
 <dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
 
 </td></tr></table></td></tr></table><p>
@@ -624,11 +614,9 @@ Uses&nbsp;the&nbsp;__trunc__&nbsp;magic&nbsp;method.</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>degPerRad</strong> = 57.29577951308232<br>
-<strong>e</strong> = 2.718281828459045<br>
+<td width="100%"><strong>e</strong> = 2.718281828459045<br>
 <strong>inf</strong> = inf<br>
 <strong>nan</strong> = nan<br>
 <strong>pi</strong> = 3.141592653589793<br>
-<strong>radPerDeg</strong> = 0.017453292519943295<br>
 <strong>tau</strong> = 6.283185307179586</td></tr></table>
 </body></html>

@@ -258,6 +258,9 @@ class TestMatrix(unittest.TestCase):
 
     def testOlympusLens(self):
         l = olympus.LUMPlanFL40X()
+        l = olympus.XLUMPlanFLN20X()
+        l = olympus.MVPlapo2XC()
+        l = olympus.UMPLFN20XW()
 
     def testThorlabsLenses(self):
         l = thorlabs.ACN254_100_A()

@@ -1,23 +1,31 @@
 from raytracing import *
 
-cavity = LaserPath()
-cavity.isResonator = True
-cavity.append(Space(d=160))
-cavity.append(DielectricSlab(thickness=100, n=1.8))
-cavity.append(Space(d=160))
-cavity.append(CurvedMirror(R=400))
-cavity.append(Space(d=160))
-cavity.append(DielectricSlab(thickness=100, n=1.8))
-cavity.append(Space(d=160))
+inputBeam = GaussianBeam(w=5)
+beamAfterLens = Lens(f=100)*inputBeam
+zo = beamAfterLens.zo
+delta = zo / 100
+path = LaserPath()
+path.append(Lens(f=100))
+path.append(Space(d=100-delta))
+N = 1000
+for i in range(2*N):
+	path.append(Space(d=delta/N))
 
-# Calculate all self-replicating modes (i.e. eigenmodes)
-(q1,q2) = cavity.eigenModes()
-print(q1,q2)
+trace = path.trace(inputRay=inputBeam)
 
-# Obtain all physical (i.e. finite) self-replicating modes
-qs = cavity.laserModes()
-for q in qs:
-	print(q)
+fig, axes = plt.subplots(figsize=(10, 7))
+axes.set(xlabel='Distance', ylabel='Radius')
+axes.set_xlim(100-delta,100+delta)
 
-# Show
-cavity.display()
+x = []
+y = []
+for q in trace:
+    x.append(q.z)
+    y.append(q.R)
+axes.plot(x, y, 'r', linewidth=1)
+plt.show()
+
+# for beam in trace:
+# 	print(beam.z, beam.R)
+
+#path.display()
