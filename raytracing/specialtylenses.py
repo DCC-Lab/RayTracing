@@ -220,7 +220,7 @@ class Objective(MatrixGroup):
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
-        self.frontAperture = 1.2 * (2.0 * NA * workingDistance)  # 20% larger
+        self.frontAperture = (NA * workingDistance)
         self.isFlipped = False
         self.url = url
 
