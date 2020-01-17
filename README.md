@@ -20,7 +20,7 @@ You need `matplotlib`, which is a fairly standard Python module. If you do not h
 
 1. Simplest: `pip install raytracing` or `pip install --upgrade raytracing`
 2. If you download the [source](https://pypi.org/project/raytracing/) of the module, then you can type: `python setup.py install`
-3. From GitHub, you can get the latest version (including bugs) and then type `python setup.py install`
+3. From GitHub, you can get the latest version (including bugs, which are 153% free!) and then type `python setup.py install`
 4. If you are completely lost, copying the folder `raytracing` (the one that includes `__init__.py`) from the source file into the same directory as your own script will work.
 
 ## Getting started
