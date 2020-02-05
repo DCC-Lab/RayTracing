@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aec5cff6-0bd8-4f6b-9922-e1715897ccc5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/RayTracing.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/RayTracing.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raytracing/tests/rayTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/tests/rayTests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raytracing/tests/gaussianTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/tests/gaussianTests.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,7 +17,7 @@
     <SUITE FILE_PATH="coverage/RayTracing$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1552143248595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
   </component>
   <component name="CoverageViewManager">
-    <option name="myElementSize" value="613" />
+    <option name="myElementSize" value="97" />
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -52,6 +50,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1WWv05j0FaTrxpf6rPksiQzy14S" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -65,21 +68,9 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Python tests.Nosetests for matrixTests.TestMatrix">
+  <component name="RunManager" selected="Python tests.Unittests for lensTests.TestLens">
     <configuration name="__main__" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="RayTracing" />
       <option name="INTERPRETER_OPTIONS" value="-m" />
@@ -168,38 +159,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Nosetests for matrixTests.TestMatrix" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
-      <module name="RayTracing" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/raytracing/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_regexPattern" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;matrixTests.TestMatrix&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Nosetests for rayTests.TestRay" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
-      <module name="RayTracing" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/raytracing/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_regexPattern" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;rayTests.TestRay&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Unittests for gaussianTests.TestBeam" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="RayTracing" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -215,19 +174,49 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Unittests for lensTests.TestLens" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="RayTracing" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/raytracing/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;lensTests.TestLens&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for matrixTests.TestMatrix" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="RayTracing" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/raytracing/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;matrixTests.TestMatrix&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.test" />
       <item itemvalue="Python.__main__" />
       <item itemvalue="Python.raytracing" />
-      <item itemvalue="Python tests.Nosetests for rayTests.TestRay" />
-      <item itemvalue="Python tests.Nosetests for matrixTests.TestMatrix" />
       <item itemvalue="Python tests.Unittests for gaussianTests.TestBeam" />
+      <item itemvalue="Python tests.Unittests for matrixTests.TestMatrix" />
+      <item itemvalue="Python tests.Unittests for lensTests.TestLens" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Nosetests for matrixTests.TestMatrix" />
+        <item itemvalue="Python tests.Unittests for lensTests.TestLens" />
         <item itemvalue="Python tests.Unittests for gaussianTests.TestBeam" />
-        <item itemvalue="Python tests.Nosetests for rayTests.TestRay" />
+        <item itemvalue="Python tests.Unittests for matrixTests.TestMatrix" />
         <item itemvalue="Python.raytracing" />
         <item itemvalue="Python.__main__" />
       </list>
@@ -253,6 +242,9 @@
       <workItem from="1579277939818" duration="3458000" />
       <workItem from="1579374679231" duration="508000" />
       <workItem from="1579379061821" duration="2000" />
+      <workItem from="1579903765969" duration="555000" />
+      <workItem from="1579904873057" duration="153000" />
+      <workItem from="1579905085106" duration="1311000" />
     </task>
     <servers />
   </component>
@@ -271,6 +263,24 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1358" height="308" key="GridCell.Tab.0.bottom" timestamp="1580218174691">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1358" height="308" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1580218174691" />
+    <state width="1358" height="308" key="GridCell.Tab.0.center" timestamp="1580218174690">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1358" height="308" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1580218174690" />
+    <state width="1358" height="308" key="GridCell.Tab.0.left" timestamp="1580218174690">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1358" height="308" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1580218174690" />
+    <state width="1358" height="308" key="GridCell.Tab.0.right" timestamp="1580218174691">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1358" height="308" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1580218174691" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -299,11 +309,13 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/RayTracing$Nosetests_for_rayTests_TestRay.coverage" NAME="Nosetests for rayTests.TestRay Coverage Results" MODIFIED="1579284188324" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
-    <SUITE FILE_PATH="coverage/RayTracing$Unittests_for_gaussianTests_TestBeam.coverage" NAME="Unittests for gaussianTests.TestBeam Coverage Results" MODIFIED="1579374737260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
-    <SUITE FILE_PATH="coverage/RayTracing$raytracing.coverage" NAME="raytracing Coverage Results" MODIFIED="1579283304648" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
     <SUITE FILE_PATH="coverage/RayTracing$Nosetests_for_matrixTests_TestMatrix.coverage" NAME="Nosetests for matrixTests.TestMatrix Coverage Results" MODIFIED="1579374747797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
-    <SUITE FILE_PATH="coverage/RayTracing$test.coverage" NAME="test Coverage Results" MODIFIED="1579277996306" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
+    <SUITE FILE_PATH="coverage/RayTracing$raytracing.coverage" NAME="raytracing Coverage Results" MODIFIED="1579903872911" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
+    <SUITE FILE_PATH="coverage/RayTracing$test.coverage" NAME="test Coverage Results" MODIFIED="1579903856066" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
+    <SUITE FILE_PATH="coverage/RayTracing$Unittests_for_matrixTests_TestMatrix.coverage" NAME="Unittests for matrixTests.TestMatrix Coverage Results" MODIFIED="1579905094871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
+    <SUITE FILE_PATH="coverage/RayTracing$Unittests_for_lensTests_TestLens.coverage" NAME="Unittests for lensTests.TestLens Coverage Results" MODIFIED="1579905267448" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
     <SUITE FILE_PATH="coverage/RayTracing$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1579278145875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
+    <SUITE FILE_PATH="coverage/RayTracing$Unittests_for_gaussianTests_TestBeam.coverage" NAME="Unittests for gaussianTests.TestBeam Coverage Results" MODIFIED="1579905122215" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
+    <SUITE FILE_PATH="coverage/RayTracing$Nosetests_for_rayTests_TestRay.coverage" NAME="Nosetests for rayTests.TestRay Coverage Results" MODIFIED="1579284188324" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
   </component>
 </project>
