@@ -40,10 +40,13 @@ for ray in allRays:
     if lastRay.isNotBlocked:
         rayHeights.append(lastRay.y) # Si pas bloqué, on le garde
 
-    if i % progressLog == 0:
-        progressLog *= 10
-        print("Progress {0}/{1} ({2}%) ".format(i, nRays,i/nRays*100))
     i += 1
+    if i % progressLog == 0:
+        progressLog *= 3
+        if progressLog > nRays:
+        	progressLog = nRays
+
+        print("Progress {0}/{1} ({2:.0f}%) ".format(i, nRays,i/nRays*100))
 
 plt.hist(rayHeights, bins=20,density=True)
 plt.title("Profil d'illumination à l'objet")
