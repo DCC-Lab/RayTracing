@@ -208,6 +208,11 @@ class Matrix(object):
     def trace(self, ray):
         """Returns a list of rays (i.e. a ray trace) for the input ray through the matrix.
         
+        Mutiplying the ray by the transfer matrix will give the correct ray
+        but will not consider apertures.  By "tracing" a ray, we do consider
+        all apertures in the system.  If a ray is blocked, its property
+        isBlocked will be true, and isNotBlocked will be false.
+
         Because we want to manage blockage by apertures, we need to perform a two-step process
         for elements that have a finite, non-null length: where is the ray blocked exactly?
         It can be blocked at the entrance, at the exit, or anywhere in between.
@@ -227,6 +232,20 @@ class Matrix(object):
         rayTrace.append(self*ray)
 
         return rayTrace
+
+    def traceThrough(self, inputRay):
+        """ Returns the ray after propagating through the system, including apertures.
+        
+        Contrary to trace(), this only returns the last ray.
+        Mutiplying the ray by the transfer matrix will give the correct ray
+        but will not consider apertures.  By "tracing" a ray, we do consider
+        all apertures in the system.  If a ray is blocked, its property
+        isBlocked will be true, and isNotBlocked will be false.
+
+        """
+
+        rayTrace = self.trace(inputRay)
+        return rayTrace[-1]
 
     def traceMany(self, inputRays):
         """ Trace each ray from a list from front edge of element to

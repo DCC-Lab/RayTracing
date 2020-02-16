@@ -19,6 +19,12 @@ class MatrixGroup(Matrix):
         for element in elements:
             self.append(element)
 
+        # Solely for performance reason: it is common to raytrace 
+        # groups of rays that are similar (to mimick intensities)
+        # We keep the last ray and the last ray trace for optimization
+        self._lastRayToBeTraced = None
+        self._lastRayTrace = None
+
     def append(self, matrix):
         """ Add an element at the end of the path """
         lastElement = None
@@ -51,6 +57,11 @@ class MatrixGroup(Matrix):
         for a fraction of the length.  It is up to the Matrix() or 
         MatrixGroup() to define such partial transfer matrix when possible.
         Quite simply, Space() defines a partial matrix as Space(d=upTo).
+
+        When using this transfer matrix, any information related to rays
+        that have been blocked is lost: apertures are not part of the 
+        ray formalism.  To find out if a ray has been blocked, you must
+        use trace().
         """
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
         distance = upTo
@@ -78,18 +89,27 @@ class MatrixGroup(Matrix):
         return transferMatrices
 
     def trace(self, inputRay):
-        """Trace the input ray from first element until after the last element
+        """Trace the input ray from first element until after the last element,
+        indicating if the ray was blocked or not
 
-        Returns a ray trace (i.e. [Ray()]) starting with inputRay, followed by the ray after
-        each element. If an element is composed of sub-elements, the ray will also be
-        traced in several steps.
+        Returns a ray trace (i.e. [Ray()]) starting with inputRay, followed by 
+        the ray after each element. If an element is composed of sub-elements, 
+        the ray will also be traced in several steps. If any element blocks the 
+        ray, it will be indicated.
+
         """
+
         ray = inputRay
-        rayTrace = [ray]
-        for element in self.elements:
-            rayTraceInElement = element.trace(ray)
-            rayTrace.extend(rayTraceInElement)
-            ray = rayTraceInElement[-1]  # last
+        if ray != self._lastRayToBeTraced:
+            rayTrace = [ray]
+            for element in self.elements:
+                rayTraceInElement = element.trace(ray)
+                rayTrace.extend(rayTraceInElement)
+                ray = rayTraceInElement[-1]  # last
+            self._lastRayToBeTraced = inputRay
+            self._lastRayTrace = rayTrace
+        else:
+            rayTrace = self._lastRayTrace
 
         return rayTrace
 

@@ -68,6 +68,7 @@ from .matrixgroup import *
 
 """ Ray matrices for geometrical optics """
 from .ray import *
+from .rays import *
 from .imagingpath import *
 
 """ ABCD matrices for gaussian beams """
@@ -90,6 +91,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.1.12"
+__version__ = "1.2.0"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
