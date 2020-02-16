@@ -265,7 +265,7 @@ class ImagingPath(MatrixGroup):
         (distance, conjugateMatrix) = self.forwardConjugate()
         print (distance, conjugateMatrix)
         magnification = conjugateMatrix.A
-        return fieldOfView * magnification
+        return abs(fieldOfView * magnification)
 
     def createRayTracePlot(
             self, axes,
@@ -274,7 +274,7 @@ class ImagingPath(MatrixGroup):
             removeBlockedRaysCompletely=False):
         """ Create a matplotlib plot to draw the rays and the elements.
             
-        Three optional parameters:
+            Three optional parameters:
             limitObjectToFieldOfView=False, to use the calculated field of view
             instead of the objectHeight
 
@@ -297,14 +297,26 @@ class ImagingPath(MatrixGroup):
             fieldOfView = self.fieldOfView()
             if fieldOfView != float('+Inf'):
                 self.objectHeight = fieldOfView
-                note1 = "Field of view: {0:.2f}".format(self.objectHeight)
+                note1 = "FOV: {0:.2f}".format(self.objectHeight)                    
             else:
                 raise ValueError(
                     "Infinite field of view: cannot use\
                     limitObjectToFieldOfView=True.")
 
+            imageSize = self.imageSize()
+            if imageSize != float('+Inf'):
+                note1 += " Image size: {0:.2f}".format(imageSize) 
+            else:
+                raise ValueError(
+                    "Infinite image size: cannot use\
+                    limitObjectToFieldOfView=True.")
+
+
         else:
             note1 = "Object height: {0:.2f}".format(self.objectHeight)
+
+
+
 
         if onlyChiefAndMarginalRays:
             (stopPosition, stopDiameter) = self.apertureStop()
@@ -358,7 +370,6 @@ class ImagingPath(MatrixGroup):
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
-        plt.ioff()
         plt.show()
 
     def save(self, filepath,

@@ -22,6 +22,9 @@ class Ray:
         self.apertureDiameter = float("+Inf")
         self.isBlocked = isBlocked
 
+        # Convenience intensity used to provide ray plots
+        self.intensity = 1.0
+
     @property
     def isNotBlocked(self):
         """Opposite of isBlocked.  Convenience function for readability

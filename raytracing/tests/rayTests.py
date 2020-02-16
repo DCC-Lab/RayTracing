@@ -7,7 +7,7 @@ inf = float("+inf")
 class TestRay(unittest.TestCase):
     def testRay(self):
         ray = Ray()
-        self.assertIsNotNone(Ray())
+        self.assertIsNotNone(ray)
         self.assertEqual(ray.y, 0)
         self.assertEqual(ray.theta, 0)
         self.assertEqual(ray.z, 0)
