@@ -1,31 +1,30 @@
 from raytracing import *
+from numpy import *
+import matplotlib.pyplot as plt
 
-inputBeam = GaussianBeam(w=5)
-beamAfterLens = Lens(f=100)*inputBeam
-zo = beamAfterLens.zo
-delta = zo / 100
-path = LaserPath()
-path.append(Lens(f=100))
-path.append(Space(d=100-delta))
-N = 1000
-for i in range(2*N):
-	path.append(Space(d=delta/N))
+fobj = 5
+f2 = 200
+f3 = 200
 
-trace = path.trace(inputRay=inputBeam)
+path = ImagingPath()
+path.append(Space(d=f3))
+path.append(Lens(f=f3, diameter=100))
+path.append(Space(d=f3))
+path.append(Space(d=f2))
+path.append(Lens(f=f2, diameter=100))
+path.append(Space(d=f2))
+path.append(Space(d=fobj))
+path.append(Lens(f=fobj, diameter=5))
+path.append(Space(d=fobj))
 
-fig, axes = plt.subplots(figsize=(10, 7))
-axes.set(xlabel='Distance', ylabel='Radius')
-axes.set_xlim(100-delta,100+delta)
+rayHeights = []
+for ray in LambertianRays(yMax=2.5,M=100, N=100, I=100):
+    lastRay = path.traceThrough(ray)
+    if lastRay.isNotBlocked:
+        rayHeights.append(lastRay.y)
 
-x = []
-y = []
-for q in trace:
-    x.append(q.z)
-    y.append(q.R)
-axes.plot(x, y, 'r', linewidth=1)
+_ = plt.hist(rayHeights, bins=10,density=True)
+plt.title("Intensity profile")
 plt.show()
 
-# for beam in trace:
-# 	print(beam.z, beam.R)
-
-#path.display()
+#print(totalNumberRays)

@@ -93,3 +93,12 @@ class Ray:
 
         return description
 
+    def __eq__(self, other):
+        if other is None:
+            return False
+        elif self.y != other.y:
+            return False
+        elif self.theta != other.theta:
+            return False
+
+        return True
