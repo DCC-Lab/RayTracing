@@ -228,6 +228,10 @@ class Matrix(object):
 
         return rayTrace
 
+    def traceThrough(self, inputRay):
+        rayTrace = self.trace(inputRay)
+        return rayTrace[-1]
+
     def traceMany(self, inputRays):
         """ Trace each ray from a list from front edge of element to
         the back edge.
