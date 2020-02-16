@@ -157,7 +157,7 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            print("Warning: the gaussian beam is not tracking the index of refraction properly")
+            print("Warning: the gaussian beam is not tracking the index of refraction properly {0} {1}".format(rightSideBeam.n, self.frontIndex))
 
         qprime = (complex(self.A) * q + complex(self.B) ) / (complex(self.C)*q + complex(self.D))
         
@@ -765,6 +765,37 @@ class DielectricInterface(Matrix):
                                                   frontIndex=n1,
                                                   backIndex=n2,
                                                   label=label)
+
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw a curved surface starting at 'z'.
+        We are not able yet to determine the color to fill with.
+        It is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
+        """
+        h = self.displayHalfHeight()
+        
+        # For simplicity, 1 is front, 2 is back.
+        # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
+        v1 = z + self.frontVertex
+        phi1 = math.asin(h/abs(self.R))
+        delta1 = self.R*(1.0-math.cos(phi1))
+        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R)
+        corner1 = v1 + delta1
+
+        Path = mpath.Path
+        p = patches.PathPatch(
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+                  (v1, 0), (v1, ctl1), (corner1, h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3]),
+            fill=False,
+            transform=axes.transData)
+
+        axes.add_patch(p)
+        if showLabels:
+            self.drawLabels(z,axes)
 
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).

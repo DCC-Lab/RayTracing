@@ -31,6 +31,14 @@ class TestBeam(unittest.TestCase):
         self.assertEqual(beamOut.n, beamIn.n)
         self.assertEqual(beamOut.wavelength, beamIn.wavelength)
 
+    def testDielectricInterfaceBeam(self):
+        # No default parameters
+        beamIn = GaussianBeam(w=10, R=inf, n=1.5, wavelength=0.400e-3)
+        beamOut = DielectricInterface(R=-20,n1=1.5, n2=1.0)*beamIn
+        self.assertEqual(beamOut.w, beamIn.w)
+        self.assertEqual(beamOut.n, 1.0)
+        self.assertEqual(beamOut.wavelength, beamIn.wavelength)
+
     def testPointBeam(self):
         beamIn = GaussianBeam(w=0.0000001)
         beamOut = Space(d=100)*beamIn

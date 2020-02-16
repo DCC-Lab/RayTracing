@@ -498,6 +498,12 @@ A&nbsp;convex&nbsp;interface&nbsp;from&nbsp;the&nbsp;perspective&nbsp;of&nbsp;th
 Methods defined here:<br>
 <dl><dt><a name="DielectricInterface-__init__"><strong>__init__</strong></a>(self, n1, n2, R=inf, diameter=inf, label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
+<dl><dt><a name="DielectricInterface-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;a&nbsp;curved&nbsp;surface&nbsp;starting&nbsp;at&nbsp;'z'.<br>
+We&nbsp;are&nbsp;not&nbsp;able&nbsp;yet&nbsp;to&nbsp;determine&nbsp;the&nbsp;color&nbsp;to&nbsp;fill&nbsp;with.<br>
+It&nbsp;is&nbsp;possible&nbsp;to&nbsp;draw&nbsp;a<br>
+quadratic&nbsp;bezier&nbsp;curve&nbsp;that&nbsp;looks&nbsp;like&nbsp;an&nbsp;arc,&nbsp;see:<br>
+https://pomax.github.io/bezierinfo/#circles_cubic</tt></dd></dl>
+
 <dl><dt><a name="DielectricInterface-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>We&nbsp;flip&nbsp;the&nbsp;element&nbsp;around&nbsp;(as&nbsp;in,&nbsp;we&nbsp;turn&nbsp;a&nbsp;lens&nbsp;around&nbsp;front-back).<br>
 This&nbsp;is&nbsp;useful&nbsp;for&nbsp;real&nbsp;elements&nbsp;and&nbsp;for&nbsp;groups.&nbsp;For&nbsp;individual&nbsp;objects,<br>
 it&nbsp;does&nbsp;not&nbsp;do&nbsp;anything&nbsp;because&nbsp;they&nbsp;are&nbsp;the&nbsp;same&nbsp;either&nbsp;way.&nbsp;However,<br>
@@ -557,10 +563,6 @@ will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureD
 
 <dl><dt><a name="DielectricInterface-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
 have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
-
-<dl><dt><a name="DielectricInterface-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=False)</dt><dd><tt>Draw&nbsp;element&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
-&nbsp;<br>
-Default&nbsp;is&nbsp;a&nbsp;black&nbsp;box&nbsp;of&nbsp;appropriate&nbsp;length.</tt></dd></dl>
 
 <dl><dt><a name="DielectricInterface-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
 
