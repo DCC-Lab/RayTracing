@@ -18,12 +18,12 @@ path.append(Lens(f=fobj, diameter=5))
 path.append(Space(d=fobj))
 
 rayHeights = []
-for ray in LambertianRays(yMax=2.5,M=100, N=100, I=100):
+for ray in RandomLambertianRays(yMax=2.5,M=1000000):
     lastRay = path.traceThrough(ray)
     if lastRay.isNotBlocked:
         rayHeights.append(lastRay.y)
 
-_ = plt.hist(rayHeights, bins=10,density=True)
+_ = plt.hist(rayHeights, bins=40,density=True)
 plt.title("Intensity profile")
 plt.show()
 

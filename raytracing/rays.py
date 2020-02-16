@@ -1,5 +1,6 @@
 from .ray import *
 from numpy import *
+import random
 
 class Rays:
     def __init__(self, rays):
@@ -41,7 +42,7 @@ class LambertianRays(Rays):
         self.yMax = yMax
         self.yMin = yMin
         if yMin is None:
-            yMin = -yMax
+            self.yMin = -yMax
 
         self.thetaMax = -pi/2
         self.thetaMin = pi/2
@@ -55,3 +56,28 @@ class LambertianRays(Rays):
                 for k in range(intensity):
                     rays.append(Ray(y,theta))
         super(LambertianRays, self).__init__(rays=rays)
+
+class RandomLambertianRays(Rays):
+    def __init__(self, yMax, yMin=None, M=1000):
+        self.yMax = yMax
+        self.yMin = yMin
+        if yMin is None:
+            self.yMin = -yMax
+
+        self.thetaMax = -pi/2
+        self.thetaMin = pi/2
+        self.M = M
+        rays = []
+        for i in range(M):
+            theta = 0
+            while (True):
+                theta = random.uniform(self.thetaMin, self.thetaMax)
+                threshold = cos(theta) * cos(theta)
+                seed = random.random()
+                if seed < threshold:
+                    break
+
+            y = random.uniform(self.yMin, self.yMax)
+            rays.append(Ray(y,theta))
+
+        super(RandomLambertianRays, self).__init__(rays=rays)
