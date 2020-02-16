@@ -1,31 +1,19 @@
 from raytracing import *
 
-inputBeam = GaussianBeam(w=5)
-beamAfterLens = Lens(f=100)*inputBeam
-zo = beamAfterLens.zo
-delta = zo / 100
-path = LaserPath()
-path.append(Lens(f=100))
-path.append(Space(d=100-delta))
-N = 1000
-for i in range(2*N):
-	path.append(Space(d=delta/N))
+fobj = 5
+f2 = 100
+f3 = 200
 
-trace = path.trace(inputRay=inputBeam)
+path = ImagingPath()
 
-fig, axes = plt.subplots(figsize=(10, 7))
-axes.set(xlabel='Distance', ylabel='Radius')
-axes.set_xlim(100-delta,100+delta)
-
-x = []
-y = []
-for q in trace:
-    x.append(q.z)
-    y.append(q.R)
-axes.plot(x, y, 'r', linewidth=1)
-plt.show()
-
-# for beam in trace:
-# 	print(beam.z, beam.R)
-
-#path.display()
+path.append(Space(d=f3))
+path.append(Lens(f=f3, diameter=100))
+path.append(Space(d=f3))
+path.append(Space(d=f2))
+path.append(Lens(f=f2, diameter=50))
+path.append(Space(d=f2))
+path.append(Space(d=fobj))
+path.append(Lens(f=fobj, diameter=5))
+path.append(Space(d=fobj))
+path.display(limitObjectToFieldOfView=True,
+            onlyChiefAndMarginalRays=True)

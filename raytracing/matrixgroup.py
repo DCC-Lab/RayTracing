@@ -21,6 +21,12 @@ class MatrixGroup(Matrix):
 
     def append(self, matrix):
         """ Add an element at the end of the path """
+        lastElement = None
+        if len(self.elements) != 0:
+            lastElement = self.elements[-1]
+            if lastElement.backIndex != matrix.frontIndex:
+                print("Mismatch of indices between element {0} and appended {1}".format(lastElement, matrix))
+
         self.elements.append(matrix)
         transferMatrix = self.transferMatrix()
         self.A = transferMatrix.A
