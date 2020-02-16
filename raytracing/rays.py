@@ -5,18 +5,28 @@ import random
 class Rays:
     def __init__(self, rays):
         self.rays = rays
-        self.N = len(rays)
+        if rays is not None:
+            self.N = len(rays)
+        else:
+            self.N = None
+            
         self.iteration = 0
 
     def __iter__(self):
         return self
 
     def __next__(self) -> Ray :
-        if len(self.rays) == 0:
+        if self.rays is None:
+            self.iteration += 1
+            return self.computeNext()
+        elif len(self.rays) == 0:
             raise StopIteration
         else:
             self.iteration += 1
             return self.rays.pop()
+
+    def computeNext(self) -> Ray :
+        raise StopIteration 
 
 class UniformRays(Rays):
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, M=100, N=100):
@@ -58,7 +68,7 @@ class LambertianRays(Rays):
         super(LambertianRays, self).__init__(rays=rays)
 
 class RandomLambertianRays(Rays):
-    def __init__(self, yMax, yMin=None, M=1000):
+    def __init__(self, yMax, yMin=None, M=10000):
         self.yMax = yMax
         self.yMin = yMin
         if yMin is None:
@@ -67,17 +77,21 @@ class RandomLambertianRays(Rays):
         self.thetaMax = -pi/2
         self.thetaMin = pi/2
         self.M = M
-        rays = []
-        for i in range(M):
-            theta = 0
-            while (True):
-                theta = random.uniform(self.thetaMin, self.thetaMax)
-                threshold = cos(theta) * cos(theta)
-                seed = random.random()
-                if seed < threshold:
-                    break
 
-            y = random.uniform(self.yMin, self.yMax)
-            rays.append(Ray(y,theta))
+        super(RandomLambertianRays, self).__init__(rays=None)
 
-        super(RandomLambertianRays, self).__init__(rays=rays)
+    def computeNext(self) -> Ray :
+        if self.iteration >= self.M:
+            raise StopIteration 
+
+        theta = 0
+        while (True):
+            theta = random.uniform(self.thetaMin, self.thetaMax)
+            threshold = cos(theta) * cos(theta)
+            seed = random.random()
+            if seed < threshold:
+                break
+
+        y = random.uniform(self.yMin, self.yMax)
+        return Ray(y,theta)
+
