@@ -3,12 +3,12 @@ from numpy import *
 import matplotlib.pyplot as plt
 
 # Les valeurs en variables pour que ce soit simple
-fobj = 5
-dObj = 5
-f2 = 200
-d2 = 50
-f3 = 100
-d3 = 50
+fobj = 45
+dObj = 45
+f2 = 150
+d2 = 75
+f3 = 33
+d3 = 45
 
 # On construit le chemin optique a partir de la lampe
 path = ImagingPath()
@@ -28,7 +28,7 @@ path.display(onlyChiefAndMarginalRays=True) # Vous verrez le montage
 # On calcule le profil d'intensité en propageant plein de rayons
 # qui suivent la distribution en cos^2 theta du probleme.
 nRays = 100000 # Vous pouvez augmenter pour obtenir une meilleure reponse
-allRays = RandomLambertianRays(yMax=2.5,M=nRays)
+allRays = RandomLambertianRays(yMax=10/2,M=nRays)
 
 # Les hauteurs des rayons a la sortie
 rayHeights = [] 
