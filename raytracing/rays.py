@@ -252,7 +252,7 @@ class RandomRays(Rays):
         return self.randomRay()
 
     def randomRay(self) -> Ray :
-        raise NotImplemented("You must implement randomRay() is your subclass")
+        raise NotImplemented("You must implement randomRay() in your subclass")
 
 class RandomUniformRays(Rays):
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, maxCount=100000):
