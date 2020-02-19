@@ -219,16 +219,8 @@ class LambertianRays(Rays):
         super(LambertianRays, self).__init__(rays=rays)
 
 class RandomRays(Rays):
-    def __init__(self, maxCount=100000):
-        self.maxCount = maxCount
-        super(RandomRays, self).__init__(rays=None)
-
-    def __len__(self) -> int:
-        return self.maxCount
-
-
-class RandomUniformRays(Rays):
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, maxCount=100000):
+        self.maxCount = maxCount
         self.yMax = yMax
         self.yMin = yMin
         if self.yMin is None:
@@ -237,31 +229,34 @@ class RandomUniformRays(Rays):
         self.thetaMin = thetaMin
         if thetaMin is None:
             self.thetaMin = -thetaMax
+        super(RandomRays, self).__init__(rays=None)
 
-        rays=[]
-        for i in range(maxCount):
-            theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
-            y = self.yMin + random.random() * (self.yMax - self.yMin) 
-            rays.append(Ray(y=y, theta=theta))
-
-        super(RandomUniformRays, self).__init__(rays=rays)
-
-class RandomLambertianRays(RandomRays):
-    def __init__(self, yMax, yMin=None, maxCount=10000):
-        self.yMax = yMax
-        self.yMin = yMin
-        if yMin is None:
-            self.yMin = -yMax
-
-        self.thetaMax = -pi/2
-        self.thetaMin = pi/2
-        super(RandomLambertianRays, self).__init__(maxCount=maxCount)
+    def __len__(self) -> int:
+        return self.maxCount
 
     def __next__(self) -> Ray :
         if self.iteration >= self.maxCount:
             raise StopIteration 
         self.iteration += 1
+        return self.randomRay()
 
+    def randomRay(self) -> Ray :
+        raise NotImplemented("You must implement randomRay() is your subclass")
+
+class RandomUniformRays(Rays):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, maxCount=100000):
+        super(RandomUniformRays, self).__init__(rays=None, yMax=yMax, yMin=yMin, thetaMax=thetaMax, thetaMin=thetaMin, maxCount=maxCount)
+
+    def randomRay(self) -> Ray :
+        theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
+        y = self.yMin + random.random() * (self.yMax - self.yMin) 
+        return Ray(y=y, theta=theta)
+
+class RandomLambertianRays(RandomRays):
+    def __init__(self, yMax, yMin=None, maxCount=10000):
+        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=-pi/2, thetaMin=pi/2, maxCount=maxCount)
+
+    def randomRay(self) -> Ray :
         theta = 0
         intensity = 1.0
         while (True):
@@ -273,4 +268,5 @@ class RandomLambertianRays(RandomRays):
 
         y = self.yMin + random.random() * (self.yMax - self.yMin) 
         return Ray(y, theta)
+
   
