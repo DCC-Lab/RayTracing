@@ -16,6 +16,7 @@ class Rays:
 
         self._yValues = None
         self._thetaValues = None
+        self._intensityValues = None
         self._intensityProfile = None
         self._intensityBinEdges = None
         self._directionProfile = None
@@ -38,43 +39,57 @@ class Rays:
             self._thetaValues = list(map(lambda x : x.theta, self.rays))
 
         return self._thetaValues
+
+    @property
+    def intensityValues(self):
+        if self._intensityValues is None:
+            self._intensityValues = list(map(lambda x : x.intensity, self.rays))
+
+        return self._intensityValues
+
     
-    def intensityProfile(self, binCount=None, min=None, max=None):
+    def intensityProfile(self, binCount=None, minValue=None, maxValue=None):
         if self._intensityProfile is None:
             if binCount is None:
-                binCount = 'auto'
+                binCount = 40
 
-            if min is None:
-                min = self.yValues.min()
+            if minValue is None:
+                minValue = min(self.yValues)
 
-            if max is None:
-                max = self.yValues.max()
+            if maxValue is None:
+                maxValue = max(self.yValues)
 
-            (self._intensityProfile, self._intensityBinEdges) = 
-                numpy.histogram(self.yValues, bins=binCount, range=(min, max))
+            (self._intensityProfile, binEdges) = histogram(self.yValues, 
+                                bins=binCount, weights=self.intensityValues, 
+                                range=(minValue, maxValue))
+            self._intensityProfile = list(self._intensityProfile)
+            xValues = []
+            for i in range(len(binEdges)-1):
+                xValues.append((binEdges[i] + binEdges[i+1])/2 )
 
-        return (self._intensityProfile, self._intensityBinEdges)
+        return (self._intensityProfile, xValues)
 
 
-    def directionProfile(self, binCount=None, min=None, max=None):
+    def directionProfile(self, binCount=None, minValue=None, maxValue=None):
         if self._directionProfile is None:
             if binCount is None:
-                binCount = 'auto'
+                binCount = 10
 
-            if min is None:
-                min = self.thetaValues.min()
+            if minValue is None:
+                minValue = min(self.thetaValues)
 
-            if max is None:
-                max = self.thetaValues.max()
+            if maxValue is None:
+                maxValue = max(self.thetaValues)
 
-            (self._directionProfile, self._directionBinEdges) = 
-                numpy.histogram(self.thetaValues, bins=binCount, range=(min, max))
+            (self._directionProfile, self._directionBinEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
 
         return (self._directionProfile, self._directionBinEdges)
 
     def display(self, title="Intensity profile"):
         plt.ioff()
-        plt.plot(self.intensityBinEdges, self.intensityProfile, fmt="ko-")
+        (y,x) = self.intensityProfile()
+        plt.plot(x,y,'k.')
+        plt.ylim(bottom = 0)
         plt.xlabel("Distance")
         plt.ylabel("Intensity [arb.u]")
         plt.title(title)
@@ -92,15 +107,16 @@ class Rays:
 
         raise StopIteration
 
-    def add(self, ray):
+    def append(self, ray):
         if self.histogramOnly:
             raise NotImplemented
-        else
+        else:
             self.rays.append(ray)
 
             # Invalidate cached values
             self._yValues = None
             self._thetaValues = None
+            self._intensityValues = None            
             self._intensityProfile = None
             self._intensityBinEdges = None
             self._directionProfile = None
@@ -114,6 +130,10 @@ class Rays:
         
         return int((value - self.min)/self.delta)
 
+
+    # For 2D histogram:
+    # https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
+    # and https://stackoverflow.com/questions/3122049/drawing-an-anti-aliased-line-with-thepython-imaging-library
 
     # @property
     # def intensityError(self):
@@ -164,7 +184,7 @@ class LambertianRays(Rays):
         rays = []
         for theta in linspace(self.thetaMin, self.thetaMax, N, endpoint=True):
             intensity = int( I * cos(theta) )
-            for y in linspace(yMin, yMax, M, endpoint=True):
+            for y in linspace(self.yMin, self.yMax, M, endpoint=True):
                 for k in range(intensity):
                     rays.append(Ray(y,theta, intensity))
         super(LambertianRays, self).__init__(rays=rays)
@@ -189,6 +209,7 @@ class RandomLambertianRays(Rays):
     def __next__(self) -> Ray :
         if self.iteration >= self.M:
             raise StopIteration 
+        self.iteration += 1
 
         theta = 0
         intensity = 1.0
@@ -200,6 +221,6 @@ class RandomLambertianRays(Rays):
                 break
 
         y = self.yMin + random.random() * (self.yMax - self.yMin) 
-        return Ray(y, theta, intensity)
+        return Ray(y, theta, 1.0)
   
 
