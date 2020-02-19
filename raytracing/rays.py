@@ -9,11 +9,9 @@ Subclasses can provide a computed ray for Monte Carlo simulation.
 """
 
 class Rays:
-    def __init__(self, rays=[], maxCount=0, histogramOnly=False):
+    def __init__(self, rays=[]):
         self.rays = rays
-        self.maxCount = maxCount
         self.iteration = 0
-        self.histogramOnly = histogramOnly
 
         # We cache these because they can be lengthy to calculate
         self._yValues = None
@@ -23,10 +21,6 @@ class Rays:
         self._intensityBinEdges = None
         self._thetaHistogram = None
         self._directionBinEdges = None
-
-    @property
-    def count(self):
-        return len(self)
 
     @property
     def yValues(self):
@@ -96,17 +90,19 @@ class Rays:
         fig = plt.figure()
         axis1 = fig.add_subplot()
         (x,y) = self.rayCountHistogram()
-        axis1.plot(x,y,'k-')
+        axis1.plot(x,y,'k-',label="Intensity")
         plt.xlabel("Distance")
         plt.ylim([0, max(y)*1.1])
 
         if showTheta:
             (x,y) = self.rayAnglesHistogram()
             axis2 = axis1.twiny()
-            axis2.plot(x,y,'k--')
+            axis2.plot(x,y,'k--',label="Orientation profile")
             plt.xlabel("Angles [rad]")
             plt.xlim([-pi/2,pi/2])
             plt.ylim([0, max(y)*1.1])
+        
+#        legend = axis1.legend(loc='upper right', shadow=True, fontsize='x-large')
 
         plt.ylabel("Ray count")
         plt.title(title)
@@ -122,16 +118,19 @@ class Rays:
         plt.show()
 
     def __len__(self) -> int:
-        if self.array is not None:
-            return len(self.array)
+        if self.rays is not None:
+            return len(self.rays)
         else:
-            return self.maxCount
+            return 0
 
     def __iter__(self):
         self.iteration = 0
         return self
 
     def __next__(self) -> Ray :
+        if self.rays is None:
+            raise StopIteration
+
         if self.iteration < len(self.rays):
             ray = self.rays[self.iteration]
             self.iteration += 1
@@ -140,19 +139,17 @@ class Rays:
         raise StopIteration
 
     def append(self, ray):
-        if self.histogramOnly:
-            raise NotImplemented
-        else:
+        if self.rays is not None:
             self.rays.append(ray)
 
-            # Invalidate cached values
-            self._yValues = None
-            self._thetaValues = None
-            self._intensityValues = None            
-            self._yHistogram = None
-            self._intensityBinEdges = None
-            self._thetaHistogram = None
-            self._directionBinEdges = None
+        # Invalidate cached values
+        self._yValues = None
+        self._thetaValues = None
+        self._intensityValues = None            
+        self._yHistogram = None
+        self._intensityBinEdges = None
+        self._thetaHistogram = None
+        self._directionBinEdges = None
 
     def whichBin(self, value):
         if value <= self.min:
@@ -241,24 +238,23 @@ class RandomUniformRays(Rays):
         super(RandomUniformRays, self).__init__(rays=rays)
 
 class RandomLambertianRays(Rays):
-    def __init__(self, yMax, yMin=None, M=10000):
+    def __init__(self, yMax, yMin=None, maxCount=10000):
         self.yMax = yMax
         self.yMin = yMin
         if yMin is None:
             self.yMin = -yMax
 
+        self.maxCount = maxCount
+
         self.thetaMax = -pi/2
         self.thetaMin = pi/2
-        self.M = M
-
         super(RandomLambertianRays, self).__init__(rays=None)
 
-    @property
-    def count(self):
-        return self.M
+    def __len__(self) -> int:
+        return self.maxCount
 
     def __next__(self) -> Ray :
-        if self.iteration >= self.M:
+        if self.iteration >= self.maxCount:
             raise StopIteration 
         self.iteration += 1
 
