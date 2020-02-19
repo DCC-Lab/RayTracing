@@ -102,8 +102,6 @@ class Rays:
             axis2.set_ylim([0, max(y)*1.1])
             axis2.set_xlim([-pi/2,pi/2])
             axis2.set_xlabel("Angles [rad]")
-        
-#        legend = axis1.legend(loc='upper right', shadow=True, fontsize='x-large')
 
         plt.ylabel("Ray count")
         plt.title(title)
