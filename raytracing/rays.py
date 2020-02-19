@@ -86,22 +86,22 @@ class Rays:
 
         return (xValues, self._thetaHistogram)
 
-    def display(self, title="Intensity profile", showTheta=True):
+    def display(self, title="Intensity profile", showTheta=False):
         plt.ioff()
         fig = plt.figure()
         axis1 = fig.add_subplot()
+        axis2 = axis1.twiny()
         (x,y) = self.rayCountHistogram()
         axis1.plot(x,y,'k-',label="Intensity")
-        plt.xlabel("Distance")
-        plt.ylim([0, max(y)*1.1])
+        axis1.set_ylim([0, max(y)*1.1])
+        axis1.set_xlabel("Distance")
 
         if showTheta:
             (x,y) = self.rayAnglesHistogram()
-            axis2 = axis1.twiny()
             axis2.plot(x,y,'k--',label="Orientation profile")
-            plt.xlabel("Angles [rad]")
-            plt.xlim([-pi/2,pi/2])
-            plt.ylim([0, max(y)*1.1])
+            axis2.set_ylim([0, max(y)*1.1])
+            axis2.set_xlim([-pi/2,pi/2])
+            axis2.set_xlabel("Angles [rad]")
         
 #        legend = axis1.legend(loc='upper right', shadow=True, fontsize='x-large')
 
