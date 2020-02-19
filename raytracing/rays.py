@@ -252,9 +252,9 @@ class RandomRays(Rays):
     def randomRay(self) -> Ray :
         raise NotImplemented("You must implement randomRay() in your subclass")
 
-class RandomUniformRays(Rays):
+class RandomUniformRays(RandomRays):
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, maxCount=100000):
-        super(RandomUniformRays, self).__init__(rays=None, yMax=yMax, yMin=yMin, thetaMax=thetaMax, thetaMin=thetaMin, maxCount=maxCount)
+        super(RandomUniformRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=thetaMax, thetaMin=thetaMin, maxCount=maxCount)
 
     def randomRay(self) -> Ray :
         theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
