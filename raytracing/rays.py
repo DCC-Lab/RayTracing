@@ -12,6 +12,7 @@ class Rays:
     def __init__(self, rays=[]):
         self.rays = rays
         self.iteration = 0
+        self.progressLog = 10000
 
         # We cache these because they can be lengthy to calculate
         self._yValues = None
@@ -117,6 +118,15 @@ class Rays:
         plt.title(title)
         plt.show()
 
+    def displayProgress(self):
+        nRays = len(self)
+        if self.iteration % self.progressLog == 0:
+            self.progressLog *= 3
+            if self.progressLog > nRays:
+                self.progressLog = nRays
+
+            print("Progress {0}/{1} ({2:.0f}%) ".format(self.iteration, nRays, self.iteration/nRays*100))
+
     def __len__(self) -> int:
         if self.rays is not None:
             return len(self.rays)
@@ -125,6 +135,7 @@ class Rays:
 
     def __iter__(self):
         self.iteration = 0
+        self.progressLog = 10000
         return self
 
     def __next__(self) -> Ray :
