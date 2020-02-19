@@ -67,7 +67,7 @@ class Rays:
             for i in range(len(binEdges)-1):
                 xValues.append((binEdges[i] + binEdges[i+1])/2 )
 
-        return (self._intensityProfile, xValues)
+        return (xValues, self._intensityProfile)
 
 
     def directionProfile(self, binCount=None, minValue=None, maxValue=None):
@@ -81,13 +81,17 @@ class Rays:
             if maxValue is None:
                 maxValue = max(self.thetaValues)
 
-            (self._directionProfile, self._directionBinEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
+            (self._directionProfile, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
+            self._directionProfile = list(self._directionProfile)
+            xValues = []
+            for i in range(len(binEdges)-1):
+                xValues.append((binEdges[i] + binEdges[i+1])/2 )
 
-        return (self._directionProfile, self._directionBinEdges)
+        return (xValues, self._directionProfile)
 
     def display(self, title="Intensity profile"):
         plt.ioff()
-        (y,x) = self.intensityProfile()
+        (x,y) = self.intensityProfile()
         plt.plot(x,y,'k.')
         plt.ylim(bottom = 0)
         plt.xlabel("Distance")
