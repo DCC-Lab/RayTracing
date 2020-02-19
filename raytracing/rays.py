@@ -9,47 +9,49 @@ Subclasses can provide a computed ray for Monte Carlo simulation.
 """
 
 class Rays:
-    def __init__(self, rays=[], histogramOnly=False):
+    def __init__(self, rays=[], maxCount=0, histogramOnly=False):
         self.rays = rays
+        self.maxCount = maxCount
         self.iteration = 0
         self.histogramOnly = histogramOnly
 
+        # We cache these because they can be lengthy to calculate
         self._yValues = None
         self._thetaValues = None
         self._intensityValues = None
-        self._intensityProfile = None
+        self._yHistogram = None
         self._intensityBinEdges = None
-        self._directionProfile = None
+        self._thetaHistogram = None
         self._directionBinEdges = None
 
     @property
     def count(self):
-        return len(self.rays)
+        return len(self)
 
     @property
     def yValues(self):
         if self._yValues is None:
-            self._yValues = list(map(lambda x : x.y, self.rays))
+            self._yValues = list(map(lambda x : x.y, self))
 
         return self._yValues
 
     @property
     def thetaValues(self):
         if self._thetaValues is None:
-            self._thetaValues = list(map(lambda x : x.theta, self.rays))
+            self._thetaValues = list(map(lambda x : x.theta, self))
 
         return self._thetaValues
 
     @property
     def intensityValues(self):
         if self._intensityValues is None:
-            self._intensityValues = list(map(lambda x : x.intensity, self.rays))
+            self._intensityValues = list(map(lambda x : x.intensity, self))
 
         return self._intensityValues
 
     
-    def intensityProfile(self, binCount=None, minValue=None, maxValue=None):
-        if self._intensityProfile is None:
+    def rayCountHistogram(self, binCount=None, minValue=None, maxValue=None):
+        if self._yHistogram is None:
             if binCount is None:
                 binCount = 40
 
@@ -59,21 +61,21 @@ class Rays:
             if maxValue is None:
                 maxValue = max(self.yValues)
 
-            (self._intensityProfile, binEdges) = histogram(self.yValues, 
-                                bins=binCount, weights=self.intensityValues, 
+            (self._yHistogram, binEdges) = histogram(self.yValues, 
+                                bins=binCount, 
                                 range=(minValue, maxValue))
-            self._intensityProfile = list(self._intensityProfile)
+            self._yHistogram = list(self._yHistogram)
             xValues = []
             for i in range(len(binEdges)-1):
                 xValues.append((binEdges[i] + binEdges[i+1])/2 )
 
-        return (xValues, self._intensityProfile)
+        return (xValues, self._yHistogram)
 
 
-    def directionProfile(self, binCount=None, minValue=None, maxValue=None):
-        if self._directionProfile is None:
+    def rayAnglesHistogram(self, binCount=None, minValue=None, maxValue=None):
+        if self._thetaHistogram is None:
             if binCount is None:
-                binCount = 10
+                binCount = 40
 
             if minValue is None:
                 minValue = min(self.thetaValues)
@@ -81,24 +83,50 @@ class Rays:
             if maxValue is None:
                 maxValue = max(self.thetaValues)
 
-            (self._directionProfile, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
-            self._directionProfile = list(self._directionProfile)
+            (self._thetaHistogram, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
+            self._thetaHistogram = list(self._thetaHistogram)
             xValues = []
             for i in range(len(binEdges)-1):
                 xValues.append((binEdges[i] + binEdges[i+1])/2 )
 
-        return (xValues, self._directionProfile)
+        return (xValues, self._thetaHistogram)
 
-    def display(self, title="Intensity profile"):
+    def display(self, title="Intensity profile", showTheta=True):
         plt.ioff()
-        (x,y) = self.intensityProfile()
-        plt.plot(x,y,'k.')
-        plt.ylim(bottom = 0)
+        fig = plt.figure()
+        axis1 = fig.add_subplot()
+        (x,y) = self.rayCountHistogram()
+        axis1.plot(x,y,'k-')
         plt.xlabel("Distance")
-        plt.ylabel("Intensity [arb.u]")
+        plt.ylim([0, max(y)*1.1])
+
+        if showTheta:
+            (x,y) = self.rayAnglesHistogram()
+            axis2 = axis1.twiny()
+            axis2.plot(x,y,'k--')
+            plt.xlabel("Angles [rad]")
+            plt.xlim([-pi/2,pi/2])
+            plt.ylim([0, max(y)*1.1])
+
+        plt.ylabel("Ray count")
         plt.title(title)
         plt.show()
     
+    def displayAngles(self, title="Angular profile"):
+        plt.ioff()
+        plt.plot(x,y,'k.')
+        plt.ylim(bottom = 0)
+        plt.xlabel("Distance")
+        plt.ylabel("Angle")
+        plt.title(title)
+        plt.show()
+
+    def __len__(self) -> int:
+        if self.array is not None:
+            return len(self.array)
+        else:
+            return self.maxCount
+
     def __iter__(self):
         self.iteration = 0
         return self
@@ -121,9 +149,9 @@ class Rays:
             self._yValues = None
             self._thetaValues = None
             self._intensityValues = None            
-            self._intensityProfile = None
+            self._yHistogram = None
             self._intensityBinEdges = None
-            self._directionProfile = None
+            self._thetaHistogram = None
             self._directionBinEdges = None
 
     def whichBin(self, value):
@@ -155,7 +183,7 @@ class Rays:
 
 
 class UniformRays(Rays):
-    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, M=1000, N=1000):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, M=100, N=100):
         self.yMax = yMax
         self.yMin = yMin
         if self.yMin is None:
@@ -193,6 +221,25 @@ class LambertianRays(Rays):
                     rays.append(Ray(y,theta, intensity))
         super(LambertianRays, self).__init__(rays=rays)
 
+class RandomUniformRays(Rays):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi/2, thetaMin=None, M=100000):
+        self.yMax = yMax
+        self.yMin = yMin
+        if self.yMin is None:
+            self.yMin = -yMax
+        self.thetaMax = thetaMax
+        self.thetaMin = thetaMin
+        if thetaMin is None:
+            self.thetaMin = -thetaMax
+
+        rays=[]
+        for i in range(M):
+            theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
+            y = self.yMin + random.random() * (self.yMax - self.yMin) 
+            rays.append(Ray(y=y, theta=theta))
+
+        super(RandomUniformRays, self).__init__(rays=rays)
+
 class RandomLambertianRays(Rays):
     def __init__(self, yMax, yMin=None, M=10000):
         self.yMax = yMax
@@ -225,6 +272,5 @@ class RandomLambertianRays(Rays):
                 break
 
         y = self.yMin + random.random() * (self.yMax - self.yMin) 
-        return Ray(y, theta, 1.0)
+        return Ray(y, theta)
   
-
