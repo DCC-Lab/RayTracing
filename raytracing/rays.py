@@ -1,6 +1,7 @@
 from .ray import *
 from numpy import *
 import matplotlib.pyplot as plt
+import pickle
 
 """ A group of rays kept as a list, to be used as a starting
 point (i.e. an object) or as a cumulative detector (i.e. at an image
@@ -22,6 +23,18 @@ class Rays:
         self._intensityBinEdges = None
         self._thetaHistogram = None
         self._directionBinEdges = None
+
+    def load(self, filepath, append=False):
+        with open(filepath, 'rb') as infile:
+            loadedRays = pickle.Unpickler(infile).load()
+            if append and self.rays is not None:
+                self.rays.extend(loadedRays)
+            else:
+                self.rays = loadedRays
+
+    def save(self, filepath):
+        with open(filepath, 'wb') as outfile:
+            pickle.Pickler(outfile).dump(self.rays)
 
     @property
     def yValues(self):
@@ -86,25 +99,32 @@ class Rays:
 
         return (xValues, self._thetaHistogram)
 
-    def display(self, title="Intensity profile", showTheta=False):
+    def display(self, title="Intensity profile", showTheta=True):
         plt.ioff()
-        fig = plt.figure()
-        axis1 = fig.add_subplot()
-        axis2 = axis1.twiny()
+        fig, axes = plt.subplots(2)
+        fig.suptitle(title)
+        fig.tight_layout(pad=3.0)
+
+        axis1 = axes[0]
+        axis2 = axes[1]
+
         (x,y) = self.rayCountHistogram()
+        #axis1.set_title('Intensity profile')
         axis1.plot(x,y,'k-',label="Intensity")
         axis1.set_ylim([0, max(y)*1.1])
         axis1.set_xlabel("Distance")
+        axis1.set_ylabel("Ray count")
+        axis1.legend(["Intensity"])
 
-        if showTheta:
-            (x,y) = self.rayAnglesHistogram()
-            axis2.plot(x,y,'k--',label="Orientation profile")
-            axis2.set_ylim([0, max(y)*1.1])
-            axis2.set_xlim([-pi/2,pi/2])
-            axis2.set_xlabel("Angles [rad]")
+        (x,y) = self.rayAnglesHistogram()
+        #axis2.set_title('Angle histogram')
+        axis2.plot(x,y,'k--',label="Orientation profile")
+        axis2.set_ylim([0, max(y)*1.1])
+        axis2.set_xlim([-pi/2,pi/2])
+        axis2.set_xlabel("Angles [rad]")
+        axis2.set_ylabel("Ray count")
+        axis2.legend(["Angle"])
 
-        plt.ylabel("Ray count")
-        plt.title(title)
         plt.show()
     
     def displayAngles(self, title="Angular profile"):
