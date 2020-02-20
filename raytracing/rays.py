@@ -22,18 +22,6 @@ class Rays:
         self._thetaHistogram = None
         self._directionBinEdges = None
 
-    def load(self, filepath, append=False):
-        with open(filepath, 'rb') as infile:
-            loadedRays = pickle.Unpickler(infile).load()
-            if append and self.rays is not None:
-                self.rays.extend(loadedRays)
-            else:
-                self.rays = loadedRays
-
-    def save(self, filepath):
-        with open(filepath, 'wb') as outfile:
-            pickle.Pickler(outfile).dump(self.rays)
-
     @property
     def yValues(self):
         if self._yValues is None:
@@ -117,15 +105,6 @@ class Rays:
 
         plt.show()
     
-    def displayAngles(self, title="Angular profile"):
-        plt.ioff()
-        plt.plot(x,y,'k.')
-        plt.ylim(bottom = 0)
-        plt.xlabel("Distance")
-        plt.ylabel("Angle")
-        plt.title(title)
-        plt.show()
-
     def displayProgress(self):
         nRays = len(self)
         if self.iteration % self.progressLog == 0:
@@ -168,14 +147,17 @@ class Rays:
         self._thetaHistogram = None
         self._directionBinEdges = None
 
-    def whichBin(self, value):
-        if value <= self.min:
-            return 0
-        elif value >= self.max:
-            return len(self.distribution)-1
-        
-        return int((value - self.min)/self.delta)
+    def load(self, filepath, append=False):
+        with open(filepath, 'rb') as infile:
+            loadedRays = pickle.Unpickler(infile).load()
+            if append and self.rays is not None:
+                self.rays.extend(loadedRays)
+            else:
+                self.rays = loadedRays
 
+    def save(self, filepath):
+        with open(filepath, 'wb') as outfile:
+            pickle.Pickler(outfile).dump(self.rays)
 
     # For 2D histogram:
     # https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
