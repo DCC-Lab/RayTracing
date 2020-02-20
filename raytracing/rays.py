@@ -18,9 +18,7 @@ class Rays:
         # We cache these because they can be lengthy to calculate
         self._yValues = None
         self._thetaValues = None
-        self._intensityValues = None
         self._yHistogram = None
-        self._intensityBinEdges = None
         self._thetaHistogram = None
         self._directionBinEdges = None
 
@@ -49,14 +47,6 @@ class Rays:
             self._thetaValues = list(map(lambda x : x.theta, self))
 
         return self._thetaValues
-
-    @property
-    def intensityValues(self):
-        if self._intensityValues is None:
-            self._intensityValues = list(map(lambda x : x.intensity, self))
-
-        return self._intensityValues
-
     
     def rayCountHistogram(self, binCount=None, minValue=None, maxValue=None):
         if self._yHistogram is None:
@@ -174,9 +164,7 @@ class Rays:
         # Invalidate cached values
         self._yValues = None
         self._thetaValues = None
-        self._intensityValues = None            
         self._yHistogram = None
-        self._intensityBinEdges = None
         self._thetaHistogram = None
         self._directionBinEdges = None
 
@@ -244,7 +232,7 @@ class LambertianRays(Rays):
             intensity = int( I * cos(theta) )
             for y in linspace(self.yMin, self.yMax, M, endpoint=True):
                 for k in range(intensity):
-                    rays.append(Ray(y,theta, intensity))
+                    rays.append(Ray(y,theta))
         super(LambertianRays, self).__init__(rays=rays)
 
 class RandomRays(Rays):
@@ -287,7 +275,6 @@ class RandomLambertianRays(RandomRays):
 
     def randomRay(self) -> Ray :
         theta = 0
-        intensity = 1.0
         while (True):
             theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
             intensity = cos(theta)

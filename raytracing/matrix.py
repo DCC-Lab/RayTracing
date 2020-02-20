@@ -142,7 +142,6 @@ class Matrix(object):
         
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
-        outputRay.intensity = rightSideRay.intensity
 
         if abs(outputRay.y) > abs(self.apertureDiameter / 2.0):
             outputRay.isBlocked = True

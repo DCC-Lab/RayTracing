@@ -11,11 +11,10 @@ class Ray:
     are fans originating from different heights.
     """
 
-    def __init__(self, y=0, theta=0, intensity=1.0, z=0, isBlocked=False):
+    def __init__(self, y=0, theta=0, z=0, isBlocked=False):
         # Ray matrix formalism
         self.y = y
         self.theta = theta
-        self.intensity = intensity
 
         # Position of this ray and the diameter of the aperture at that 
         # position
