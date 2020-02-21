@@ -139,7 +139,7 @@ class Matrix(object):
         outputRay = Ray()
         outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
-
+        
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
@@ -234,7 +234,8 @@ class Matrix(object):
         return rayTrace
 
     def traceThrough(self, inputRay):
-        """ Returns the ray after propagating through the system, including apertures.
+        """ Returns the last ray after propagating through the system, 
+        including apertures.
         
         Contrary to trace(), this only returns the last ray.
         Mutiplying the ray by the transfer matrix will give the correct ray
@@ -259,6 +260,33 @@ class Matrix(object):
             rayTrace = self.trace(inputRay)
             manyRayTraces.append(rayTrace)
         return manyRayTraces
+
+    def traceManyThrough(self, inputRays, progress=True):
+        """ Trace each ray from a list or distribution from 
+        front edge of element to the back edge.
+
+        Returns the last ray for each input ray.
+        See traceThrough().
+
+        UniformRays, LambertianRays() etc... can be used.
+        """
+        
+        i = 1
+        progressLog = 1000
+        manyRays = []
+        for inputRay in inputRays:
+            manyRays.append(self.traceThrough(inputRay))
+
+            if progress:
+                i += 1
+                if i % progressLog == 0:
+                    progressLog *= 3
+                    if progressLog > inputRays.count:
+                        progressLog = inputRays.count
+
+                    print("Progress {0}/{1} ({2:.0f}%) ".format(i, inputRays.count,i/inputRays.count*100))
+
+        return manyRays
 
     @property
     def isImaging(self):
