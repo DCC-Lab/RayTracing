@@ -98,35 +98,25 @@ path.append(Space(d=f2))
 path.append(Space(d=fobj))
 path.append(Lens(f=fobj, diameter=dObj))
 path.append(Space(d=fobj))
-path.display(onlyChiefAndMarginalRays=True) # Show the setup
 
 # Obtaining the intensity profile
 nRays = 1000000 # Increase for better resolution 
-allRays = RandomLambertianRays(yMax=2.5,M=nRays)
-
-# Heights at the exit plane
-rayHeights = [] 
-i = 1
-progressLog = 100
-
-for ray in allRays:
-    lastRay = path.traceThrough(ray)
-    if lastRay.isNotBlocked:
-        rayHeights.append(lastRay.y) # We keep if not blocked
-
-    i += 1
-    if i % progressLog == 0:
-        progressLog *= 3
-        if progressLog > nRays:
-        	progressLog = nRays
-
-        print("Progress {0}/{1} ({2:.0f}%) ".format(i, nRays,i/nRays*100))
-
-plt.hist(rayHeights, bins=20,density=True)
-plt.title("Illumination at the exit plane")
-plt.show()
+inputRays = RandomLambertianRays(yMax=2.5, maxCount=nRays)
+inputRays.display("Input profile")
+outputRays = path.traceManyThrough(inputRays, progress=True)
+# On macOS and Linux, you can do parallel computations
+# outputRays = path.traceManyThroughInParallel(inputRays, progress=True, processes=8) 
+outputRays.display("Output profile")
 
 ```
+
+and you will get the following ray histograms:
+
+<img src="README.assets/inputProfile.png" alt="inputProfile" style="zoom:25%;" />
+
+<img src="README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
+
+
 
 
 
