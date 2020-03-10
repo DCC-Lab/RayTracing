@@ -642,9 +642,9 @@ if 19 in examples:
 
 
 
-![Figure1](assets/Figure1.png)
-![Microscope](assets/Microscope.png)
-![Illumination](assets/Illumination.png)
+![Figure1](README.assets/Figure1.png)
+![Microscope](README.assets/Microscope.png)
+![Illumination](README.assets/Illumination.png)
 
 ## Known limitations
 
