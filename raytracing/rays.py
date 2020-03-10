@@ -2,6 +2,8 @@ from .ray import *
 from numpy import *
 import matplotlib.pyplot as plt
 import pickle
+import time
+import os
 
 """ A group of rays kept as a list, to be used as a starting
 point (i.e. an object) or as a cumulative detector (i.e. at an image
@@ -147,17 +149,40 @@ class Rays:
         self._thetaHistogram = None
         self._directionBinEdges = None
 
-    def load(self, filepath, append=False):
-        with open(filepath, 'rb') as infile:
+    def load(self, filePath, append=False):
+        with open(filePath, 'rb') as infile:
             loadedRays = pickle.Unpickler(infile).load()
             if append and self.rays is not None:
                 self.rays.extend(loadedRays)
             else:
                 self.rays = loadedRays
 
-    def save(self, filepath):
-        with open(filepath, 'wb') as outfile:
+    def save(self, filePath):
+        with open(filePath, 'wb') as outfile:
             pickle.Pickler(outfile).dump(self.rays)
+
+        # We save the data to disk using a module called Pickler
+        # Some asynchronous magic is happening here with Pickle
+        # and sometimes, access to files is wonky, especially
+        # when the files are very large.
+        # Make sure file exists
+        while not os.path.exists(filePath):
+            time.sleep(0.1)
+
+        oldSize = None
+        # Make sure file is not still being written to
+        while True:
+            try:
+                currentSize = os.path.getsize(filePath)
+                if currentSize == oldSize:
+                    break
+
+                time.sleep(1)
+                oldSize = currentSize
+            except:
+                # Not possible, yet: sometimes we get here
+                time.sleep(0.1)
+
 
     # For 2D histogram:
     # https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm

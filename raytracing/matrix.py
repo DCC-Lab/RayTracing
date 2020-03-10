@@ -1,13 +1,15 @@
 from .ray import *
 from .gaussianbeam import *
+from .rays import *
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
-
 import math
 
+import time
+import tempfile 
 
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
@@ -249,44 +251,115 @@ class Matrix(object):
         return rayTrace[-1]
 
     def traceMany(self, inputRays):
-        """ Trace each ray from a list from front edge of element to
-        the back edge.
-
-        Returns a list of ray traces for each input ray.
+        """ Trace each ray from a group of rays from front edge of element to
+        the back edge. It can be either a list of Ray(), or a Rays() object:
+        the Rays() object is an iterator and can be used like a list.
+        
+        Returns a list of Ray() (i,e. a raytrace), one for each input ray.
         See trace().
         """
         manyRayTraces = []
         for inputRay in inputRays:
             rayTrace = self.trace(inputRay)
             manyRayTraces.append(rayTrace)
+    
         return manyRayTraces
 
     def traceManyThrough(self, inputRays, progress=True):
-        """ Trace each ray from a list or distribution from 
+        """ Trace each ray from a list or a Rays() distribution from 
         front edge of element to the back edge.
-
-        Returns the last ray for each input ray.
-        See traceThrough().
-
+        Input can be either a list of Ray(), or a Rays() object:
+        the Rays() object is an iterator and can be used like a list.
         UniformRays, LambertianRays() etc... can be used.
+        
+        We assume that if the user passed a Rays() as input,
+        they will want a Rays() as output. Otherwise, returns a list of 
+        Ray(), one for each input ray.
         """
         
-        i = 1
-        progressLog = 1000
-        manyRays = []
-        for inputRay in inputRays:
-            manyRays.append(self.traceThrough(inputRay))
+        if not isinstance(inputRays, Rays) and isinstance(inputRays, list):
+            inputRays = Rays(inputRays)
 
+        outputRays = Rays()
+
+        for ray in inputRays:
+            lastRay = self.traceThrough(ray)
+            if lastRay.isNotBlocked:
+                outputRays.append(lastRay)
+            
             if progress:
-                i += 1
-                if i % progressLog == 0:
-                    progressLog *= 3
-                    if progressLog > inputRays.count:
-                        progressLog = inputRays.count
+                inputRays.displayProgress()
 
-                    print("Progress {0}/{1} ({2:.0f}%) ".format(i, inputRays.count,i/inputRays.count*100))
+        return outputRays
 
-        return manyRays
+    def traceManyThroughInParallel(self, inputRays, progress=True, processes=8):
+        """ This is an advanced technique to gain from parallel computation:
+        it is the same as traceManyThrough(), but splits this call in
+        several other parallel processes using the fork() command (not available
+        on Windows): the process clones itself and creates a child and keeps the parent.
+        The benefits are simple: if you create 8 processes on 8 CPU cores,
+        you gain a factor of 8 in speed. We are not talking GPU acceleration,
+        but still: 1 minute is shorter than 8 minutes.
+
+        The strategy is relatively simple: split the computation in several
+        processes, save the results to file, then read the results back into a single
+        Rays() object that will naturally combine all results from all runs.
+        """
+
+        outputRays = Rays()
+
+        childs = []
+        childPID = -1
+        tmpDir = tempfile.gettempdir()
+        if progress:
+            print("Attempting parallel computation, combining {0} groups".format(processes))
+
+        while len(childs) < processes and childPID != 0:
+            try:
+                childPID = os.fork() # Read about fork() to understand: code splits here
+            except:
+                return self.traceManyThrough(inputRays) # Give up on fork(): do just one.
+
+            if childPID == 0:    # Child process, compute, save, exit
+                outputRays = self.traceManyThrough(inputRays)
+                filePath = os.path.join(tmpDir, "rays-{0}.dat".format(os.getpid()))
+                outputRays.save(filePath)
+                exit(0)
+            else:                # Parent process keeps track of child, loop
+                childs.append(childPID)
+
+        # Only parent process gets here to gather everything (the child always exit()) 
+        if progress:
+            print("Waiting for childs for complete")
+        os.waitpid(0, 0)
+        time.sleep(1)
+
+        allRays = Rays()
+        for pid in childs:
+            try:
+                filePath = os.path.join(tmpDir, "rays-{0}.dat".format(pid))
+                self._waitForFile(filePath) # FIXME: Files are not always ready?
+                allRays.load(filePath, append=True)
+                os.remove(filePath)
+            except Exception as exception:
+                print("{1}: {0}".format(filePath,exception))
+
+        return allRays
+
+    def _waitForFile(self, filePath, timeout=5):
+        # Internal function for validating files with parallel computations
+        while not os.path.exists(filePath):
+            time.sleep(0.1)
+
+        oldSize = None
+        while True:
+            currentSize = os.path.getsize(filePath)
+            if currentSize == oldSize:
+                break
+            time.sleep(0.1)
+            oldSize = currentSize
+        time.sleep(0.1)
+
 
     @property
     def isImaging(self):
@@ -683,6 +756,7 @@ class Matrix(object):
         else:
             description += "\nf = +inf (afocal)\n"
         return description
+
 
 class Lens(Matrix):
     """A thin lens of focal f, null thickness and infinite or finite diameter
