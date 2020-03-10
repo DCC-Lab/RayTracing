@@ -32,11 +32,14 @@ setuptools.setup(
     author_email="dccote@cervo.ulaval.ca",
     description="Simple optical ray tracing library \
     to validate the design of an optical system\
-    (lenses positions and sizes, focal lengths).",
+    (lenses positions and sizes, focal lengths,\
+    aperture and field stops). Some support for Monte Carlo\
+    raytracing to estimate transmission efficiency and powers.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     license='MIT',
-    keywords='optics lenses ray matrices aperture field stop',
+    keywords='optics optical lens ray tracing matrix matrices aperture field stop\
+    monte carlo design raytracing',
     packages=setuptools.find_packages(),
     install_requires=['matplotlib'],
     python_requires='>=3',
