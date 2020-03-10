@@ -71,7 +71,7 @@ thorlabs.AC254_050_A().display()
 eo.PN_33_921().display()
 ```
 
-Finally, an addition as of 1.2.0 is the ability to obtain the intensity profile of a given source from the object plane at the exit plane of an OpticalPath. This is in fact really simple: by tracing a large number of rays, with the number of rays at y​ and θ being proportionnal to the intensity, one can obtain the intensity profile by plotting the histogram of rays reaching a given height at the image plane. `Rays` are small classes that return a `Ray` that satisfies the condition of the class.  Currently, there is `UniformRays`, `LambertianRays` and `RandomLambertianRays` (a Lambertian distribution follows a cosθ distribution).  They appear like iterators and can easily be used like this example script:
+Finally, an addition as of 1.2.0 is the ability to obtain the intensity profile of a given source from the object plane at the exit plane of an OpticalPath. This is in fact really simple: by tracing a large number of rays, with the number of rays at y and θ being proportionnal to the intensity, one can obtain the intensity profile by plotting the histogram of rays reaching a given height at the image plane. `Rays` are small classes that return a `Ray` that satisfies the condition of the class.  Currently, there is `UniformRays`,`RandomUniformRays` `LambertianRays` and `RandomLambertianRays` (a Lambertian distribution follows a cosθ distribution, it is a common diffuse surface source).  They appear like iterators and can easily be used like this example script:
 
 ```python
 from raytracing import *
@@ -86,9 +86,8 @@ d2 = 50
 f3 = 100
 d3 = 50
 
-# We build the imaging path
-path = ImagingPath()
-path.objectHeight = 5
+# We build the path (i.e. not an Imaging path)
+path = OpticalPath()
 path.append(Space(d=f3))
 path.append(Lens(f=f3, diameter=d3))
 path.append(Space(d=f3))
@@ -134,7 +133,7 @@ Documentation is sparse at best.   You may obtain help by:
    1. Core: 
       1. [`Ray`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.ray.html): a ray for geometrical optics with a height and angle $y$ and $\theta$.
       2. `Rays`: ray distributions to ray trace an object through the optical system.
-         1.  `UniformRays`, `LambertianRays` and `RandomLambertianRays` are currently available.  See example above.
+         1.  `UniformRays`, `RandomUniformRays`, `LambertianRays` and `RandomLambertianRays` are currently available.  See example above.
       3. [`GaussianBeam`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.gaussianbeam.html): a gaussian laser beam with complex radius of curvature $q$.
       4. [`Matrix`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrix.html): any 2x2 matrix.
       5. [`MatrixGroup`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrixgroup.html): treats a group of matrix as a unit (draws it as a unit too)
