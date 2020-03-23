@@ -607,6 +607,9 @@ class Matrix(object):
         halfHeight = self.displayHalfHeight()
         (p1, p2) = self.principalPlanePositions(z=z)
 
+        if p1 is None or p2 is None:
+            return
+            
         axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
