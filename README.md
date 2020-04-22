@@ -64,12 +64,62 @@ path.display()
 
 You can also call display() on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
 
-```
+```python
 from raytracing import *
 
 thorlabs.AC254_050_A().display()
 eo.PN_33_921().display()
 ```
+
+Finally, an addition as of 1.2.0 is the ability to obtain the intensity profile of a given source from the object plane at the exit plane of an OpticalPath. This is in fact really simple: by tracing a large number of rays, with the number of rays at y and θ being proportionnal to the intensity, one can obtain the intensity profile by plotting the histogram of rays reaching a given height at the image plane. `Rays` are small classes that return a `Ray` that satisfies the condition of the class.  Currently, there is `UniformRays`,`RandomUniformRays` `LambertianRays` and `RandomLambertianRays` (a Lambertian distribution follows a cosθ distribution, it is a common diffuse surface source).  They appear like iterators and can easily be used like this example script:
+
+```python
+from raytracing import *
+from numpy import *
+import matplotlib.pyplot as plt
+
+# Kohler illumination with these variables
+fobj = 5
+dObj = 5
+f2 = 200
+d2 = 50
+f3 = 100
+d3 = 50
+
+# We build the path (i.e. not an Imaging path)
+path = OpticalPath()
+path.append(Space(d=f3))
+path.append(Lens(f=f3, diameter=d3))
+path.append(Space(d=f3))
+path.append(Space(d=f2))
+path.append(Lens(f=f2, diameter=d2))
+path.append(Space(d=f2))
+path.append(Space(d=fobj))
+path.append(Lens(f=fobj, diameter=dObj))
+path.append(Space(d=fobj))
+
+# Obtaining the intensity profile
+nRays = 1000000 # Increase for better resolution 
+inputRays = RandomLambertianRays(yMax=2.5, maxCount=nRays)
+inputRays.display("Input profile")
+outputRays = path.traceManyThrough(inputRays, progress=True)
+# On macOS and Linux, you can do parallel computations
+# outputRays = path.traceManyThroughInParallel(inputRays, progress=True, processes=8) 
+outputRays.display("Output profile")
+
+```
+
+and you will get the following ray histograms:
+
+<img src="README.assets/inputProfile.png" alt="inputProfile" style="zoom:25%;" />
+
+<img src="README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
+
+
+
+
+
+
 
 ## Documentation
 
@@ -82,11 +132,13 @@ Documentation is sparse at best.   You may obtain help by:
 1. Reading an automatically generated documentation from the code (not that good-looking, but at least it is *some* documentation):
    1. Core: 
       1. [`Ray`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.ray.html): a ray for geometrical optics with a height and angle $y$ and $\theta$.
-      2. [`GaussianBeam`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.gaussianbeam.html): a gaussian laser beam with complex radius of curvature $q$.
-      3. [`Matrix`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrix.html): any 2x2 matrix.
-      4. [`MatrixGroup`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrixgroup.html): treats a group of matrix as a unit (draws it as a unit too)
-      5. [`ImagingPath`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.imagingpath.html): A `MatrixGroup` with an object at the front for geometrical optics 
-      6. [`LaserPath`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.laserpath.html): A `MatrixGroup` with a laser beam input at the front or a Resonator.
+      2. `Rays`: ray distributions to ray trace an object through the optical system.
+         1.  `UniformRays`, `RandomUniformRays`, `LambertianRays` and `RandomLambertianRays` are currently available.  See example above.
+      3. [`GaussianBeam`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.gaussianbeam.html): a gaussian laser beam with complex radius of curvature $q$.
+      4. [`Matrix`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrix.html): any 2x2 matrix.
+      5. [`MatrixGroup`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrixgroup.html): treats a group of matrix as a unit (draws it as a unit too)
+      6. [`ImagingPath`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.imagingpath.html): A `MatrixGroup` with an object at the front for geometrical optics 
+      7. [`LaserPath`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.laserpath.html): A `MatrixGroup` with a laser beam input at the front or a Resonator.
    2. [Optical elements:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrix.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
    3. [Specialty lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.specialtylenses.html) Defines a general achromat and objective lens
    4. [Thorlabs lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs.
@@ -590,9 +642,9 @@ if 19 in examples:
 
 
 
-![Figure1](assets/Figure1.png)
-![Microscope](assets/Microscope.png)
-![Illumination](assets/Illumination.png)
+![Figure1](README.assets/Figure1.png)
+![Microscope](README.assets/Microscope.png)
+![Illumination](README.assets/Illumination.png)
 
 ## Known limitations
 
