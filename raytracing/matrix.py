@@ -207,6 +207,24 @@ class Matrix(object):
 
         return [self]
 
+    def lagrangeInvariant(self, ray1, ray2, z=0):
+        """ The Lagrange invariant is a quantity that is conserved
+        for any two rays in the system. It is often seen with the
+        chief ray and marginal ray in an imaging system, but it is
+        actually very general and any rays can be used. 
+        In ImagingPath(), if no rays are provided, the chief and 
+        marginal rays are used.
+
+        This quantity is L = n (y1 theta2 - y2 theta1) 
+        """
+
+        matrix = self.transferMatrix(upTo=z)
+
+        outputRay1 = matrix.traceThrough(ray1)
+        outputRay2 = matrix.traceThrough(ray2)
+
+        return matrix.backIndex * (outputRay1.theta * outputRay2.y - outputRay1.y * outputRay2.theta)
+
     def trace(self, ray):
         """Returns a list of rays (i.e. a ray trace) for the input ray through the matrix.
         

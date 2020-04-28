@@ -37,9 +37,10 @@ class ImagingPath(MatrixGroup):
         self.showPlanesAcrossPointsOfInterest = True
         super(ImagingPath, self).__init__(elements=elements, label=label)
 
-    def chiefRay(self, y):
+    def chiefRay(self, y=None):
         """ Chief ray for a height y (i.e., the ray that goes
-        through the center of the aperture stop)
+        through the center of the aperture stop). If no height
+        is provided, then we use the limit of the field of view.
 
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
@@ -53,6 +54,9 @@ class ImagingPath(MatrixGroup):
 
         if B == 0:
             return None
+
+        if y is None:
+            y = self.fieldOfView()
 
         return Ray(y=y, theta=-A * y / B)
 
@@ -266,6 +270,24 @@ class ImagingPath(MatrixGroup):
         print (distance, conjugateMatrix)
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
+
+    def lagrangeInvariant(self, ray1=None, ray2=None, z=0):
+        """ The Lagrange invariant is a quantity that is conserved
+        for any two rays in the system.
+        In an imaging system, it is likely that we want to use the
+        chief ray and marginal ray, but any two rays will do.
+
+        This quantity is L = n (y1 theta2 - y2 theta1) 
+        """
+
+        if ray1 is None:
+            (ray1, dummy) = self.marginalRays()
+
+        if ray2 is None:
+            ray2 = self.chiefRay()
+
+        return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
+
 
     def createRayTracePlot(
             self, axes,
