@@ -257,10 +257,10 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m.frontFocalLength(), 5)
 
     def testOlympusLens(self):
-        l = olympus.LUMPlanFL40X()
-        l = olympus.XLUMPlanFLN20X()
-        l = olympus.MVPlapo2XC()
-        l = olympus.UMPLFN20XW()
+        self.assertIsNotNone(olympus.LUMPlanFL40X())
+        self.assertIsNotNone(olympus.XLUMPlanFLN20X())
+        self.assertIsNotNone(olympus.MVPlapo2XC())
+        self.assertIsNotNone(olympus.UMPLFN20XW())
 
     def testThorlabsLenses(self):
         l = thorlabs.ACN254_100_A()
