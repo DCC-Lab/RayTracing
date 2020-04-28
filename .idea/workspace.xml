@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aec5cff6-0bd8-4f6b-9922-e1715897ccc5" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raytracing/imagingpath.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/imagingpath.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raytracing/matrix.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/matrix.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raytracing/specialtylenses.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/specialtylenses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raytracing/tests/lensTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/raytracing/tests/lensTests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,34 +19,7 @@
     <SUITE FILE_PATH="coverage/RayTracing$__main__.coverage" NAME="__main__ Coverage Results" MODIFIED="1552143248595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
   </component>
   <component name="CoverageViewManager">
-    <option name="myElementSize" value="97" />
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>thick</find>
-      <find>drawLabel</find>
-      <find>displayha</find>
-      <find>displayHalfHeight</find>
-      <find>largestDiameter</find>
-      <find>displayhal</find>
-      <find>drawap</find>
-      <find>__mul__</find>
-      <find>print(</find>
-      <find>instance</find>
-      <find>isBlocked</find>
-      <find>draw</find>
-      <find>display(</find>
-      <find>create</find>
-      <find>gaussianbeam</find>
-      <find>rearran</find>
-      <find>imag</find>
-      <find>gaussian</find>
-      <find>fieldstops</find>
-      <find>.z</find>
-      <find>traceMany</find>
-      <find>drawPointso</find>
-      <find>drawpointsof</find>
-    </findStrings>
+    <option name="myElementSize" value="397" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -234,6 +207,8 @@
       <workItem from="1579904873057" duration="153000" />
       <workItem from="1579905085106" duration="1311000" />
       <workItem from="1587520893660" duration="2466000" />
+      <workItem from="1588113963428" duration="248000" />
+      <workItem from="1588114241141" duration="1291000" />
     </task>
     <servers />
   </component>
@@ -254,26 +229,26 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1978" height="308" key="GridCell.Tab.0.bottom" timestamp="1588114070907">
+    <state width="1978" height="308" key="GridCell.Tab.0.bottom" timestamp="1588115577475">
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state width="1358" height="308" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1580218174691" />
-    <state width="1978" height="308" key="GridCell.Tab.0.bottom/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588114070907" />
-    <state width="1978" height="308" key="GridCell.Tab.0.center" timestamp="1588114070906">
+    <state width="1978" height="308" key="GridCell.Tab.0.bottom/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588115577475" />
+    <state width="1978" height="308" key="GridCell.Tab.0.center" timestamp="1588115577474">
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state width="1358" height="308" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1580218174690" />
-    <state width="1978" height="308" key="GridCell.Tab.0.center/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588114070906" />
-    <state width="1978" height="308" key="GridCell.Tab.0.left" timestamp="1588114070905">
+    <state width="1978" height="308" key="GridCell.Tab.0.center/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588115577474" />
+    <state width="1978" height="308" key="GridCell.Tab.0.left" timestamp="1588115577474">
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state width="1358" height="308" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1580218174690" />
-    <state width="1978" height="308" key="GridCell.Tab.0.left/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588114070905" />
-    <state width="1978" height="308" key="GridCell.Tab.0.right" timestamp="1588114070907">
+    <state width="1978" height="308" key="GridCell.Tab.0.left/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588115577474" />
+    <state width="1978" height="308" key="GridCell.Tab.0.right" timestamp="1588115577475">
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state width="1358" height="308" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1580218174691" />
-    <state width="1978" height="308" key="GridCell.Tab.0.right/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588114070907" />
+    <state width="1978" height="308" key="GridCell.Tab.0.right/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588115577475" />
     <state width="1614" height="278" key="GridCell.Tab.1.bottom" timestamp="1587521750639">
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
@@ -290,6 +265,10 @@
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state width="1614" height="278" key="GridCell.Tab.1.right/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1587521750638" />
+    <state x="875" y="290" width="689" height="708" key="find.popup" timestamp="1588115545838">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="875" y="290" width="689" height="708" key="find.popup/0.23.2560.1417/-1792.538.1792.1097@0.23.2560.1417" timestamp="1588115545838" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -311,14 +290,14 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/raytracing/imagingpath.py</url>
-          <line>48</line>
+          <line>49</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/RayTracing$Unittests_in_tests.coverage" NAME="Unittests in tests Coverage Results" MODIFIED="1588114070896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
+    <SUITE FILE_PATH="coverage/RayTracing$Unittests_in_tests.coverage" NAME="Unittests in tests Coverage Results" MODIFIED="1588115577464" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
     <SUITE FILE_PATH="coverage/RayTracing$raytracing.coverage" NAME="raytracing Coverage Results" MODIFIED="1587520989130" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
     <SUITE FILE_PATH="coverage/RayTracing$Unittests_for_lensTests_TestLens_testRaysThroughAperture.coverage" NAME="Unittests for lensTests.TestLens.testRaysThroughAperture Coverage Results" MODIFIED="1587521689826" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />
     <SUITE FILE_PATH="coverage/RayTracing$Unittests_for_lensTests.coverage" NAME="Unittests for lensTests Coverage Results" MODIFIED="1587522078625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raytracing/tests" />

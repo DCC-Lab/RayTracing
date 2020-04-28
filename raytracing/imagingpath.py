@@ -301,7 +301,7 @@ class ImagingPath(MatrixGroup):
             self, axes,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False,
-            removeBlockedRaysCompletely=False):
+            removeBlockedRaysCompletely=False): # pragma: no cover
         """ Create a matplotlib plot to draw the rays and the elements.
             
             Three optional parameters:
@@ -381,7 +381,7 @@ class ImagingPath(MatrixGroup):
         return axes
 
     def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):
+                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None): # pragma: no cover
         """ Display the optical system and trace the rays. If comments are included
         they will be displayed on a graph in the bottom half of the plot.
 
@@ -422,7 +422,7 @@ class ImagingPath(MatrixGroup):
 
         fig.savefig(filepath, dpi=600)
 
-    def drawObject(self, axes):
+    def drawObject(self, axes): # pragma: no cover
         """ Draw the object as defined by objectPosition, objectHeight """
         (xScaling, yScaling) = self.axesToDataScaling(axes)
         arrowWidth = xScaling * 0.01
@@ -440,7 +440,7 @@ class ImagingPath(MatrixGroup):
             head_width=arrowWidth,
             length_includes_head=True)
 
-    def drawImages(self, axes):
+    def drawImages(self, axes): # pragma: no cover
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
 
@@ -469,7 +469,7 @@ class ImagingPath(MatrixGroup):
                         head_width=arrowWidth,
                         length_includes_head=True)
 
-    def drawStops(self, z, axes):
+    def drawStops(self, z, axes): # pragma: no cover
         """
         AS and FS are drawn at 110% of the largest diameter
         """
@@ -497,7 +497,7 @@ class ImagingPath(MatrixGroup):
                          ha='center',
                          va='bottom')
 
-    def drawEntrancePupil(self, z, axes):
+    def drawEntrancePupil(self, z, axes): # pragma: no cover
         (pupilPosition, pupilDiameter) = self.entrancePupil()
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
@@ -519,13 +519,13 @@ class ImagingPath(MatrixGroup):
                            color='r'))
 
 
-    def drawOpticalElements(self, z, axes):
+    def drawOpticalElements(self, z, axes): # pragma: no cover
         """ Deprecated. Use drawAt() """
         print("drawOpticalElements() was renamed drawAt()")
         self.drawAt(z,axes)
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
-                      removeBlockedRaysCompletely=True):
+                      removeBlockedRaysCompletely=True): # pragma: no cover
         """ Draw all ray traces corresponding to either 
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber) 
         2. the principal rays (chief and marginal) """
