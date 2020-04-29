@@ -72,6 +72,26 @@ class TestLens(unittest.TestCase):
         self.assertIsNotNone(obj)
         self.assertEqual(obj.backAperture, 22)
 
+    def testOlympus20XObjective(self):
+        path = ImagingPath()
+        path.append(Space(d=1000))
+        obj = olympus.XLUMPlanFLN20X()
+        path.append(obj)
+        self.assertIsNotNone(obj)
+        self.assertEqual(obj.backAperture, 22)
+        # print(path.fieldOfView())
+        # print(path.imageSize())
+
+    def deactivated_testFlippedOlympus20XObjective(self):
+        path = ImagingPath()
+        obj = olympus.XLUMPlanFLN20X()
+        obj.flipOrientation()
+        path.append(obj)
+        path.append(Space(d=100))
+        self.assertIsNotNone(obj)
+        self.assertEqual(obj.backAperture, 22)
+        # print(path.fieldOfView())
+        # print(path.imageSize())
 
 if __name__ == '__main__':
     unittest.main()

@@ -33,7 +33,7 @@ class ImagingPath(MatrixGroup):
         # Display properties
         self.showObject = True
         self.showImages = True
-        self.showEntrancePupil = True
+        self.showEntrancePupil = False
         self.showElementLabels = True
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
