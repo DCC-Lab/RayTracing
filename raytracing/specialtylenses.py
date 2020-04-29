@@ -201,6 +201,8 @@ expected {1:.4}".format(BFL, fb, self.label))
 
 
 class Objective(MatrixGroup):
+    warningDisplayed = False
+
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
         """ General microscope objective, approximately correct.
 
@@ -237,6 +239,12 @@ class Objective(MatrixGroup):
         self.frontVertex = 0
         self.backVertex = focusToFocusLength - workingDistance
         self.apertureDiameter = backAperture
+
+        if not Objective.warningDisplayed:
+            print("Warning: Objective class not fully tested. \
+No guarantee that apertures and field of view will exactly \
+reproduce the objective.")
+            Objective.warningDisplayed = True
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:

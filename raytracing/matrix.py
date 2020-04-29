@@ -207,6 +207,24 @@ class Matrix(object):
 
         return [self]
 
+    def lagrangeInvariant(self, ray1, ray2, z=0):
+        """ The Lagrange invariant is a quantity that is conserved
+        for any two rays in the system. It is often seen with the
+        chief ray and marginal ray in an imaging system, but it is
+        actually very general and any rays can be used. 
+        In ImagingPath(), if no rays are provided, the chief and 
+        marginal rays are used.
+
+        This quantity is L = n (y1 theta2 - y2 theta1) 
+        """
+
+        matrix = self.transferMatrix(upTo=z)
+
+        outputRay1 = matrix.traceThrough(ray1)
+        outputRay2 = matrix.traceThrough(ray2)
+
+        return matrix.backIndex * (outputRay1.theta * outputRay2.y - outputRay1.y * outputRay2.theta)
+
     def trace(self, ray):
         """Returns a list of rays (i.e. a ray trace) for the input ray through the matrix.
         
@@ -551,7 +569,7 @@ class Matrix(object):
 
         return self
 
-    def display(self):
+    def display(self): # pragma: no cover
         """ Display this component, without any ray tracing but with 
         all of its cardinal points and planes. If the component has no
         power (i.e. C == 0) this will fail.
@@ -576,7 +594,7 @@ class Matrix(object):
         plt.ioff()
         plt.show()
 
-    def drawAt(self, z, axes, showLabels=False):
+    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
 
         Default is a black box of appropriate length.
@@ -590,19 +608,19 @@ class Matrix(object):
                               transform=axes.transData, clip_on=True)
         axes.add_patch(p)
 
-    def drawVertices(self, z, axes):
+    def drawVertices(self, z, axes): # pragma: no cover
         """ Draw vertices of the system """
         axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
         axes.text(z+self.frontVertex, 0, '$V_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
         axes.text(z+self.backVertex, 0, '$V_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
-    def drawCardinalPoints(self, z, axes):
+    def drawCardinalPoints(self, z, axes): # pragma: no cover
         """ Draw the focal points of a thin lens as black dots """
         (f1, f2) = self.focusPositions(z)
         axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
 
-    def drawPrincipalPlanes(self, z, axes):
+    def drawPrincipalPlanes(self, z, axes): # pragma: no cover
         """ Draw the principal planes """
         halfHeight = self.displayHalfHeight()
         (p1, p2) = self.principalPlanePositions(z=z)
@@ -651,7 +669,7 @@ class Matrix(object):
         axes.text((self.backVertex+F2)/2, -h, 'BFL = {0:0.1f}'.format(BFL),
             ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
 
-    def drawLabels(self, z, axes):
+    def drawLabels(self, z, axes): # pragma: no cover
         """ Draw element labels on plot with starting edge at 'z'.
 
         Labels are drawn 50% above the display height
@@ -667,7 +685,7 @@ class Matrix(object):
                      fontsize=8, xycoords='data', ha='center',
                      va='bottom',clip_box=axes.bbox, clip_on=True)
 
-    def drawPointsOfInterest(self, z, axes):
+    def drawPointsOfInterest(self, z, axes): # pragma: no cover
         """
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
@@ -689,7 +707,7 @@ class Matrix(object):
                          xycoords='data', fontsize=12,
                          ha='center', va='bottom')
 
-    def drawAperture(self, z, axes):
+    def drawAperture(self, z, axes): # pragma: no cover
         """ Draw the aperture size for this element.  Any element may 
         have a finite aperture size, so this function is general for all elements.
         """
@@ -774,7 +792,7 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
-    def drawAt(self, z, axes, showLabels=False):
+    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw a thin lens at z """
 
         halfHeight = self.displayHalfHeight() # real units, i.e. data
@@ -851,7 +869,7 @@ class Space(Matrix):
                                     apertureDiameter=diameter,
                                     label=label)
 
-    def drawAt(self, z, axes, showLabels=False):
+    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw nothing because free space is nothing. """
         return
 
@@ -890,7 +908,7 @@ class DielectricInterface(Matrix):
                                                   backIndex=n2,
                                                   label=label)
 
-    def drawAt(self, z, axes, showLabels=False):
+    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw a curved surface starting at 'z'.
         We are not able yet to determine the color to fill with.
         It is possible to draw a
@@ -964,7 +982,7 @@ class ThickLens(Matrix):
                                         backVertex=thickness,
                                         label=label)
 
-    def drawAt(self, z, axes, showLabels=False):
+    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw a faint blue box with slightly curved interfaces
         of length 'thickness' starting at 'z'.
 
@@ -1011,7 +1029,7 @@ class ThickLens(Matrix):
         if showLabels:
             self.drawLabels(z,axes)
 
-    def drawAperture(self, z, axes):
+    def drawAperture(self, z, axes): # pragma: no cover
         """ Draw the aperture size for this element.
         The thick lens requires special care because the corners are not
         separated by self.L: the curvature makes the edges shorter.
@@ -1064,7 +1082,7 @@ class DielectricSlab(ThickLens):
                                              diameter=diameter,
                                              label=label)
 
-    def drawAt(self, z, axes, showLabels=False):
+    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw a faint blue box of length L starting at 'z'.
 
         """

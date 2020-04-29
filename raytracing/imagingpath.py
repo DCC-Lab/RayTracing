@@ -1,3 +1,5 @@
+from typing import Any, Union
+
 from .matrixgroup import *
 
 from .ray import *
@@ -5,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
+
 
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
@@ -17,11 +20,11 @@ class ImagingPath(MatrixGroup):
     """
 
     def __init__(self, elements=[], label=""):
-        self.objectHeight = 10.0   # object height (full).
+        self.objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
-        self.fanAngle = 0.1        # full fan angle for rays
-        self.fanNumber = 9         # number of rays in fan
-        self.rayNumber = 3         # number of points on object
+        self.fanAngle = 0.1  # full fan angle for rays
+        self.fanNumber = 9  # number of rays in fan
+        self.rayNumber = 3  # number of points on object
 
         # Constants when calculating field stop
         self.precision = 0.001
@@ -30,16 +33,17 @@ class ImagingPath(MatrixGroup):
         # Display properties
         self.showObject = True
         self.showImages = True
-        self.showEntrancePupil = True
+        self.showEntrancePupil = False
         self.showElementLabels = True
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
         super(ImagingPath, self).__init__(elements=elements, label=label)
 
-    def chiefRay(self, y):
+    def chiefRay(self, y=None):
         """ Chief ray for a height y (i.e., the ray that goes
-        through the center of the aperture stop)
+        through the center of the aperture stop). If no height
+        is provided, then we use the limit of the field of view.
 
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
@@ -53,6 +57,9 @@ class ImagingPath(MatrixGroup):
 
         if B == 0:
             return None
+
+        if y is None:
+            y = self.fieldOfView()
 
         return Ray(y=y, theta=-A * y / B)
 
@@ -77,13 +84,13 @@ class ImagingPath(MatrixGroup):
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
-        thetaUp = (stopDiameter / 2.0 - A * y) / B
-        thetaDown = (-stopDiameter / 2.0 - A * y) / B
+        thetaUp: float = (stopDiameter / 2.0 - A * y) / B
+        thetaDown: float = (-stopDiameter / 2.0 - A * y) / B
 
         if thetaDown > thetaUp:
             (thetaUp, thetaDown) = (thetaDown, thetaUp)
 
-        return (Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown))
+        return [Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown)]
 
     def axialRays(self, y):
         """ Synonym of marginal rays """
@@ -146,10 +153,9 @@ class ImagingPath(MatrixGroup):
             transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
             (pupilPosition, matrixToPupil) = transferMatrixToApertureStop.backwardConjugate()
             (Mt, Ma) = matrixToPupil.magnification()
-            return (-pupilPosition, stopDiameter/Mt)
+            return (-pupilPosition, stopDiameter / Mt)
         else:
             return (None, None)
-        
 
     def fieldStop(self):
         """ The field stop is the aperture that limits the image
@@ -201,15 +207,15 @@ class ImagingPath(MatrixGroup):
                 outputChiefRay = chiefRayTrace[-1]
 
                 if outputChiefRay.isBlocked != wasBlocked:
-                    dy = -dy/2.0 # Go back, reduce increment
+                    dy = -dy / 2.0  # Go back, reduce increment
                 else:
-                    dy = dy*1.5 # Keep going, go faster (different factor)
+                    dy = dy * 1.5  # Keep going, go faster (different factor)
 
                 y += dy
                 wasBlocked = outputChiefRay.isBlocked
                 if abs(y) > self.maxHeight and not wasBlocked:
                     return (fieldStopPosition, fieldStopDiameter)
-            
+
             for ray in chiefRayTrace:
                 if ray.isBlocked:
                     fieldStopPosition = ray.z
@@ -245,15 +251,15 @@ class ImagingPath(MatrixGroup):
             outputChiefRay = chiefRayTrace[-1]
 
             if outputChiefRay.isBlocked != wasBlocked:
-                dy = -dy/2.0
+                dy = -dy / 2.0
             else:
-                dy = dy*1.5 # Don't use 2.0: could bounce forever
+                dy = dy * 1.5  # Don't use 2.0: could bounce forever
 
             y += dy
             wasBlocked = outputChiefRay.isBlocked
             if abs(y) > self.maxHeight and not wasBlocked:
                 return float("+Inf")
-        
+
         return chiefRay.y * 2.0
 
     def imageSize(self):
@@ -263,15 +269,40 @@ class ImagingPath(MatrixGroup):
         """
         fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
-        print (distance, conjugateMatrix)
+        print(distance, conjugateMatrix)
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
+
+    def lagrangeInvariant(self, ray1=None, ray2=None, z=0):
+        """ The Lagrange invariant is a quantity that is conserved
+        for any two rays in the system.
+        In an imaging system, it is likely that we want to use the
+        chief ray and marginal ray, but any two rays will do.
+
+        This quantity is L = n (y1 theta2 - y2 theta1) 
+        """
+
+        if ray1 is None:
+            (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
+            if apertureStopPosition is None:
+                raise ValueError("There is no aperture stop in this ImagingPath and therefore no marginal ray")
+
+            (ray1, dummy) = self.marginalRays()
+
+        if ray2 is None:
+            (fieldStopPosition, fieldStopDiameter) = self.fieldStop()
+            if fieldStopPosition is None:
+                raise ValueError("There is no field stop in this ImagingPath and therefore no chief ray")
+
+            ray2 = self.chiefRay()
+
+        return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
     def createRayTracePlot(
             self, axes,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False,
-            removeBlockedRaysCompletely=False):
+            removeBlockedRaysCompletely=False):  # pragma: no cover
         """ Create a matplotlib plot to draw the rays and the elements.
             
             Three optional parameters:
@@ -289,7 +320,7 @@ class ImagingPath(MatrixGroup):
             displayRange = self.objectHeight * 2
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-displayRange /2 * 1.2, displayRange / 2 * 1.2])
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
         note1 = ""
         note2 = ""
@@ -297,7 +328,7 @@ class ImagingPath(MatrixGroup):
             fieldOfView = self.fieldOfView()
             if fieldOfView != float('+Inf'):
                 self.objectHeight = fieldOfView
-                note1 = "FOV: {0:.2f}".format(self.objectHeight)                    
+                note1 = "FOV: {0:.2f}".format(self.objectHeight)
             else:
                 raise ValueError(
                     "Infinite field of view: cannot use\
@@ -305,7 +336,7 @@ class ImagingPath(MatrixGroup):
 
             imageSize = self.imageSize()
             if imageSize != float('+Inf'):
-                note1 += " Image size: {0:.2f}".format(imageSize) 
+                note1 += " Image size: {0:.2f}".format(imageSize)
             else:
                 raise ValueError(
                     "Infinite image size: cannot use\
@@ -314,9 +345,6 @@ class ImagingPath(MatrixGroup):
 
         else:
             note1 = "Object height: {0:.2f}".format(self.objectHeight)
-
-
-
 
         if onlyChiefAndMarginalRays:
             (stopPosition, stopDiameter) = self.apertureStop()
@@ -328,7 +356,7 @@ class ImagingPath(MatrixGroup):
             note2 = "Only chief and marginal rays shown"
 
         axes.text(0.05, 0.15, note1 + "\n" + note2, transform=axes.transAxes,
-                  fontsize=12, verticalalignment='top',clip_box=axes.bbox, clip_on=True)
+                  fontsize=12, verticalalignment='top', clip_box=axes.bbox, clip_on=True)
 
         self.drawRayTraces(
             axes,
@@ -351,48 +379,48 @@ class ImagingPath(MatrixGroup):
         return axes
 
     def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):
+                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
         """ Display the optical system and trace the rays. If comments are included
         they will be displayed on a graph in the bottom half of the plot.
 
         """
 
         if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2,1,figsize=(10, 7))
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             axesComments.axis('off')
             axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-            fontsize=10, verticalalignment='top')
+                              fontsize=10, verticalalignment='top')
         else:
             fig, axes = plt.subplots(figsize=(10, 7))
 
         self.createRayTracePlot(axes=axes,
-            limitObjectToFieldOfView=limitObjectToFieldOfView,
-            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+                                limitObjectToFieldOfView=limitObjectToFieldOfView,
+                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         plt.show()
 
     def save(self, filepath,
-            limitObjectToFieldOfView=False,
-            onlyChiefAndMarginalRays=False, 
-            removeBlockedRaysCompletely=False,
-            comments=None):
+             limitObjectToFieldOfView=False,
+             onlyChiefAndMarginalRays=False,
+             removeBlockedRaysCompletely=False,
+             comments=None):
         if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2,1,figsize=(10, 7))
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             axesComments.axis('off')
             axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-            fontsize=10, verticalalignment='top')
+                              fontsize=10, verticalalignment='top')
         else:
             fig, axes = plt.subplots(figsize=(10, 7))
 
         self.createRayTracePlot(axes=axes,
-            limitObjectToFieldOfView=limitObjectToFieldOfView,
-            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+                                limitObjectToFieldOfView=limitObjectToFieldOfView,
+                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         fig.savefig(filepath, dpi=600)
 
-    def drawObject(self, axes):
+    def drawObject(self, axes):  # pragma: no cover
         """ Draw the object as defined by objectPosition, objectHeight """
         (xScaling, yScaling) = self.axesToDataScaling(axes)
         arrowWidth = xScaling * 0.01
@@ -403,14 +431,14 @@ class ImagingPath(MatrixGroup):
             -self.objectHeight / 2,
             0,
             self.objectHeight,
-            width=arrowWidth/5,
+            width=arrowWidth / 5,
             fc='b',
             ec='b',
             head_length=arrowHeight,
             head_width=arrowWidth,
             length_includes_head=True)
 
-    def drawImages(self, axes):
+    def drawImages(self, axes):  # pragma: no cover
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
 
@@ -432,70 +460,69 @@ class ImagingPath(MatrixGroup):
                         -magnification * self.objectHeight / 2,
                         0,
                         (magnification) * self.objectHeight,
-                        width=arrowWidth/5,
+                        width=arrowWidth / 5,
                         fc='r',
                         ec='r',
                         head_length=arrowHeight,
                         head_width=arrowWidth,
                         length_includes_head=True)
 
-    def drawStops(self, z, axes):
+    def drawStops(self, z, axes):  # pragma: no cover
         """
         AS and FS are drawn at 110% of the largest diameter
         """
-        halfHeight = self.largestDiameter()/2
+        halfHeight = self.largestDiameter() / 2
 
         (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
         if apertureStopPosition is not None:
             axes.annotate('AS',
-                         xy=(apertureStopPosition, 0.0),
-                         xytext=(apertureStopPosition, halfHeight * 1.1),
-                         fontsize=18,
-                         xycoords='data',
-                         ha='center',
-                         va='bottom')
+                          xy=(apertureStopPosition, 0.0),
+                          xytext=(apertureStopPosition, halfHeight * 1.1),
+                          fontsize=18,
+                          xycoords='data',
+                          ha='center',
+                          va='bottom')
 
         (fieldStopPosition, fieldStopDiameter) = self.fieldStop()
         if fieldStopPosition is not None:
             axes.annotate('FS',
-                         xy=(fieldStopPosition,
-                             0.0),
-                         xytext=(fieldStopPosition,
-                                 halfHeight * 1.1),
-                         fontsize=18,
-                         xycoords='data',
-                         ha='center',
-                         va='bottom')
+                          xy=(fieldStopPosition,
+                              0.0),
+                          xytext=(fieldStopPosition,
+                                  halfHeight * 1.1),
+                          fontsize=18,
+                          xycoords='data',
+                          ha='center',
+                          va='bottom')
 
-    def drawEntrancePupil(self, z, axes):
+    def drawEntrancePupil(self, z, axes):  # pragma: no cover
         (pupilPosition, pupilDiameter) = self.entrancePupil()
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
             center = z + pupilPosition
-            (xScaling,_) = self.axesToDataScaling(axes)
-            width = xScaling*0.01/2
+            (xScaling, _) = self.axesToDataScaling(axes)
+            width = xScaling * 0.01 / 2
 
             axes.add_patch(patches.Polygon(
-                           [[center - width, halfHeight],
-                            [center + width, halfHeight]],
-                           linewidth=3,
-                           closed=False,
-                           color='r'))
+                [[center - width, halfHeight],
+                 [center + width, halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='r'))
             axes.add_patch(patches.Polygon(
-                           [[center - width, -halfHeight],
-                            [center + width, -halfHeight]],
-                           linewidth=3,
-                           closed=False,
-                           color='r'))
+                [[center - width, -halfHeight],
+                 [center + width, -halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='r'))
 
-
-    def drawOpticalElements(self, z, axes):
+    def drawOpticalElements(self, z, axes):  # pragma: no cover
         """ Deprecated. Use drawAt() """
         print("drawOpticalElements() was renamed drawAt()")
-        self.drawAt(z,axes)
+        self.drawAt(z, axes)
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
-                      removeBlockedRaysCompletely=True):
+                      removeBlockedRaysCompletely=True):  # pragma: no cover
         """ Draw all ray traces corresponding to either 
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber) 
         2. the principal rays (chief and marginal) """
