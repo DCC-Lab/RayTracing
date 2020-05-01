@@ -12,8 +12,12 @@ Subclasses can provide a computed ray for Monte Carlo simulation.
 """
 
 class Rays:
-    def __init__(self, rays=[]):
-        self.rays = rays
+    def __init__(self, rays=None):
+        if rays is None:
+            self.rays = []
+        else:
+            self.rays = rays
+            
         self.iteration = 0
         self.progressLog = 10000
 
@@ -23,6 +27,13 @@ class Rays:
         self._yHistogram = None
         self._thetaHistogram = None
         self._directionBinEdges = None
+
+    def __len__(self) -> int:
+        return len(self.rays)
+
+    @property
+    def count(self):
+        return len(self)
 
     @property
     def yValues(self):

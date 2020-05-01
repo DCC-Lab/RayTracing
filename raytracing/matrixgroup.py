@@ -12,12 +12,14 @@ class MatrixGroup(Matrix):
     whole, or treated explicitly as a sequence when needed.
     """
 
-    def __init__(self, elements=[], label=""):
+    def __init__(self, elements=None, label=""):
         super(MatrixGroup, self).__init__(1,0,0,1,label=label)
+
         self.elements = []
 
-        for element in elements:
-            self.append(element)
+        if elements is not None:
+            for element in elements:
+                self.append(element)
 
         # Solely for performance reason: it is common to raytrace 
         # groups of rays that are similar (to mimick intensities)

@@ -17,7 +17,7 @@ class LaserPath(MatrixGroup):
     is set to indicate it, but it will propagate nevertheless
     and without diffraction due to that aperture.
     """
-    def __init__(self, elements=[], label=""):
+    def __init__(self, elements=None, label=""):
         self.inputBeam = None
         self.isResonator = False
         self.showElementLabels = True
