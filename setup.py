@@ -3,7 +3,9 @@ import setuptools
 """ 
 To document:
 ===========
+cd docs
 pydoc -w raytracing.ray
+pydoc -w raytracing.rays
 pydoc -w raytracing.gaussianbeam
 pydoc -w raytracing.matrix
 pydoc -w raytracing.matrixgroup

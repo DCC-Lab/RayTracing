@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module raytracing.matrixgroup</title>
+<html><head><title>Python: module raytracing.rays</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="raytracing.html"><font color="#ffffff">raytracing</font></a>.matrixgroup</strong></big></big></font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="raytracing.html"><font color="#ffffff">raytracing</font></a>.rays</strong></big></big> (version 1.18.1)</font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/dccote/GitHub/RayTracing/raytracing/matrixgroup.py">/Users/dccote/GitHub/RayTracing/raytracing/matrixgroup.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/dccote/GitHub/RayTracing/raytracing/rays.py">/Users/dccote/GitHub/RayTracing/raytracing/rays.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -18,23 +18,18 @@
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="numpy.core.defchararray.html">numpy.core.defchararray</a><br>
-<a href="cmath.html">cmath</a><br>
 <a href="numpy.ctypeslib.html">numpy.ctypeslib</a><br>
 <a href="numpy.lib.scimath.html">numpy.lib.scimath</a><br>
 <a href="numpy.fft.html">numpy.fft</a><br>
 </td><td width="25%" valign=top><a href="numpy.linalg.html">numpy.linalg</a><br>
 <a href="numpy.ma.html">numpy.ma</a><br>
 <a href="math.html">math</a><br>
-<a href="matplotlib.path.html">matplotlib.path</a><br>
 <a href="os.html">os</a><br>
-</td><td width="25%" valign=top><a href="matplotlib.patches.html">matplotlib.patches</a><br>
-<a href="pickle.html">pickle</a><br>
+</td><td width="25%" valign=top><a href="pickle.html">pickle</a><br>
 <a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
 <a href="numpy.random.html">numpy.random</a><br>
 <a href="numpy.core.records.html">numpy.core.records</a><br>
-</td><td width="25%" valign=top><a href="tempfile.html">tempfile</a><br>
-<a href="time.html">time</a><br>
-<a href="matplotlib.transforms.html">matplotlib.transforms</a><br>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
@@ -43,275 +38,366 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>(<a href="builtins.html#object">builtins.object</a>)
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="raytracing.matrixgroup.html#MatrixGroup">MatrixGroup</a>
+<dt><font face="helvetica, arial"><a href="raytracing.rays.html#Rays">Rays</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="raytracing.rays.html#LambertianRays">LambertianRays</a>
+</font></dt><dt><font face="helvetica, arial"><a href="raytracing.rays.html#RandomRays">RandomRays</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="raytracing.rays.html#RandomLambertianRays">RandomLambertianRays</a>
+</font></dt><dt><font face="helvetica, arial"><a href="raytracing.rays.html#RandomUniformRays">RandomUniformRays</a>
 </font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="raytracing.rays.html#UniformRays">UniformRays</a>
+</font></dt></dl>
+</dd>
+</dl>
 </dd>
 </dl>
  <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="MatrixGroup">class <strong>MatrixGroup</strong></a>(<a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="LambertianRays">class <strong>LambertianRays</strong></a>(<a href="raytracing.rays.html#Rays">Rays</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#MatrixGroup">MatrixGroup</a>(elements=None,&nbsp;label='')<br>
+<td colspan=2><tt><a href="#LambertianRays">LambertianRays</a>(yMax,&nbsp;yMin=None,&nbsp;M=100,&nbsp;N=100,&nbsp;I=100)<br>
 &nbsp;<br>
-<a href="#MatrixGroup">MatrixGroup</a>:&nbsp;A&nbsp;group&nbsp;of&nbsp;<a href="raytracing.matrix.html#Matrix">Matrix</a>(),&nbsp;allowing<br>
-the&nbsp;combination&nbsp;of&nbsp;several&nbsp;elements&nbsp;to&nbsp;be&nbsp;treated&nbsp;as&nbsp;a&nbsp;<br>
-whole,&nbsp;or&nbsp;treated&nbsp;explicitly&nbsp;as&nbsp;a&nbsp;sequence&nbsp;when&nbsp;needed.<br>&nbsp;</tt></td></tr>
+<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="raytracing.matrixgroup.html#MatrixGroup">MatrixGroup</a></dd>
-<dd><a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a></dd>
+<dd><a href="raytracing.rays.html#LambertianRays">LambertianRays</a></dd>
+<dd><a href="raytracing.rays.html#Rays">Rays</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="MatrixGroup-ImagingPath"><strong>ImagingPath</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="MatrixGroup-LaserPath"><strong>LaserPath</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="MatrixGroup-__init__"><strong>__init__</strong></a>(self, elements=None, label='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-append"><strong>append</strong></a>(self, matrix)</dt><dd><tt>Add&nbsp;an&nbsp;element&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;path</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-drawAt"><strong>drawAt</strong></a>(self, z, axes, showLabels=True)</dt><dd><tt>Draw&nbsp;each&nbsp;element&nbsp;of&nbsp;this&nbsp;group</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-drawPointsOfInterest"><strong>drawPointsOfInterest</strong></a>(self, z, axes)</dt><dd><tt>Labels&nbsp;of&nbsp;general&nbsp;points&nbsp;of&nbsp;interest&nbsp;are&nbsp;drawn&nbsp;below&nbsp;the<br>
-axis,&nbsp;at&nbsp;25%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter.<br>
-&nbsp;<br>
-AS&nbsp;and&nbsp;FS&nbsp;are&nbsp;drawn&nbsp;at&nbsp;110%&nbsp;of&nbsp;the&nbsp;largest&nbsp;diameter</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-flipOrientation"><strong>flipOrientation</strong></a>(self)</dt><dd><tt>Flip&nbsp;the&nbsp;orientation&nbsp;(forward-backward)&nbsp;of&nbsp;this&nbsp;group&nbsp;of&nbsp;elements.<br>
-Each&nbsp;element&nbsp;is&nbsp;also&nbsp;flipped&nbsp;individually.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-hasFiniteApertureDiameter"><strong>hasFiniteApertureDiameter</strong></a>(self)</dt><dd><tt>True&nbsp;if&nbsp;ImagingPath&nbsp;has&nbsp;at&nbsp;least&nbsp;one&nbsp;element&nbsp;of&nbsp;finite&nbsp;diameter</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-largestDiameter"><strong>largestDiameter</strong></a>(self)</dt><dd><tt>Largest&nbsp;finite&nbsp;diameter&nbsp;in&nbsp;all&nbsp;elements</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-trace"><strong>trace</strong></a>(self, inputRay)</dt><dd><tt>Trace&nbsp;the&nbsp;input&nbsp;ray&nbsp;from&nbsp;first&nbsp;element&nbsp;until&nbsp;after&nbsp;the&nbsp;last&nbsp;element,<br>
-indicating&nbsp;if&nbsp;the&nbsp;ray&nbsp;was&nbsp;blocked&nbsp;or&nbsp;not<br>
-&nbsp;<br>
-Returns&nbsp;a&nbsp;ray&nbsp;trace&nbsp;(i.e.&nbsp;[Ray()])&nbsp;starting&nbsp;with&nbsp;inputRay,&nbsp;followed&nbsp;by&nbsp;<br>
-the&nbsp;ray&nbsp;after&nbsp;each&nbsp;element.&nbsp;If&nbsp;an&nbsp;element&nbsp;is&nbsp;composed&nbsp;of&nbsp;sub-elements,&nbsp;<br>
-the&nbsp;ray&nbsp;will&nbsp;also&nbsp;be&nbsp;traced&nbsp;in&nbsp;several&nbsp;steps.&nbsp;If&nbsp;any&nbsp;element&nbsp;blocks&nbsp;the&nbsp;<br>
-ray,&nbsp;it&nbsp;will&nbsp;be&nbsp;indicated.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-transferMatrices"><strong>transferMatrices</strong></a>(self)</dt><dd><tt>The&nbsp;list&nbsp;of&nbsp;<a href="raytracing.matrix.html#Matrix">Matrix</a>()&nbsp;that&nbsp;corresponds&nbsp;to&nbsp;the&nbsp;propagation&nbsp;through&nbsp;<br>
-this&nbsp;element&nbsp;(or&nbsp;group).&nbsp;For&nbsp;a&nbsp;<a href="raytracing.matrix.html#Matrix">Matrix</a>(),&nbsp;it&nbsp;simply&nbsp;returns&nbsp;a&nbsp;list&nbsp;<br>
-with&nbsp;a&nbsp;single&nbsp;element&nbsp;[self].<br>
-For&nbsp;a&nbsp;<a href="#MatrixGroup">MatrixGroup</a>(),&nbsp;it&nbsp;returns&nbsp;the&nbsp;transferMatrices&nbsp;for&nbsp;<br>
-each&nbsp;individual&nbsp;element&nbsp;and&nbsp;appends&nbsp;them&nbsp;to&nbsp;a&nbsp;list&nbsp;for&nbsp;this&nbsp;group.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-transferMatrix"><strong>transferMatrix</strong></a>(self, upTo=inf)</dt><dd><tt>The&nbsp;transfer&nbsp;matrix&nbsp;between&nbsp;front&nbsp;edge&nbsp;and&nbsp;distance=upTo<br>
-&nbsp;<br>
-If&nbsp;"upTo"&nbsp;falls&nbsp;inside&nbsp;an&nbsp;element&nbsp;of&nbsp;finite&nbsp;length,&nbsp;then&nbsp;<br>
-it&nbsp;will&nbsp;request&nbsp;from&nbsp;that&nbsp;element&nbsp;a&nbsp;"partial"&nbsp;transfer&nbsp;matrix<br>
-for&nbsp;a&nbsp;fraction&nbsp;of&nbsp;the&nbsp;length.&nbsp;&nbsp;It&nbsp;is&nbsp;up&nbsp;to&nbsp;the&nbsp;<a href="raytracing.matrix.html#Matrix">Matrix</a>()&nbsp;or&nbsp;<br>
-<a href="#MatrixGroup">MatrixGroup</a>()&nbsp;to&nbsp;define&nbsp;such&nbsp;partial&nbsp;transfer&nbsp;matrix&nbsp;when&nbsp;possible.<br>
-Quite&nbsp;simply,&nbsp;Space()&nbsp;defines&nbsp;a&nbsp;partial&nbsp;matrix&nbsp;as&nbsp;Space(d=upTo).<br>
-&nbsp;<br>
-When&nbsp;using&nbsp;this&nbsp;transfer&nbsp;matrix,&nbsp;any&nbsp;information&nbsp;related&nbsp;to&nbsp;rays<br>
-that&nbsp;have&nbsp;been&nbsp;blocked&nbsp;is&nbsp;lost:&nbsp;apertures&nbsp;are&nbsp;not&nbsp;part&nbsp;of&nbsp;the&nbsp;<br>
-ray&nbsp;formalism.&nbsp;&nbsp;To&nbsp;find&nbsp;out&nbsp;if&nbsp;a&nbsp;ray&nbsp;has&nbsp;been&nbsp;blocked,&nbsp;you&nbsp;must<br>
-use&nbsp;<a href="#MatrixGroup-trace">trace</a>().</tt></dd></dl>
+<dl><dt><a name="LambertianRays-__init__"><strong>__init__</strong></a>(self, yMax, yMin=None, M=100, N=100, I=100)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
-Methods inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
-<dl><dt><a name="MatrixGroup-__mul__"><strong>__mul__</strong></a>(self, rightSide)</dt><dd><tt>Operator&nbsp;overloading&nbsp;allowing&nbsp;easy&nbsp;to&nbsp;read&nbsp;matrix&nbsp;multiplication<br>
-&nbsp;<br>
-For&nbsp;instance,&nbsp;with&nbsp;M1&nbsp;=&nbsp;<a href="raytracing.matrix.html#Matrix">Matrix</a>()&nbsp;and&nbsp;M2&nbsp;=&nbsp;<a href="raytracing.matrix.html#Matrix">Matrix</a>(),&nbsp;one&nbsp;can&nbsp;write<br>
-M3&nbsp;=&nbsp;M1*M2.&nbsp;With&nbsp;r&nbsp;=&nbsp;Ray(),&nbsp;one&nbsp;can&nbsp;apply&nbsp;the&nbsp;M1&nbsp;transform&nbsp;to&nbsp;a&nbsp;ray<br>
-with&nbsp;r&nbsp;=&nbsp;M1*r</tt></dd></dl>
+Methods inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><a name="LambertianRays-__iter__"><strong>__iter__</strong></a>(self)</dt></dl>
 
-<dl><dt><a name="MatrixGroup-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>String&nbsp;description&nbsp;that&nbsp;allows&nbsp;the&nbsp;use&nbsp;of&nbsp;print(<a href="raytracing.matrix.html#Matrix">Matrix</a>())</tt></dd></dl>
+<dl><dt><a name="LambertianRays-__len__"><strong>__len__</strong></a>(self) -&gt; int</dt></dl>
 
-<dl><dt><a name="MatrixGroup-axesToDataScaling"><strong>axesToDataScaling</strong></a>(self, axes)</dt><dd><tt>For&nbsp;drawing&nbsp;properly&nbsp;arrows&nbsp;and&nbsp;other&nbsp;things,&nbsp;sometimes&nbsp;<br>
-we&nbsp;need&nbsp;to&nbsp;draw&nbsp;along&nbsp;y&nbsp;in&nbsp;real&nbsp;space&nbsp;but&nbsp;in&nbsp;x&nbsp;in&nbsp;relative&nbsp;space&nbsp;<br>
-(i.e.&nbsp;relative&nbsp;to&nbsp;the&nbsp;width&nbsp;of&nbsp;the&nbsp;graph,&nbsp;not&nbsp;x&nbsp;coordinates).<br>
-There&nbsp;are&nbsp;transforms&nbsp;in&nbsp;matplotlib,&nbsp;but&nbsp;only&nbsp;between&nbsp;axes-display,&nbsp;<br>
-and&nbsp;data-display,&nbsp;not&nbsp;between&nbsp;data-axes.&nbsp;&nbsp;Here&nbsp;we&nbsp;obtain&nbsp;the&nbsp;scaling<br>
-so&nbsp;we&nbsp;can&nbsp;set&nbsp;arrow&nbsp;properties&nbsp;intelligently</tt></dd></dl>
+<dl><dt><a name="LambertianRays-__next__"><strong>__next__</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
 
-<dl><dt><a name="MatrixGroup-backFocalLength"><strong>backFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;back&nbsp;vertex.<br>
-This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
-When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
-the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
-lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
-focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
-BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertex.<br>
-&nbsp;<br>
-If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
-we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
-we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
-&nbsp;<br>
-Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
-both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
+<dl><dt><a name="LambertianRays-append"><strong>append</strong></a>(self, ray)</dt></dl>
 
-<dl><dt><a name="MatrixGroup-backwardConjugate"><strong>backwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,<br>
-where&nbsp;is&nbsp;the&nbsp;object&nbsp;?&nbsp;Distance&nbsp;before&nbsp;the&nbsp;element&nbsp;by<br>
-which&nbsp;a&nbsp;ray&nbsp;must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;at<br>
-the&nbsp;back&nbsp;of&nbsp;the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the<br>
-object&nbsp;is&nbsp;"distance"&nbsp;in&nbsp;front&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the<br>
-left,&nbsp;or&nbsp;before).<br>
-&nbsp;<br>
-M2&nbsp;=&nbsp;M1*Space(distance)<br>
-#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
+<dl><dt><a name="LambertianRays-display"><strong>display</strong></a>(self, title='Intensity profile', showTheta=True)</dt></dl>
 
-<dl><dt><a name="MatrixGroup-display"><strong>display</strong></a>(self)</dt><dd><tt>Display&nbsp;this&nbsp;component,&nbsp;without&nbsp;any&nbsp;ray&nbsp;tracing&nbsp;but&nbsp;with&nbsp;<br>
-all&nbsp;of&nbsp;its&nbsp;cardinal&nbsp;points&nbsp;and&nbsp;planes.&nbsp;If&nbsp;the&nbsp;component&nbsp;has&nbsp;no<br>
-power&nbsp;(i.e.&nbsp;C&nbsp;==&nbsp;0)&nbsp;this&nbsp;will&nbsp;fail.</tt></dd></dl>
+<dl><dt><a name="LambertianRays-displayProgress"><strong>displayProgress</strong></a>(self)</dt></dl>
 
-<dl><dt><a name="MatrixGroup-displayHalfHeight"><strong>displayHalfHeight</strong></a>(self)</dt><dd><tt>A&nbsp;reasonable&nbsp;height&nbsp;for&nbsp;display&nbsp;purposes&nbsp;for<br>
-an&nbsp;element,&nbsp;whether&nbsp;it&nbsp;is&nbsp;infinite&nbsp;or&nbsp;not.<br>
-&nbsp;<br>
-If&nbsp;the&nbsp;element&nbsp;is&nbsp;infinite,&nbsp;currently&nbsp;the&nbsp;half-height<br>
-will&nbsp;be&nbsp;'4'.&nbsp;If&nbsp;not,&nbsp;it&nbsp;is&nbsp;the&nbsp;apertureDiameter/2.</tt></dd></dl>
+<dl><dt><a name="LambertianRays-load"><strong>load</strong></a>(self, filePath, append=False)</dt></dl>
 
-<dl><dt><a name="MatrixGroup-drawAperture"><strong>drawAperture</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;aperture&nbsp;size&nbsp;for&nbsp;this&nbsp;element.&nbsp;&nbsp;Any&nbsp;element&nbsp;may&nbsp;<br>
-have&nbsp;a&nbsp;finite&nbsp;aperture&nbsp;size,&nbsp;so&nbsp;this&nbsp;function&nbsp;is&nbsp;general&nbsp;for&nbsp;all&nbsp;elements.</tt></dd></dl>
+<dl><dt><a name="LambertianRays-rayAnglesHistogram"><strong>rayAnglesHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
 
-<dl><dt><a name="MatrixGroup-drawCardinalPoints"><strong>drawCardinalPoints</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;focal&nbsp;points&nbsp;of&nbsp;a&nbsp;thin&nbsp;lens&nbsp;as&nbsp;black&nbsp;dots</tt></dd></dl>
+<dl><dt><a name="LambertianRays-rayCountHistogram"><strong>rayCountHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
 
-<dl><dt><a name="MatrixGroup-drawLabels"><strong>drawLabels</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;element&nbsp;labels&nbsp;on&nbsp;plot&nbsp;with&nbsp;starting&nbsp;edge&nbsp;at&nbsp;'z'.<br>
-&nbsp;<br>
-Labels&nbsp;are&nbsp;drawn&nbsp;50%&nbsp;above&nbsp;the&nbsp;display&nbsp;height</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-drawPrincipalPlanes"><strong>drawPrincipalPlanes</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;the&nbsp;principal&nbsp;planes</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-drawVertices"><strong>drawVertices</strong></a>(self, z, axes)</dt><dd><tt>Draw&nbsp;vertices&nbsp;of&nbsp;the&nbsp;system</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-effectiveFocalLengths"><strong>effectiveFocalLengths</strong></a>(self)</dt><dd><tt>The&nbsp;effective&nbsp;focal&nbsp;lengths&nbsp;calculated&nbsp;from&nbsp;the&nbsp;power&nbsp;(C)<br>
-of&nbsp;the&nbsp;matrix.<br>
-&nbsp;<br>
-Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
-both&nbsp;focal&nbsp;lengths&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-focalDistances"><strong>focalDistances</strong></a>(self)</dt><dd><tt>Synonym&nbsp;of&nbsp;<a href="#MatrixGroup-effectiveFocalLengths">effectiveFocalLengths</a>()</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-focusPositions"><strong>focusPositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;both&nbsp;focal&nbsp;points&nbsp;on&nbsp;either&nbsp;side&nbsp;of&nbsp;the&nbsp;element.<br>
-&nbsp;<br>
-Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and&nbsp;both&nbsp;focal<br>
-distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-forwardConjugate"><strong>forwardConjugate</strong></a>(self)</dt><dd><tt>With&nbsp;an&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;of&nbsp;the&nbsp;element,&nbsp;where<br>
-is&nbsp;the&nbsp;image?&nbsp;Distance&nbsp;after&nbsp;the&nbsp;element&nbsp;by&nbsp;which&nbsp;a&nbsp;ray<br>
-must&nbsp;travel&nbsp;to&nbsp;reach&nbsp;the&nbsp;conjugate&nbsp;plane&nbsp;of&nbsp;the&nbsp;front&nbsp;of<br>
-the&nbsp;element.&nbsp;A&nbsp;positive&nbsp;distance&nbsp;means&nbsp;the&nbsp;image&nbsp;is&nbsp;"distance"<br>
-beyond&nbsp;the&nbsp;back&nbsp;of&nbsp;the&nbsp;element&nbsp;(or&nbsp;to&nbsp;the&nbsp;right,&nbsp;or&nbsp;after).<br>
-&nbsp;<br>
-M2&nbsp;=&nbsp;Space(distance)*M1<br>
-#&nbsp;M2.isImaging&nbsp;==&nbsp;True</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-frontFocalLength"><strong>frontFocalLength</strong></a>(self)</dt><dd><tt>The&nbsp;focal&nbsp;lengths&nbsp;measured&nbsp;from&nbsp;the&nbsp;front&nbsp;vertex.<br>
-This&nbsp;is&nbsp;the&nbsp;distance&nbsp;between&nbsp;the&nbsp;surface&nbsp;and&nbsp;the&nbsp;focal&nbsp;point.<br>
-When&nbsp;the&nbsp;principal&nbsp;plane&nbsp;is&nbsp;not&nbsp;at&nbsp;the&nbsp;surface&nbsp;(which&nbsp;is&nbsp;usually<br>
-the&nbsp;case&nbsp;in&nbsp;anything&nbsp;except&nbsp;a&nbsp;thin&nbsp;lens),&nbsp;the&nbsp;back&nbsp;and&nbsp;front&nbsp;focal<br>
-lengths&nbsp;will&nbsp;be&nbsp;different&nbsp;from&nbsp;effective&nbsp;focal&nbsp;lengths.&nbsp;The&nbsp;effective<br>
-focal&nbsp;lengths&nbsp;is&nbsp;always&nbsp;measured&nbsp;from&nbsp;the&nbsp;principal&nbsp;planes,&nbsp;but&nbsp;the<br>
-BFL&nbsp;and&nbsp;FFL&nbsp;are&nbsp;measured&nbsp;from&nbsp;the&nbsp;vertices.<br>
-&nbsp;<br>
-If&nbsp;the&nbsp;matrix&nbsp;is&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;product&nbsp;of&nbsp;several&nbsp;matrices,<br>
-we&nbsp;may&nbsp;not&nbsp;know&nbsp;where&nbsp;the&nbsp;front&nbsp;and&nbsp;back&nbsp;vertices&nbsp;are.&nbsp;In&nbsp;that&nbsp;case,<br>
-we&nbsp;return&nbsp;None&nbsp;(or&nbsp;undefined).<br>
-&nbsp;<br>
-Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side&nbsp;and<br>
-both&nbsp;focal&nbsp;distances&nbsp;are&nbsp;the&nbsp;same.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-lagrangeInvariant"><strong>lagrangeInvariant</strong></a>(self, ray1, ray2, z=0)</dt><dd><tt>The&nbsp;Lagrange&nbsp;invariant&nbsp;is&nbsp;a&nbsp;quantity&nbsp;that&nbsp;is&nbsp;conserved<br>
-for&nbsp;any&nbsp;two&nbsp;rays&nbsp;in&nbsp;the&nbsp;system.&nbsp;It&nbsp;is&nbsp;often&nbsp;seen&nbsp;with&nbsp;the<br>
-chief&nbsp;ray&nbsp;and&nbsp;marginal&nbsp;ray&nbsp;in&nbsp;an&nbsp;imaging&nbsp;system,&nbsp;but&nbsp;it&nbsp;is<br>
-actually&nbsp;very&nbsp;general&nbsp;and&nbsp;any&nbsp;rays&nbsp;can&nbsp;be&nbsp;used.&nbsp;<br>
-In&nbsp;<a href="#MatrixGroup-ImagingPath">ImagingPath</a>(),&nbsp;if&nbsp;no&nbsp;rays&nbsp;are&nbsp;provided,&nbsp;the&nbsp;chief&nbsp;and&nbsp;<br>
-marginal&nbsp;rays&nbsp;are&nbsp;used.<br>
-&nbsp;<br>
-This&nbsp;quantity&nbsp;is&nbsp;L&nbsp;=&nbsp;n&nbsp;(y1&nbsp;theta2&nbsp;-&nbsp;y2&nbsp;theta1)</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-magnification"><strong>magnification</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="MatrixGroup-mul_beam"><strong>mul_beam</strong></a>(self, rightSideBeam)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;coherent&nbsp;beam&nbsp;with&nbsp;complex&nbsp;radius<br>
-of&nbsp;curvature&nbsp;q&nbsp;by&nbsp;a&nbsp;matrix.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-mul_matrix"><strong>mul_matrix</strong></a>(self, rightSideMatrix)</dt><dd><tt>Multiplication&nbsp;of&nbsp;two&nbsp;matrices.&nbsp;&nbsp;Total&nbsp;length&nbsp;of&nbsp;the<br>
-elements&nbsp;is&nbsp;calculated.&nbsp;Apertures&nbsp;are&nbsp;lost.&nbsp;We&nbsp;compute<br>
-the&nbsp;first&nbsp;and&nbsp;last&nbsp;vertices.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-mul_ray"><strong>mul_ray</strong></a>(self, rightSideRay)</dt><dd><tt>Multiplication&nbsp;of&nbsp;a&nbsp;ray&nbsp;by&nbsp;a&nbsp;matrix.&nbsp;&nbsp;New&nbsp;position&nbsp;of<br>
-ray&nbsp;is&nbsp;updated&nbsp;by&nbsp;the&nbsp;physical&nbsp;length&nbsp;of&nbsp;the&nbsp;matrix.<br>
-If&nbsp;the&nbsp;ray&nbsp;is&nbsp;beyond&nbsp;the&nbsp;aperture&nbsp;diameter&nbsp;it&nbsp;is&nbsp;labelled<br>
-as&nbsp;"isBlocked&nbsp;=&nbsp;True"&nbsp;but&nbsp;can&nbsp;still&nbsp;propagate.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-pointsOfInterest"><strong>pointsOfInterest</strong></a>(self, z)</dt><dd><tt>Any&nbsp;points&nbsp;of&nbsp;interest&nbsp;for&nbsp;this&nbsp;matrix&nbsp;(focal&nbsp;points,<br>
-principal&nbsp;planes&nbsp;etc...)</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-principalPlanePositions"><strong>principalPlanePositions</strong></a>(self, z)</dt><dd><tt>Positions&nbsp;of&nbsp;the&nbsp;input&nbsp;and&nbsp;output&nbsp;principal&nbsp;planes.<br>
-&nbsp;<br>
-Currently,&nbsp;it&nbsp;is&nbsp;assumed&nbsp;the&nbsp;index&nbsp;is&nbsp;n=1&nbsp;on&nbsp;either&nbsp;side.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-traceMany"><strong>traceMany</strong></a>(self, inputRays)</dt><dd><tt>Trace&nbsp;each&nbsp;ray&nbsp;from&nbsp;a&nbsp;group&nbsp;of&nbsp;rays&nbsp;from&nbsp;front&nbsp;edge&nbsp;of&nbsp;element&nbsp;to<br>
-the&nbsp;back&nbsp;edge.&nbsp;It&nbsp;can&nbsp;be&nbsp;either&nbsp;a&nbsp;list&nbsp;of&nbsp;Ray(),&nbsp;or&nbsp;a&nbsp;Rays()&nbsp;object:<br>
-the&nbsp;Rays()&nbsp;object&nbsp;is&nbsp;an&nbsp;iterator&nbsp;and&nbsp;can&nbsp;be&nbsp;used&nbsp;like&nbsp;a&nbsp;list.<br>
-&nbsp;<br>
-Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;Ray()&nbsp;(i,e.&nbsp;a&nbsp;raytrace),&nbsp;one&nbsp;for&nbsp;each&nbsp;input&nbsp;ray.<br>
-See&nbsp;<a href="#MatrixGroup-trace">trace</a>().</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-traceManyThrough"><strong>traceManyThrough</strong></a>(self, inputRays, progress=True)</dt><dd><tt>Trace&nbsp;each&nbsp;ray&nbsp;from&nbsp;a&nbsp;list&nbsp;or&nbsp;a&nbsp;Rays()&nbsp;distribution&nbsp;from&nbsp;<br>
-front&nbsp;edge&nbsp;of&nbsp;element&nbsp;to&nbsp;the&nbsp;back&nbsp;edge.<br>
-Input&nbsp;can&nbsp;be&nbsp;either&nbsp;a&nbsp;list&nbsp;of&nbsp;Ray(),&nbsp;or&nbsp;a&nbsp;Rays()&nbsp;object:<br>
-the&nbsp;Rays()&nbsp;object&nbsp;is&nbsp;an&nbsp;iterator&nbsp;and&nbsp;can&nbsp;be&nbsp;used&nbsp;like&nbsp;a&nbsp;list.<br>
-UniformRays,&nbsp;LambertianRays()&nbsp;etc...&nbsp;can&nbsp;be&nbsp;used.<br>
-&nbsp;<br>
-We&nbsp;assume&nbsp;that&nbsp;if&nbsp;the&nbsp;user&nbsp;passed&nbsp;a&nbsp;Rays()&nbsp;as&nbsp;input,<br>
-they&nbsp;will&nbsp;want&nbsp;a&nbsp;Rays()&nbsp;as&nbsp;output.&nbsp;Otherwise,&nbsp;returns&nbsp;a&nbsp;list&nbsp;of&nbsp;<br>
-Ray(),&nbsp;one&nbsp;for&nbsp;each&nbsp;input&nbsp;ray.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-traceManyThroughInParallel"><strong>traceManyThroughInParallel</strong></a>(self, inputRays, progress=True, processes=8)</dt><dd><tt>This&nbsp;is&nbsp;an&nbsp;advanced&nbsp;technique&nbsp;to&nbsp;gain&nbsp;from&nbsp;parallel&nbsp;computation:<br>
-it&nbsp;is&nbsp;the&nbsp;same&nbsp;as&nbsp;<a href="#MatrixGroup-traceManyThrough">traceManyThrough</a>(),&nbsp;but&nbsp;splits&nbsp;this&nbsp;call&nbsp;in<br>
-several&nbsp;other&nbsp;parallel&nbsp;processes&nbsp;using&nbsp;the&nbsp;fork()&nbsp;command&nbsp;(not&nbsp;available<br>
-on&nbsp;Windows):&nbsp;the&nbsp;process&nbsp;clones&nbsp;itself&nbsp;and&nbsp;creates&nbsp;a&nbsp;child&nbsp;and&nbsp;keeps&nbsp;the&nbsp;parent.<br>
-The&nbsp;benefits&nbsp;are&nbsp;simple:&nbsp;if&nbsp;you&nbsp;create&nbsp;8&nbsp;processes&nbsp;on&nbsp;8&nbsp;CPU&nbsp;cores,<br>
-you&nbsp;gain&nbsp;a&nbsp;factor&nbsp;of&nbsp;8&nbsp;in&nbsp;speed.&nbsp;We&nbsp;are&nbsp;not&nbsp;talking&nbsp;GPU&nbsp;acceleration,<br>
-but&nbsp;still:&nbsp;1&nbsp;minute&nbsp;is&nbsp;shorter&nbsp;than&nbsp;8&nbsp;minutes.<br>
-&nbsp;<br>
-The&nbsp;strategy&nbsp;is&nbsp;relatively&nbsp;simple:&nbsp;split&nbsp;the&nbsp;computation&nbsp;in&nbsp;several<br>
-processes,&nbsp;save&nbsp;the&nbsp;results&nbsp;to&nbsp;file,&nbsp;then&nbsp;read&nbsp;the&nbsp;results&nbsp;back&nbsp;into&nbsp;a&nbsp;single<br>
-Rays()&nbsp;object&nbsp;that&nbsp;will&nbsp;naturally&nbsp;combine&nbsp;all&nbsp;results&nbsp;from&nbsp;all&nbsp;runs.</tt></dd></dl>
-
-<dl><dt><a name="MatrixGroup-traceThrough"><strong>traceThrough</strong></a>(self, inputRay)</dt><dd><tt>Returns&nbsp;the&nbsp;last&nbsp;ray&nbsp;after&nbsp;propagating&nbsp;through&nbsp;the&nbsp;system,&nbsp;<br>
-including&nbsp;apertures.<br>
-&nbsp;<br>
-Contrary&nbsp;to&nbsp;<a href="#MatrixGroup-trace">trace</a>(),&nbsp;this&nbsp;only&nbsp;returns&nbsp;the&nbsp;last&nbsp;ray.<br>
-Mutiplying&nbsp;the&nbsp;ray&nbsp;by&nbsp;the&nbsp;transfer&nbsp;matrix&nbsp;will&nbsp;give&nbsp;the&nbsp;correct&nbsp;ray<br>
-but&nbsp;will&nbsp;not&nbsp;consider&nbsp;apertures.&nbsp;&nbsp;By&nbsp;"tracing"&nbsp;a&nbsp;ray,&nbsp;we&nbsp;do&nbsp;consider<br>
-all&nbsp;apertures&nbsp;in&nbsp;the&nbsp;system.&nbsp;&nbsp;If&nbsp;a&nbsp;ray&nbsp;is&nbsp;blocked,&nbsp;its&nbsp;property<br>
-isBlocked&nbsp;will&nbsp;be&nbsp;true,&nbsp;and&nbsp;isNotBlocked&nbsp;will&nbsp;be&nbsp;false.</tt></dd></dl>
+<dl><dt><a name="LambertianRays-save"><strong>save</strong></a>(self, filePath)</dt></dl>
 
 <hr>
-Data descriptors inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
+Data descriptors inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
-<dl><dt><strong>determinant</strong></dt>
+<dl><dt><strong>count</strong></dt>
 </dl>
-<dl><dt><strong>hasPower</strong></dt>
+<dl><dt><strong>thetaValues</strong></dt>
 </dl>
-<dl><dt><strong>isImaging</strong></dt>
-<dd><tt>If&nbsp;B=0,&nbsp;then&nbsp;the&nbsp;matrix&nbsp;is&nbsp;from&nbsp;a&nbsp;conjugate&nbsp;plane&nbsp;to&nbsp;another<br>
-(i.e.&nbsp;object&nbsp;at&nbsp;the&nbsp;front&nbsp;edge&nbsp;and&nbsp;image&nbsp;at&nbsp;the&nbsp;back&nbsp;edge).<br>
+<dl><dt><strong>yValues</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RandomLambertianRays">class <strong>RandomLambertianRays</strong></a>(<a href="raytracing.rays.html#RandomRays">RandomRays</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#RandomLambertianRays">RandomLambertianRays</a>(yMax,&nbsp;yMin=None,&nbsp;maxCount=10000)<br>
 &nbsp;<br>
-In&nbsp;this&nbsp;case,&nbsp;A&nbsp;=&nbsp;transverse&nbsp;magnification,&nbsp;D&nbsp;=&nbsp;angular&nbsp;magnification<br>
-As&nbsp;usual,&nbsp;C&nbsp;=&nbsp;-1/f&nbsp;(always).</tt></dd>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="raytracing.rays.html#RandomLambertianRays">RandomLambertianRays</a></dd>
+<dd><a href="raytracing.rays.html#RandomRays">RandomRays</a></dd>
+<dd><a href="raytracing.rays.html#Rays">Rays</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix">raytracing.matrix.Matrix</a>:<br>
-<dl><dt><strong>__epsilon__</strong> = 1e-05</dl>
+Methods defined here:<br>
+<dl><dt><a name="RandomLambertianRays-__init__"><strong>__init__</strong></a>(self, yMax, yMin=None, maxCount=10000)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
+<dl><dt><a name="RandomLambertianRays-randomRay"><strong>randomRay</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.rays.html#RandomRays">RandomRays</a>:<br>
+<dl><dt><a name="RandomLambertianRays-__len__"><strong>__len__</strong></a>(self) -&gt; int</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-__next__"><strong>__next__</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><a name="RandomLambertianRays-__iter__"><strong>__iter__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-append"><strong>append</strong></a>(self, ray)</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-display"><strong>display</strong></a>(self, title='Intensity profile', showTheta=True)</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-displayProgress"><strong>displayProgress</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-load"><strong>load</strong></a>(self, filePath, append=False)</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-rayAnglesHistogram"><strong>rayAnglesHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-rayCountHistogram"><strong>rayCountHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="RandomLambertianRays-save"><strong>save</strong></a>(self, filePath)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>count</strong></dt>
+</dl>
+<dl><dt><strong>thetaValues</strong></dt>
+</dl>
+<dl><dt><strong>yValues</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RandomRays">class <strong>RandomRays</strong></a>(<a href="raytracing.rays.html#Rays">Rays</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#RandomRays">RandomRays</a>(yMax=1.0,&nbsp;yMin=None,&nbsp;thetaMax=1.5707963267948966,&nbsp;thetaMin=None,&nbsp;maxCount=100000)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="raytracing.rays.html#RandomRays">RandomRays</a></dd>
+<dd><a href="raytracing.rays.html#Rays">Rays</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="RandomRays-__init__"><strong>__init__</strong></a>(self, yMax=1.0, yMin=None, thetaMax=1.5707963267948966, thetaMin=None, maxCount=100000)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="RandomRays-__len__"><strong>__len__</strong></a>(self) -&gt; int</dt></dl>
+
+<dl><dt><a name="RandomRays-__next__"><strong>__next__</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<dl><dt><a name="RandomRays-randomRay"><strong>randomRay</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><a name="RandomRays-__iter__"><strong>__iter__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RandomRays-append"><strong>append</strong></a>(self, ray)</dt></dl>
+
+<dl><dt><a name="RandomRays-display"><strong>display</strong></a>(self, title='Intensity profile', showTheta=True)</dt></dl>
+
+<dl><dt><a name="RandomRays-displayProgress"><strong>displayProgress</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RandomRays-load"><strong>load</strong></a>(self, filePath, append=False)</dt></dl>
+
+<dl><dt><a name="RandomRays-rayAnglesHistogram"><strong>rayAnglesHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="RandomRays-rayCountHistogram"><strong>rayCountHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="RandomRays-save"><strong>save</strong></a>(self, filePath)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>count</strong></dt>
+</dl>
+<dl><dt><strong>thetaValues</strong></dt>
+</dl>
+<dl><dt><strong>yValues</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RandomUniformRays">class <strong>RandomUniformRays</strong></a>(<a href="raytracing.rays.html#RandomRays">RandomRays</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#RandomUniformRays">RandomUniformRays</a>(yMax=1.0,&nbsp;yMin=None,&nbsp;thetaMax=1.5707963267948966,&nbsp;thetaMin=None,&nbsp;maxCount=100000)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="raytracing.rays.html#RandomUniformRays">RandomUniformRays</a></dd>
+<dd><a href="raytracing.rays.html#RandomRays">RandomRays</a></dd>
+<dd><a href="raytracing.rays.html#Rays">Rays</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="RandomUniformRays-__init__"><strong>__init__</strong></a>(self, yMax=1.0, yMin=None, thetaMax=1.5707963267948966, thetaMin=None, maxCount=100000)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="RandomUniformRays-randomRay"><strong>randomRay</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.rays.html#RandomRays">RandomRays</a>:<br>
+<dl><dt><a name="RandomUniformRays-__len__"><strong>__len__</strong></a>(self) -&gt; int</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-__next__"><strong>__next__</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><a name="RandomUniformRays-__iter__"><strong>__iter__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-append"><strong>append</strong></a>(self, ray)</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-display"><strong>display</strong></a>(self, title='Intensity profile', showTheta=True)</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-displayProgress"><strong>displayProgress</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-load"><strong>load</strong></a>(self, filePath, append=False)</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-rayAnglesHistogram"><strong>rayAnglesHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-rayCountHistogram"><strong>rayCountHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="RandomUniformRays-save"><strong>save</strong></a>(self, filePath)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>count</strong></dt>
+</dl>
+<dl><dt><strong>thetaValues</strong></dt>
+</dl>
+<dl><dt><strong>yValues</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Rays">class <strong>Rays</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Rays">Rays</a>(rays=None)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Rays-__init__"><strong>__init__</strong></a>(self, rays=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Rays-__iter__"><strong>__iter__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Rays-__len__"><strong>__len__</strong></a>(self) -&gt; int</dt></dl>
+
+<dl><dt><a name="Rays-__next__"><strong>__next__</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<dl><dt><a name="Rays-append"><strong>append</strong></a>(self, ray)</dt></dl>
+
+<dl><dt><a name="Rays-display"><strong>display</strong></a>(self, title='Intensity profile', showTheta=True)</dt></dl>
+
+<dl><dt><a name="Rays-displayProgress"><strong>displayProgress</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Rays-load"><strong>load</strong></a>(self, filePath, append=False)</dt></dl>
+
+<dl><dt><a name="Rays-rayAnglesHistogram"><strong>rayAnglesHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="Rays-rayCountHistogram"><strong>rayCountHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="Rays-save"><strong>save</strong></a>(self, filePath)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>count</strong></dt>
+</dl>
+<dl><dt><strong>thetaValues</strong></dt>
+</dl>
+<dl><dt><strong>yValues</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="UniformRays">class <strong>UniformRays</strong></a>(<a href="raytracing.rays.html#Rays">Rays</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#UniformRays">UniformRays</a>(yMax=1.0,&nbsp;yMin=None,&nbsp;thetaMax=1.5707963267948966,&nbsp;thetaMin=None,&nbsp;M=100,&nbsp;N=100)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="raytracing.rays.html#UniformRays">UniformRays</a></dd>
+<dd><a href="raytracing.rays.html#Rays">Rays</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="UniformRays-__init__"><strong>__init__</strong></a>(self, yMax=1.0, yMin=None, thetaMax=1.5707963267948966, thetaMin=None, M=100, N=100)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><a name="UniformRays-__iter__"><strong>__iter__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="UniformRays-__len__"><strong>__len__</strong></a>(self) -&gt; int</dt></dl>
+
+<dl><dt><a name="UniformRays-__next__"><strong>__next__</strong></a>(self) -&gt; raytracing.ray.Ray</dt></dl>
+
+<dl><dt><a name="UniformRays-append"><strong>append</strong></a>(self, ray)</dt></dl>
+
+<dl><dt><a name="UniformRays-display"><strong>display</strong></a>(self, title='Intensity profile', showTheta=True)</dt></dl>
+
+<dl><dt><a name="UniformRays-displayProgress"><strong>displayProgress</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="UniformRays-load"><strong>load</strong></a>(self, filePath, append=False)</dt></dl>
+
+<dl><dt><a name="UniformRays-rayAnglesHistogram"><strong>rayAnglesHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="UniformRays-rayCountHistogram"><strong>rayCountHistogram</strong></a>(self, binCount=None, minValue=None, maxValue=None)</dt></dl>
+
+<dl><dt><a name="UniformRays-save"><strong>save</strong></a>(self, filePath)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="raytracing.rays.html#Rays">Rays</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>count</strong></dt>
+</dl>
+<dl><dt><strong>thetaValues</strong></dt>
+</dl>
+<dl><dt><strong>yValues</strong></dt>
+</dl>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
@@ -323,7 +409,7 @@ Data and other attributes inherited from <a href="raytracing.matrix.html#Matrix"
 &nbsp;<br>
 Add&nbsp;a&nbsp;docstring&nbsp;to&nbsp;a&nbsp;built-in&nbsp;obj&nbsp;if&nbsp;possible.<br>
 If&nbsp;the&nbsp;obj&nbsp;already&nbsp;has&nbsp;a&nbsp;docstring&nbsp;raise&nbsp;a&nbsp;RuntimeError<br>
-If&nbsp;this&nbsp;routine&nbsp;does&nbsp;not&nbsp;know&nbsp;how&nbsp;to&nbsp;add&nbsp;a&nbsp;docstring&nbsp;to&nbsp;the&nbsp;object<br>
+If&nbsp;this&nbsp;routine&nbsp;does&nbsp;not&nbsp;know&nbsp;how&nbsp;to&nbsp;add&nbsp;a&nbsp;docstring&nbsp;to&nbsp;the&nbsp;<a href="builtins.html#object">object</a><br>
 raise&nbsp;a&nbsp;TypeError</tt></dd></dl>
  <dl><dt><a name="-add_newdoc_ufunc"><strong>add_newdoc_ufunc</strong></a> = _add_newdoc_ufunc(...)</dt><dd><tt>add_ufunc_docstring(ufunc,&nbsp;new_docstring)<br>
 &nbsp;<br>
@@ -403,29 +489,29 @@ Examples<br>
 <a href="#-array">array</a>([3,&nbsp;4,&nbsp;5,&nbsp;6])<br>
 &gt;&gt;&gt;&nbsp;np.<a href="#-arange">arange</a>(3,7,2)<br>
 <a href="#-array">array</a>([3,&nbsp;5])</tt></dd></dl>
- <dl><dt><a name="-array"><strong>array</strong></a>(...)</dt><dd><tt><a href="#-array">array</a>(object,&nbsp;dtype=None,&nbsp;copy=True,&nbsp;order='K',&nbsp;subok=False,&nbsp;ndmin=0)<br>
+ <dl><dt><a name="-array"><strong>array</strong></a>(...)</dt><dd><tt><a href="#-array">array</a>(<a href="builtins.html#object">object</a>,&nbsp;dtype=None,&nbsp;copy=True,&nbsp;order='K',&nbsp;subok=False,&nbsp;ndmin=0)<br>
 &nbsp;<br>
 Create&nbsp;an&nbsp;array.<br>
 &nbsp;<br>
 Parameters<br>
 ----------<br>
-object&nbsp;:&nbsp;array_like<br>
-&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;array,&nbsp;any&nbsp;object&nbsp;exposing&nbsp;the&nbsp;array&nbsp;interface,&nbsp;an&nbsp;object&nbsp;whose<br>
+<a href="builtins.html#object">object</a>&nbsp;:&nbsp;array_like<br>
+&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;array,&nbsp;any&nbsp;<a href="builtins.html#object">object</a>&nbsp;exposing&nbsp;the&nbsp;array&nbsp;interface,&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;whose<br>
 &nbsp;&nbsp;&nbsp;&nbsp;__array__&nbsp;method&nbsp;returns&nbsp;an&nbsp;array,&nbsp;or&nbsp;any&nbsp;(nested)&nbsp;sequence.<br>
 dtype&nbsp;:&nbsp;data-type,&nbsp;optional<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;desired&nbsp;data-type&nbsp;for&nbsp;the&nbsp;array.&nbsp;&nbsp;If&nbsp;not&nbsp;given,&nbsp;then&nbsp;the&nbsp;type&nbsp;will<br>
 &nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;determined&nbsp;as&nbsp;the&nbsp;minimum&nbsp;type&nbsp;required&nbsp;to&nbsp;hold&nbsp;the&nbsp;objects&nbsp;in&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;sequence.<br>
 copy&nbsp;:&nbsp;bool,&nbsp;optional<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;true&nbsp;(default),&nbsp;then&nbsp;the&nbsp;object&nbsp;is&nbsp;copied.&nbsp;&nbsp;Otherwise,&nbsp;a&nbsp;copy&nbsp;will<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;true&nbsp;(default),&nbsp;then&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;copied.&nbsp;&nbsp;Otherwise,&nbsp;a&nbsp;copy&nbsp;will<br>
 &nbsp;&nbsp;&nbsp;&nbsp;only&nbsp;be&nbsp;made&nbsp;if&nbsp;__array__&nbsp;returns&nbsp;a&nbsp;copy,&nbsp;if&nbsp;obj&nbsp;is&nbsp;a&nbsp;nested&nbsp;sequence,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;if&nbsp;a&nbsp;copy&nbsp;is&nbsp;needed&nbsp;to&nbsp;satisfy&nbsp;any&nbsp;of&nbsp;the&nbsp;other&nbsp;requirements<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(`dtype`,&nbsp;`order`,&nbsp;etc.).<br>
 order&nbsp;:&nbsp;{'K',&nbsp;'A',&nbsp;'C',&nbsp;'F'},&nbsp;optional<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Specify&nbsp;the&nbsp;memory&nbsp;layout&nbsp;of&nbsp;the&nbsp;array.&nbsp;If&nbsp;object&nbsp;is&nbsp;not&nbsp;an&nbsp;array,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Specify&nbsp;the&nbsp;memory&nbsp;layout&nbsp;of&nbsp;the&nbsp;array.&nbsp;If&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;not&nbsp;an&nbsp;array,&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;newly&nbsp;created&nbsp;array&nbsp;will&nbsp;be&nbsp;in&nbsp;C&nbsp;order&nbsp;(row&nbsp;major)&nbsp;unless&nbsp;'F'&nbsp;is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;specified,&nbsp;in&nbsp;which&nbsp;case&nbsp;it&nbsp;will&nbsp;be&nbsp;in&nbsp;Fortran&nbsp;order&nbsp;(column&nbsp;major).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;object&nbsp;is&nbsp;an&nbsp;array&nbsp;the&nbsp;following&nbsp;holds.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;an&nbsp;array&nbsp;the&nbsp;following&nbsp;holds.<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;=====&nbsp;=========&nbsp;===================================================<br>
 &nbsp;&nbsp;&nbsp;&nbsp;order&nbsp;&nbsp;no&nbsp;copy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;copy=True<br>
@@ -450,7 +536,7 @@ ndmin&nbsp;:&nbsp;int,&nbsp;optional<br>
 Returns<br>
 -------<br>
 out&nbsp;:&nbsp;ndarray<br>
-&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;array&nbsp;object&nbsp;satisfying&nbsp;the&nbsp;specified&nbsp;requirements.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;array&nbsp;<a href="builtins.html#object">object</a>&nbsp;satisfying&nbsp;the&nbsp;specified&nbsp;requirements.<br>
 &nbsp;<br>
 See&nbsp;Also<br>
 --------<br>
@@ -466,7 +552,7 @@ full&nbsp;:&nbsp;Return&nbsp;a&nbsp;new&nbsp;array&nbsp;of&nbsp;given&nbsp;shape
 &nbsp;<br>
 Notes<br>
 -----<br>
-When&nbsp;order&nbsp;is&nbsp;'A'&nbsp;and&nbsp;`object`&nbsp;is&nbsp;an&nbsp;array&nbsp;in&nbsp;neither&nbsp;'C'&nbsp;nor&nbsp;'F'&nbsp;order,<br>
+When&nbsp;order&nbsp;is&nbsp;'A'&nbsp;and&nbsp;`<a href="builtins.html#object">object</a>`&nbsp;is&nbsp;an&nbsp;array&nbsp;in&nbsp;neither&nbsp;'C'&nbsp;nor&nbsp;'F'&nbsp;order,<br>
 and&nbsp;a&nbsp;copy&nbsp;is&nbsp;forced&nbsp;by&nbsp;a&nbsp;change&nbsp;in&nbsp;dtype,&nbsp;then&nbsp;the&nbsp;order&nbsp;of&nbsp;the&nbsp;result&nbsp;is<br>
 not&nbsp;necessarily&nbsp;'C'&nbsp;as&nbsp;expected.&nbsp;This&nbsp;is&nbsp;likely&nbsp;a&nbsp;bug.<br>
 &nbsp;<br>
@@ -553,7 +639,7 @@ The&nbsp;returned&nbsp;tuple&nbsp;can&nbsp;be&nbsp;passed&nbsp;as&nbsp;the&nbsp;
 Parameters<br>
 ----------<br>
 dtype&nbsp;:&nbsp;dtype<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;dtype&nbsp;object,&nbsp;which&nbsp;must&nbsp;be&nbsp;a&nbsp;`datetime64`&nbsp;or&nbsp;`timedelta64`&nbsp;type.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;dtype&nbsp;<a href="builtins.html#object">object</a>,&nbsp;which&nbsp;must&nbsp;be&nbsp;a&nbsp;`datetime64`&nbsp;or&nbsp;`timedelta64`&nbsp;type.<br>
 &nbsp;<br>
 Returns<br>
 -------<br>
@@ -630,7 +716,7 @@ Interpret&nbsp;a&nbsp;buffer&nbsp;as&nbsp;a&nbsp;1-dimensional&nbsp;array.<br>
 Parameters<br>
 ----------<br>
 buffer&nbsp;:&nbsp;buffer_like<br>
-&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;object&nbsp;that&nbsp;exposes&nbsp;the&nbsp;buffer&nbsp;interface.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="builtins.html#object">object</a>&nbsp;that&nbsp;exposes&nbsp;the&nbsp;buffer&nbsp;interface.<br>
 dtype&nbsp;:&nbsp;data-type,&nbsp;optional<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Data-type&nbsp;of&nbsp;the&nbsp;returned&nbsp;array;&nbsp;default:&nbsp;float.<br>
 count&nbsp;:&nbsp;int,&nbsp;optional<br>
@@ -671,7 +757,7 @@ as&nbsp;well&nbsp;as&nbsp;parsing&nbsp;simply&nbsp;formatted&nbsp;text&nbsp;file
 Parameters<br>
 ----------<br>
 file&nbsp;:&nbsp;file&nbsp;or&nbsp;str&nbsp;or&nbsp;Path<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Open&nbsp;file&nbsp;object&nbsp;or&nbsp;filename.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Open&nbsp;file&nbsp;<a href="builtins.html#object">object</a>&nbsp;or&nbsp;filename.<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;..&nbsp;versionchanged::&nbsp;1.17.0<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`pathlib.Path`&nbsp;objects&nbsp;are&nbsp;now&nbsp;accepted.<br>
@@ -746,12 +832,12 @@ The&nbsp;recommended&nbsp;way&nbsp;to&nbsp;store&nbsp;and&nbsp;load&nbsp;data:<b
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dtype=[('time',&nbsp;[('min',&nbsp;'&lt;i8'),&nbsp;('sec',&nbsp;'&lt;i8')]),&nbsp;('temp',&nbsp;'&lt;f8')])</tt></dd></dl>
  <dl><dt><a name="-fromiter"><strong>fromiter</strong></a>(...)</dt><dd><tt><a href="#-fromiter">fromiter</a>(iterable,&nbsp;dtype,&nbsp;count=-1)<br>
 &nbsp;<br>
-Create&nbsp;a&nbsp;new&nbsp;1-dimensional&nbsp;array&nbsp;from&nbsp;an&nbsp;iterable&nbsp;object.<br>
+Create&nbsp;a&nbsp;new&nbsp;1-dimensional&nbsp;array&nbsp;from&nbsp;an&nbsp;iterable&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Parameters<br>
 ----------<br>
-iterable&nbsp;:&nbsp;iterable&nbsp;object<br>
-&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;iterable&nbsp;object&nbsp;providing&nbsp;data&nbsp;for&nbsp;the&nbsp;array.<br>
+iterable&nbsp;:&nbsp;iterable&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;iterable&nbsp;<a href="builtins.html#object">object</a>&nbsp;providing&nbsp;data&nbsp;for&nbsp;the&nbsp;array.<br>
 dtype&nbsp;:&nbsp;data-type<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data-type&nbsp;of&nbsp;the&nbsp;returned&nbsp;array.<br>
 count&nbsp;:&nbsp;int,&nbsp;optional<br>
@@ -782,7 +868,7 @@ function&nbsp;(see&nbsp;Examples&nbsp;section).<br>
 &nbsp;<br>
 Parameters<br>
 ----------<br>
-func&nbsp;:&nbsp;Python&nbsp;function&nbsp;object<br>
+func&nbsp;:&nbsp;Python&nbsp;function&nbsp;<a href="builtins.html#object">object</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;arbitrary&nbsp;Python&nbsp;function.<br>
 nin&nbsp;:&nbsp;int<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;input&nbsp;arguments.<br>
@@ -792,7 +878,7 @@ nout&nbsp;:&nbsp;int<br>
 Returns<br>
 -------<br>
 out&nbsp;:&nbsp;ufunc<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;a&nbsp;NumPy&nbsp;universal&nbsp;function&nbsp;(``ufunc``)&nbsp;object.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;a&nbsp;NumPy&nbsp;universal&nbsp;function&nbsp;(``ufunc``)&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 See&nbsp;Also<br>
 --------<br>
@@ -808,7 +894,7 @@ Use&nbsp;frompyfunc&nbsp;to&nbsp;add&nbsp;broadcasting&nbsp;to&nbsp;the&nbsp;Pyt
 &nbsp;<br>
 &gt;&gt;&gt;&nbsp;oct_array&nbsp;=&nbsp;np.<a href="#-frompyfunc">frompyfunc</a>(oct,&nbsp;1,&nbsp;1)<br>
 &gt;&gt;&gt;&nbsp;oct_array(np.<a href="#-array">array</a>((10,&nbsp;30,&nbsp;100)))<br>
-<a href="#-array">array</a>(['0o12',&nbsp;'0o36',&nbsp;'0o144'],&nbsp;dtype=object)<br>
+<a href="#-array">array</a>(['0o12',&nbsp;'0o36',&nbsp;'0o144'],&nbsp;dtype=<a href="builtins.html#object">object</a>)<br>
 &gt;&gt;&gt;&nbsp;np.<a href="#-array">array</a>((oct(10),&nbsp;oct(30),&nbsp;oct(100)))&nbsp;#&nbsp;for&nbsp;comparison<br>
 <a href="#-array">array</a>(['0o12',&nbsp;'0o36',&nbsp;'0o144'],&nbsp;dtype='&lt;U5')</tt></dd></dl>
  <dl><dt><a name="-fromstring"><strong>fromstring</strong></a>(...)</dt><dd><tt><a href="#-fromstring">fromstring</a>(string,&nbsp;dtype=float,&nbsp;count=-1,&nbsp;sep='')<br>
@@ -868,9 +954,9 @@ Examples<br>
 <a href="#-array">array</a>([1,&nbsp;2])</tt></dd></dl>
  <dl><dt><a name="-geterrobj"><strong>geterrobj</strong></a>(...)</dt><dd><tt><a href="#-geterrobj">geterrobj</a>()<br>
 &nbsp;<br>
-Return&nbsp;the&nbsp;current&nbsp;object&nbsp;that&nbsp;defines&nbsp;floating-point&nbsp;error&nbsp;handling.<br>
+Return&nbsp;the&nbsp;current&nbsp;<a href="builtins.html#object">object</a>&nbsp;that&nbsp;defines&nbsp;floating-point&nbsp;error&nbsp;handling.<br>
 &nbsp;<br>
-The&nbsp;error&nbsp;object&nbsp;contains&nbsp;all&nbsp;information&nbsp;that&nbsp;defines&nbsp;the&nbsp;error&nbsp;handling<br>
+The&nbsp;error&nbsp;<a href="builtins.html#object">object</a>&nbsp;contains&nbsp;all&nbsp;information&nbsp;that&nbsp;defines&nbsp;the&nbsp;error&nbsp;handling<br>
 behavior&nbsp;in&nbsp;NumPy.&nbsp;`geterrobj`&nbsp;is&nbsp;used&nbsp;internally&nbsp;by&nbsp;the&nbsp;other<br>
 functions&nbsp;that&nbsp;get&nbsp;and&nbsp;set&nbsp;error&nbsp;handling&nbsp;behavior&nbsp;(`geterr`,&nbsp;`seterr`,<br>
 `geterrcall`,&nbsp;`seterrcall`).<br>
@@ -878,7 +964,7 @@ functions&nbsp;that&nbsp;get&nbsp;and&nbsp;set&nbsp;error&nbsp;handling&nbsp;beh
 Returns<br>
 -------<br>
 errobj&nbsp;:&nbsp;list<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;error&nbsp;object,&nbsp;a&nbsp;list&nbsp;containing&nbsp;three&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;error&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;list&nbsp;containing&nbsp;three&nbsp;elements:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[internal&nbsp;numpy&nbsp;buffer&nbsp;size,&nbsp;error&nbsp;mask,&nbsp;error&nbsp;callback&nbsp;function].<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;error&nbsp;mask&nbsp;is&nbsp;a&nbsp;single&nbsp;integer&nbsp;that&nbsp;holds&nbsp;the&nbsp;treatment&nbsp;information<br>
@@ -1083,16 +1169,16 @@ Examples<br>
 &gt;&gt;&gt;&nbsp;ignore&nbsp;=&nbsp;np.<a href="#-set_numeric_ops">set_numeric_ops</a>(**old_funcs)&nbsp;#&nbsp;restore&nbsp;operators</tt></dd></dl>
  <dl><dt><a name="-seterrobj"><strong>seterrobj</strong></a>(...)</dt><dd><tt><a href="#-seterrobj">seterrobj</a>(errobj)<br>
 &nbsp;<br>
-Set&nbsp;the&nbsp;object&nbsp;that&nbsp;defines&nbsp;floating-point&nbsp;error&nbsp;handling.<br>
+Set&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;that&nbsp;defines&nbsp;floating-point&nbsp;error&nbsp;handling.<br>
 &nbsp;<br>
-The&nbsp;error&nbsp;object&nbsp;contains&nbsp;all&nbsp;information&nbsp;that&nbsp;defines&nbsp;the&nbsp;error&nbsp;handling<br>
+The&nbsp;error&nbsp;<a href="builtins.html#object">object</a>&nbsp;contains&nbsp;all&nbsp;information&nbsp;that&nbsp;defines&nbsp;the&nbsp;error&nbsp;handling<br>
 behavior&nbsp;in&nbsp;NumPy.&nbsp;`seterrobj`&nbsp;is&nbsp;used&nbsp;internally&nbsp;by&nbsp;the&nbsp;other<br>
 functions&nbsp;that&nbsp;set&nbsp;error&nbsp;handling&nbsp;behavior&nbsp;(`seterr`,&nbsp;`seterrcall`).<br>
 &nbsp;<br>
 Parameters<br>
 ----------<br>
 errobj&nbsp;:&nbsp;list<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;error&nbsp;object,&nbsp;a&nbsp;list&nbsp;containing&nbsp;three&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;error&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;list&nbsp;containing&nbsp;three&nbsp;elements:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;[internal&nbsp;numpy&nbsp;buffer&nbsp;size,&nbsp;error&nbsp;mask,&nbsp;error&nbsp;callback&nbsp;function].<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;error&nbsp;mask&nbsp;is&nbsp;a&nbsp;single&nbsp;integer&nbsp;that&nbsp;holds&nbsp;the&nbsp;treatment&nbsp;information<br>
@@ -1241,7 +1327,7 @@ Examples<br>
 <strong>bitwise_or</strong> = &lt;ufunc 'bitwise_or'&gt;<br>
 <strong>bitwise_xor</strong> = &lt;ufunc 'bitwise_xor'&gt;<br>
 <strong>c_</strong> = &lt;numpy.lib.index_tricks.CClass object&gt;<br>
-<strong>cast</strong> = {&lt;class 'numpy.complex64'&gt;: &lt;function &lt;lambda&gt; a...py.int8'&gt;: &lt;function &lt;lambda&gt; at 0x7ff47054c050&gt;}<br>
+<strong>cast</strong> = {&lt;class 'numpy.complex64'&gt;: &lt;function &lt;lambda&gt; a...py.int8'&gt;: &lt;function &lt;lambda&gt; at 0x7fdbd815c050&gt;}<br>
 <strong>cbrt</strong> = &lt;ufunc 'cbrt'&gt;<br>
 <strong>ceil</strong> = &lt;ufunc 'ceil'&gt;<br>
 <strong>conj</strong> = &lt;ufunc 'conjugate'&gt;<br>
