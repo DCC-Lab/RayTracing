@@ -2,6 +2,9 @@ from .ray import *
 from .gaussianbeam import *
 from .rays import *
 
+import multiprocessing
+import copy
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
@@ -9,7 +12,7 @@ import matplotlib.transforms as transforms
 import math
 
 import time
-import tempfile 
+import tempfile
 
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
@@ -141,7 +144,7 @@ class Matrix(object):
         outputRay = Ray()
         outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
-        
+
         outputRay.z = self.L + rightSideRay.z
         outputRay.apertureDiameter = self.apertureDiameter
 
@@ -162,7 +165,7 @@ class Matrix(object):
             print("Warning: the gaussian beam is not tracking the index of refraction properly {0} {1}".format(rightSideBeam.n, self.frontIndex))
 
         qprime = (complex(self.A) * q + complex(self.B) ) / (complex(self.C)*q + complex(self.D))
-        
+
         outputBeam = GaussianBeam(q=qprime, wavelength=rightSideBeam.wavelength)
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
@@ -184,7 +187,7 @@ class Matrix(object):
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ The Matrix() that corresponds to propagation from the edge
-        of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is 
+        of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is
         provided, the transfer matrix will be from the front edge to the back edge.
         If the element has a null thickness, the matrix representing the element
         is returned.
@@ -199,10 +202,10 @@ class Matrix(object):
             raise TypeError("Subclass of non-null physical length must override transferMatrix()")
 
     def transferMatrices(self):
-        """ The list of Matrix() that corresponds to the propagation through 
-        this element (or group). For a Matrix(), it simply returns a list 
+        """ The list of Matrix() that corresponds to the propagation through
+        this element (or group). For a Matrix(), it simply returns a list
         with a single element [self].
-        For a MatrixGroup(), it returns the transferMatrices for 
+        For a MatrixGroup(), it returns the transferMatrices for
         each individual element and appends each element to a list for this group."""
 
         return [self]
@@ -211,11 +214,11 @@ class Matrix(object):
         """ The Lagrange invariant is a quantity that is conserved
         for any two rays in the system. It is often seen with the
         chief ray and marginal ray in an imaging system, but it is
-        actually very general and any rays can be used. 
-        In ImagingPath(), if no rays are provided, the chief and 
+        actually very general and any rays can be used.
+        In ImagingPath(), if no rays are provided, the chief and
         marginal rays are used.
 
-        This quantity is L = n (y1 theta2 - y2 theta1) 
+        This quantity is L = n (y1 theta2 - y2 theta1)
         """
 
         matrix = self.transferMatrix(upTo=z)
@@ -227,7 +230,7 @@ class Matrix(object):
 
     def trace(self, ray):
         """Returns a list of rays (i.e. a ray trace) for the input ray through the matrix.
-        
+
         Mutiplying the ray by the transfer matrix will give the correct ray
         but will not consider apertures.  By "tracing" a ray, we do consider
         all apertures in the system.  If a ray is blocked, its property
@@ -254,9 +257,9 @@ class Matrix(object):
         return rayTrace
 
     def traceThrough(self, inputRay):
-        """ Returns the last ray after propagating through the system, 
+        """ Returns the last ray after propagating through the system,
         including apertures.
-        
+
         Contrary to trace(), this only returns the last ray.
         Mutiplying the ray by the transfer matrix will give the correct ray
         but will not consider apertures.  By "tracing" a ray, we do consider
@@ -272,7 +275,7 @@ class Matrix(object):
         """ Trace each ray from a group of rays from front edge of element to
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
-        
+
         Returns a list of Ray() (i,e. a raytrace), one for each input ray.
         See trace().
         """
@@ -280,21 +283,21 @@ class Matrix(object):
         for inputRay in inputRays:
             rayTrace = self.trace(inputRay)
             manyRayTraces.append(rayTrace)
-    
+
         return manyRayTraces
 
     def traceManyThrough(self, inputRays, progress=True):
-        """ Trace each ray from a list or a Rays() distribution from 
+        """ Trace each ray from a list or a Rays() distribution from
         front edge of element to the back edge.
         Input can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
         UniformRays, LambertianRays() etc... can be used.
-        
+
         We assume that if the user passed a Rays() as input,
-        they will want a Rays() as output. Otherwise, returns a list of 
+        they will want a Rays() as output. Otherwise, returns a list of
         Ray(), one for each input ray.
         """
-        
+
         if not isinstance(inputRays, Rays) and isinstance(inputRays, list):
             inputRays = Rays(inputRays)
 
@@ -304,7 +307,7 @@ class Matrix(object):
             lastRay = self.traceThrough(ray)
             if lastRay.isNotBlocked:
                 outputRays.append(lastRay)
-            
+
             if progress:
                 inputRays.displayProgress()
 
@@ -323,7 +326,6 @@ class Matrix(object):
         processes, save the results to file, then read the results back into a single
         Rays() object that will naturally combine all results from all runs.
         """
-
         outputRays = Rays()
 
         childs = []
@@ -346,7 +348,7 @@ class Matrix(object):
             else:                # Parent process keeps track of child, loop
                 childs.append(childPID)
 
-        # Only parent process gets here to gather everything (the child always exit()) 
+        # Only parent process gets here to gather everything (the child always exit())
         if progress:
             print("Waiting for childs for complete")
         os.waitpid(0, 0)
@@ -378,6 +380,62 @@ class Matrix(object):
             oldSize = currentSize
         time.sleep(0.1)
 
+    def traceManyThroughInMultiprocess(self, inputRays, processes=4):
+        """
+        Naive implementation of multiprocessing on `inputRays`.
+        """
+        with multiprocessing.Pool(processes=processes) as pool:
+            outputRays = pool.map(self.traceThrough, inputRays)
+        return Rays(rays=outputRays)
+
+    def traceManyThroughInMultiprocessChunks(self, inputRays, processes=4):
+        """
+        Chunked implementation of multiprocessing on `inputRays`. In this implementation
+        we split the `inputRays` into the number of `processes`. This is somewhat
+        faster than `traceManyThroughInMultiprocess` when the number of `inputRays`
+        becomes large (>1e+4).
+        Using 4 processes gives an acceleration of approximately two folds.
+
+        :param inputRays: A {`list`, `Rays`, `RandomRays`} object containing `ray`
+        :param processes: The number of processes to use
+
+        :returns : A `Rays` object containing the outputRays
+        """
+
+        # Helper function to flatten a list of lists
+        flatten = lambda l: [item for sublist in l for item in sublist]
+
+        # inputRays conditioning
+        if isinstance(inputRays, list):
+            inputRays = Rays(rays=inputRays)
+
+        length = len(inputRays) // processes # length of each worker
+
+        # When the inputRays has RandomRays as base class we simply copy the instance
+        # of inputRays and change the maxCount. This is faster than iterating through
+        # each rays of inputRays and slicing through the generated list.
+        if inputRays.__class__.__bases__[0] is RandomRays:
+            chunks = [min(i + length, len(inputRays)) - i for i in range(0, len(inputRays), length)]
+            tmp = []
+            for chunk in chunks:
+                duplicate = copy.copy(inputRays)
+                duplicate.maxCount = chunk
+                tmp.append(duplicate)
+            inputRays = tmp
+        # When the inputRays is a Rays object, we slice through the list of rays
+        elif isinstance(inputRays, Rays):
+            chunks = [slice(i, min(i + length, len(inputRays))) for i in range(0, len(inputRays), length)]
+            inputRays = [inputRays.rays[slc] for slc in chunks]
+        # Other inputRays type are not supported at the moment
+        else:
+            print(f"Not supported inputRays with type `{type(inputRays)}`")
+
+        # We use the multiprocessing library to map through all chunked lists
+        with multiprocessing.Pool(processes=processes) as pool:
+            outputRays = pool.map(self.traceManyThrough, inputRays)
+
+        # We return a Rays object with the flatten list of outputRays
+        return Rays(rays=flatten(outputRays))
 
     @property
     def isImaging(self):
@@ -393,7 +451,7 @@ class Matrix(object):
     @property
     def hasPower(self):
         return self.C != 0
-    
+
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
         principal planes etc...)
@@ -404,7 +462,7 @@ class Matrix(object):
         #     ptsOfInterest.append({'z': self.frontVertex, 'label': '$V_f$'})
         # if self.backVertex is not None:
         #     ptsOfInterest.append({'z': self.backVertex, 'label': '$V_b$'})
-        
+
         return []
 
     def focalDistances(self):
@@ -463,7 +521,7 @@ class Matrix(object):
         If the matrix is the result of the product of several matrices,
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
-        
+
         Currently, it is assumed the index is n=1 on either side and
         both focal distances are the same.
         """
@@ -570,7 +628,7 @@ class Matrix(object):
         return self
 
     def display(self): # pragma: no cover
-        """ Display this component, without any ray tracing but with 
+        """ Display this component, without any ray tracing but with
         all of its cardinal points and planes. If the component has no
         power (i.e. C == 0) this will fail.
         """
@@ -627,7 +685,7 @@ class Matrix(object):
 
         if p1 is None or p2 is None:
             return
-            
+
         axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
@@ -678,7 +736,7 @@ class Matrix(object):
             halfHeight = self.largestDiameter()/2.0
         else:
             halfHeight = self.displayHalfHeight()
-            
+
         center = z + self.L / 2.0
         axes.annotate(self.label, xy=(center, 0.0),
                      xytext=(center, halfHeight * 1.5),
@@ -708,7 +766,7 @@ class Matrix(object):
                          ha='center', va='bottom')
 
     def drawAperture(self, z, axes): # pragma: no cover
-        """ Draw the aperture size for this element.  Any element may 
+        """ Draw the aperture size for this element.  Any element may
         have a finite aperture size, so this function is general for all elements.
         """
 
@@ -749,10 +807,10 @@ class Matrix(object):
         return halfHeight
 
     def axesToDataScaling(self, axes):
-        """ For drawing properly arrows and other things, sometimes 
-        we need to draw along y in real space but in x in relative space 
+        """ For drawing properly arrows and other things, sometimes
+        we need to draw along y in real space but in x in relative space
         (i.e. relative to the width of the graph, not x coordinates).
-        There are transforms in matplotlib, but only between axes-display, 
+        There are transforms in matplotlib, but only between axes-display,
         and data-display, not between data-axes.  Here we obtain the scaling
         so we can set arrow properties intelligently """
 
@@ -865,7 +923,7 @@ class Space(Matrix):
                                     frontVertex=None,
                                     backVertex=None,
                                     frontIndex=n,
-                                    backIndex=n, 
+                                    backIndex=n,
                                     apertureDiameter=diameter,
                                     label=label)
 
@@ -917,7 +975,7 @@ class DielectricInterface(Matrix):
 
         """
         h = self.displayHalfHeight()
-        
+
         # For simplicity, 1 is front, 2 is back.
         # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
         v1 = z + self.frontVertex
@@ -928,7 +986,7 @@ class DielectricInterface(Matrix):
 
         Path = mpath.Path
         p = patches.PathPatch(
-            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
                   (v1, 0), (v1, ctl1), (corner1, h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3]),
@@ -953,7 +1011,7 @@ class DielectricInterface(Matrix):
         self.R = -self.R
         self.C = - (self.n2-self.n1)/(self.n2*self.R)
         self.D = self.n1/self.n2
-        
+
         return self
 
 
@@ -994,7 +1052,7 @@ class ThickLens(Matrix):
 
         """
         h = self.displayHalfHeight()
-        
+
         # For simplicity, 1 is front, 2 is back.
         # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
         v1 = z + self.frontVertex
@@ -1011,10 +1069,10 @@ class ThickLens(Matrix):
 
         Path = mpath.Path
         p = patches.PathPatch(
-            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
                   (v1, 0), (v1, ctl1), (corner1, h),
                   (corner2, h), (v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h), 
+                  (v2, 0), (v2, -ctl2), (corner2, -h),
                   (corner1, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
@@ -1116,4 +1174,3 @@ class Aperture(Matrix):
         """ Currently nothing specific to draw because any
         aperture for any object is drawn with drawAperture()
         """
-
