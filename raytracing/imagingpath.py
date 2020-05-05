@@ -19,7 +19,7 @@ class ImagingPath(MatrixGroup):
     and rayNumber.
     """
 
-    def __init__(self, elements=[], label=""):
+    def __init__(self, elements=None, label=""):
         self.objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
         self.fanAngle = 0.1  # full fan angle for rays
