@@ -339,7 +339,7 @@ class Matrix(object):
                 return self.traceManyThrough(inputRays) # Give up on fork(): do just one.
 
             if childPID == 0:    # Child process, compute, save, exit
-                outputRays = self.traceManyThrough(inputRays)
+                outputRays = self.traceManyThrough(inputRays,progress=progress)
                 filePath = os.path.join(tmpDir, "rays-{0}.dat".format(os.getpid()))
                 outputRays.save(filePath)
                 exit(0)
