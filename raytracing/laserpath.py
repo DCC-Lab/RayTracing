@@ -95,7 +95,7 @@ class LaserPath(MatrixGroup):
                 plt.pause(0.001)
 
         except KeyboardInterrupt:
-            exit(0)
+            plt.close()
 
     def createBeamTracePlot(self, axes, beams):
         """ Create a matplotlib plot to draw the laser beam and the elements.

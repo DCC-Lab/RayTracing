@@ -405,7 +405,7 @@ class ImagingPath(MatrixGroup):
                 plt.pause(0.001)
 
         except KeyboardInterrupt:
-            exit(0)
+            plt.close()
 
 
     def save(self, filepath,

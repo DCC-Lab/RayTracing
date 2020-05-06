@@ -570,7 +570,7 @@ class Matrix(object):
                 plt.pause(0.001)
 
         except KeyboardInterrupt:
-            exit(0)
+            plt.close()
 
     def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
