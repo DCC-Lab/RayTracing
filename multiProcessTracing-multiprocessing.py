@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     fig, ax = pyplot.subplots()
     width = 1 / (len(test_functions) + 1)
-    possible_rays = [1e+2, 1e+3, 1e+4,1e+5,1e+6]
+    possible_rays = [1e+2, 1e+3, 1e+4,1e+5]
     for i, nRays in enumerate(possible_rays):
         nRays = int(nRays)
         inputRays = RandomUniformRays(yMax=0, maxCount=nRays)
