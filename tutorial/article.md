@@ -1,5 +1,25 @@
 # Tutorial article on ray tracing
 
+>  This file is public on the repository, but cannot be copied outside of the DCCLab group: we are working on an article, and I purposely left the file on GitHub.  I understand people outside the group may see the article before it is complete but the file is copyrighted to the group and the authors. Do not use or distribute outside of DCCLab.
+>
+> Daniel Cote, May 5th, 2020, dccote@cervo.ulaval.ca
+
+Let’s get started! Anybody in DCCLab can join.  People who contribute will be authors on the paper. We will need to find a lead author, but at this point I do not know who it should be: just assume you are not first author.
+
+I want this article about raytracing out this summer. We will operate like this: I added the article *directly on GitHub* because the writing is tightly tied to the code. I know, this is weird, and possibly crazy, we’ll see.
+
+1. On GitHub, the main repository is here: https://github.com/DCC-Lab/RayTracing
+2. Take a look at the Board (it is called a Kanban board) of things to do: we monitor our progress here: https://github.com/DCC-Lab/RayTracing/projects/1. If you have a task you are taking up, then you “make it move” across the board.
+3. There is a branch called [tutorial-article](about:blank) where we will be working.
+4. Take a look at the **article.md** file in https://github.com/DCC-Lab/RayTracing/tree/tutorial-article/tutorial. Yes, we will try to write the article with markdown.
+5. We will work on the code and the text the same way: with Pull Requests.  You will modify the code/the text and we will review the modifications before integrating them.
+6. **If you want to write,** take a look at the article and talk to me. We can use all of my Optique Notes if needed! DeepML can translate very quickly and very well. We should use it.
+7. **If you want to code**, take a look at issues: https://github.com/DCC-Lab/RayTracing/issues
+8. **If you want to understand the code,** code unit tests! https://github.com/DCC-Lab/RayTracing/issues/52
+9. You found a bug? Write a test that does not pass, create an issue. Then fix it if you can and close the issue.
+10. **If you want to code examples**, look at the current examples and create new ones.
+11. **If you want to improve the** **aesthetics,** make suggestions and look at article for a figure request. You can even work on the rendering of the various elements if you feel like it to make it look better. I would be happy if the figures looked more like what I have in my notes.
+
 Here is the skeleton of the article.
 
 [TOC]
@@ -21,6 +41,8 @@ Here is the skeleton of the article.
 
 This section contains a very short primer on imaging and ray matrices. It has definition of rays, ABCD matrices and a table gathering all useful matrices.
 
+**Figure showing element, matrix and ray.**
+
 Definitions and illustration of how to use formalism:
 
 1. $C = -1/f$, measured from principal planes
@@ -35,13 +57,13 @@ Simple example (?): recovering thick lens equation from interface and space.
 
 Other example: achromats from EO and Thorlabs can be modelled.
 
-Optical invariant: the product $n ( y_1 \theta_2 - y_2 \theta_1)$ is a constant.  Therefore if a component cannot "support" a certain product, then it becomes clear the ray will be blocked.
-
-
+Optical invariant: the product $n ( y_1 \theta_2 - y_2 \theta_1)$ is a constant.  Therefore if a component cannot "support" a certain product, then it becomes clear the rays will be blocked.
 
 ## Apertures
 
 This section contains a description of apertures, how they are not considered in ABCD formalism but can easily be added and how they lead to **Aperture Stop** and **Field Stop**. A section describes the procedure to find the aperture and field stop.
+
+Explain difference between matrix multiplications and tracing: tracing considers apertures but multiplications do not.  Tracing is a multi-step procedure involving ABCD matrix multiplications.
 
 **Chief** and **axial** rays (validate definitions, especially axial or marginal ray?). Simple proof to obtain chief and axial ray and that these two rays are sufficient to describe the light through whole system.
 
