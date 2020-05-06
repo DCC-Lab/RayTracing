@@ -115,3 +115,6 @@ dmypy.json
 .pyre/
 test.py
 tony.py
+
+# PyCharm project .idea folder
+.idea/
