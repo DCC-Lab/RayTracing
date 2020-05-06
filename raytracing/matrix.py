@@ -290,12 +290,11 @@ class Matrix(object):
         """ Trace each ray from a list or a Rays() distribution from
         front edge of element to the back edge.
         Input can be either a list of Ray(), or a Rays() object:
-        the Rays() object is an iterator and can be used like a list.
+        the Rays() object is an iterator and can be used like a list of rays.
         UniformRays, LambertianRays() etc... can be used.
 
-        We assume that if the user passed a Rays() as input,
-        they will want a Rays() as output. Otherwise, returns a list of
-        Ray(), one for each input ray.
+        We assume that if the user will be happy to receive 
+        Rays() as an output even if they passed a list of rays as inputs.
         """
 
         if not isinstance(inputRays, Rays) and isinstance(inputRays, list):
@@ -313,129 +312,44 @@ class Matrix(object):
 
         return outputRays
 
-    def traceManyThroughInParallel(self, inputRays, progress=True, processes=8):
+    def traceManyThroughInParallel(self, inputRays, progress=True, processes=None):
         """ This is an advanced technique to gain from parallel computation:
         it is the same as traceManyThrough(), but splits this call in
-        several other parallel processes using the fork() command (not available
-        on Windows): the process clones itself and creates a child and keeps the parent.
-        The benefits are simple: if you create 8 processes on 8 CPU cores,
-        you gain a factor of 8 in speed. We are not talking GPU acceleration,
-        but still: 1 minute is shorter than 8 minutes.
+        several other parallel processes using the `multiprocessing` module,
+        which is os-independent.
 
-        The strategy is relatively simple: split the computation in several
-        processes, save the results to file, then read the results back into a single
-        Rays() object that will naturally combine all results from all runs.
+        Everything hinges on a simple pool.map() command that will apply 
+        the provided function to every element of the array, but across several
+        processors. It is trivial to implement and the benefits are simple:
+        if you create 8 processes on 8 CPU cores, you gain a factor of 
+        approximately 8 in speed. We are not talking GPU acceleration, but
+        still: 1 minute is shorter than 8 minutes.
+
+        One important technical issue: Pool accesses the array in multiple processes
+        and cannot be dynamically generated (because it is not thread-safe).
+        We explicitly generate the list before the computation, then we split
+        the array in #processes different lists.
         """
-        outputRays = Rays()
 
-        childs = []
-        childPID = -1
-        tmpDir = tempfile.gettempdir()
-        if progress:
-            print("Attempting parallel computation, combining {0} groups".format(processes))
+        if processes is None:
+            processes = multiprocessing.cpu_count()
 
-        while len(childs) < processes and childPID != 0:
-            try:
-                childPID = os.fork() # Read about fork() to understand: code splits here
-            except:
-                return self.traceManyThrough(inputRays) # Give up on fork(): do just one.
+        theExplicitList = list(inputRays) 
+        manyInputRays = [theExplicitList[i::processes] for i in range(processes)]
 
-            if childPID == 0:    # Child process, compute, save, exit
-                outputRays = self.traceManyThrough(inputRays,progress=progress)
-                filePath = os.path.join(tmpDir, "rays-{0}.dat".format(os.getpid()))
-                outputRays.save(filePath)
-                exit(0)
-            else:                # Parent process keeps track of child, loop
-                childs.append(childPID)
-
-        # Only parent process gets here to gather everything (the child always exit())
-        if progress:
-            print("Waiting for childs for complete")
-        os.waitpid(0, 0)
-        time.sleep(1)
-
-        allRays = Rays()
-        for pid in childs:
-            try:
-                filePath = os.path.join(tmpDir, "rays-{0}.dat".format(pid))
-                self._waitForFile(filePath) # FIXME: Files are not always ready?
-                allRays.load(filePath, append=True)
-                os.remove(filePath)
-            except Exception as exception:
-                print("{1}: {0}".format(filePath,exception))
-
-        return allRays
-
-    def _waitForFile(self, filePath, timeout=5):
-        # Internal function for validating files with parallel computations
-        while not os.path.exists(filePath):
-            time.sleep(0.1)
-
-        oldSize = None
-        while True:
-            currentSize = os.path.getsize(filePath)
-            if currentSize == oldSize:
-                break
-            time.sleep(0.1)
-            oldSize = currentSize
-        time.sleep(0.1)
-
-    def traceManyThroughInMultiprocess(self, inputRays, processes=4):
-        """
-        Naive implementation of multiprocessing on `inputRays`.
-        """
         with multiprocessing.Pool(processes=processes) as pool:
-            outputRays = pool.map(self.traceThrough, inputRays)
+            outputRays = pool.map(self.traceManyThrough, manyInputRays)
         return Rays(rays=outputRays)
 
-    def traceManyThroughInMultiprocessChunks(self, inputRays, processes=4):
-        """
-        Chunked implementation of multiprocessing on `inputRays`. In this implementation
-        we split the `inputRays` into the number of `processes`. This is somewhat
-        faster than `traceManyThroughInMultiprocess` when the number of `inputRays`
-        becomes large (>1e+4).
-        Using 4 processes gives an acceleration of approximately two folds.
+    def traceManyThroughInParallelNoChunks(self, inputRays, progress=True, processes=None):
+        if processes is None:
+            processes = multiprocessing.cpu_count()
 
-        :param inputRays: A {`list`, `Rays`, `RandomRays`} object containing `ray`
-        :param processes: The number of processes to use
+        manyInputRays = list(inputRays) 
 
-        :returns : A `Rays` object containing the outputRays
-        """
-
-        # Helper function to flatten a list of lists
-        flatten = lambda l: [item for sublist in l for item in sublist]
-
-        # inputRays conditioning
-        if isinstance(inputRays, list):
-            inputRays = Rays(rays=inputRays)
-
-        length = len(inputRays) // processes # length of each worker
-
-        # When the inputRays has RandomRays as base class we simply copy the instance
-        # of inputRays and change the maxCount. This is faster than iterating through
-        # each rays of inputRays and slicing through the generated list.
-        if inputRays.__class__.__bases__[0] is RandomRays:
-            chunks = [min(i + length, len(inputRays)) - i for i in range(0, len(inputRays), length)]
-            tmp = []
-            for chunk in chunks:
-                duplicate = copy.copy(inputRays)
-                duplicate.maxCount = chunk
-                tmp.append(duplicate)
-            inputRays = tmp
-        # When the inputRays is a Rays object, we slice through the list of rays
-        elif isinstance(inputRays, Rays):
-            chunks = [slice(i, min(i + length, len(inputRays))) for i in range(0, len(inputRays), length)]
-            inputRays = [inputRays.rays[slc] for slc in chunks]
-        # Other inputRays type are not supported at the moment
-        else:
-            print(f"Not supported inputRays with type `{type(inputRays)}`")
-
-        # We use the multiprocessing library to map through all chunked lists
         with multiprocessing.Pool(processes=processes) as pool:
-            outputRays = pool.map(self.traceManyThrough, inputRays)
-
-        # We return a Rays object with the flatten list of outputRays
-        return Rays(rays=flatten(outputRays))
+            outputRays = pool.map(self.traceThrough, manyInputRays)
+        return Rays(rays=outputRays)
 
     @property
     def isImaging(self):
