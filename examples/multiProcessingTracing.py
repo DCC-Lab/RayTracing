@@ -9,8 +9,8 @@ fobj, backaperture = 5., 5.
 
 if __name__ == "__main__":
 
-    reps = 5
-    processes = 4
+    reps = 1
+    processes = None
 
     path = ImagingPath()
 
@@ -40,14 +40,13 @@ if __name__ == "__main__":
 
     test_functions = {
         "naive" : path.traceManyThrough,
-        "naive-multiprocessing" : path.traceManyThroughInMultiprocess,
-        "chunk-multiprocessing" : path.traceManyThroughInMultiprocessChunks,
-        "parallel" : path.traceManyThroughInParallel
+        "chunks-multiprocessing" : path.traceManyThroughInParallel,
+        "one-block-multiprocessing" : path.traceManyThroughInParallelNoChunks
     }
 
     fig, ax = pyplot.subplots()
     width = 1 / (len(test_functions) + 1)
-    possible_rays = [1e+2, 1e+3, 1e+4]
+    possible_rays = [1e+2, 1e+3, 1e+4,1e+5]
     for i, nRays in enumerate(possible_rays):
         nRays = int(nRays)
         inputRays = RandomUniformRays(yMax=0, maxCount=nRays)
