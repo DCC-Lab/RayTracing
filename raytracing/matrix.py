@@ -568,8 +568,7 @@ class Matrix(object):
             while True:
                 plt.draw()
                 plt.pause(0.001)
-
-        except KeyboardInterrupt:
+        except:
             plt.close()
 
     def drawAt(self, z, axes, showLabels=False): # pragma: no cover
