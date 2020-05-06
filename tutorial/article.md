@@ -31,13 +31,25 @@ Definitions and illustration of how to use formalism:
 
 We need a figure that shows a group of arbitrary optical elements, with all the important properties (ACBD) in addition to all the properties that are considered in `Matrix` such as vertices, length.
 
+Simple example (?): recovering thick lens equation from interface and space.
+
+Other example: achromats from EO and Thorlabs can be modelled.
+
 Optical invariant: the product $n ( y_1 \theta_2 - y_2 \theta_1)$ is a constant.  Therefore if a component cannot "support" a certain product, then it becomes clear the ray will be blocked.
+
+
 
 ## Apertures
 
 This section contains a description of apertures, how they are not considered in ABCD formalism but can easily be added and how they lead to **Aperture Stop** and **Field Stop**. A section describes the procedure to find the aperture and field stop.
 
-**Chief** and **axial** rays (validate definitions, especially axial or marginal ray?). Simple proof to obtain chief and axial ray.
+**Chief** and **axial** rays (validate definitions, especially axial or marginal ray?). Simple proof to obtain chief and axial ray and that these two rays are sufficient to describe the light through whole system.
+
+## Collection of rays: as inputs and outputs
+
+To obtain the (relative) intensity of a point on an object, we can trace many rays and collect a histogram of rays as a function of position.
+
+Example: Uniform (validate math!), LambertianRays, 
 
 ## Gaussian beams
 
@@ -77,11 +89,35 @@ Explain difference between matrix multiplications and tracing: tracing considers
 
 Relevant examples of how to use the code.
 
+Prepare many different examples, keep them in a directory and show figures.
+
 
 
 ## Practical examples solved with module
 
-?
+Widefield microscope
+
+Simple scanning system
+
+Laser scanning microscope
+
+Confocal pinhole detection
+
+Diffuse source from scattering medium
+
+Two-photon descanned detector
+
+​	Big detectors (R3896) versus small detectors (GaAsP)
+
+Illumination system
+
+Axicon
+
+Fiber-based collection system
+
+
+
+
 
 
 
@@ -91,15 +127,19 @@ Examples of things that could be added:
 
 1. Scanning mirrors.
 
-2. GUI, but not within main code: avoid Zawinski's law of software envelopment (also known as *Zawinski's law*) and [software bloating](https://en.wikipedia.org/wiki/Software_bloat) with popular features:[[13\]](https://en.wikipedia.org/wiki/Jamie_Zawinski#cite_note-aoup-13)[[14\]](https://en.wikipedia.org/wiki/Jamie_Zawinski#cite_note-jf-14)
+2. Extract wavefronts 
+
+3. GUI, but not within main code: avoid Zawinski's law of software envelopment (also known as *Zawinski's law*) and [software bloating](https://en.wikipedia.org/wiki/Software_bloat) with popular features:[[13\]](https://en.wikipedia.org/wiki/Jamie_Zawinski#cite_note-aoup-13)[[14\]](https://en.wikipedia.org/wiki/Jamie_Zawinski#cite_note-jf-14)
 
    > Every program attempts to expand until it can read [mail](https://en.wikipedia.org/wiki/E-mail). Those programs which cannot so expand are replaced by ones which can.
 
-3. Misaligned matrices
+4. Misaligned matrices
 
-4. Polarization
+5. Polarization
 
-5. 3D rays and 3D rendering 3D export of optical systems
+6. 3D rays and 3D rendering 3D export of optical systems
 
-6. Reflections
+7. Reflections
+
+8. 
 
