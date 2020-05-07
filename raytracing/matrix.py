@@ -563,8 +563,17 @@ class Matrix(object):
         self.drawPointsOfInterest(z=0, axes=axes)
         self.drawPrincipalPlanes(z=0, axes=axes)
 
-        plt.ioff()
-        plt.show()
+        try:
+            plt.plot()
+            if sys.platform.startswith('win'):
+                plt.show()
+            else:
+                plt.draw()
+                while True:
+                    plt.pause(0.001)
+
+        except KeyboardInterrupt:
+            plt.close()
 
     def drawAt(self, z, axes, showLabels=False): # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
