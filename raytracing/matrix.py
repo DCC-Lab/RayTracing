@@ -4,7 +4,7 @@ from .rays import *
 
 import multiprocessing
 import copy
-
+import sys
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
