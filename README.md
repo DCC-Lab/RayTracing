@@ -118,7 +118,7 @@ and you will get the following ray histograms:
 
 The class hierarchy for optical elements (with parameters and defaults) is:
 
-![image-20190511230415520](assets/image-20190511230415520.png)
+![image-20190511230415520](README.assets/image-20190511230415520.png)
 
 Documentation is sparse at best.   You may obtain help by:
 
