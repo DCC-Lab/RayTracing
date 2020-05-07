@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
-
+import sys
 
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
@@ -400,13 +400,15 @@ class ImagingPath(MatrixGroup):
 
         try:
             plt.plot()
-            while True:
+            if sys.platform.startswith('win'):
+                plt.show()
+            else:
                 plt.draw()
-                plt.pause(0.001)
+                while True:
+                    plt.pause(0.001)
 
         except KeyboardInterrupt:
             plt.close()
-
 
     def save(self, filepath,
              limitObjectToFieldOfView=False,

@@ -90,9 +90,12 @@ class LaserPath(MatrixGroup):
 
         try:
             plt.plot()
-            while True:
+            if sys.platform.startswith('win'):
+                plt.show()
+            else:
                 plt.draw()
-                plt.pause(0.001)
+                while True:
+                    plt.pause(0.001)
 
         except KeyboardInterrupt:
             plt.close()
