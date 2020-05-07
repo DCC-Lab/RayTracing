@@ -563,6 +563,9 @@ class Matrix(object):
         self.drawPointsOfInterest(z=0, axes=axes)
         self.drawPrincipalPlanes(z=0, axes=axes)
 
+        self._showPlot()
+
+    def _showPlot(self): # internal, do not use
         try:
             plt.plot()
             if sys.platform.startswith('win'):
@@ -570,7 +573,10 @@ class Matrix(object):
             else:
                 plt.draw()
                 while True:
-                    plt.pause(0.001)
+                    if plt.get_fignums():
+                        plt.pause(0.001)
+                    else:
+                        break
 
         except KeyboardInterrupt:
             plt.close()
