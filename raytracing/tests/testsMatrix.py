@@ -220,14 +220,14 @@ class TestMatrix(unittest.TestCase):
         self.assertListEqual(m.trace(ray), trace)
 
     def testTraceBlocked(self):
-        ray = Ray(y=1, theta=1)
-        m = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        ray = Ray(y=10, theta=1)
+        m = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10, physicalLength=1)
         trace = m.trace(ray)
         self.assertTrue(all(x.isBlocked for x in trace))
 
     def testTraceGaussianBeam(self):
         beam = GaussianBeam(w=1)
-        m = Matrix()
+        m = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
         outputBeam = m * beam
         tracedBeam = m.trace(beam)[-1]
         self.assertEqual(tracedBeam.w, outputBeam.w)
@@ -235,7 +235,13 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(tracedBeam.z, outputBeam.z)
         self.assertEqual(tracedBeam.n, outputBeam.n)
         self.assertEqual(tracedBeam.isClipped, outputBeam.isClipped)
-        
+
+    def testTraceThrough(self):
+        ray = Ray()
+        m = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        trace = m.traceThrough(ray)
+        self.assertEqual(trace, m * ray)
+
     def testIsImaging(self):
         m1 = Matrix(A=1, B=0, C=3, D=4)
         self.assertTrue(m1.isImaging)
