@@ -371,7 +371,7 @@ class ImagingPath(MatrixGroup):
         if self.showEntrancePupil:
             self.drawEntrancePupil(z=0, axes=axes)
 
-        self.drawAt(z=0, axes=axes)
+        self.drawAt(z=0, axes=axes, showLabels=self.showElementLabels)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(z=0, axes=axes)
             self.drawStops(z=0, axes=axes)
@@ -519,7 +519,7 @@ class ImagingPath(MatrixGroup):
     def drawOpticalElements(self, z, axes):  # pragma: no cover
         """ Deprecated. Use drawAt() """
         print("drawOpticalElements() was renamed drawAt()")
-        self.drawAt(z, axes)
+        self.drawAt(z, axes, showLabels=self.showElementLabels)
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):  # pragma: no cover
