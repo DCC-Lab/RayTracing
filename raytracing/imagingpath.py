@@ -398,17 +398,7 @@ class ImagingPath(MatrixGroup):
                                 onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
                                 removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
-        try:
-            plt.plot()
-            if sys.platform.startswith('win'):
-                plt.show()
-            else:
-                plt.draw()
-                while True:
-                    plt.pause(0.001)
-
-        except KeyboardInterrupt:
-            plt.close()
+        self._showPlot()
 
     def save(self, filepath,
              limitObjectToFieldOfView=False,
