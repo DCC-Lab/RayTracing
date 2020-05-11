@@ -1,45 +1,36 @@
-# Tutorial article on ray tracing
+# Tools and tutorial on practical ray tracing for microscopy
 
 >  This file is public on the repository, but cannot be copied outside of the DCCLab group: we are working on an article, and I purposely left the file on GitHub.  I understand people outside the group may see the article before it is complete but the file is copyrighted to the group and the authors. Do not use or distribute outside of DCCLab.
 >
 > Daniel Cote, May 5th, 2020, dccote@cervo.ulaval.ca
 
-Let’s get started! Anybody in DCCLab can join.  People who contribute will be authors on the paper. We will need to find a lead author, but at this point I do not know who it should be: just assume you are not first author.
-
-I want this article about raytracing out this summer. We will operate like this: I added the article *directly on GitHub* because the writing is tightly tied to the code. I know, this is weird, and possibly crazy, we’ll see.
-
-1. On GitHub, the main repository is here: https://github.com/DCC-Lab/RayTracing
-2. Take a look at the Board (it is called a Kanban board) of things to do: we monitor our progress here: https://github.com/DCC-Lab/RayTracing/projects/1. If you have a task you are taking up, then you “make it move” across the board.
-3. There is a branch called [tutorial-article](about:blank) where we will be working.
-4. Take a look at the **article.md** file in https://github.com/DCC-Lab/RayTracing/tree/tutorial-article/tutorial. Yes, we will try to write the article with markdown.
-5. We will work on the code and the text the same way: with Pull Requests.  You will modify the code/the text and we will review the modifications before integrating them.
-6. **If you want to write,** take a look at the article and talk to me. We can use all of my Optique Notes if needed! DeepML can translate very quickly and very well. We should use it.
-7. **If you want to code**, take a look at issues: https://github.com/DCC-Lab/RayTracing/issues
-8. **If you want to understand the code,** code unit tests! https://github.com/DCC-Lab/RayTracing/issues/52
-9. You found a bug? Write a test that does not pass, create an issue. Then fix it if you can and close the issue.
-10. **If you want to code examples**, look at the current examples and create new ones.
-11. **If you want to improve the** **aesthetics,** make suggestions and look at article for a figure request. You can even work on the rendering of the various elements if you feel like it to make it look better. I would be happy if the figures looked more like what I have in my notes.
-
-Here is the skeleton of the article.
-
 [TOC]
+
+## Authors
+
+**Very likely:** Valérie Pineau Noel, Elahe Parham, Shadi Massoumi, François Côté
+
+**Possible:** Gabriel Genest, Ludovick Bégin, Marc-André, others
+
+**Certain**: Daniel C. Côté 
 
 ## Abstract
 
-1. Simple optical design, 0th order: objects, images, but also apertures, field stops and invariant
+1. Simple optical design, first line of defense: objects, images, but also apertures, aperture stops, field stops, and invariant
 2. **For students and non optical designers**
-3. Simple Python library for tracing rays, few dependencies: only depends on `matplotlib`
+3. Simple Python library for tracing rays, few dependencies: only depends on `matplotlib`, Python >3.6
 4. Documented code, simplicity before power, but still, very powerful.
 
 ## Introduction
 
 - Optical design is everywhere, although not referred to by this name. Students need to know certain system properties to successfully build their systems. However, not everyone has the knowledge from undergraduate courses or experience. Of course, when needed eventually, many people dig in and figure it out, but not everyone actually digs in. This in fact, includes many people such as the last author of this article.
-
-- This Python module is designed to provide answers (and teach) to non-experts to identify weaknesses in their optical systems such as microscopes but also fiber-based devices. 
+- Tedious to obtain numbers even if formalism is not particularly complicated
+- Zemax, CodeV steep learning curve.
+- This Python module is designed to provide answers (and teach) to non-experts so they can identify weaknesses in their optical systems, in particular microscopes, but also fiber-based devices or illumination devices. 
 
 ## Objects, images, and rays
 
-This section contains a very short primer on imaging and ray matrices. It has definition of rays, ABCD matrices and a table gathering all useful matrices.
+This section contains a very short primer on imaging and ray matrices. It has definitions of rays, ABCD matrices and a table gathering all useful matrices.
 
 **Figure showing element, matrix and ray.**
 
