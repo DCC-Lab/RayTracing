@@ -298,6 +298,14 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
+    @property
+    def displayRange(self):
+        displayRange = 2 * self.largestDiameter()
+        if displayRange == float('+Inf'):
+            displayRange = self.objectHeight * 2
+
+        return displayRange
+
     def createRayTracePlot(
             self, axes,
             limitObjectToFieldOfView=False,
@@ -315,12 +323,8 @@ class ImagingPath(MatrixGroup):
 
          """
 
-        displayRange = 2 * self.largestDiameter()
-        if displayRange == float('+Inf'):
-            displayRange = self.objectHeight * 2
-
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
+        axes.set_ylim([-self.displayRange / 2 * 1.2, self.displayRange / 2 * 1.2])
 
         note1 = ""
         note2 = ""
