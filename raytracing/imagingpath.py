@@ -434,19 +434,19 @@ class ImagingPath(MatrixGroup):
     def drawObject(self, axes):  # pragma: no cover
         """ Draw the object as defined by objectPosition, objectHeight """
         (xScaling, yScaling) = self.axesScale(axes)
-        arrowWidth = xScaling * 0.01
-        arrowHeight = yScaling * 0.03
+        arrowHeadWidth = xScaling * 0.01
+        arrowHeadHeight = yScaling * 0.03
 
         axes.arrow(
             self.objectPosition,
             -self.objectHeight / 2,
             0,
             self.objectHeight,
-            width=arrowWidth / 5,
+            width=arrowHeadWidth / 5,
             fc='b',
             ec='b',
-            head_length=arrowHeight,
-            head_width=arrowWidth,
+            head_length=arrowHeadHeight,
+            head_width=arrowHeadWidth,
             length_includes_head=True)
 
     def computeImages(self):
@@ -468,8 +468,8 @@ class ImagingPath(MatrixGroup):
         objectPosition, objectHeight """
 
         (xScaling, yScaling) = self.axesScale(axes)
-        arrowWidth = xScaling * 0.01
-        arrowHeight = yScaling * 0.03
+        arrowHeadWidth = xScaling * 0.01
+        arrowHeadHeight = yScaling * 0.03
 
         for (imagePosition, magnification) in self.images:
             axes.arrow(
@@ -477,11 +477,11 @@ class ImagingPath(MatrixGroup):
                 -magnification * self.objectHeight / 2,
                 0,
                 magnification * self.objectHeight,
-                width=arrowWidth / 5,
+                width=arrowHeadWidth / 5,
                 fc='r',
                 ec='r',
-                head_length=arrowHeight,
-                head_width=arrowWidth,
+                head_length=arrowHeadHeight,
+                head_width=arrowHeadWidth,
                 length_includes_head=True)
 
     def drawStops(self, z, axes):  # pragma: no cover

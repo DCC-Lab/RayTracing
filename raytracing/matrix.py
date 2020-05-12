@@ -803,12 +803,12 @@ class Lens(Matrix):
         halfHeight = self.displayHalfHeight()  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesScale(axes)
-        arrowWidth = xScaling * 0.01
-        arrowHeight = yScaling * 0.03
-        axes.arrow(z, 0, 0, halfHeight, width=arrowWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
+        arrowHeadWidth = xScaling * 0.01
+        arrowHeadHeight = yScaling * 0.03
+        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
+        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
