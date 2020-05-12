@@ -29,7 +29,7 @@ class TestImagingPath(unittest.TestCase):
 
         largestDiameter = 20
 
-        self.assertEqual(path.displayRange, largestDiameter * 2)
+        self.assertEqual(path.displayRange, largestDiameter)
 
     def testDisplayRangeWithObjectHigherThanLens(self):
         path = ImagingPath()
@@ -39,14 +39,14 @@ class TestImagingPath(unittest.TestCase):
 
         largestDiameter = path.objectHeight * 2
 
-        self.assertEqual(path.displayRange, largestDiameter * 2)
+        self.assertEqual(path.displayRange, largestDiameter)
 
     def testDisplayRangeWithEmptyPath(self):
         path = ImagingPath()
 
         largestDiameter = path.objectHeight * 2
 
-        self.assertEqual(path.displayRange, largestDiameter * 2)
+        self.assertEqual(path.displayRange, largestDiameter)
 
 
 if __name__ == '__main__':
