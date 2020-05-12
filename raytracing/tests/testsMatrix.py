@@ -29,7 +29,6 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m3.C, 1 * 7 + 3 * 8)
         self.assertEqual(m3.D, 2 * 7 + 4 * 8)
 
-
     def testMatrixProductWithRayMath(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
         rayIn = Ray(y=1, theta=45)
@@ -72,7 +71,6 @@ class TestMatrix(unittest.TestCase):
         rayIn = Ray(y=-1, theta=45, z=1, isBlocked=True)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
-
 
     def testMatrixProductLength(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
@@ -139,39 +137,48 @@ class TestMatrix(unittest.TestCase):
         q = complex(0, math.pi)
         self.assertEqual(beamOut.q, (1 * q + 2) / (3 * q + 4))
 
-    def testMatrixProductGaussianBeamWavelengthOut(self):
+    def testMatrixProductGaussianNotSameRefractionIndex(self):
         m = Matrix(A=1, B=2, C=3, D=4)
+        beam = GaussianBeam(w=1, n=1.2)
+
+        with self.assertRaises(UserWarning):
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("error")
+                m * beam
+
+    def testMatrixProductGaussianBeamWavelengthOut(self):
+        m = Matrix(A=1, B=2, C=3, D=4, )
         beamIn = GaussianBeam(w=1, wavelength=1)
         beamOut = m * beamIn
         self.assertEqual(beamOut.wavelength, 1)
 
     def testMatrixProductGaussianRefractIndexOut(self):
-        m = Matrix(A=1, B=2, C=3, D=4, backIndex=1.33)
-        beamIn = GaussianBeam(w=1, wavelength=1)
+        m = Matrix(A=1, B=2, C=3, D=4, frontIndex=1.33, backIndex=1.33)
+        beamIn = GaussianBeam(w=1, wavelength=1, n=1.33)
         beamOut = m * beamIn
         self.assertEqual(beamOut.n, 1.33)
 
     def testMatrixProductGaussianLength(self):
-        m = Matrix(A=1, B=2, C=3, D=4, backIndex=1.33, physicalLength=1.2)
-        beamIn = GaussianBeam(w=1, wavelength=1, z=1)
+        m = Matrix(A=1, B=2, C=3, D=4, frontIndex=1.33, physicalLength=1.2)
+        beamIn = GaussianBeam(w=1, wavelength=1, z=1, n=1.33)
         beamOut = m * beamIn
         self.assertEqual(beamOut.z, 2.2)
 
     def testMatrixProductGaussianClippedOverAperture(self):
-        m = Matrix(A=1, B=2, C=3, D=4, backIndex=1.33, physicalLength=1.2, apertureDiameter=2)
+        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1.2, apertureDiameter=2)
         beamIn = GaussianBeam(w=1.1, wavelength=1, z=1)
         beamOut = m * beamIn
         self.assertTrue(beamOut.isClipped)
 
     def testMatrixProductGaussianInitiallyClipped(self):
-        m = Matrix(A=1, B=2, C=3, D=4, backIndex=1.33, physicalLength=1.2, apertureDiameter=2)
+        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1.2, apertureDiameter=2)
         beamIn = GaussianBeam(w=0.5, wavelength=1, z=1)
         beamIn.isClipped = True
         beamOut = m * beamIn
         self.assertTrue(beamOut.isClipped)
 
     def testMatrixProductGaussianNotClipped(self):
-        m = Matrix(A=1, B=2, C=3, D=4, backIndex=1.33, physicalLength=1.2)
+        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1.2)
         beamIn = GaussianBeam(w=1.1, wavelength=1, z=1)
         beamOut = m * beamIn
         self.assertFalse(beamOut.isClipped)
@@ -207,7 +214,7 @@ class TestMatrix(unittest.TestCase):
             m2.transferMatrix(upTo=0.5)
 
     def testTransferMatrices(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4)
+        m1 = Matrix(A=1, B=2, C=3, D=4, frontIndex=2)
         self.assertEqual(m1.transferMatrices(), [m1])
         m1 * GaussianBeam(w=1, n=2)
 
@@ -265,14 +272,12 @@ class TestMatrix(unittest.TestCase):
         traceMany = [rays * 2]
         self.assertListEqual(m.traceMany(rays), traceMany)
 
-    def deactivated_testTraceManyThroughList(self):
-        # Deactivited because Rays doesn't support indexing
+    def testTraceManyThroughList(self):
         rays = [Ray(y, y) for y in range(10)]
         m = Matrix(physicalLength=1)
         traceManyThrough = m.traceManyThrough(rays)
         for i in range(len(rays)):
             self.assertEqual(rays[i], traceManyThrough[i])
-
 
     def testTraceManyThroughOutput(self):
         import io
@@ -285,6 +290,27 @@ class TestMatrix(unittest.TestCase):
             m.traceManyThrough(rays, True)
         out = f.getvalue()
         self.assertEqual(out.strip(), "Progress 10000/10000 (100%)")
+
+    def testTraceManyThroughNoOutput(self):
+        import io
+        from contextlib import redirect_stdout
+
+        f = io.StringIO()
+        with redirect_stdout(f):
+            rays = [Ray(y, y) for y in range(10_000)]
+            m = Matrix(physicalLength=1)
+            m.traceManyThrough(rays, False)
+        out = f.getvalue()
+        self.assertEqual(out.strip(), "")
+
+    def testTraceManyThroughInParallel(self):
+        rays = [Ray(y, y) for y in range(10)]
+        rays = Rays(rays=rays)
+        m = Matrix(physicalLength=1)
+        trace = m.traceManyThroughInParallel(rays)
+        print(list(rays))
+        for ray in trace:
+            print(ray)
 
     def testIsImaging(self):
         m1 = Matrix(A=1, B=0, C=3, D=4)
