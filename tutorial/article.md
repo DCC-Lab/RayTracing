@@ -28,7 +28,9 @@
 - Zemax, CodeV steep learning curve.
 - This Python module is designed to provide answers (and teach) to non-experts so they can identify weaknesses in their optical systems, in particular microscopes, but also fiber-based devices or illumination devices. 
 
-## Objects, images, and rays
+## Formalism
+
+### Rays through optical elements
 
 For completeness, we start with a very compact introduction to the ray matrix formalism to avoid.  The ABCD matrix formalism (or ray matrices) allows a ray (column vector) to be transformed from one reference plane to another through different optical elements (represented by matrices). A ray is defined as :
 $$
@@ -45,10 +47,10 @@ $$
 A & B \\
 C & D
 \end{matrix}
-\Biggr].
+\Biggr]
 $$
 
-It transforms a ray with a left-multiplication $\mathbf{r}^\prime = \mathbf{M} \mathbf{r}$, which gives explicitly:
+and describes everything about the transformation of a ray between two reference planes. It transforms a ray with a left-multiplication $\mathbf{r}^\prime = \mathbf{M} \mathbf{r}$, which gives explicitly:
 
 $$
 y^\prime = A y + B \theta,
@@ -57,6 +59,10 @@ $$
 $$
 \theta^\prime = C y + D \theta.
 $$
+**[Redo this figure better? translate, also add vertices and length ]** 
+
+<img src="article.assets/image-20200512140455081.png" alt="image-20200512140455081" style="zoom: 25%;" />
+
 There really are only two transformations that need to be described to recover the behavior of any optical elements: the propagation by a distance $d$ in any homogeneous medium :
 $$
 \mathbf{S}(d) = \Biggl[ 
@@ -84,30 +90,65 @@ $$
 where $n_1$ is the refractive index at the entry plane and $n_2$ at the exit plane. A ray $\mathbf{r}$ that crosses the elements  $\mathbf{M}_1,\mathbf{M}_2,\mathbf{M}_3, ... \mathbf{M}_i$ will be transformed into $\mathbf{r}^\prime$ by the sequential *left* application of the matrices representing the elements (note the order of multiplication): 
 
 $$
-\mathbf{r}^\prime = \mathbf{M}_i,...\mathbf{M}_3,\mathbf{M}_2 \mathbf{M}_1 \mathbf{r}.
+\mathbf{r}^\prime = \mathbf{M}_i,...\mathbf{M}_3,\mathbf{M}_2 \mathbf{M}_1 \mathbf{r} = \mathbf{M} \mathbf{r}.
 $$
 
-[Recreate this table and translate]
+### Useful properties
+
+From this, we can already extract important properties for any optical systems:
+
+1. When $B=0$, whe have an **imaging condition** where an object at the entrance is imaged at the exit plane, since a ray originating from a height $y$ reaches a height $y^\prime=Ay$, independent of the angle of emission $\theta$. Naturally, $A$ is the transverse magnification, and $D$ is the angular magnification. *[show a figure.]*,
+2. **The equivalent focal distance** for any system is $C = -\frac{1}{f}$ *[Check index of refraction  show a figure.]*,
+3. **Principal planes:** Focal distances are measured from principal planes, which are planes of unity magnification in any systems where all the focusing power is concentrated. They are located at $L_\mathrm{PP_i} = \frac{{{n_1}/{n_2} - D}}{C}$ and $L_\mathrm{PP_o} = \frac{{1 - A}}{C}$. *[Explain and discuss signs, show a figure*]
+4. **Optical invariant:** Finally, it can be shown that the product $n ( y_1 \theta_2 - y_2 \theta_1)$ for any two rays at a given point is a constant throughout the system.  Therefore if a component cannot "support" a certain product, then it becomes clear the rays will be blocked.
+
+### Use of formalism through examples
+
+A simple thin lens made of a material of index $n$ and two curved surfaces of radii $R_1$ and $R_2$ is described by :
+$$
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{1-n}{R_2} & n
+\end{matrix}
+\Biggl]
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{n-1}{n R_1} & \frac{1}{n}
+\end{matrix}
+\Biggl]
+=
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-(n-1)\left( \frac{1}{R_1} - \frac{1}{R_2}  \right) & 1
+\end{matrix}
+\Biggl]
+\equiv
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{1}{f} & 1
+\end{matrix}
+\Biggl]
+,
+$$
+where we recover the Lensmaker equation for thin lenses with $C = -1/f$. Of course, more complex lenses can be modelled (always within the paraxial equation) such as achromatic doublets. Thorlabs and Edmund Optics both provide the three radii of curvatures $R_1, R_2, R_3$ of dielectric interfaces as well as the thickness $t_1, t_2$ and indices $n_1,n_2$ of both materials.  It becomes a simple application of the formalism to recover the expected focal length from an achromatic doublets in air with:
+$$
+\mathbf{D}(R_1,R_2,R_3,t_1, t_2, n_1, n_2) \equiv \mathbf{C}(R_3, n_2, 1)\mathbf{S}(t_2)\mathbf{C}(R_2, n_1, n_2)\mathbf{S}(t_1)\mathbf{C}(R_1, 1, n_1).
+$$
+It will be shown below that many achromatic lenses from manufacturers are included in the module.
+
+Finally, 
+
+**[Recreate this table and translate]**
 
 <img src="article.assets/image-20200512135616564.png" alt="image-20200512135616564" style="zoom:25%;" />
 
-**Figure showing element, matrix and ray.**
 
-Definitions and illustration of how to use formalism:
 
-1. $C = -1/f$, measured from principal planes
-2. An imaging matrix has $ B= 0$
-   1. When it is imaging, A = transverse magnification
-   2. When it is imaging, D = angular magnification
-   3. Principal planes distances
 
-We need a figure that shows a group of arbitrary optical elements, with all the important properties (ACBD) in addition to all the properties that are considered in `Matrix` such as vertices, length.
-
-Simple example (?): recovering thick lens equation from interface and space.
-
-Other example: achromats from EO and Thorlabs can be modelled.
-
-Optical invariant: the product $n ( y_1 \theta_2 - y_2 \theta_1)$ is a constant.  Therefore if a component cannot "support" a certain product, then it becomes clear the rays will be blocked.
 
 ## Apertures
 
