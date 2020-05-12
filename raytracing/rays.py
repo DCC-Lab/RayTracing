@@ -148,6 +148,9 @@ class Rays:
             return ray
 
         raise StopIteration
+    
+    def __getitem__(self, item):
+        return self.rays[item]
 
     def append(self, ray):
         if self.rays is not None:
