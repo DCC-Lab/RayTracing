@@ -301,8 +301,8 @@ class ImagingPath(MatrixGroup):
     @property
     def displayRange(self):
         displayRange = 2 * self.largestDiameter()
-        if displayRange == float('+Inf'):
-            displayRange = self.objectHeight * 2
+        if displayRange == float('+Inf') or displayRange < self.objectHeight * 4:
+            displayRange = self.objectHeight * 4
 
         return displayRange
 

@@ -10,16 +10,43 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath()
         path.append(System2f(f=10))
         self.assertEqual(path.fieldOfView(), inf)
+
     def testImagingPathInfiniteFieldOfView2(self):
         path = ImagingPath()
         path.append(System2f(f=10, diameter=10))
         self.assertEqual(path.fieldOfView(), inf)
+
     def testImagingPathInfiniteFieldOfView3(self):
         path = ImagingPath()
         path.append(System2f(f=10, diameter=10))
         path.append(Aperture(diameter=20))
         self.assertAlmostEqual(path.fieldOfView(), 20, 2)
 
+    def testDisplayRangeWithFiniteLens(self):
+        path = ImagingPath()  # default objectHeight is 10
+        path.append(Space(d=10))
+        path.append(Lens(f=5, diameter=20))
+
+        largestDiameter = 20
+
+        self.assertEqual(path.displayRange, largestDiameter * 2)
+
+    def testDisplayRangeWithObjectHigherThanLens(self):
+        path = ImagingPath()
+        path.objectHeight = 20
+        path.append(Space(d=10))
+        path.append(Lens(f=5, diameter=20))
+
+        largestDiameter = path.objectHeight * 2
+
+        self.assertEqual(path.displayRange, largestDiameter * 2)
+
+    def testDisplayRangeWithEmptyPath(self):
+        path = ImagingPath()
+
+        largestDiameter = path.objectHeight * 2
+
+        self.assertEqual(path.displayRange, largestDiameter * 2)
 
 
 if __name__ == '__main__':
