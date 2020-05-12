@@ -679,7 +679,7 @@ class Matrix(object):
 
         center = z + self.L / 2.0
         axes.annotate(self.label, xy=(center, 0.0),
-                      xytext=(center, halfHeight * 1.5),
+                      xytext=(center, halfHeight * 1.4),
                       fontsize=8, xycoords='data', ha='center',
                       va='bottom', clip_box=axes.bbox, clip_on=True)
 
