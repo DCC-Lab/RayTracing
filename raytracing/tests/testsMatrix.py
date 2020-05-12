@@ -242,6 +242,46 @@ class TestMatrix(unittest.TestCase):
         trace = m.traceThrough(ray)
         self.assertEqual(trace, m * ray)
 
+    def testLagrangeInvariant(self):
+        ray1 = Ray(10, 1)
+        ray2 = Ray(0, 0.5)
+        m = Matrix()
+        invariant = m.lagrangeInvariant(ray1, ray2)
+        self.assertEqual(invariant, 1 * (ray1.theta * ray2.y - ray2.theta * ray1.y))
+
+    def testTraceMany(self):
+        rays = [Ray(y, theta) for y, theta in zip(range(10, 20), range(10))]
+        m = Matrix(physicalLength=1.01)
+        traceMany = [[ray, ray] for ray in rays]
+        self.assertListEqual(m.traceMany(rays), traceMany)
+
+    def testTraceManyJustOne(self):
+        rays = [Ray()]
+        m = Matrix(physicalLength=1e-9)
+        traceMany = [rays * 2]
+        self.assertListEqual(m.traceMany(rays), traceMany)
+
+    def deactivated_testTraceManyThroughList(self):
+        # Deactivited because Rays doesn't support indexing
+        rays = [Ray(y, y) for y in range(10)]
+        m = Matrix(physicalLength=1)
+        traceManyThrough = m.traceManyThrough(rays)
+        for i in range(len(rays)):
+            self.assertEqual(rays[i], traceManyThrough[i])
+
+
+    def testTraceManyThroughOutput(self):
+        import io
+        from contextlib import redirect_stdout
+
+        f = io.StringIO()
+        with redirect_stdout(f):
+            rays = [Ray(y, y) for y in range(10_000)]
+            m = Matrix(physicalLength=1)
+            m.traceManyThrough(rays, True)
+        out = f.getvalue()
+        self.assertEqual(out.strip(), "Progress 10000/10000 (100%)")
+
     def testIsImaging(self):
         m1 = Matrix(A=1, B=0, C=3, D=4)
         self.assertTrue(m1.isImaging)
