@@ -9,6 +9,7 @@ import matplotlib.path as mpath
 import matplotlib.transforms as transforms
 import sys
 
+
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
     the combination of Matrix() or MatrixGroup() to be used 
@@ -371,7 +372,7 @@ class ImagingPath(MatrixGroup):
         if self.showEntrancePupil:
             self.drawEntrancePupil(z=0, axes=axes)
 
-        self.drawAt(z=0, axes=axes)
+        self.drawAt(z=0, axes=axes, showLabels=self.showElementLabels)
         if self.showPointsOfInterest:
             self.drawPointsOfInterest(z=0, axes=axes)
             self.drawStops(z=0, axes=axes)
@@ -518,8 +519,9 @@ class ImagingPath(MatrixGroup):
 
     def drawOpticalElements(self, z, axes):  # pragma: no cover
         """ Deprecated. Use drawAt() """
-        print("drawOpticalElements() was renamed drawAt()")
-        self.drawAt(z, axes)
+        msg = "drawOpticalElements() was renamed drawAt()"
+        warnings.warn(msg, DeprecationWarning)
+        self.drawAt(z, axes, showLabels=self.showElementLabels)
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):  # pragma: no cover

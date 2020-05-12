@@ -1,5 +1,6 @@
 import unittest
 import env  # modifies path
+
 from raytracing import *
 
 inf = float("+inf")
@@ -27,6 +28,7 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m3.B, 2 * 5 + 4 * 6)
         self.assertEqual(m3.C, 1 * 7 + 3 * 8)
         self.assertEqual(m3.D, 2 * 7 + 4 * 8)
+
 
     def testMatrixProductWithRayMath(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
@@ -70,6 +72,7 @@ class TestMatrix(unittest.TestCase):
         rayIn = Ray(y=-1, theta=45, z=1, isBlocked=True)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
+
 
     def testMatrixProductLength(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
@@ -206,6 +209,7 @@ class TestMatrix(unittest.TestCase):
     def testTransferMatrices(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
         self.assertEqual(m1.transferMatrices(), [m1])
+        m1 * GaussianBeam(w=1, n=2)
 
     def testTrace(self):
         ray = Ray(y=1, theta=1)

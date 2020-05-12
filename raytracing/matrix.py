@@ -13,6 +13,17 @@ import math
 
 import time
 import tempfile
+import warnings
+
+
+
+def warningOnOneLine(message, category, filename, lineno, line=None):
+    return ' %s:%s\n%s:%s' % (filename, lineno, category.__name__, message)
+
+
+
+warnings.formatwarning = warningOnOneLine
+
 
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
@@ -39,18 +50,18 @@ class Matrix(object):
 
     def __init__(
             self,
-            A:float=1,
-            B:float=0,
-            C:float=0,
-            D:float=1,
-            physicalLength:float=0,
+            A: float = 1,
+            B: float = 0,
+            C: float = 0,
+            D: float = 1,
+            physicalLength: float = 0,
             frontVertex=None,
             backVertex=None,
             frontIndex=1.0,
             backIndex=1.0,
             apertureDiameter=float('+Inf'),
             label=''
-            ):
+    ):
         # Ray matrix formalism
         self.A = float(A)
         self.B = float(B)
@@ -76,7 +87,7 @@ class Matrix(object):
 
     @property
     def determinant(self):
-        return self.A*self.D - self.B*self.C
+        return self.A * self.D - self.B * self.C
 
     def __mul__(self, rightSide):
         """Operator overloading allowing easy to read matrix multiplication
@@ -162,9 +173,11 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            print("Warning: the gaussian beam is not tracking the index of refraction properly {0} {1}".format(rightSideBeam.n, self.frontIndex))
+            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
+                rightSideBeam.n, self.frontIndex)
+            warnings.warn(msg, UserWarning)
 
-        qprime = (complex(self.A) * q + complex(self.B) ) / (complex(self.C)*q + complex(self.D))
+        qprime = (complex(self.A) * q + complex(self.B)) / (complex(self.C) * q + complex(self.D))
 
         outputBeam = GaussianBeam(q=qprime, wavelength=rightSideBeam.wavelength)
         outputBeam.z = self.L + rightSideBeam.z
@@ -252,7 +265,7 @@ class Matrix(object):
                     ray.isBlocked = True
                 rayTrace.append(ray)
 
-        rayTrace.append(self*ray)
+        rayTrace.append(self * ray)
 
         return rayTrace
 
@@ -334,7 +347,7 @@ class Matrix(object):
         if processes is None:
             processes = multiprocessing.cpu_count()
 
-        theExplicitList = list(inputRays) 
+        theExplicitList = list(inputRays)
         manyInputRays = [theExplicitList[i::processes] for i in range(processes)]
 
         with multiprocessing.Pool(processes=processes) as pool:
@@ -345,7 +358,7 @@ class Matrix(object):
         if processes is None:
             processes = multiprocessing.cpu_count()
 
-        manyInputRays = list(inputRays) 
+        manyInputRays = list(inputRays)
 
         with multiprocessing.Pool(processes=processes) as pool:
             outputRays = pool.map(self.traceThrough, manyInputRays)
@@ -448,7 +461,6 @@ class Matrix(object):
         else:
             return None
 
-
     def focusPositions(self, z):
         """ Positions of both focal points on either side of the element.
 
@@ -491,7 +503,7 @@ class Matrix(object):
 
         if self.D == 0:
             distance = float("+inf")
-            conjugateMatrix = None # Unable to compute with inf
+            conjugateMatrix = None  # Unable to compute with inf
         else:
             distance = -self.B / self.D
             conjugateMatrix = Space(d=distance) * self
@@ -541,7 +553,7 @@ class Matrix(object):
 
         return self
 
-    def display(self): # pragma: no cover
+    def display(self):  # pragma: no cover
         """ Display this component, without any ray tracing but with
         all of its cardinal points and planes. If the component has no
         power (i.e. C == 0) this will fail.
@@ -553,7 +565,7 @@ class Matrix(object):
             displayRange = self.displayHalfHeight() * 4
 
         axes.set(xlabel='Distance', ylabel='Height', title="Properties of {0}".format(self.label))
-        axes.set_ylim([-displayRange /2 * 1.2, displayRange / 2 * 1.2])
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
 
         self.drawAt(z=0, axes=axes)
         self.drawLabels(z=0, axes=axes)
@@ -565,7 +577,7 @@ class Matrix(object):
 
         self._showPlot()
 
-    def _showPlot(self): # internal, do not use
+    def _showPlot(self):  # internal, do not use
         try:
             plt.plot()
             if sys.platform.startswith('win'):
@@ -581,12 +593,12 @@ class Matrix(object):
         except KeyboardInterrupt:
             plt.close()
 
-    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
 
         Default is a black box of appropriate length.
         """
-        halfHeight = self.largestDiameter()/2
+        halfHeight = self.largestDiameter() / 2
         if halfHeight == float("+Inf"):
             halfHeight = self.displayHalfHeight()
 
@@ -595,19 +607,19 @@ class Matrix(object):
                               transform=axes.transData, clip_on=True)
         axes.add_patch(p)
 
-    def drawVertices(self, z, axes): # pragma: no cover
+    def drawVertices(self, z, axes):  # pragma: no cover
         """ Draw vertices of the system """
-        axes.plot([z+self.frontVertex, z+self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
+        axes.plot([z + self.frontVertex, z + self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
-        axes.text(z+self.frontVertex, 0, '$V_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
-        axes.text(z+self.backVertex, 0, '$V_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+        axes.text(z + self.frontVertex, 0, '$V_f$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+        axes.text(z + self.backVertex, 0, '$V_b$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
 
-    def drawCardinalPoints(self, z, axes): # pragma: no cover
+    def drawCardinalPoints(self, z, axes):  # pragma: no cover
         """ Draw the focal points of a thin lens as black dots """
         (f1, f2) = self.focusPositions(z)
         axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
 
-    def drawPrincipalPlanes(self, z, axes): # pragma: no cover
+    def drawPrincipalPlanes(self, z, axes):  # pragma: no cover
         """ Draw the principal planes """
         halfHeight = self.displayHalfHeight()
         (p1, p2) = self.principalPlanePositions(z=z)
@@ -617,9 +629,8 @@ class Matrix(object):
 
         axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
         axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
-        axes.text(p1, halfHeight*1.2, '$P_f$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
-        axes.text(p2, halfHeight*1.2, '$P_b$',ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
-
+        axes.text(p1, halfHeight * 1.2, '$P_f$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+        axes.text(p2, halfHeight * 1.2, '$P_b$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
 
         (f1, f2) = self.effectiveFocalLengths()
         FFL = self.frontFocalLength()
@@ -629,50 +640,50 @@ class Matrix(object):
         h = halfHeight * 0.4
         # Front principal plane to front focal spot (effective focal length)
         axes.annotate("", xy=(p1, h), xytext=(F1, h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text(p1-f1/2, h, 'EFL = {0:0.1f}'.format(f1),
-            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text(p1 - f1 / 2, h, 'EFL = {0:0.1f}'.format(f1),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
         # Back principal plane to back focal spot (effective focal length)
         axes.annotate("", xy=(p2, -h), xytext=(F2, -h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text(p2+f2/2, -h, 'EFL = {0:0.1f}'.format(f1),
-            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text(p2 + f2 / 2, -h, 'EFL = {0:0.1f}'.format(f1),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
 
         # Front vertex to front focal spot (front focal length or FFL)
         h = 0.5
 
         axes.annotate("", xy=(self.frontVertex, h), xytext=(F1, h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text((self.frontVertex+F1)/2, h, 'FFL = {0:0.1f}'.format(FFL),
-            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text((self.frontVertex + F1) / 2, h, 'FFL = {0:0.1f}'.format(FFL),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
 
         # Back vertex to back focal spot (back focal length or BFL)
         axes.annotate("", xy=(self.backVertex, -h), xytext=(F2, -h),
-                     xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                     clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text((self.backVertex+F2)/2, -h, 'BFL = {0:0.1f}'.format(BFL),
-            ha='center', va='bottom',clip_box=axes.bbox, clip_on=True)
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text((self.backVertex + F2) / 2, -h, 'BFL = {0:0.1f}'.format(BFL),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
 
-    def drawLabels(self, z, axes): # pragma: no cover
+    def drawLabels(self, z, axes):  # pragma: no cover
         """ Draw element labels on plot with starting edge at 'z'.
 
         Labels are drawn 50% above the display height
         """
         if self.hasFiniteApertureDiameter():
-            halfHeight = self.largestDiameter()/2.0
+            halfHeight = self.largestDiameter() / 2.0
         else:
             halfHeight = self.displayHalfHeight()
 
         center = z + self.L / 2.0
         axes.annotate(self.label, xy=(center, 0.0),
-                     xytext=(center, halfHeight * 1.5),
-                     fontsize=8, xycoords='data', ha='center',
-                     va='bottom',clip_box=axes.bbox, clip_on=True)
+                      xytext=(center, halfHeight * 1.5),
+                      fontsize=8, xycoords='data', ha='center',
+                      va='bottom', clip_box=axes.bbox, clip_on=True)
 
-    def drawPointsOfInterest(self, z, axes): # pragma: no cover
+    def drawPointsOfInterest(self, z, axes):  # pragma: no cover
         """
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
@@ -691,10 +702,10 @@ class Matrix(object):
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                         xycoords='data', fontsize=12,
-                         ha='center', va='bottom')
+                          xycoords='data', fontsize=12,
+                          ha='center', va='bottom')
 
-    def drawAperture(self, z, axes): # pragma: no cover
+    def drawAperture(self, z, axes):  # pragma: no cover
         """ Draw the aperture size for this element.  Any element may
         have a finite aperture size, so this function is general for all elements.
         """
@@ -702,25 +713,25 @@ class Matrix(object):
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0
 
-            center = z + self.L/2
+            center = z + self.L / 2
             if self.L == 0:
-                (xScaling,_) = self.axesToDataScaling(axes)
-                width = xScaling*0.01/2
+                (xScaling, _) = self.axesToDataScaling(axes)
+                width = xScaling * 0.01 / 2
             else:
-                width = self.L/2
+                width = self.L / 2
 
             axes.add_patch(patches.Polygon(
-                           [[center - width, halfHeight],
-                            [center + width, halfHeight]],
-                           linewidth=3,
-                           closed=False,
-                           color='0.7'))
+                [[center - width, halfHeight],
+                 [center + width, halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
             axes.add_patch(patches.Polygon(
-                           [[center - width, -halfHeight],
-                            [center + width, -halfHeight]],
-                           linewidth=3,
-                           closed=False,
-                           color='0.7'))
+                [[center - width, -halfHeight],
+                 [center + width, -halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
 
     def displayHalfHeight(self):
         """ A reasonable height for display purposes for
@@ -745,9 +756,9 @@ class Matrix(object):
 
         fromDispToData = axes.transData.inverted()
         fromAxesToDisp = axes.transAxes
-        scalingFromAxesToData = fromDispToData.transform(fromAxesToDisp.transform([[1,1],[0,0]]))
-        xScaling = abs(scalingFromAxesToData[1][0]-scalingFromAxesToData[0][0])
-        yScaling = abs(scalingFromAxesToData[1][1]-scalingFromAxesToData[0][1])
+        scalingFromAxesToData = fromDispToData.transform(fromAxesToDisp.transform([[1, 1], [0, 0]]))
+        xScaling = abs(scalingFromAxesToData[1][0] - scalingFromAxesToData[0][0])
+        yScaling = abs(scalingFromAxesToData[1][1] - scalingFromAxesToData[0][1])
         return (xScaling, yScaling)
 
     def __str__(self):
@@ -779,18 +790,18 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
-    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a thin lens at z """
 
-        halfHeight = self.displayHalfHeight() # real units, i.e. data
+        halfHeight = self.displayHalfHeight()  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesToDataScaling(axes)
         arrowWidth = xScaling * 0.01
         arrowHeight = yScaling * 0.03
-        axes.arrow(z, 0, 0, halfHeight, width=arrowWidth/5, fc='k', ec='k',
-                  head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowWidth/5, fc='k', ec='k',
-                  head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
+        axes.arrow(z, 0, 0, halfHeight, width=arrowWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
+        axes.arrow(z, 0, 0, -halfHeight, width=arrowWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
@@ -808,6 +819,7 @@ class Lens(Matrix):
 
         return pointsOfInterest
 
+
 class CurvedMirror(Matrix):
     """A curved mirror of radius R and infinite or finite diameter
 
@@ -815,12 +827,11 @@ class CurvedMirror(Matrix):
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
         super(CurvedMirror, self).__init__(A=1, B=0, C=-2 / float(R), D=1,
-                                   physicalLength=0,
-                                   apertureDiameter=diameter,
-                                   frontVertex=0,
-                                   backVertex=0,
-                                   label=label)
-
+                                           physicalLength=0,
+                                           apertureDiameter=diameter,
+                                           frontVertex=0,
+                                           backVertex=0,
+                                           label=label)
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -856,7 +867,7 @@ class Space(Matrix):
                                     apertureDiameter=diameter,
                                     label=label)
 
-    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw nothing because free space is nothing. """
         return
 
@@ -868,6 +879,7 @@ class Space(Matrix):
             return Space(distance)
         else:
             return self
+
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
@@ -883,8 +895,8 @@ class DielectricInterface(Matrix):
         self.R = R
         a = 1.0
         b = 0.0
-        c = - (n2-n1)/(n2*R)
-        d = n1/n2
+        c = - (n2 - n1) / (n2 * R)
+        d = n1 / n2
 
         super(DielectricInterface, self).__init__(A=a, B=b, C=c, D=d,
                                                   physicalLength=0,
@@ -895,7 +907,7 @@ class DielectricInterface(Matrix):
                                                   backIndex=n2,
                                                   label=label)
 
-    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a curved surface starting at 'z'.
         We are not able yet to determine the color to fill with.
         It is possible to draw a
@@ -908,9 +920,9 @@ class DielectricInterface(Matrix):
         # For simplicity, 1 is front, 2 is back.
         # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
         v1 = z + self.frontVertex
-        phi1 = math.asin(h/abs(self.R))
-        delta1 = self.R*(1.0-math.cos(phi1))
-        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R)
+        phi1 = math.asin(h / abs(self.R))
+        delta1 = self.R * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * self.R)
         corner1 = v1 + delta1
 
         Path = mpath.Path
@@ -924,7 +936,7 @@ class DielectricInterface(Matrix):
 
         axes.add_patch(p)
         if showLabels:
-            self.drawLabels(z,axes)
+            self.drawLabels(z, axes)
 
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
@@ -938,8 +950,8 @@ class DielectricInterface(Matrix):
         self.n1 = self.n2
         self.n2 = temp
         self.R = -self.R
-        self.C = - (self.n2-self.n1)/(self.n2*self.R)
-        self.D = self.n1/self.n2
+        self.C = - (self.n2 - self.n1) / (self.n2 * self.R)
+        self.D = self.n1 / self.n2
 
         return self
 
@@ -958,10 +970,10 @@ class ThickLens(Matrix):
 
         t = thickness
 
-        a = t*(1.0-n)/(n*R1) + 1
-        b = t/n
-        c = - (n - 1.0)*(1.0/R1 - 1.0/R2 + t*(n-1.0)/(n*R1*R2))
-        d = t*(n-1.0)/(n*R2) + 1
+        a = t * (1.0 - n) / (n * R1) + 1
+        b = t / n
+        c = - (n - 1.0) * (1.0 / R1 - 1.0 / R2 + t * (n - 1.0) / (n * R1 * R2))
+        d = t * (n - 1.0) / (n * R2) + 1
         super(ThickLens, self).__init__(A=a, B=b, C=c, D=d,
                                         physicalLength=thickness,
                                         apertureDiameter=diameter,
@@ -969,7 +981,7 @@ class ThickLens(Matrix):
                                         backVertex=thickness,
                                         label=label)
 
-    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a faint blue box with slightly curved interfaces
         of length 'thickness' starting at 'z'.
 
@@ -985,15 +997,15 @@ class ThickLens(Matrix):
         # For simplicity, 1 is front, 2 is back.
         # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
         v1 = z + self.frontVertex
-        phi1 = math.asin(h/abs(self.R1))
-        delta1 = self.R1*(1.0-math.cos(phi1))
-        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*self.R1)
+        phi1 = math.asin(h / abs(self.R1))
+        delta1 = self.R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * self.R1)
         corner1 = v1 + delta1
 
         v2 = z + self.backVertex
-        phi2 = math.asin(h/abs(self.R2))
-        delta2 = self.R2*(1.0-math.cos(phi2))
-        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*self.R2)
+        phi2 = math.asin(h / abs(self.R2))
+        delta2 = self.R2 * (1.0 - math.cos(phi2))
+        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * self.R2)
         corner2 = v2 + delta2
 
         Path = mpath.Path
@@ -1014,9 +1026,9 @@ class ThickLens(Matrix):
 
         axes.add_patch(p)
         if showLabels:
-            self.drawLabels(z,axes)
+            self.drawLabels(z, axes)
 
-    def drawAperture(self, z, axes): # pragma: no cover
+    def drawAperture(self, z, axes):  # pragma: no cover
         """ Draw the aperture size for this element.
         The thick lens requires special care because the corners are not
         separated by self.L: the curvature makes the edges shorter.
@@ -1024,23 +1036,23 @@ class ThickLens(Matrix):
         """
 
         if self.apertureDiameter != float('+Inf'):
-            h = self.largestDiameter()/2.0
-            phi1 = math.asin(h/abs(self.R1))
-            corner1 = z + self.frontVertex + self.R1*(1.0-math.cos(phi1))
+            h = self.largestDiameter() / 2.0
+            phi1 = math.asin(h / abs(self.R1))
+            corner1 = z + self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
 
-            phi2 = math.asin(h/abs(self.R2))
-            corner2 = z + self.backVertex + self.R2*(1.0-math.cos(phi2))
+            phi2 = math.asin(h / abs(self.R2))
+            corner2 = z + self.backVertex + self.R2 * (1.0 - math.cos(phi2))
 
             axes.add_patch(patches.Polygon(
-                           [[corner1, h],[corner2, h]],
-                           linewidth=3,
-                           closed=False,
-                           color='0.7'))
+                [[corner1, h], [corner2, h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
             axes.add_patch(patches.Polygon(
-                           [[corner1, -h],[corner2, -h]],
-                           linewidth=3,
-                           closed=False,
-                           color='0.7'))
+                [[corner1, -h], [corner2, -h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1057,6 +1069,7 @@ class ThickLens(Matrix):
 
         return pointsOfInterest
 
+
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
 
@@ -1069,7 +1082,7 @@ class DielectricSlab(ThickLens):
                                              diameter=diameter,
                                              label=label)
 
-    def drawAt(self, z, axes, showLabels=False): # pragma: no cover
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a faint blue box of length L starting at 'z'.
 
         """
