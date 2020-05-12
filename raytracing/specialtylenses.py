@@ -69,12 +69,12 @@ class AchromatDoubletLens(MatrixGroup):
         # focal length (fa) is actually within 1% of the calculated focal length
         (f, f) = self.focalDistances()
         if abs((f - fa) / fa) > 0.01:
-            msg = "Warning {2}: Obtained effective focal length {0:.4} is not within 1% of " \
+            msg = "Doublet {2}: Obtained effective focal length {0:.4} is not within 1% of " \
                   "expected {1:.4}".format(f, fa, self.label)
             warnings.warn(msg, UserWarning)
         BFL = self.backFocalLength()
         if abs((BFL - fb) / fb) > 0.01:
-            msg = "Warning {2}: Obtained back focal length {0:.4} is not within 1% of " \
+            msg = "Doublet {2}: Obtained back focal length {0:.4} is not within 1% of " \
                   "expected {1:.4}".format(BFL, fb, self.label)
             warnings.warn(msg, UserWarning)
 
@@ -85,7 +85,7 @@ class AchromatDoubletLens(MatrixGroup):
         phi3 = math.asin(h / abs(self.R3))
         corner3 = self.backVertex + self.R3 * (1.0 - math.cos(phi3))
         if abs(((corner3 - corner1) / self.te) - 1.0) > 0.05:
-            msg = "Warning {2}: obtained thickness {0:.1f} does not match expected " \
+            msg = "Doublet {2}: obtained thickness {0:.1f} does not match expected " \
                   "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
@@ -246,7 +246,7 @@ class Objective(MatrixGroup):
         self.apertureDiameter = backAperture
 
         if not Objective.warningDisplayed:
-            msg = "Warning: Objective class not fully tested. \
+            msg = "Objective class not fully tested. \
 No guarantee that apertures and field of view will exactly \
 reproduce the objective."
             warnings.warn(msg, FutureWarning)

@@ -171,7 +171,7 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            msg = "Warning: the gaussian beam is not tracking the index of refraction properly {0} {1}".format(
+            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
                 rightSideBeam.n, self.frontIndex)
             warnings.warn(msg, UserWarning)
 
