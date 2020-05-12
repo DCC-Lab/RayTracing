@@ -746,6 +746,11 @@ class Matrix(object):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
 
+    def axesScale(self, axes):
+        xlims, ylims = axes.get_xbound(), axes.get_ybound()
+        xScale, yScale = xlims[1]-xlims[0], ylims[1]-ylims[0]
+        return xScale, yScale
+
     def axesToDataScaling(self, axes):
         """ For drawing properly arrows and other things, sometimes
         we need to draw along y in real space but in x in relative space
