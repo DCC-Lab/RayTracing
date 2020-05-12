@@ -1,63 +1,154 @@
-# Tutorial article on ray tracing
+# Tools and tutorial on practical ray tracing for microscopy
 
 >  This file is public on the repository, but cannot be copied outside of the DCCLab group: we are working on an article, and I purposely left the file on GitHub.  I understand people outside the group may see the article before it is complete but the file is copyrighted to the group and the authors. Do not use or distribute outside of DCCLab.
 >
 > Daniel Cote, May 5th, 2020, dccote@cervo.ulaval.ca
 
-Let’s get started! Anybody in DCCLab can join.  People who contribute will be authors on the paper. We will need to find a lead author, but at this point I do not know who it should be: just assume you are not first author.
-
-I want this article about raytracing out this summer. We will operate like this: I added the article *directly on GitHub* because the writing is tightly tied to the code. I know, this is weird, and possibly crazy, we’ll see.
-
-1. On GitHub, the main repository is here: https://github.com/DCC-Lab/RayTracing
-2. Take a look at the Board (it is called a Kanban board) of things to do: we monitor our progress here: https://github.com/DCC-Lab/RayTracing/projects/1. If you have a task you are taking up, then you “make it move” across the board.
-3. There is a branch called [tutorial-article](about:blank) where we will be working.
-4. Take a look at the **article.md** file in https://github.com/DCC-Lab/RayTracing/tree/tutorial-article/tutorial. Yes, we will try to write the article with markdown.
-5. We will work on the code and the text the same way: with Pull Requests.  You will modify the code/the text and we will review the modifications before integrating them.
-6. **If you want to write,** take a look at the article and talk to me. We can use all of my Optique Notes if needed! DeepML can translate very quickly and very well. We should use it.
-7. **If you want to code**, take a look at issues: https://github.com/DCC-Lab/RayTracing/issues
-8. **If you want to understand the code,** code unit tests! https://github.com/DCC-Lab/RayTracing/issues/52
-9. You found a bug? Write a test that does not pass, create an issue. Then fix it if you can and close the issue.
-10. **If you want to code examples**, look at the current examples and create new ones.
-11. **If you want to improve the** **aesthetics,** make suggestions and look at article for a figure request. You can even work on the rendering of the various elements if you feel like it to make it look better. I would be happy if the figures looked more like what I have in my notes.
-
-Here is the skeleton of the article.
-
 [TOC]
+
+## Authors
+
+**Very likely:** Valérie Pineau Noel, Elahe Parham, Shadi Massoumi, François Côté
+
+**Possible:** Gabriel Genest, Ludovick Bégin, Marc-André, others
+
+**Certain**: Daniel C. Côté
 
 ## Abstract
 
-1. Simple optical design, 0th order: objects, images, but also apertures, field stops and invariant
+1. Simple optical design, first line of defense: objects, images, but also apertures, aperture stops, field stops, and invariant
 2. **For students and non optical designers**
-3. Simple Python library for tracing rays, few dependencies: only depends on `matplotlib`
+3. Simple Python library for tracing rays, few dependencies: only depends on `matplotlib`, Python >3.6
 4. Documented code, simplicity before power, but still, very powerful.
 
 ## Introduction
 
 - Optical design is everywhere, although not referred to by this name. Students need to know certain system properties to successfully build their systems. However, not everyone has the knowledge from undergraduate courses or experience. Of course, when needed eventually, many people dig in and figure it out, but not everyone actually digs in. This in fact, includes many people such as the last author of this article.
+- Tedious to obtain numbers even if formalism is not particularly complicated
+- Zemax, CodeV steep learning curve.
+- This Python module is designed to provide answers (and teach) to non-experts so they can identify weaknesses in their optical systems, in particular microscopes, but also fiber-based devices or illumination devices. 
 
-- This Python module is designed to provide answers (and teach) to non-experts to identify weaknesses in their optical systems such as microscopes but also fiber-based devices. 
+## Formalism
 
-## Objects, images, and rays
+### Rays through optical elements
 
-This section contains a very short primer on imaging and ray matrices. It has definition of rays, ABCD matrices and a table gathering all useful matrices.
+For completeness, we start with a very compact introduction to the ray matrix formalism to avoid.  The ABCD matrix formalism (or ray matrices) allows a ray (column vector) to be transformed from one reference plane to another through different optical elements (represented by matrices). A ray is defined as :
+$$
+\mathbf{r} \equiv \Biggl[ \begin{matrix}
+y \\
+\theta \\
+\end{matrix} \Biggr]
+$$
+with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. A matrix is represented in general by:
 
-**Figure showing element, matrix and ray.**
+$$
+\mathbf{M} = \Biggl[ 
+\begin{matrix}
+A & B \\
+C & D
+\end{matrix}
+\Biggr]
+$$
 
-Definitions and illustration of how to use formalism:
+and describes everything about the transformation of a ray between two reference planes. It transforms a ray with a left-multiplication $\mathbf{r}^\prime = \mathbf{M} \mathbf{r}$, which gives explicitly:
 
-1. $C = -1/f$, measured from principal planes
-2. An imaging matrix has $ B= 0$
-   1. When it is imaging, A = transverse magnification
-   2. When it is imaging, D = angular magnification
-   3. Principal planes distances
+$$
+y^\prime = A y + B \theta,
+$$
 
-We need a figure that shows a group of arbitrary optical elements, with all the important properties (ACBD) in addition to all the properties that are considered in `Matrix` such as vertices, length.
+$$
+\theta^\prime = C y + D \theta.
+$$
+**[Redo this figure better? translate, also add vertices and length ]** 
 
-Simple example (?): recovering thick lens equation from interface and space.
+<img src="article.assets/image-20200512140455081.png" alt="image-20200512140455081" style="zoom: 25%;" />
 
-Other example: achromats from EO and Thorlabs can be modelled.
+There really are only two transformations that need to be described to recover the behavior of any optical elements: the propagation by a distance $d$ in any homogeneous medium :
+$$
+\mathbf{S}(d) = \Biggl[ 
+\begin{matrix}
+1 & d \\
+0 & 1
+\end{matrix}
+\Biggr],
+$$
+ and the crossing of a ray from medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$, with $R>0$ when convex:
+$$
+\mathbf{C}(n_1, n_2, R) = 
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{n_2-n_1}{n_2 R} & \frac{n_1}{n_2}
+\end{matrix}
+\Biggl],
+$$
+which can be derived using geometry and Snell's law.  We note that the determinant in general is:
 
-Optical invariant: the product $n ( y_1 \theta_2 - y_2 \theta_1)$ is a constant.  Therefore if a component cannot "support" a certain product, then it becomes clear the rays will be blocked.
+$$
+\det\ \mathbf{M} = AD-BC=\frac{n_1}{n_2},
+$$
+where $n_1$ is the refractive index at the entry plane and $n_2$ at the exit plane. A ray $\mathbf{r}$ that crosses the elements  $\mathbf{M}_1,\mathbf{M}_2,\mathbf{M}_3, ... \mathbf{M}_i$ will be transformed into $\mathbf{r}^\prime$ by the sequential *left* application of the matrices representing the elements (note the order of multiplication): 
+
+$$
+\mathbf{r}^\prime = \mathbf{M}_i,...\mathbf{M}_3,\mathbf{M}_2 \mathbf{M}_1 \mathbf{r} = \mathbf{M} \mathbf{r}.
+$$
+
+### Useful properties
+
+From this, we can already extract important properties for any optical systems:
+
+1. When $B=0$, whe have an **imaging condition** where an object at the entrance is imaged at the exit plane, since a ray originating from a height $y$ reaches a height $y^\prime=Ay$, independent of the angle of emission $\theta$. Naturally, $A$ is the transverse magnification, and $D$ is the angular magnification. *[show a figure.]*,
+2. **The equivalent focal distance** for any system is $C = -\frac{1}{f}$ *[Check index of refraction  show a figure.]*,
+3. **Principal planes:** Focal distances are measured from principal planes, which are planes of unity magnification in any systems where all the focusing power is concentrated. They are located at $L_\mathrm{PP_i} = \frac{{{n_1}/{n_2} - D}}{C}$ and $L_\mathrm{PP_o} = \frac{{1 - A}}{C}$. *[Explain and discuss signs, show a figure*]
+4. **Optical invariant:** Finally, it can be shown that the product $n ( y_1 \theta_2 - y_2 \theta_1)$ for any two rays at a given point is a constant throughout the system.  Therefore if a component cannot "support" a certain product, then it becomes clear the rays will be blocked.
+
+### Use of formalism through examples
+
+A simple thin lens made of a material of index $n$ and two curved surfaces of radii $R_1$ and $R_2$ is described by :
+$$
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{1-n}{R_2} & n
+\end{matrix}
+\Biggl]
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{n-1}{n R_1} & \frac{1}{n}
+\end{matrix}
+\Biggl]
+=
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-(n-1)\left( \frac{1}{R_1} - \frac{1}{R_2}  \right) & 1
+\end{matrix}
+\Biggl]
+\equiv
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{1}{f} & 1
+\end{matrix}
+\Biggl]
+,
+$$
+where we recover the Lensmaker equation for thin lenses with $C = -1/f$. Of course, more complex lenses can be modelled (always within the paraxial equation) such as achromatic doublets. Thorlabs and Edmund Optics both provide the three radii of curvatures $R_1, R_2, R_3$ of dielectric interfaces as well as the thickness $t_1, t_2$ and indices $n_1,n_2$ of both materials.  It becomes a simple application of the formalism to recover the expected focal length from an achromatic doublets in air with:
+$$
+\mathbf{D}(R_1,R_2,R_3,t_1, t_2, n_1, n_2) \equiv \mathbf{C}(R_3, n_2, 1)\mathbf{S}(t_2)\mathbf{C}(R_2, n_1, n_2)\mathbf{S}(t_1)\mathbf{C}(R_1, 1, n_1).
+$$
+It will be shown below that many achromatic lenses from manufacturers are included in the module.
+
+Finally, 
+
+**[Recreate this table and translate]**
+
+<img src="article.assets/image-20200512135616564.png" alt="image-20200512135616564" style="zoom:25%;" />
+
+
+
+
 
 ## Apertures
 

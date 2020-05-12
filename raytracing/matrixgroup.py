@@ -33,7 +33,8 @@ class MatrixGroup(Matrix):
         if len(self.elements) != 0:
             lastElement = self.elements[-1]
             if lastElement.backIndex != matrix.frontIndex:
-                print("Mismatch of indices between element {0} and appended {1}".format(lastElement, matrix))
+                msg = "Mismatch of indices between element {0} and appended {1}".format(lastElement, matrix)
+                warnings.warn(msg, UserWarning)
 
         self.elements.append(matrix)
         transferMatrix = self.transferMatrix()

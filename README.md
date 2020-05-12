@@ -14,7 +14,7 @@ If you want to perform calculations with coherent laser beams, then you use `Gau
 
 ## Installing and upgrading
 
-You need `matplotlib`, which is a fairly standard Python module. If you do not have it,  installing [Anaconda](https://www.anaconda.com/download/) is your best option. You should choose Python 3.7 or later. There are several ways to install the module:
+You need `matplotlib`, which is a fairly standard Python module. If you do not have it,  installing [Anaconda](https://www.anaconda.com/download/) is your best option. Python 3.6 or later is required. There are several ways to install the module:
 
 1. Simplest: `pip install raytracing` or `pip install --upgrade raytracing`
    1. If you need to install `pip`, download [getpip.py](https://bootstrap.pypa.io/get-pip.py) and run it with `python getpip.py`

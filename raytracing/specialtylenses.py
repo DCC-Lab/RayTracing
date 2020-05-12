@@ -1,6 +1,6 @@
 from .matrixgroup import *
 from .materials import *
-from math import  *
+from math import *
 import matplotlib.transforms as transforms
 
 """
@@ -19,6 +19,7 @@ the Objective() class.
 
 """
 
+
 class AchromatDoubletLens(MatrixGroup):
     """ 
     General Achromat doublet lens with an effective focal length of fa, back focal
@@ -35,7 +36,8 @@ class AchromatDoubletLens(MatrixGroup):
 
     """
 
-    def __init__(self,fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None, url=None, label=''):
+    def __init__(self, fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None,
+                 url=None, label=''):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -52,37 +54,40 @@ class AchromatDoubletLens(MatrixGroup):
 
         elements = []
         elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
-        elements.append(Space(d=tc1,n=n1))
+        elements.append(Space(d=tc1, n=n1))
         elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
-        elements.append(Space(d=tc2,n=n2))
+        elements.append(Space(d=tc2, n=n2))
         elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
         super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
-            print("Obtained thickness {0:.4} is not within 2%% of\
-                expected {1:.4}".format(self.tc1 + self.tc2, self.L))
+            msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1 + self.tc2, self.L)
+            warnings.warn(msg, UserWarning)
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
         (f, f) = self.focalDistances()
-        if abs((f-fa)/fa) > 0.01:
-            print("Warning {2}: Obtained effective focal length {0:.4} is not within 1% of \
-expected {1:.4}".format(f, fa, self.label))
+        if abs((f - fa) / fa) > 0.01:
+            msg = "Doublet {2}: Obtained effective focal length {0:.4} is not within 1% of " \
+                  "expected {1:.4}".format(f, fa, self.label)
+            warnings.warn(msg, UserWarning)
         BFL = self.backFocalLength()
-        if abs((BFL-fb)/fb) > 0.01:
-            print("Warning {2}: Obtained back focal length {0:.4} is not within 1% of \
-expected {1:.4}".format(BFL, fb, self.label))
+        if abs((BFL - fb) / fb) > 0.01:
+            msg = "Doublet {2}: Obtained back focal length {0:.4} is not within 1% of " \
+                  "expected {1:.4}".format(BFL, fb, self.label)
+            warnings.warn(msg, UserWarning)
 
-        h = self.largestDiameter()/2.0
-        phi1 = math.asin(h/abs(self.R1))
-        corner1 = self.frontVertex + self.R1*(1.0-math.cos(phi1))
+        h = self.largestDiameter() / 2.0
+        phi1 = math.asin(h / abs(self.R1))
+        corner1 = self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
 
-        phi3 = math.asin(h/abs(self.R3))
-        corner3 = self.backVertex + self.R3*(1.0-math.cos(phi3))
-        if abs(((corner3-corner1)/self.te)-1.0) > 0.05:
-            print("Warning {2}: obtained thickness {0:.1f} does not match expected \
-{1:0.1f}".format(corner3-corner1, self.te,self.label))
+        phi3 = math.asin(h / abs(self.R3))
+        corner3 = self.backVertex + self.R3 * (1.0 - math.cos(phi3))
+        if abs(((corner3 - corner1) / self.te) - 1.0) > 0.05:
+            msg = "Doublet {2}: obtained thickness {0:.1f} does not match expected " \
+                  "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
+            warnings.warn(msg, UserWarning)
 
     def drawAt(self, z, axes, showLabels=False):
         """ Draw the doublet as two dielectric of different colours.
@@ -102,31 +107,31 @@ expected {1:.4}".format(BFL, fb, self.label))
         tc2 = self.elements[3].L
         R3 = self.elements[4].R
 
-        h = self.largestDiameter()/2.0
-        v1 = z 
-        phi1 = math.asin(h/abs(R1))
-        delta1 = R1*(1.0-math.cos(phi1))
-        ctl1 = abs((1.0-math.cos(phi1))/math.sin(phi1)*R1)
+        h = self.largestDiameter() / 2.0
+        v1 = z
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
         corner1 = v1 + delta1
 
         v2 = v1 + tc1
-        phi2 = math.asin(h/abs(R2))
-        delta2 = R2*(1.0-math.cos(phi2))
-        ctl2 = abs((1.0-math.cos(phi2))/math.sin(phi2)*R2)
+        phi2 = math.asin(h / abs(R2))
+        delta2 = R2 * (1.0 - math.cos(phi2))
+        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
         corner2 = v2 + delta2
 
         v3 = z + tc1 + tc2
-        phi3 = math.asin(h/abs(R3))
-        delta3 = R3*(1.0-math.cos(phi3))
-        ctl3 = abs((1.0-math.cos(phi3))/math.sin(phi3)*R3)
+        phi3 = math.asin(h / abs(R3))
+        delta3 = R3 * (1.0 - math.cos(phi3))
+        ctl3 = abs((1.0 - math.cos(phi3)) / math.sin(phi3) * R3)
         corner3 = v3 + delta3
 
         Path = mpath.Path
         p1 = patches.PathPatch(
-            Path([(corner1, -h), (v1, -ctl1), (v1, 0), 
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
                   (v1, 0), (v1, ctl1), (corner1, h),
                   (corner2, h), (v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h), 
+                  (v2, 0), (v2, -ctl2), (corner2, -h),
                   (corner1, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
@@ -138,10 +143,10 @@ expected {1:.4}".format(BFL, fb, self.label))
             transform=axes.transData)
 
         p2 = patches.PathPatch(
-            Path([(corner2, -h), (v2, -ctl2), (v2, 0), 
+            Path([(corner2, -h), (v2, -ctl2), (v2, 0),
                   (v2, 0), (v2, ctl2), (corner2, h),
                   (corner3, h), (v3, ctl3), (v3, 0),
-                  (v3, 0), (v3, -ctl3), (corner3, -h), 
+                  (v3, 0), (v3, -ctl3), (corner3, -h),
                   (corner2, -h)],
                  [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                   Path.LINETO, Path.CURVE3, Path.CURVE3,
@@ -155,7 +160,7 @@ expected {1:.4}".format(BFL, fb, self.label))
         axes.add_patch(p1)
         axes.add_patch(p2)
         if showLabels:
-            self.drawLabels(z,axes)
+            self.drawLabels(z, axes)
 
         self.drawAperture(z, axes)
 
@@ -173,23 +178,23 @@ expected {1:.4}".format(BFL, fb, self.label))
             tc2 = self.elements[3].L
             R3 = self.elements[4].R
 
-            h = self.largestDiameter()/2.0
-            phi1 = math.asin(h/abs(R1))
-            corner1 = z + R1*(1.0-math.cos(phi1))
+            h = self.largestDiameter() / 2.0
+            phi1 = math.asin(h / abs(R1))
+            corner1 = z + R1 * (1.0 - math.cos(phi1))
 
-            phi3 = math.asin(h/abs(R3))
-            corner3 = z + tc1 + tc2 + R3*(1.0-math.cos(phi3))
+            phi3 = math.asin(h / abs(R3))
+            corner3 = z + tc1 + tc2 + R3 * (1.0 - math.cos(phi3))
 
             axes.add_patch(patches.Polygon(
-                           [[corner1, h],[corner3, h]],
-                           linewidth=3,
-                           closed=False,
-                           color='0.7'))
+                [[corner1, h], [corner3, h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
             axes.add_patch(patches.Polygon(
-                           [[corner1, -h],[corner3, -h]],
-                           linewidth=3,
-                           closed=False,
-                           color='0.7'))
+                [[corner1, -h], [corner3, -h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -222,28 +227,29 @@ class Objective(MatrixGroup):
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
-        self.frontAperture = 2*(NA * workingDistance)
+        self.frontAperture = 2 * (NA * workingDistance)
         self.isFlipped = False
         self.url = url
 
-        elements = [Aperture(diameter=backAperture,label="backAperture"),
+        elements = [Aperture(diameter=backAperture, label="backAperture"),
                     Space(d=f),
-                    Matrix(1,0,0,1, physicalLength=focusToFocusLength-2*f),
+                    Matrix(1, 0, 0, 1, physicalLength=focusToFocusLength - 2 * f),
                     Lens(f=f),
-                    Space(d=f-workingDistance),
-                    Aperture(diameter=self.frontAperture,label="frontAperture"),
+                    Space(d=f - workingDistance),
+                    Aperture(diameter=self.frontAperture, label="frontAperture"),
                     Space(d=workingDistance)]
 
         super(Objective, self).__init__(elements=elements, label=label)
-        
+
         self.frontVertex = 0
         self.backVertex = focusToFocusLength - workingDistance
         self.apertureDiameter = backAperture
 
         if not Objective.warningDisplayed:
-            print("Warning: Objective class not fully tested. \
+            msg = "Objective class not fully tested. \
 No guarantee that apertures and field of view will exactly \
-reproduce the objective.")
+reproduce the objective."
+            warnings.warn(msg, FutureWarning)
             Objective.warningDisplayed = True
 
     def pointsOfInterest(self, z):
@@ -252,12 +258,12 @@ reproduce the objective.")
         'label':the label to be used.  Can include LaTeX math code.
         """
         if self.isFlipped:
-            return [{'z': z+self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]            
+            return [{'z': z + self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
         else:
-            return [{'z': z, 'label': '$F_b$'}, {'z': z+self.focusToFocusLength, 'label': '$F_f$'}]
+            return [{'z': z, 'label': '$F_b$'}, {'z': z + self.focusToFocusLength, 'label': '$F_f$'}]
 
     def flipOrientation(self):
-        super(Objective,self).flipOrientation()
+        super(Objective, self).flipOrientation()
         self.isFlipped = not self.isFlipped
 
         z = 0
@@ -286,29 +292,28 @@ reproduce the objective.")
         L = self.focusToFocusLength
         f = self.f
         wd = self.workingDistance
-        halfHeight = self.backAperture/2
-        shoulder = halfHeight/self.NA
+        halfHeight = self.backAperture / 2
+        shoulder = halfHeight / self.NA
 
         points = [[0, halfHeight],
                   [(L - shoulder), halfHeight],
-                  [(L - wd), self.frontAperture/2],
-                  [(L - wd), -self.frontAperture/2],
+                  [(L - wd), self.frontAperture / 2],
+                  [(L - wd), -self.frontAperture / 2],
                   [(L - shoulder), -halfHeight],
                   [0, -halfHeight]]
 
         if self.isFlipped:
-            trans = transforms.Affine2D().scale(-1).translate(tx=z+L,ty=0) + axes.transData
+            trans = transforms.Affine2D().scale(-1).translate(tx=z + L, ty=0) + axes.transData
         else:
-            trans = transforms.Affine2D().translate(tx=z,ty=0) + axes.transData
+            trans = transforms.Affine2D().translate(tx=z, ty=0) + axes.transData
 
         axes.add_patch(patches.Polygon(
-               points,
-               linewidth=1, linestyle='--',closed=True,
-               color='k', fill=False, transform=trans))
+            points,
+            linewidth=1, linestyle='--', closed=True,
+            color='k', fill=False, transform=trans))
 
         self.drawCardinalPoints(z, axes)
 
         for element in self.elements:
             element.drawAperture(z, axes)
             z += element.L
-

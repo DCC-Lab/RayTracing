@@ -24,11 +24,10 @@ rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/*
 
 """
 
- 
 
 setuptools.setup(
     name="raytracing",
-    version="1.2.6",
+    version="1.2.7",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",
@@ -44,8 +43,8 @@ setuptools.setup(
     monte carlo design raytracing',
     packages=setuptools.find_packages(),
     install_requires=['matplotlib'],
-    python_requires='>=3',
-    package_data = {
+    python_requires='>=3.6',
+    package_data={
         # If any package contains *.txt or *.rst files, include them:
         '': ['*.png'],
         "doc": ['*.html']
@@ -60,13 +59,15 @@ setuptools.setup(
         'Topic :: Education',
 
         # Pick your license as you wish (should match "license" above)
-         'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: MIT License',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
 
         'Operating System :: OS Independent'
     ],
