@@ -131,7 +131,7 @@ class MatrixGroup(Matrix):
                 diameter = element.largestDiameter()
                 if diameter != float('+Inf') and diameter > maxDiameter:
                     maxDiameter = diameter
-        else:
+        elif len(self.elements) != 0:
             maxDiameter = self.elements[0].displayHalfHeight() * 2
 
         return maxDiameter
