@@ -39,6 +39,7 @@ class ImagingPath(MatrixGroup):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
+        self.images = None
         super(ImagingPath, self).__init__(elements=elements, label=label)
 
     def chiefRay(self, y=None):
@@ -304,7 +305,10 @@ class ImagingPath(MatrixGroup):
         displayRange = self.largestDiameter()
         if displayRange == float('+Inf') or displayRange < self.objectHeight:
             displayRange = self.objectHeight
-
+        if self.images is not None:
+            for (imagePosition, magnification) in self.images:
+                if displayRange < self.objectHeight * magnification:
+                    displayRange = self.objectHeight * magnification
         return displayRange
 
     def createRayTracePlot(
@@ -323,6 +327,8 @@ class ImagingPath(MatrixGroup):
             removeBlockedRaysCompletely=False to remove rays that are blocked.
 
          """
+
+        self.computeImages()
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-self.displayRange / 2 * 1.5, self.displayRange / 2 * 1.5])
@@ -443,6 +449,20 @@ class ImagingPath(MatrixGroup):
             head_width=arrowWidth,
             length_includes_head=True)
 
+    def computeImages(self):
+        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
+        matrices = self.transferMatrices()
+        images = []
+        for element in matrices:
+            transferMatrix = element * transferMatrix
+            (distance, conjugate) = transferMatrix.forwardConjugate()
+            if distance is not None:
+                imagePosition = transferMatrix.L + distance
+                if imagePosition != 0 and conjugate is not None:
+                    magnification = conjugate.A
+                    images.append([imagePosition, magnification])
+        self.images = images
+
     def drawImages(self, axes):  # pragma: no cover
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
@@ -451,26 +471,18 @@ class ImagingPath(MatrixGroup):
         arrowWidth = xScaling * 0.01
         arrowHeight = yScaling * 0.03
 
-        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-        matrices = self.transferMatrices()
-        for element in matrices:
-            transferMatrix = element * transferMatrix
-            (distance, conjugate) = transferMatrix.forwardConjugate()
-            if distance is not None:
-                imagePosition = transferMatrix.L + distance
-                if imagePosition != 0 and conjugate is not None:
-                    magnification = conjugate.A
-                    axes.arrow(
-                        imagePosition,
-                        -magnification * self.objectHeight / 2,
-                        0,
-                        (magnification) * self.objectHeight,
-                        width=arrowWidth / 5,
-                        fc='r',
-                        ec='r',
-                        head_length=arrowHeight,
-                        head_width=arrowWidth,
-                        length_includes_head=True)
+        for (imagePosition, magnification) in self.images:
+            axes.arrow(
+                imagePosition,
+                -magnification * self.objectHeight / 2,
+                0,
+                magnification * self.objectHeight,
+                width=arrowWidth / 5,
+                fc='r',
+                ec='r',
+                head_length=arrowHeight,
+                head_width=arrowWidth,
+                length_includes_head=True)
 
     def drawStops(self, z, axes):  # pragma: no cover
         """
