@@ -16,8 +16,10 @@ import tempfile
 import warnings
 
 
-def warningOnOneLine(message, category, filename, lineno, file=None, line=None):
-    return ' %s:%s: %s:%s' % (filename, lineno, category.__name__, message)
+
+def warningOnOneLine(message, category, filename, lineno, line=None):
+    return ' %s:%s\n%s:%s' % (filename, lineno, category.__name__, message)
+
 
 
 warnings.formatwarning = warningOnOneLine
@@ -171,7 +173,7 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            msg = "Warning: the gaussian beam is not tracking the index of refraction properly {0} {1}".format(
+            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
                 rightSideBeam.n, self.frontIndex)
             warnings.warn(msg, UserWarning)
 
