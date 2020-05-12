@@ -30,7 +30,50 @@
 
 ## Objects, images, and rays
 
-This section contains a very short primer on imaging and ray matrices. It has definitions of rays, ABCD matrices and a table gathering all useful matrices.
+For completeness, we start with a very brief introduction to the ray matrix formalism.  The ABCD matrix formalism (or ray matrices) allows a ray (column vector) to be transformed from one reference plane to another through different optical elements (represented by matrices). A ray is defined as :
+$$
+\mathbf{r} \equiv \Biggl[ \begin{matrix}
+y \\
+\theta \\
+\end{matrix} \Biggr]
+$$
+with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. This matrix is represented in general by:
+
+$$
+\mathbf{M} = \Biggl[ 
+\begin{matrix}
+A & B \\
+C & D
+\end{matrix}
+\Biggr].
+$$
+
+
+A ray $\mathbf{r}$ that crosses the elements  $\mathbf{M}_1,\mathbf{M}_2,\mathbf{M}_3, ... \mathbf{M}_i$ will be transformed into $\mathbf{r}^\prime$ by the sequential *left* application of the matrices representing the elements (note the order of multiplication): 
+$$
+\mathbf{r}^\prime = \mathbf{M}_i,...\mathbf{M}_3,\mathbf{M}_2 \mathbf{M}_1 \mathbf{r}.
+$$
+
+
+Practically speaking, a ray is therefore transformed by:
+
+
+$$
+y^\prime = A y + B \theta,
+$$
+
+$$
+\theta^\prime = C y + D \theta.
+$$
+
+The matrix determinant can be shown to be:
+
+$$
+\det\ \mathbf{M} = AD-BC=\frac{n_1}{n_2},
+$$
+where $n_1$ is the refractive index at the entry plane and $n_2$ at the exit plane. If the indices are identical (often the case, for example with an optical system in the air), we will have $\det \mathbf{M} = 1$.
+
+
 
 **Figure showing element, matrix and ray.**
 
