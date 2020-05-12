@@ -715,7 +715,7 @@ class Matrix(object):
 
             center = z + self.L / 2
             if self.L == 0:
-                (xScaling, _) = self.axesToDataScaling(axes)
+                (xScaling, _) = self.axesScale(axes)
                 width = xScaling * 0.01 / 2
             else:
                 width = self.L / 2
@@ -752,6 +752,8 @@ class Matrix(object):
         return xScale, yScale
 
     def axesToDataScaling(self, axes):
+        raise DeprecationWarning("Use .axesScale() instead")
+
         """ For drawing properly arrows and other things, sometimes
         we need to draw along y in real space but in x in relative space
         (i.e. relative to the width of the graph, not x coordinates).
@@ -800,7 +802,7 @@ class Lens(Matrix):
 
         halfHeight = self.displayHalfHeight()  # real units, i.e. data
 
-        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        (xScaling, yScaling) = self.axesScale(axes)
         arrowWidth = xScaling * 0.01
         arrowHeight = yScaling * 0.03
         axes.arrow(z, 0, 0, halfHeight, width=arrowWidth / 5, fc='k', ec='k',

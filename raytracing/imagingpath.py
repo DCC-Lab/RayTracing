@@ -427,7 +427,7 @@ class ImagingPath(MatrixGroup):
 
     def drawObject(self, axes):  # pragma: no cover
         """ Draw the object as defined by objectPosition, objectHeight """
-        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        (xScaling, yScaling) = self.axesScale(axes)
         arrowWidth = xScaling * 0.01
         arrowHeight = yScaling * 0.03
 
@@ -447,7 +447,7 @@ class ImagingPath(MatrixGroup):
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
 
-        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        (xScaling, yScaling) = self.axesScale(axes)
         arrowWidth = xScaling * 0.01
         arrowHeight = yScaling * 0.03
 
@@ -505,7 +505,7 @@ class ImagingPath(MatrixGroup):
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
             center = z + pupilPosition
-            (xScaling, _) = self.axesToDataScaling(axes)
+            (xScaling, _) = self.axesScale(axes)
             width = xScaling * 0.01 / 2
 
             axes.add_patch(patches.Polygon(
