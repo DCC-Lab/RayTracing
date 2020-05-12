@@ -16,8 +16,8 @@ import tempfile
 import warnings
 
 
-def warningOnOneLine(message, category, filename, lineno):
-    return ' %s:%s: %s:%s' % (filename, lineno, category.__name__, message)
+def warningOnOneLine(message, category, filename, lineno, line=None):
+    return ' %s:%s\n%s:%s' % (filename, lineno, category.__name__, message)
 
 
 warnings.formatwarning = warningOnOneLine
