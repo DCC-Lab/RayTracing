@@ -16,7 +16,7 @@ import tempfile
 import warnings
 
 
-def warningOnOneLine(message, category, filename, lineno):
+def warningOnOneLine(message, category, filename, lineno, file=None, line=None):
     return ' %s:%s: %s:%s' % (filename, lineno, category.__name__, message)
 
 
