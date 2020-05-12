@@ -12,7 +12,7 @@
 
 **Possible:** Gabriel Genest, Ludovick Bégin, Marc-André, others
 
-**Certain**: Daniel C. Côté 
+**Certain**: Daniel C. Côté
 
 ## Abstract
 
@@ -30,14 +30,14 @@
 
 ## Objects, images, and rays
 
-For completeness, we start with a very brief introduction to the ray matrix formalism.  The ABCD matrix formalism (or ray matrices) allows a ray (column vector) to be transformed from one reference plane to another through different optical elements (represented by matrices). A ray is defined as :
+For completeness, we start with a very compact introduction to the ray matrix formalism to avoid.  The ABCD matrix formalism (or ray matrices) allows a ray (column vector) to be transformed from one reference plane to another through different optical elements (represented by matrices). A ray is defined as :
 $$
 \mathbf{r} \equiv \Biggl[ \begin{matrix}
 y \\
 \theta \\
 \end{matrix} \Biggr]
 $$
-with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. This matrix is represented in general by:
+with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. A matrix is represented in general by:
 
 $$
 \mathbf{M} = \Biggl[ 
@@ -48,15 +48,7 @@ C & D
 \Biggr].
 $$
 
-
-A ray $\mathbf{r}$ that crosses the elements  $\mathbf{M}_1,\mathbf{M}_2,\mathbf{M}_3, ... \mathbf{M}_i$ will be transformed into $\mathbf{r}^\prime$ by the sequential *left* application of the matrices representing the elements (note the order of multiplication): 
-$$
-\mathbf{r}^\prime = \mathbf{M}_i,...\mathbf{M}_3,\mathbf{M}_2 \mathbf{M}_1 \mathbf{r}.
-$$
-
-
-Practically speaking, a ray is therefore transformed by:
-
+It transforms a ray with a left-multiplication $\mathbf{r}^\prime = \mathbf{M} \mathbf{r}$, which gives explicitly:
 
 $$
 y^\prime = A y + B \theta,
@@ -65,15 +57,39 @@ $$
 $$
 \theta^\prime = C y + D \theta.
 $$
-
-The matrix determinant can be shown to be:
+There really are only two transformations that need to be described to recover the behavior of any optical elements: the propagation by a distance $d$ in any homogeneous medium :
+$$
+\mathbf{S}(d) = \Biggl[ 
+\begin{matrix}
+1 & d \\
+0 & 1
+\end{matrix}
+\Biggr],
+$$
+ and the crossing of a ray from medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$, with $R>0$ when convex:
+$$
+\mathbf{C}(n_1, n_2, R) = 
+\Biggr[
+\begin{matrix}
+1 & 0 \\
+-\frac{n_2-n_1}{n_2 R} & \frac{n_1}{n_2}
+\end{matrix}
+\Biggl],
+$$
+which can be derived using geometry and Snell's law.  We note that the determinant in general is:
 
 $$
 \det\ \mathbf{M} = AD-BC=\frac{n_1}{n_2},
 $$
-where $n_1$ is the refractive index at the entry plane and $n_2$ at the exit plane. If the indices are identical (often the case, for example with an optical system in the air), we will have $\det \mathbf{M} = 1$.
+where $n_1$ is the refractive index at the entry plane and $n_2$ at the exit plane. A ray $\mathbf{r}$ that crosses the elements  $\mathbf{M}_1,\mathbf{M}_2,\mathbf{M}_3, ... \mathbf{M}_i$ will be transformed into $\mathbf{r}^\prime$ by the sequential *left* application of the matrices representing the elements (note the order of multiplication): 
 
+$$
+\mathbf{r}^\prime = \mathbf{M}_i,...\mathbf{M}_3,\mathbf{M}_2 \mathbf{M}_1 \mathbf{r}.
+$$
 
+[Recreate this table and translate]
+
+<img src="article.assets/image-20200512135616564.png" alt="image-20200512135616564" style="zoom:25%;" />
 
 **Figure showing element, matrix and ray.**
 
