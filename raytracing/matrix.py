@@ -16,6 +16,13 @@ import tempfile
 import warnings
 
 
+def warningOnOneLine(message, category, filename, lineno):
+    return ' %s:%s: %s:%s' % (filename, lineno, category.__name__, message)
+
+
+warnings.formatwarning = warningOnOneLine
+
+
 class Matrix(object):
     """A matrix and an optical element that can transform a ray or another
     matrix.

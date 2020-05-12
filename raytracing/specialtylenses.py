@@ -76,7 +76,7 @@ class AchromatDoubletLens(MatrixGroup):
         if abs((BFL - fb) / fb) > 0.01:
             msg = "Warning {2}: Obtained back focal length {0:.4} is not within 1% of " \
                   "expected {1:.4}".format(BFL, fb, self.label)
-            warnings.warn(msg, FutureWarning)
+            warnings.warn(msg, UserWarning)
 
         h = self.largestDiameter() / 2.0
         phi1 = math.asin(h / abs(self.R1))
