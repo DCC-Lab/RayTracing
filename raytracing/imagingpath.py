@@ -325,7 +325,7 @@ class ImagingPath(MatrixGroup):
          """
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-self.displayRange / 2 * 1.2, self.displayRange / 2 * 1.2])
+        axes.set_ylim([-self.displayRange / 2 * 1.5, self.displayRange / 2 * 1.5])
 
         note1 = ""
         note2 = ""
