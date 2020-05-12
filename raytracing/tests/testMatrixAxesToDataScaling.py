@@ -25,6 +25,7 @@ class TestMatrixAxesToDataScaling(unittest.TestCase):
         self.assertEqual(yScaling, 10)
 
     def testWithEmptyImagingPath(self):
+        """ Does not pass. The xScaling is wrong. """
         path = ImagingPath()
 
         fig, axes = plt.subplots(figsize=(10, 7))
@@ -33,7 +34,7 @@ class TestMatrixAxesToDataScaling(unittest.TestCase):
         (xScaling, yScaling) = path.axesToDataScaling(axes)
 
         self.assertEqual(yScaling, path.displayRange * 1.2)
-        self.assertEqual(xScaling, 1)
+        self.assertEqual(xScaling, (2*0.05) * 1.1)  # There's a text for objectHeight displayed at 0.05
 
     def testWithImagingPath(self):
         """ Does not pass. The xScaling is wrong. Next test isolates the bug. """
