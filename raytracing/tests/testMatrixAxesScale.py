@@ -37,7 +37,7 @@ class TestMatrixAxesScale(unittest.TestCase):
 
         (xScaling, yScaling) = path.axesScale(axes)
 
-        self.assertEqual(yScaling, path.displayRange * 1.2)
+        self.assertEqual(yScaling, path.displayRange * 1.5)
         self.assertEqual(xScaling, (2*0.05) * 1.1)  # There's a text for objectHeight displayed at 0.05
 
     def testWithImagingPath(self):
@@ -52,7 +52,7 @@ class TestMatrixAxesScale(unittest.TestCase):
 
         (xScaling, yScaling) = path.axesScale(axes)
 
-        self.assertEqual(yScaling, path.displayRange * 1.2)
+        self.assertEqual(yScaling, path.displayRange * 1.5)
         self.assertEqual(xScaling, 20 * 1.1)
 
 
