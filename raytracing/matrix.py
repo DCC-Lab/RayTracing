@@ -3,16 +3,12 @@ from .gaussianbeam import *
 from .rays import *
 
 import multiprocessing
-import copy
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
 import math
-
-import time
-import tempfile
 import warnings
 
 
