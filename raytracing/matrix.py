@@ -1032,6 +1032,8 @@ class ThickLens(Matrix):
         if showLabels:
             self.drawLabels(z, axes)
 
+        self.drawCardinalPoints(z=z, axes=axes)
+
     def drawAperture(self, z, axes):  # pragma: no cover
         """ Draw the aperture size for this element.
         The thick lens requires special care because the corners are not
