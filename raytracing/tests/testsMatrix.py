@@ -5,7 +5,7 @@ from raytracing import *
 
 inf = float("+inf")
 
-# Change this to Tru if you want to run speed tests
+# Change this to True if you want to run speed tests
 doBenchmark = False
 
 
@@ -350,9 +350,21 @@ class TestMatrix(unittest.TestCase):
         focalLengths = (inf, inf)
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 
+    def testMatrixBackFocalLength(self):
+        m = Matrix(1, 2, 3, 4, backVertex=1, physicalLength=1)
+        f2 = -1 / 3
+        p2 = 0 + 1 + (1 - 1) / 3
+        self.assertEqual(m.backFocalLength(), p2 + f2 - 1)
+
     def testBackFocalLengthSupposedNone(self):
         m = Matrix()
         self.assertIsNone(m.backFocalLength())
+
+    def testMatrixFrontFocalLength(self):
+        m = Matrix(1, 2, 3, 4, frontVertex=1, physicalLength=1)
+        f1 = -1 / 3
+        p1 = 0 - (1 - 4) / 3
+        self.assertEqual(m.frontFocalLength(), -(p1 - f1 - 1))
 
     def testFrontFocalLengthSupposedNone(self):
         m = Matrix()
@@ -433,7 +445,8 @@ class TestMatrix(unittest.TestCase):
         backVertexInit = 20
         frontIndexInit = 1
         backIndexInit = 2
-        m = Matrix(frontVertex=frontVertexInit, backVertex=backVertexInit, frontIndex=frontIndexInit, backIndex=backIndexInit)
+        m = Matrix(frontVertex=frontVertexInit, backVertex=backVertexInit, frontIndex=frontIndexInit,
+                   backIndex=backIndexInit)
         m.flipOrientation()
         self.assertTrue(m.isFlipped)
         self.assertEqual(m.backIndex, frontIndexInit)
@@ -441,146 +454,27 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m.frontVertex, backVertexInit)
         self.assertEqual(m.backVertex, frontVertexInit)
 
+    def testStrRepresentation(self):
+        m = Matrix(C=1)
+        strRepresentation = r""" /             \ 
+| {0:6.3f}   {1:6.3f} |
+|               |
+| {2:6.3f}   {3:6.3f} |
+ \             /
+""".format(1, 0, 1, 1)
+        strRepresentation += "\nf={:0.3f}\n".format(-1.0)
+        self.assertEqual(str(m).strip(), strRepresentation.strip())
 
-    def testSpaceMatrix(self):
-        s = Space(d=10)
-        self.assertEqual(s.B, 10)
-        self.assertEqual(s.L, 10)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-        s = Space(d=-10)
-        self.assertEqual(s.B, -10)
-        self.assertEqual(s.L, -10)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-        s = Space(d=10) * Space(d=5)
-        self.assertEqual(s.B, 15)
-        self.assertEqual(s.L, 15)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-    def deactivated_testInfiniteSpaceMatrix(self):
-        s = Space(d=inf)
-        self.assertEqual(s.A, 1)
-        self.assertEqual(s.B, inf)
-        self.assertEqual(s.C, 0)
-        self.assertEqual(s.D, 1)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-    def deactivated_testInfiniteSpaceMatrixMultiplication(self):
-        # This should work, not sure how to deal
-        # with this failed test: C is identically
-        # zero and 0 * d->inf == 0 (I think).
-        s = Space(d=1) * Space(d=inf)
-        self.assertEqual(s.A, 1)
-        self.assertEqual(s.B, inf)
-        self.assertEqual(s.C, 0)
-        self.assertEqual(s.D, 1)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-        s = Space(d=inf) * Space(d=1)
-        self.assertEqual(s.A, 1)
-        self.assertEqual(s.B, inf)
-        self.assertEqual(s.C, 0)
-        self.assertEqual(s.D, 1)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-        s = Space(d=inf) * Space(d=inf)
-        self.assertEqual(s.A, 1)
-        self.assertEqual(s.B, inf)
-        self.assertEqual(s.C, 0)
-        self.assertEqual(s.D, 1)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-    def testLensMatrix(self):
-        s = Lens(f=10)
-        self.assertEqual(s.C, -1 / 10)
-        self.assertEqual(s.determinant, 1)
-        self.assertEqual(s.frontVertex, 0)
-        self.assertEqual(s.backVertex, 0)
-
-    def testApertureMatrix(self):
-        s = Aperture(diameter=25)
-        self.assertEqual(s.apertureDiameter, 25)
-        self.assertEqual(s.A, 1)
-        self.assertEqual(s.B, 0)
-        self.assertEqual(s.C, 0)
-        self.assertEqual(s.D, 1)
-        self.assertEqual(s.determinant, 1)
-        self.assertIsNone(s.frontVertex)
-        self.assertIsNone(s.backVertex)
-
-    def testDielectricInterface(self):
-        m = DielectricInterface(n1=1, n2=1.5, R=10)
-        self.assertEqual(m.determinant, 1 / 1.5)
-        self.assertEqual(m.frontVertex, 0)
-        self.assertEqual(m.backVertex, 0)
-
-    def testLensFocalLengths(self):
-        m = Lens(f=5)
-        self.assertEqual(m.effectiveFocalLengths(), (5, 5))
-        self.assertEqual(m.backFocalLength(), 5)
-        self.assertEqual(m.frontFocalLength(), 5)
-
-    def deactivated_testThickLensFocalLengths(self):
-        m = ThickLens(n=1.55, R1=100, R2=-100, thickness=3)
-
-        self.assertEqual(m.backFocalLength(), 5)
-        self.assertEqual(m.frontFocalLength(), 5)
-
-    def testOlympusLens(self):
-        self.assertIsNotNone(olympus.LUMPlanFL40X())
-        self.assertIsNotNone(olympus.XLUMPlanFLN20X())
-        self.assertIsNotNone(olympus.MVPlapo2XC())
-        self.assertIsNotNone(olympus.UMPLFN20XW())
-
-    def testThorlabsLenses(self):
-        l = thorlabs.ACN254_100_A()
-        l = thorlabs.ACN254_075_A()
-        l = thorlabs.ACN254_050_A()
-        l = thorlabs.ACN254_040_A()
-        l = thorlabs.AC254_030_A()
-        l = thorlabs.AC254_035_A()
-        l = thorlabs.AC254_045_A()
-        l = thorlabs.AC254_050_A()
-        l = thorlabs.AC254_060_A()
-        l = thorlabs.AC254_075_A()
-        l = thorlabs.AC254_080_A()
-        l = thorlabs.AC254_100_A()
-        l = thorlabs.AC254_125_A()
-        l = thorlabs.AC254_200_A()
-        l = thorlabs.AC254_250_A()
-        l = thorlabs.AC254_300_A()
-        l = thorlabs.AC254_400_A()
-        l = thorlabs.AC254_500_A()
-
-        l = thorlabs.AC508_075_B()
-        l = thorlabs.AC508_080_B()
-        l = thorlabs.AC508_100_B()
-        l = thorlabs.AC508_150_B()
-        l = thorlabs.AC508_200_B()
-        l = thorlabs.AC508_250_B()
-        l = thorlabs.AC508_300_B()
-        l = thorlabs.AC508_400_B()
-        l = thorlabs.AC508_500_B()
-        l = thorlabs.AC508_750_B()
-        l = thorlabs.AC508_1000_B()
-
-    def testEdmundLens(self):
-        l = eo.PN_33_921()
+    def testStrRepresentationAfocal(self):
+        m = Matrix()
+        strRepresentation = r""" /             \ 
+| {0:6.3f}   {1:6.3f} |
+|               |
+| {2:6.3f}   {3:6.3f} |
+ \             /
+""".format(1, 0, 0, 1)
+        strRepresentation += "\nf = +inf (afocal)\n".format(-1.0)
+        self.assertEqual(str(m).strip(), strRepresentation.strip())
 
 
 if __name__ == '__main__':
