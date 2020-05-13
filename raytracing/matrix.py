@@ -757,8 +757,6 @@ class Matrix(object):
         return xScale, yScale
 
     def axesToDataScaling(self, axes):
-        raise DeprecationWarning("Use .axesScale() instead")
-
         """ For drawing properly arrows and other things, sometimes
         we need to draw along y in real space but in x in relative space
         (i.e. relative to the width of the graph, not x coordinates).
