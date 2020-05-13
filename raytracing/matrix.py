@@ -365,7 +365,7 @@ class Matrix(object):
 
         with multiprocessing.Pool(processes=processes) as pool:
             outputRays = pool.map(self.traceThrough, manyInputRays)
-            print(outputRays)
+
         return Rays(rays=outputRays)
 
     @property

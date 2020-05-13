@@ -301,11 +301,10 @@ class TestMatrix(unittest.TestCase):
 
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(10)]
-        rays = Rays(rays=rays)
         m = Matrix(physicalLength=1)
         trace = m.traceManyThroughInParallel(rays)
         for i in range(len(rays)):
-            self.assertEqual(trace[i], rays[i])
+            self.assertTrue(trace[i] in rays)
 
     def testTraceManyThroughInParallelNoChunks(self):
         rays = [Ray(y, y) for y in range(10)]
@@ -331,11 +330,55 @@ class TestMatrix(unittest.TestCase):
         print(f"Parallel : {parallelTime * 1e-9}s")
         self.assertTrue(parallelTime < notParallelTime)
 
+    def testPointsOfInterest(self):
+        m = Matrix()
+        self.assertListEqual(m.pointsOfInterest(1), [])
+
     def testIsImaging(self):
         m1 = Matrix(A=1, B=0, C=3, D=4)
         self.assertTrue(m1.isImaging)
         m2 = Matrix(A=1, B=1, C=3, D=4)
         self.assertFalse(m2.isImaging)
+
+    def testEffectiveFocalLengthsHasPower(self):
+        m = Matrix(1, 2, 3, 4)
+        focalLengths = (-1 / 3, -1 / 3)
+        self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
+
+    def testEffectiveFocalLengthsNoPower(self):
+        m = Matrix()
+        focalLengths = (inf, inf)
+        self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
+
+    def testBackFocalLengthSupposedNone(self):
+        m = Matrix()
+        self.assertIsNone(m.backFocalLength())
+
+    def testFrontFocalLengthSupposedNone(self):
+        m = Matrix()
+        self.assertIsNone(m.frontFocalLength())
+
+    def testPrincipalPlanePositions(self):
+        m = Matrix(1, 2, 3, 4, physicalLength=1)
+        p1 = 0 - (1 - 4) / 3
+        p2 = 0 + 1 + (1 - 1) / 3
+        self.assertTupleEqual(m.principalPlanePositions(0), (p1, p2))
+
+    def testPrincipalPlanePositionsNoPower(self):
+        m = Matrix()
+        self.assertTupleEqual(m.principalPlanePositions(0), (None, None))
+
+    def testFocusPositions(self):
+        m = Matrix(1, 2, 3, 4, physicalLength=1)
+        f1 = -1 / 3
+        p1 = 1
+        f2 = -1 / 3
+        p2 = 1
+        self.assertTupleEqual(m.focusPositions(0), (p1 - f1, p2 + f2))
+
+    def testFocusPositionsNoPower(self):
+        m = Matrix()
+        self.assertTupleEqual(m.focusPositions(0), (None, None))
 
     def testFiniteForwardConjugate(self):
         m1 = Lens(f=5) * Space(d=10)
@@ -351,13 +394,16 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(d, 5)
         self.assertEqual(m2.determinant, 1)
 
-    def deactivated_testInfiniteForwardConjugate(self):
+    def testInfiniteForwardConjugate(self):
         m1 = Lens(f=5) * Space(d=5)
         (d, m2) = m1.forwardConjugate()
-        self.assertTrue(m2.isImaging)
+        self.assertIsNone(m2)
         self.assertEqual(d, float("+inf"))
         self.assertEqual(m1.determinant, 1)
-        self.assertEqual(m2.determinant, 1)
+
+    def testInfiniteBackConjugate(self):
+        m = Matrix(A=0)
+        self.assertTupleEqual(m.backwardConjugate(), (None, None))
 
     def testFiniteBackConjugate(self):
         m1 = Space(d=10) * Lens(f=5)
@@ -373,6 +419,28 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(d, 5)
         self.assertEqual(m1.determinant, 1)
         self.assertEqual(m2.determinant, 1)
+
+    def testMagnificationImaging(self):
+        m = Matrix()
+        self.assertTupleEqual(m.magnification(), (1, 1))
+
+    def testMagnificationNotImaging(self):
+        m = Matrix(B=1)
+        self.assertTupleEqual(m.magnification(), (None, None))
+
+    def testMatrixFlipOrientation(self):
+        frontVertexInit = 10
+        backVertexInit = 20
+        frontIndexInit = 1
+        backIndexInit = 2
+        m = Matrix(frontVertex=frontVertexInit, backVertex=backVertexInit, frontIndex=frontIndexInit, backIndex=backIndexInit)
+        m.flipOrientation()
+        self.assertTrue(m.isFlipped)
+        self.assertEqual(m.backIndex, frontIndexInit)
+        self.assertEqual(m.frontIndex, backIndexInit)
+        self.assertEqual(m.frontVertex, backVertexInit)
+        self.assertEqual(m.backVertex, frontVertexInit)
+
 
     def testSpaceMatrix(self):
         s = Space(d=10)
