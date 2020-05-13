@@ -1,6 +1,8 @@
 # Tools and tutorial on practical ray tracing for microscopy
 
->  This file is public on the repository, but cannot be copied outside of the DCCLab group: we are working on an article, and I purposely left the file on GitHub.  I understand people outside the group may see the article before it is complete but the file is copyrighted to the group and the authors. Do not use or distribute outside of DCCLab.
+Best viewed and edited with [Typora](http://typora.io).
+
+>  This file is public on the RayTracing repository, but cannot be copied outside of the DCCLab group: we are working on an article, and I purposely left the file on GitHub.  I understand people outside the group may see the article before it is complete but the file is copyrighted to the group and the authors. Do not use or distribute outside of DCCLab.
 >
 > Daniel Cote, May 5th, 2020, dccote@cervo.ulaval.ca
 
@@ -10,7 +12,7 @@
 
 **Very likely:** Valérie Pineau Noel, Elahe Parham, Shadi Massoumi, François Côté
 
-**Possible:** Gabriel Genest, Ludovick Bégin, Marc-André, others
+**Possible:** Gabriel Genest, Ludovick Bégin, Marc-André Vigneault, others
 
 **Certain**: Daniel C. Côté
 
@@ -72,9 +74,9 @@ $$
 \end{matrix}
 \Biggr],
 $$
- and the crossing of a ray from medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$ (with $R>0$ when convex):
+ and the crossing of a ray from a dielectric medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$ (with $R>0$ when convex):
 $$
-\mathbf{C}(n_1, n_2, R) = 
+\mathbf{D}(n_1, n_2, R) = 
 \Biggr[
 \begin{matrix}
 1 & 0 \\
@@ -97,12 +99,12 @@ $$
 
 From this, we can already extract important properties for any optical systems:
 
-1. When $B=0$, whe have an **imaging condition** where an object at the entrance is imaged at the exit plane, since a ray originating from a height $y$ reaches a height $y^\prime=Ay$, independent of the angle of emission $\theta$. Naturally, $A$ is the transverse magnification, and $D$ is the angular magnification. *[show a figure.]*,
+1. When $B=0$, we have an **imaging condition** where an object at the entrance is imaged at the exit plane, since a ray originating from a height $y$ reaches a height $y^\prime=Ay$, independent of the angle of emission $\theta$. Naturally, $A$ is the transverse magnification, and $D$ is the angular magnification. *[show a figure.]*,
 2. **The equivalent focal distance** for any system is $C = -\frac{1}{f}$ *[Check index of refraction  show a figure.]*,
 3. **Principal planes:** Focal distances are measured from principal planes, which are planes of unity magnification in any systems where all the focusing power is concentrated. They are located at $L_\mathrm{PP_i} = \frac{{{n_1}/{n_2} - D}}{C}$ and $L_\mathrm{PP_o} = \frac{{1 - A}}{C}$. *[Explain and discuss signs, show a figure*]
 4. **Optical invariant:** Finally, it can be shown that the product $n ( y_1 \theta_2 - y_2 \theta_1)$ for any two rays at a given point is a constant throughout the system.  Therefore if a component cannot "support" a certain product, then it becomes clear the rays will be blocked.
 
-### Use of formalism through examples
+### Use of formalism c examples
 
 We can easily recover the position of an image with respect to the position of an object  with a thin lens matrix:
 $$
@@ -148,7 +150,7 @@ $$
 $$
 We recover the Lensmaker equation for thin lenses with $C = -1/f$. Of course, within the paraxial equation more complex lenses can be modelled such as achromatic doublets. Thorlabs and Edmund Optics for instance both provide the three radii of curvatures $R_1, R_2, R_3$ of dielectric interfaces as well as the thickness $t_1, t_2$ and indices $n_1,n_2$ of both materials required to compute the properties of their doublets.  It becomes a simple application of the formalism to recover the expected focal length from an achromatic doublets in air with:
 $$
-\mathbf{D}(R_1,R_2,R_3,t_1, t_2, n_1, n_2) \equiv \mathbf{C}(R_3, n_2, 1)\mathbf{S}(t_2)\mathbf{C}(R_2, n_1, n_2)\mathbf{S}(t_1)\mathbf{C}(R_1, 1, n_1).
+\mathbf{L}_\text{AD}(R_1,R_2,R_3,t_1, t_2, n_1, n_2) \equiv \mathbf{D}(R_3, n_2, 1)\mathbf{S}(t_2)\mathbf{D}(R_2, n_1, n_2)\mathbf{S}(t_1)\mathbf{D}(R_1, 1, n_1).
 $$
 where the equivalent focal length and the principal planes are obtained.  It will be shown below that many achromatic lenses from manufacturers are included in the module.
 
@@ -198,7 +200,7 @@ $$
 f \theta(t) \\
 0
 \end{matrix}
-\Biggl]
+\Biggl].
 $$
 The modulation pattern on $\theta(t)$ is translated to a raster scan in $y(t) = f\theta(t)$, as desired in scanning microscopes. 
 
