@@ -97,6 +97,10 @@ class TestSpaceMatrix(unittest.TestCase):
         self.assertIsNone(s.frontVertex)
         self.assertIsNone(s.backVertex)
 
+        s = Space(d=inf)
+        self.assertEqual(s.B, inf)
+        self.assertEqual(s.L, inf)
+
     def deactivated_testInfiniteSpaceMatrix(self):
         # 0 * inifinity = nan in python
         s = Space(d=inf)
@@ -141,6 +145,129 @@ class TestSpaceMatrix(unittest.TestCase):
         self.assertIsNone(s.frontVertex)
         self.assertIsNone(s.backVertex)
 
+    def testTransferMatrix(self):
+        s = Space(inf)
+        s = s.transferMatrix(2)
+        self.assertEqual(s.A, 1)
+        self.assertEqual(s.B, 2)
+        self.assertEqual(s.C, 0)
+        self.assertEqual(s.D, 1)
+        self.assertEqual(s.determinant, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
+        self.assertEqual(s.L, 2)
+
+        s = Space(2)
+        s = s.transferMatrix()
+        self.assertEqual(s.A, 1)
+        self.assertEqual(s.B, 2)
+        self.assertEqual(s.C, 0)
+        self.assertEqual(s.D, 1)
+        self.assertIsNone(s.frontVertex)
+        self.assertIsNone(s.backVertex)
+        self.assertEqual(s.L, 2)
+
+
+class TestDielectricInterface(unittest.TestCase):
+
+    def testDielectricInterface(self):
+        di = DielectricInterface(1, 1.33)
+        self.assertEqual(di.apertureDiameter, inf)
+        self.assertEqual(di.n1, 1)
+        self.assertEqual(di.n2, 1.33)
+        self.assertEqual(di.A, 1)
+        self.assertEqual(di.B, 0)
+        self.assertEqual(di.C, 0)
+        self.assertEqual(di.D, 1 / 1.33)
+        self.assertEqual(di.L, 0)
+        self.assertEqual(di.R, inf)
+        self.assertEqual(di.frontVertex, 0)
+        self.assertEqual(di.backVertex, 0)
+        self.assertEqual(di.label, "")
+
+        di = DielectricInterface(1, 1.33, 2, 2, "Test")
+        self.assertEqual(di.apertureDiameter, 2)
+        self.assertEqual(di.n1, 1)
+        self.assertEqual(di.n2, 1.33)
+        self.assertEqual(di.A, 1)
+        self.assertEqual(di.B, 0)
+        self.assertEqual(di.C, -(1.33 - 1) / (2 * 1.33))
+        self.assertEqual(di.D, 1 / 1.33)
+        self.assertEqual(di.L, 0)
+        self.assertEqual(di.R, 2)
+        self.assertEqual(di.frontVertex, 0)
+        self.assertEqual(di.backVertex, 0)
+        self.assertEqual(di.label, "Test")
+
+    def testFlipOrientation(self):
+        di = DielectricInterface(1, 1.33, 2, 2)
+        di.flipOrientation()
+        self.assertEqual(di.n1, 1.33)
+        self.assertEqual(di.n2, 1)
+        self.assertEqual(di.R, -2)
+        self.assertEqual(di.C, -(1 - 1.33) / (-2 * 1))
+        self.assertEqual(di.D, 1.33)
+
+
+class TestThickLens(unittest.TestCase):
+
+    def testThickLens(self):
+        tl = ThickLens(1.33, 5, -5, 0)
+        self.assertEqual(tl.R1, 5)
+        self.assertEqual(tl.R2, -5)
+        self.assertEqual(tl.n, 1.33)
+        self.assertEqual(tl.A, 1)
+        self.assertEqual(tl.B, 0)
+        self.assertEqual(tl.C, -(1.33 - 1) * (1 / 5 + 1 / 5))
+        self.assertEqual(tl.D, 1)
+        self.assertEqual(tl.L, 0)
+        self.assertEqual(tl.apertureDiameter, inf)
+        self.assertEqual(tl.frontVertex, 0)
+        self.assertEqual(tl.backVertex, 0)
+        self.assertEqual(tl.label, "")
+
+        tl = ThickLens(1.33, 5, 10, 2, 10, "Test")
+        self.assertEqual(tl.R1, 5)
+        self.assertEqual(tl.R2, 10)
+        self.assertEqual(tl.n, 1.33)
+        self.assertEqual(tl.A, 2 * (1 - 1.33) / (1.33 * 5) + 1)
+        self.assertEqual(tl.B, 2 / 1.33)
+        self.assertEqual(tl.C, -(1.33 - 1) * (1 / 5 - 1 / 10 + 2 * (1.33 - 1) / (1.33 * 5 * 10)))
+        self.assertEqual(tl.D, 2 * (1.33 - 1) / (1.33 * 10) + 1)
+        self.assertEqual(tl.L, 2)
+        self.assertEqual(tl.apertureDiameter, 10)
+        self.assertEqual(tl.backVertex, 2)
+        self.assertEqual(tl.label, "Test")
+
+    def testThickLensPointsOfInterest(self):
+        z = 10
+        tl = ThickLens(1.33, 5, -8, 10, 100)
+        f = - 1 / tl.C
+        p1 = z - (1 - tl.D) / tl.C
+        p2 = z + 10 + (1 - tl.A) / tl.C
+        focusPos = p1 - f, p2 + f
+        pointsInterest = [{'z': focusPos[0], 'label': "$F_f$"}, {'z': focusPos[1], 'label': "$F_b$"}]
+        self.assertListEqual(tl.pointsOfInterest(z), pointsInterest)
+
+
+class TestDielectricSlab(unittest.TestCase):
+
+    def testDielectricSlab(self):
+        ds = DielectricSlab(1.33, 2)
+        self.assertEqual(ds.A, 1)
+        self.assertEqual(ds.B, 2 / 1.33)
+        self.assertEqual(ds.C, 0)
+        self.assertEqual(ds.D, 1)
+        self.assertEqual(ds.n, 1.33)
+        self.assertEqual(ds.R1, inf)
+        self.assertEqual(ds.R2, inf)
+        self.assertEqual(ds.L, 2)
+        self.assertEqual(ds.apertureDiameter, inf)
+        self.assertEqual(ds.label, "")
+
+
+class TestAperture(unittest.TestCase):
+
     def testApertureMatrix(self):
         s = Aperture(diameter=25)
         self.assertEqual(s.apertureDiameter, 25)
@@ -152,55 +279,6 @@ class TestSpaceMatrix(unittest.TestCase):
         self.assertIsNone(s.frontVertex)
         self.assertIsNone(s.backVertex)
 
-    def testDielectricInterface(self):
-        m = DielectricInterface(n1=1, n2=1.5, R=10)
-        self.assertEqual(m.determinant, 1 / 1.5)
-        self.assertEqual(m.frontVertex, 0)
-        self.assertEqual(m.backVertex, 0)
 
-    def deactivated_testThickLensFocalLengths(self):
-        m = ThickLens(n=1.55, R1=100, R2=-100, thickness=3)
-
-        self.assertEqual(m.backFocalLength(), 5)
-        self.assertEqual(m.frontFocalLength(), 5)
-
-    def testOlympusLens(self):
-        self.assertIsNotNone(olympus.LUMPlanFL40X())
-        self.assertIsNotNone(olympus.XLUMPlanFLN20X())
-        self.assertIsNotNone(olympus.MVPlapo2XC())
-        self.assertIsNotNone(olympus.UMPLFN20XW())
-
-    def testThorlabsLenses(self):
-        l = thorlabs.ACN254_100_A()
-        l = thorlabs.ACN254_075_A()
-        l = thorlabs.ACN254_050_A()
-        l = thorlabs.ACN254_040_A()
-        l = thorlabs.AC254_030_A()
-        l = thorlabs.AC254_035_A()
-        l = thorlabs.AC254_045_A()
-        l = thorlabs.AC254_050_A()
-        l = thorlabs.AC254_060_A()
-        l = thorlabs.AC254_075_A()
-        l = thorlabs.AC254_080_A()
-        l = thorlabs.AC254_100_A()
-        l = thorlabs.AC254_125_A()
-        l = thorlabs.AC254_200_A()
-        l = thorlabs.AC254_250_A()
-        l = thorlabs.AC254_300_A()
-        l = thorlabs.AC254_400_A()
-        l = thorlabs.AC254_500_A()
-
-        l = thorlabs.AC508_075_B()
-        l = thorlabs.AC508_080_B()
-        l = thorlabs.AC508_100_B()
-        l = thorlabs.AC508_150_B()
-        l = thorlabs.AC508_200_B()
-        l = thorlabs.AC508_250_B()
-        l = thorlabs.AC508_300_B()
-        l = thorlabs.AC508_400_B()
-        l = thorlabs.AC508_500_B()
-        l = thorlabs.AC508_750_B()
-        l = thorlabs.AC508_1000_B()
-
-    def testEdmundLens(self):
-        l = eo.PN_33_921()
+if __name__ == '__main__':
+    unittest.main()

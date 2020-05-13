@@ -326,8 +326,6 @@ class TestMatrix(unittest.TestCase):
         finalTime = time.perf_counter_ns()
         notParallelTime = timeInitParallel - timeInitNoParallel
         parallelTime = finalTime - timeInitParallel
-        print(f"Not parallel : {notParallelTime * 1e-9}s")
-        print(f"Parallel : {parallelTime * 1e-9}s")
         self.assertTrue(parallelTime < notParallelTime)
 
     def testPointsOfInterest(self):
