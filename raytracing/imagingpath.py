@@ -299,8 +299,8 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    @property
     def displayRange(self):
+        """ The required display height to fit all elements, object and images. """
         displayRange = self.largestDiameter()
         if displayRange == float('+Inf') or displayRange < self.objectHeight:
             displayRange = self.objectHeight
@@ -328,9 +328,8 @@ class ImagingPath(MatrixGroup):
             removeBlockedRaysCompletely=False to remove rays that are blocked.
 
          """
-
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-self.displayRange / 2 * 1.5, self.displayRange / 2 * 1.5])
+        axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
 
         note1 = ""
         note2 = ""
