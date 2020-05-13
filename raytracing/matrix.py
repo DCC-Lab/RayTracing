@@ -738,15 +738,18 @@ class Matrix(object):
                 closed=False,
                 color='0.7'))
 
-    def displayHalfHeight(self):
+    def displayHalfHeight(self, minSize=0):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
 
-        If the element is infinite, currently the half-height
-        will be '4'. If not, it is the apertureDiameter/2.
+        If the element is infinite, the half-height is currently
+         set to '4' or to the specified minimum half height.
+         If not, it is the apertureDiameter/2.
 
         """
-        halfHeight = 4  # FIXME: reasonable half height when infinite
+        halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
+        if minSize > halfHeight:
+            halfHeight = minSize
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
@@ -803,8 +806,12 @@ class Lens(Matrix):
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a thin lens at z """
+        maxRayHeight = 0
+        for rayTrace in axes.lines:
+            if max(rayTrace._y) > maxRayHeight:
+                maxRayHeight = max(rayTrace._y)
 
-        halfHeight = self.displayHalfHeight()  # real units, i.e. data
+        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
         arrowHeadHeight = 2*halfHeight * 0.1
