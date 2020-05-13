@@ -1,20 +1,27 @@
-from raytracing import ImagingPath, Space, Lens
+from raytracing import ImagingPath, Space, Lens, Objective
 from matplotlib import pyplot as plt
 
-'''An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\
-This will use the default objectHeight and fanAngle but they can be changed with:
-path.objectHeight = 1.0
-path.fanAngle = 0.5
-path.fanNumber = 5
-path.rayNumber = 3'''
+'''
+Demo #14 Path with generic objective
+'''
 
 
 def example():
+    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
+    print("Focal distances: ", obj.focalDistances())
+    print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
+    print("Focal spots positions: ", obj.focusPositions(z=0))
+    print("Distance between entrance and exit planes: ", obj.L)
+
     path = ImagingPath()
-    path.label = "Demo #1: lens f = 5cm, infinite diameter"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
+    path.fanAngle = 0.0
+    path.fanNumber = 1
+    path.rayNumber = 15
+    path.objectHeight = 10.0
+    path.label = "Demo #14 Path with generic objective"
+    path.append(Space(180))
+    path.append(obj)
+    path.append(Space(10))
     fig, axes = plt.subplots(figsize=(10, 7))
     path.createRayTracePlot(axes=axes)
     plt.savefig('tempFig.pdf', dpi=600)

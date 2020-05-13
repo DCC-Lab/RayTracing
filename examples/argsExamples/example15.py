@@ -1,20 +1,20 @@
 from raytracing import ImagingPath, Space, Lens
 from matplotlib import pyplot as plt
 
-'''An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\
-This will use the default objectHeight and fanAngle but they can be changed with:
-path.objectHeight = 1.0
-path.fanAngle = 0.5
-path.fanNumber = 5
-path.rayNumber = 3'''
+'''
+#DEMO 15 - Path with LUMPlanFL40X
+'''
 
 
 def example():
     path = ImagingPath()
-    path.label = "Demo #1: lens f = 5cm, infinite diameter"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
+    path.fanAngle = 0.0
+    path.fanNumber = 1
+    path.rayNumber = 15
+    path.objectHeight = 10.0
+    path.label = "Demo #15 Path with LUMPlanFL40X"
+    path.append(Space(180))
+    path.append(olympus.LUMPlanFL40X())
     fig, axes = plt.subplots(figsize=(10, 7))
     path.createRayTracePlot(axes=axes)
     plt.savefig('tempFig.pdf', dpi=600)

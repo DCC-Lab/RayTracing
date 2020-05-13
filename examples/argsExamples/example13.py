@@ -10,17 +10,14 @@ path.rayNumber = 3'''
 
 
 def example():
-    path = ImagingPath()
-    path.label = "Demo #1: lens f = 5cm, infinite diameter"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    fig, axes = plt.subplots(figsize=(10, 7))
-    path.createRayTracePlot(axes=axes)
-    plt.savefig('tempFig.pdf', dpi=600)
+    M1 = Space(d=10)
+    M2 = Lens(f=5)
+    M3 = M2 * M1
+    print(M3.forwardConjugate())
+    print(M3.backwardConjugate())
 
     if __name__ == "__main__":
-        path._showPlot()
+        pass
 
 
 if __name__ == "__main__":
