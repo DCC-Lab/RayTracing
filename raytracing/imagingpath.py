@@ -431,7 +431,8 @@ class ImagingPath(MatrixGroup):
 
     def drawObject(self, axes):  # pragma: no cover
         """ Draw the object as defined by objectPosition, objectHeight """
-        (xScaling, yScaling) = self.axesScale(axes)
+        (xScaling, yScaling) = self.axesToDataScale(axes)
+
         arrowHeadHeight = self.objectHeight * 0.1
 
         heightFactor = self.objectHeight / yScaling
@@ -453,7 +454,7 @@ class ImagingPath(MatrixGroup):
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
 
-        (xScaling, yScaling) = self.axesScale(axes)
+        (xScaling, yScaling) = self.axesToDataScale(axes)
         images = self.intermediateConjugates()
 
         for (imagePosition, magnification) in images:
@@ -508,7 +509,7 @@ class ImagingPath(MatrixGroup):
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
             center = z + pupilPosition
-            (xScaling, yScaling) = self.axesScale(axes)
+            (xScaling, yScaling) = self.axesToDataScale(axes)
             heightFactor = halfHeight * 2 / yScaling
             width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
 
