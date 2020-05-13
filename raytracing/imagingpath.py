@@ -39,7 +39,6 @@ class ImagingPath(MatrixGroup):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
-        self.images = None
         super(ImagingPath, self).__init__(elements=elements, label=label)
 
     def chiefRay(self, y=None):
@@ -305,8 +304,10 @@ class ImagingPath(MatrixGroup):
         displayRange = self.largestDiameter()
         if displayRange == float('+Inf') or displayRange < self.objectHeight:
             displayRange = self.objectHeight
-        if self.images is not None:
-            for (imagePosition, magnification) in self.images:
+
+        conjugates = self.intermediateConjugates()
+        if len(conjugates) != 0:
+            for (planePosition, magnification) in conjugates:
                 if displayRange < self.objectHeight * magnification:
                     displayRange = self.objectHeight * magnification
         return displayRange
@@ -327,8 +328,6 @@ class ImagingPath(MatrixGroup):
             removeBlockedRaysCompletely=False to remove rays that are blocked.
 
          """
-
-        self.computeImages()
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-self.displayRange / 2 * 1.5, self.displayRange / 2 * 1.5])
@@ -451,27 +450,14 @@ class ImagingPath(MatrixGroup):
             head_width=arrowHeadWidth,
             length_includes_head=True)
 
-    def computeImages(self):
-        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-        matrices = self.transferMatrices()
-        images = []
-        for element in matrices:
-            transferMatrix = element * transferMatrix
-            (distance, conjugate) = transferMatrix.forwardConjugate()
-            if distance is not None:
-                imagePosition = transferMatrix.L + distance
-                if imagePosition != 0 and conjugate is not None:
-                    magnification = conjugate.A
-                    images.append([imagePosition, magnification])
-        self.images = images
-
     def drawImages(self, axes):  # pragma: no cover
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
 
         (xScaling, yScaling) = self.axesScale(axes)
+        images = self.intermediateConjugates()
 
-        for (imagePosition, magnification) in self.images:
+        for (imagePosition, magnification) in images:
             arrowHeight = abs(magnification * self.objectHeight)
             arrowHeadHeight = arrowHeight * 0.1
 
