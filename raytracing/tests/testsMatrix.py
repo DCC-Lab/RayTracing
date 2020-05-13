@@ -5,6 +5,9 @@ from raytracing import *
 
 inf = float("+inf")
 
+# Change this to Tru if you want to run speed tests
+doBenchmark = False
+
 
 class TestMatrix(unittest.TestCase):
     def testMatrix(self):
@@ -253,13 +256,6 @@ class TestMatrix(unittest.TestCase):
         trace = m.traceThrough(ray)
         self.assertEqual(trace, m * ray)
 
-    def testLagrangeInvariant(self):
-        ray1 = Ray(10, 1)
-        ray2 = Ray(0, 0.5)
-        m = Matrix()
-        invariant = m.lagrangeInvariant(ray1, ray2)
-        self.assertEqual(invariant, 1 * (ray1.theta * ray2.y - ray2.theta * ray1.y))
-
     def testTraceMany(self):
         rays = [Ray(y, theta) for y, theta in zip(range(10, 20), range(10))]
         m = Matrix(physicalLength=1.01)
@@ -308,9 +304,32 @@ class TestMatrix(unittest.TestCase):
         rays = Rays(rays=rays)
         m = Matrix(physicalLength=1)
         trace = m.traceManyThroughInParallel(rays)
-        print(list(rays))
-        for ray in trace:
-            print(ray)
+        for i in range(len(rays)):
+            self.assertEqual(trace[i], rays[i])
+
+    def testTraceManyThroughInParallelNoChunks(self):
+        rays = [Ray(y, y) for y in range(10)]
+        rays = Rays(rays=rays)
+        m = Matrix(physicalLength=1)
+        trace = m.traceManyThroughInParallelNoChunks(rays)
+        for i in range(len(rays)):
+            self.assertEqual(trace[i], rays[i])
+
+    @unittest.skipIf(not doBenchmark, "Not running speed tests.")
+    def testTraceManyThroughInParallelNoChunksFaster(self):
+        import time
+        rays = [Ray(y, y) for y in range(1_000_000)]
+        m = Matrix(physicalLength=1)
+        timeInitNoParallel = time.perf_counter_ns()
+        m.traceManyThrough(rays, False)
+        timeInitParallel = time.perf_counter_ns()
+        m.traceManyThroughInParallelNoChunks(rays)
+        finalTime = time.perf_counter_ns()
+        notParallelTime = timeInitParallel - timeInitNoParallel
+        parallelTime = finalTime - timeInitParallel
+        print(f"Not parallel : {notParallelTime * 1e-9}s")
+        print(f"Parallel : {parallelTime * 1e-9}s")
+        self.assertTrue(parallelTime < notParallelTime)
 
     def testIsImaging(self):
         m1 = Matrix(A=1, B=0, C=3, D=4)
