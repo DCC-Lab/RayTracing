@@ -371,6 +371,13 @@ class ImagingPath(MatrixGroup):
             axes,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+        self.drawDisplayObjects(axes)
+
+        return axes
+
+    def drawDisplayObjects(self, axes):
+        """ Draw all elements to the display """
         if self.showObject:
             self.drawObject(axes)
 
@@ -385,7 +392,19 @@ class ImagingPath(MatrixGroup):
             self.drawPointsOfInterest(z=0, axes=axes)
             self.drawStops(z=0, axes=axes)
 
-        return axes
+    def updateDisplay(self, axes):
+        """ Callback function used to redraw the objects when zooming. """
+        for artist in axes.artists:
+            artist.remove()
+        axes.artists = []
+        for patch in axes.patches:
+            patch.remove()
+        axes.patches = []
+        for text in axes.texts:
+            text.remove()
+        axes.texts = []
+
+        self.drawDisplayObjects(axes)
 
     def display(self, limitObjectToFieldOfView=False,
                 onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
@@ -406,6 +425,8 @@ class ImagingPath(MatrixGroup):
                                 limitObjectToFieldOfView=limitObjectToFieldOfView,
                                 onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
                                 removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+        axes.callbacks.connect('ylim_changed', self.updateDisplay)
 
         self._showPlot()
 

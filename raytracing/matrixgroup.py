@@ -92,6 +92,7 @@ class MatrixGroup(Matrix):
         return transferMatrices
 
     def intermediateConjugates(self):
+        """ The list of position and magnification of conjugate planes """
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
         matrices = self.transferMatrices()
         planes = []
