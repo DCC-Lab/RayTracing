@@ -6,8 +6,9 @@ from .axicon import *
 import raytracing.thorlabs as thorlabs
 import raytracing.eo as eo
 import raytracing.olympus as olympus
-
 import argparse
+
+
 ap = argparse.ArgumentParser(prog='python -m raytracing')
 ap.add_argument("-e", "--examples", required=False, default='all', help="Specific example numbers, separated by a comma")
 
@@ -19,131 +20,37 @@ if examples == 'all':
 else:
     examples = [ int(y) for y in examples.split(',')]
 
-if 1 in examples:
-    path = ImagingPath()
-    path.label = "Demo #1: lens f = 5cm, infinite diameter"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display(comments= """Demo #1: lens with f=5 cm, infinite diameter
 
-    An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\
-    This will use the default objectHeight and fanAngle but they can be changed with:
-    path.objectHeight = 1.0
-    path.fanAngle = 0.5
-    path.fanNumber = 5
-    path.rayNumber = 3
+class ExampleManager:
+    def __init__(self, arguments):
+        self.arguments = arguments
+        self.exampleDirPath = os.path.dirname(os.path.realpath(__file__)) + "\..\examples\\argsExamples"
+        self.parseArguments()
 
-    Code:
-    path = ImagingPath()
-    path.label = "Demo #1: lens f = 5cm, infinite diameter"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    """)
+    def exampleCarousel(self):
+        pass
 
-if 2 in examples:
-    path = ImagingPath()
-    path.label = "Demo #2: Two lenses, infinite diameters"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=20))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display(comments="""Demo #2: Two lenses, infinite diameters
-    An object at z=0 (front edge) is used with default properties (see Demo #1).
+    def showExample(self):
+        pass
 
-    Code:
-    path = ImagingPath()
-    path.label = "Demo #2: Two lenses, infinite diameters"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=20))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    """)
-    # or
-    #path.save("Figure 2.pdf")
+    def generatePdfExample(self):
+        pass
 
-if 3 in examples:
-    path = ImagingPath()
-    path.label = "Demo #3: Finite lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=2.5))
-    path.append(Space(d=3))
-    path.append(Space(d=17))
-    path.display(comments="""Demo #3: A finite lens
-    An object at z=0 (front edge) is used with default properties (see Demo #1). Notice the aperture stop (AS)
-    identified at the lens which blocks the cone of light. There is no field stop to restrict the field of view,
-    which is why we must use the default object and cannot restrict the field of view. Notice how the default
-    rays are blocked.
+    def generateFigureFromCode(self):
+        pass
 
-    path = ImagingPath()
-    path.objectHeight = 1.0    # object height (full).
-    path.objectPosition = 0.0  # always at z=0 for now.
-    path.fanAngle = 0.5        # full fan angle for rays
-    path.fanNumber = 9         # number of rays in fan
-    path.rayNumber = 3         # number of points on object
-    path.label = "Demo #3: Finite lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=2.5))
-    path.append(Space(d=3))
-    path.append(Space(d=17))
-    path.display()
-    """)
-if 4 in examples:
-    path = ImagingPath()
-    path.label = "Demo #4: Aperture behind lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=3))
-    path.append(Space(d=3))
-    path.append(Aperture(diameter=3))
-    path.append(Space(d=17))
-    path.display(comments="""Demo #4: Aperture behind lens
+    def generateHighlightedCodePdf(self):
+        pass
 
-    Notice the aperture stop (AS) identified after the lens, not at the lens. Again, since there is no field stop,
-    we cannot restrict the object to the field of view because it is infinite.
+    def highlightCode(self):
+        pass
 
-    Code:
-    path = ImagingPath()
-    path.label = "Demo #4: Aperture behind lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=3))
-    path.append(Space(d=3))
-    path.append(Aperture(diameter=3))
-    path.append(Space(d=17))
-    path.display()
-    """)
-if 5 in examples:
-    path = ImagingPath()
-    path.label = "Demo #5: Simple microscope system"
-    path.fanAngle = 0.1        # full fan angle for rays
-    path.fanNumber = 5         # number of rays in fan
-    path.rayNumber = 5         # number of points on object
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display(limitObjectToFieldOfView=True, comments="""# Demo #5: Simple microscope system
-    The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
-    the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
-    when displaying, which will set the objectHeight to the field of view, but will still trace all the rays using our parameters.
+    def parseArguments(self):
+        pass
 
-    path = ImagingPath()
-    path.label = "Demo #5: Simple microscope system"
-    path.fanAngle = 0.1        # full fan angle for rays
-    path.fanNumber = 5         # number of rays in fan
-    path.rayNumber = 5         # number of points on object
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display()
-    """)
+
+
+
 if 6 in examples:
     path = ImagingPath()
     path.label = "Demo #6: Simple microscope system, only principal rays"
@@ -427,4 +334,3 @@ if 19 in examples:
 
     # Show
     cavity.display()
-
