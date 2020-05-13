@@ -1,5 +1,5 @@
 import unittest
-import env # modifies path
+import envtest # modifies path
 from raytracing import *
 
 inf = float("+inf")
