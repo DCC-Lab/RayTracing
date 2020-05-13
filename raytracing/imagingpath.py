@@ -434,8 +434,10 @@ class ImagingPath(MatrixGroup):
     def drawObject(self, axes):  # pragma: no cover
         """ Draw the object as defined by objectPosition, objectHeight """
         (xScaling, yScaling) = self.axesScale(axes)
-        arrowHeadWidth = xScaling * 0.01
-        arrowHeadHeight = yScaling * 0.03
+        arrowHeadHeight = self.objectHeight * 0.1
+
+        heightFactor = self.objectHeight / yScaling
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
 
         axes.arrow(
             self.objectPosition,
@@ -468,10 +470,14 @@ class ImagingPath(MatrixGroup):
         objectPosition, objectHeight """
 
         (xScaling, yScaling) = self.axesScale(axes)
-        arrowHeadWidth = xScaling * 0.01
-        arrowHeadHeight = yScaling * 0.03
 
         for (imagePosition, magnification) in self.images:
+            arrowHeight = abs(magnification * self.objectHeight)
+            arrowHeadHeight = arrowHeight * 0.1
+
+            heightFactor = arrowHeight / yScaling
+            arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+
             axes.arrow(
                 imagePosition,
                 -magnification * self.objectHeight / 2,
