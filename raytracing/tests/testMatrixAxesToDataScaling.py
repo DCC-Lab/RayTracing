@@ -1,4 +1,5 @@
 import unittest
+import env  # modifies path
 from raytracing import *
 
 
