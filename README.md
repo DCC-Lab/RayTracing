@@ -110,15 +110,15 @@ outputRays.display("Output profile")
 
 and you will get the following ray histograms:
 
-<img src="README.assets/inputProfile.png" alt="inputProfile" style="zoom:25%;" />
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/inputProfile.png" alt="inputProfile" style="zoom:25%;" />
 
-<img src="README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
 
 ## Documentation
 
 The class hierarchy for optical elements (with parameters and defaults) is:
 
-![image-20190511230415520](README.assets/image-20190511230415520.png)
+![class](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/hierarchy.png)
 
 Documentation is sparse at best.   You may obtain help by:
 
@@ -633,11 +633,9 @@ if 19 in examples:
     cavity.display()
 ```
 
-
-
-![Figure1](README.assets/Figure1.png)
-![Microscope](README.assets/Microscope.png)
-![Illumination](README.assets/Illumination.png)
+![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simpleObjectImage.png)
+![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscope.png)
+![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/illumination.png)
 
 ## Known limitations
 
