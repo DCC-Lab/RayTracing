@@ -311,7 +311,7 @@ class ImagingPath(MatrixGroup):
                 if displayRange < self.objectHeight * magnification:
                     displayRange = self.objectHeight * magnification
 
-        if axes is not None:
+        if not self.hasFiniteApertureDiameter() and axes is not None:
             if len(axes.lines) != 0:
                 for rayTrace in axes.lines:
                     if max(abs(rayTrace._y)) * 2 > displayRange:
