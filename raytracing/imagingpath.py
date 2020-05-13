@@ -299,8 +299,8 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def displayRange(self):
-        """ The required display height to fit all elements, object and images. """
+    def displayRange(self, axes=None):
+        """ The required display height to fit all elements, object, images and raytraces. """
         displayRange = self.largestDiameter()
         if displayRange == float('+Inf') or displayRange < self.objectHeight:
             displayRange = self.objectHeight
@@ -310,6 +310,13 @@ class ImagingPath(MatrixGroup):
             for (planePosition, magnification) in conjugates:
                 if displayRange < self.objectHeight * magnification:
                     displayRange = self.objectHeight * magnification
+
+        if axes is not None:
+            if len(axes.lines) != 0:
+                for rayTrace in axes.lines:
+                    if max(abs(rayTrace._y)) * 2 > displayRange:
+                        displayRange = max(abs(rayTrace._y)) * 2
+
         return displayRange
 
     def createFigure(self, limitObjectToFieldOfView=False,
@@ -331,7 +338,7 @@ class ImagingPath(MatrixGroup):
             fig, axes = plt.subplots(figsize=(10, 7))
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
+        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
 
         note1 = ""
         note2 = ""
@@ -403,6 +410,7 @@ class ImagingPath(MatrixGroup):
         self.drawDisplayObjects(axes)
 
         axes.callbacks.connect('ylim_changed', self.updateDisplay)
+        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
 
         self._showPlot()
 
@@ -422,6 +430,7 @@ class ImagingPath(MatrixGroup):
             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         self.drawDisplayObjects(axes)
+        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
 
         fig.savefig(filepath, dpi=600)
 
