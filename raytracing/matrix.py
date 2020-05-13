@@ -3,16 +3,12 @@ from .gaussianbeam import *
 from .rays import *
 
 import multiprocessing
-import copy
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
 import math
-
-import time
-import tempfile
 import warnings
 
 
@@ -546,14 +542,14 @@ class Matrix(object):
         """
         self.isFlipped = not self.isFlipped
         # First and last interfaces. Used for BFL and FFL
-        tempVertex = self.frontVertex
-        self.backVertex = tempVertex
-        self.frontVertex = self.backVertex
+        tempVertex = self.backVertex
+        self.backVertex = self.frontVertex
+        self.frontVertex = tempVertex
 
         # Index of refraction at entrance and exit.
         tempIndex = self.frontIndex
         self.frontIndex = self.backIndex
-        self.backIndex = self.frontIndex
+        self.backIndex = tempIndex
 
         return self
 
