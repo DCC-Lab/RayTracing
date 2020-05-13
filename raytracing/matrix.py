@@ -546,14 +546,14 @@ class Matrix(object):
         """
         self.isFlipped = not self.isFlipped
         # First and last interfaces. Used for BFL and FFL
-        tempVertex = self.frontVertex
-        self.backVertex = tempVertex
-        self.frontVertex = self.backVertex
+        tempVertex = self.backVertex
+        self.backVertex = self.frontVertex
+        self.frontVertex = tempVertex
 
         # Index of refraction at entrance and exit.
         tempIndex = self.frontIndex
         self.frontIndex = self.backIndex
-        self.backIndex = self.frontIndex
+        self.backIndex = tempIndex
 
         return self
 
