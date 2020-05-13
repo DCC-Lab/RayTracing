@@ -29,8 +29,9 @@ class TestMatrixAxesToDataScalingOLD(unittest.TestCase):
         """ Does not pass. The xScaling is wrong. """
         path = ImagingPath()
 
-        fig, axes = plt.subplots(figsize=(10, 7))
-        path.createRayTracePlot(axes=axes)
+        fig, axes = path.createFigure()
+        path.drawRayTraces(axes, onlyChiefAndMarginalRays=False)
+        path.drawDisplayObjects(axes)
 
         (xScaling, yScaling) = path.axesToDataScalingOLD(axes)
 
@@ -44,8 +45,9 @@ class TestMatrixAxesToDataScalingOLD(unittest.TestCase):
         path.append(Lens(f=5))
         path.append(Space(d=10))
 
-        fig, axes = plt.subplots(figsize=(10, 7))
-        path.createRayTracePlot(axes=axes)
+        fig, axes = path.createFigure()
+        path.drawRayTraces(axes, onlyChiefAndMarginalRays=False)
+        path.drawDisplayObjects(axes)
 
         (xScaling, yScaling) = path.axesToDataScalingOLD(axes)
 
@@ -59,8 +61,9 @@ class TestMatrixAxesToDataScalingOLD(unittest.TestCase):
         path.append(Lens(f=5))
         path.append(Space(d=10))
 
-        fig, axes = plt.subplots(figsize=(10, 7))
-        path.createRayTracePlot(axes=axes)
+        fig, axes = path.createFigure()
+        path.drawRayTraces(axes, onlyChiefAndMarginalRays=False)
+        path.drawDisplayObjects(axes)
 
         (xScaling1, yScaling1) = path.axesToDataScalingOLD(axes)
         # xScaling1 is wrong
