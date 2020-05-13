@@ -16,10 +16,8 @@ import tempfile
 import warnings
 
 
-
 def warningOnOneLine(message, category, filename, lineno, line=None):
     return ' %s:%s\n%s:%s' % (filename, lineno, category.__name__, message)
-
 
 
 warnings.formatwarning = warningOnOneLine
@@ -352,7 +350,12 @@ class Matrix(object):
 
         with multiprocessing.Pool(processes=processes) as pool:
             outputRays = pool.map(self.traceManyThrough, manyInputRays)
-        return Rays(rays=outputRays)
+
+        outputRaysList = []
+        for rays in outputRays:
+            outputRaysList += rays.rays
+
+        return Rays(rays=outputRaysList)
 
     def traceManyThroughInParallelNoChunks(self, inputRays, progress=True, processes=None):
         if processes is None:
@@ -362,6 +365,7 @@ class Matrix(object):
 
         with multiprocessing.Pool(processes=processes) as pool:
             outputRays = pool.map(self.traceThrough, manyInputRays)
+            print(outputRays)
         return Rays(rays=outputRays)
 
     @property
