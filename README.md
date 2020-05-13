@@ -633,11 +633,9 @@ if 19 in examples:
     cavity.display()
 ```
 
-
-
-![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Figure1.png)
-![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Microscope.png)
-![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Illumination.png)
+![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simpleObjectImage.png)
+![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscope.png)
+![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/illumination.png)
 
 ## Known limitations
 
