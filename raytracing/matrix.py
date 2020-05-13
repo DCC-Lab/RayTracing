@@ -715,8 +715,9 @@ class Matrix(object):
 
             center = z + self.L / 2
             if self.L == 0:
-                (xScaling, _) = self.axesScale(axes)
-                width = xScaling * 0.01 / 2
+                (xScaling, yScaling) = self.axesScale(axes)
+                heightFactor = halfHeight * 2 / yScaling
+                width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
             else:
                 width = self.L / 2
 

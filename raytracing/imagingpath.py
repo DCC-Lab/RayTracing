@@ -523,8 +523,9 @@ class ImagingPath(MatrixGroup):
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
             center = z + pupilPosition
-            (xScaling, _) = self.axesScale(axes)
-            width = xScaling * 0.01 / 2
+            (xScaling, yScaling) = self.axesScale(axes)
+            heightFactor = halfHeight * 2 / yScaling
+            width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
 
             axes.add_patch(patches.Polygon(
                 [[center - width, halfHeight],
