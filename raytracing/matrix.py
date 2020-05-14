@@ -751,25 +751,13 @@ class Matrix(object):
         return halfHeight
 
     def axesToDataScale(self, axes):
-        """ Display dimensions in data units"""
+        """ Display dimensions in data units.
+        Used to properly draw elements on the display
+        with appropriate data coordinates. """
+
         xScale, yScale = axes.viewLim.bounds[2:]
 
         return xScale, yScale
-
-    def axesToDataScalingOLD(self, axes):
-        """ For drawing properly arrows and other things, sometimes
-        we need to draw along y in real space but in x in relative space
-        (i.e. relative to the width of the graph, not x coordinates).
-        There are transforms in matplotlib, but only between axes-display,
-        and data-display, not between data-axes.  Here we obtain the scaling
-        so we can set arrow properties intelligently """
-
-        fromDispToData = axes.transData.inverted()
-        fromAxesToDisp = axes.transAxes
-        scalingFromAxesToData = fromDispToData.transform(fromAxesToDisp.transform([[1, 1], [0, 0]]))
-        xScaling = abs(scalingFromAxesToData[1][0] - scalingFromAxesToData[0][0])
-        yScaling = abs(scalingFromAxesToData[1][1] - scalingFromAxesToData[0][1])
-        return (xScaling, yScaling)
 
     def __str__(self):
         """ String description that allows the use of print(Matrix())

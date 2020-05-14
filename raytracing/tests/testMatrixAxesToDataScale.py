@@ -28,9 +28,8 @@ class TestMatrixAxesToDataScale(unittest.TestCase):
     def testWithEmptyImagingPath(self):
         path = ImagingPath()
 
-        fig, axes = path.createFigure()
-        path.drawRayTraces(axes, onlyChiefAndMarginalRays=False)
-        path.drawDisplayObjects(axes)
+        fig, axes = plt.subplots(figsize=(10, 7))
+        path.createRayTracePlot(axes=axes)
 
         (xScaling, yScaling) = path.axesToDataScale(axes)
 
@@ -44,9 +43,8 @@ class TestMatrixAxesToDataScale(unittest.TestCase):
         path.append(Lens(f=5))
         path.append(Space(d=10))
 
-        fig, axes = path.createFigure()
-        path.drawRayTraces(axes, onlyChiefAndMarginalRays=False)
-        path.drawDisplayObjects(axes)
+        fig, axes = plt.subplots(figsize=(10, 7))
+        path.createRayTracePlot(axes=axes)
 
         (xScaling, yScaling) = path.axesToDataScale(axes)
 
