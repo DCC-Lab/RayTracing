@@ -155,7 +155,7 @@ class LaserPath(MatrixGroup):
         returned is relative to the position of the beam, which is why we add the actual
         position of the beam to the relative position. """
 
-        (xScaling, yScaling) = self.axesToDataScaling(axes)
+        (xScaling, yScaling) = self.axesToDataScale(axes)
         arrowWidth = xScaling * 0.01
         arrowHeight = yScaling * 0.03
         arrowSize = arrowHeight * 3
