@@ -3,17 +3,24 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to RayTracing's documentation!
+RayTracing
 ======================================
+This code aims to provide a simple ray tracing module for calculating various
+properties of optical paths (object, image, aperture stops, field stops). It
+makes use of ABCD matrices and does not consider aberrations (spherical or
+chromatic). Since it uses the ABCD formalism (or Ray matrices, or Gauss
+matrices) it can perform tracing of rays and gaussian laser beams.
+
+Contents
+^^^^^^^^
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
-
+   README
 
 Indices and tables
-==================
+^^^^^^^^^^^^^^^^^^
 
 * :ref:`genindex`
 * :ref:`modindex`
