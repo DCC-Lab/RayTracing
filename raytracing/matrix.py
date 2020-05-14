@@ -1071,6 +1071,26 @@ class ThickLens(Matrix):
 
         return pointsOfInterest
 
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        In this case, R1 = -R2, and R2 = -R1.  It is important to call the
+        super implementation because other things must be flipped (vertices for instance)
+        """
+        super(DielectricInterface, self).flipOrientation()
+
+        temp = self.R1
+        self.R1 = -self.R2
+        self.R2 = -temp
+
+        R1 = self.R1
+        R2 = self.R2
+        t = self.L
+
+        self.A = t * (1.0 - n) / (n * R1) + 1
+        self.B = t / n
+        self.C = - (n - 1.0) * (1.0 / R1 - 1.0 / R2 + t * (n - 1.0) / (n * R1 * R2))
+        self.D = t * (n - 1.0) / (n * R2) + 1
+        return self
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
