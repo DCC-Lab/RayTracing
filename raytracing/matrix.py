@@ -848,6 +848,16 @@ class CurvedMirror(Matrix):
 
         return pointsOfInterest
 
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        In this case, R -> -R.  It is important to call the
+        super implementation because other things must be flipped (vertices for instance)
+        """
+        super(CurvedMirror, self).flipOrientation()
+
+        self.C = - self.C
+        return self
+
 
 class Space(Matrix):
     """Free space of length d
@@ -1076,7 +1086,7 @@ class ThickLens(Matrix):
         In this case, R1 = -R2, and R2 = -R1.  It is important to call the
         super implementation because other things must be flipped (vertices for instance)
         """
-        super(DielectricInterface, self).flipOrientation()
+        super(ThickLens, self).flipOrientation()
 
         temp = self.R1
         self.R1 = -self.R2
