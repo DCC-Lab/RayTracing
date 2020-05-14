@@ -12,17 +12,14 @@ import os
 
 ap = argparse.ArgumentParser(prog='python -m raytracing')
 ap.add_argument("-e", "--examples", required=False, default='', help="Specific example numbers, separated by a comma")
-
 args = vars(ap.parse_args())
-examples = args['examples']
 
 
 class ExampleManager:
     def __init__(self, arguments):
         self.arguments = arguments
         self.exampleDirPath = os.path.dirname(os.path.realpath(__file__)) + "\..\examples\\argsExamples"
-        self.outputExampleFilePath = self.exampleDirPath + "\exampleFile.html"
-        self.figureFilePath = self.exampleDirPath + "\\tempFig.png"
+        self.htmlTemporaryExampleFile = None
         self.selectedFileIndex = 0
         self.figureObject = None
         self.base64Figure = None
@@ -39,7 +36,7 @@ class ExampleManager:
 
     def showExample(self):
         self.generateExample()
-        webbrowser.open(self.outputExampleFilePath)
+        webbrowser.open("file://" + self.htmlTemporaryExampleFile)
 
     def generateExample(self):
         self.generateFigureFromCode()
@@ -47,7 +44,7 @@ class ExampleManager:
         self.mergeFigureAndHTML()
 
     def mergeFigureAndHTML(self):
-        with open(self.outputExampleFilePath, 'a+') as f:
+        with open(self.htmlTemporaryExampleFile, 'a+') as f:
             f.write(''''<img class="icon" src="data:image/png;base64,{} ">'''.format(self.base64Figure))
             f.close()
 
@@ -59,15 +56,18 @@ class ExampleManager:
             plt.savefig(tmpfile, format="png")
             tmpfile.seek(0)
             self.base64Figure = base64.b64encode(tmpfile.read()).decode()
-            print(self.base64Figure)
 
-    def generateHTMLHighlightedCode(self, code=None):
-        code = code
-        if code is None:
+    def generateHTMLHighlightedCode(self, code=""):
+        if not code:
             code = self.getExampleCode()
-        with open(self.outputExampleFilePath, 'w') as f:
-            highlightedCode = highlight(code, self.lexer, self.formatter, outfile=f)
+        temp = tempfile.NamedTemporaryFile(delete=False)
+        path = temp.name + '.html'
+        self.htmlTemporaryExampleFile = path
+        with open(path, 'w') as f:
+            highlightedCode = highlight(code, self.lexer, self.formatter)
+            f.write(highlightedCode)
             f.close()
+
         return highlightedCode
 
     def runExampleCode(self):
@@ -84,15 +84,15 @@ class ExampleManager:
         return codeString
 
     def parseArguments(self):
-        if "examples" in self.arguments:
-            print(self.arguments['examples'].split(","))
-            self.exampleCarousel(list((self.arguments['examples'].replace(" ", "").split(","))))
+        if self.arguments['examples']:
+            if self.arguments['examples'] == 'all':
+                examplesIndexes = range()
+            else:
+                examplesIndexes = list((self.arguments['examples'].replace(" ", "").split(",")))
+            self.exampleCarousel(examplesIndexes)
 
 
 if __name__ == "__main__":
-    args = {"examples": "1"}
     manager = ExampleManager(args)
 
-else:
-    manager = ExampleManager(args)
 
