@@ -18,6 +18,7 @@ Contents
    :maxdepth: 1
 
    README
+   reference
 
 Indices and tables
 ^^^^^^^^^^^^^^^^^^
