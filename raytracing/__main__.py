@@ -12,6 +12,8 @@ ap.add_argument("-e", "--examples", required=False, default='', help="Specific e
 args = vars(ap.parse_args())
 examples = args['examples']
 
+args = {"examples": "1, 2, 3"}
+
 
 class ExampleManager:
     def __init__(self, arguments):
@@ -25,7 +27,7 @@ class ExampleManager:
 
     def exampleCarousel(self, exampleIndexList):
         for i in exampleIndexList:
-            self.selectedFile = self.exampleDirPath + '\example{}'.format(i)
+            self.selectedFile = self.exampleDirPath + '\example{}.py'.format(i)
             self.showExample()
 
     def showExample(self):
@@ -42,24 +44,32 @@ class ExampleManager:
         pass
 
     def generateFigureFromCode(self):
-        pass
+        self.runExampleCode()
 
-    def generateHTMLHighlightedCode(self, code):
+    def generateHTMLHighlightedCode(self, code=None):
+        code = code
+        if code is None:
+            code = self.getExampleCode()
         with open(self.outputExampleFilePath, 'w') as f:
             highlightedCode = highlight(code, self.lexer, self.formatter, outfile=f)
             f.close()
         return highlightedCode
 
+    def runExampleCode(self):
+        os.system('cmd /c python {}'.format(self.selectedFile))
+
     def getExampleCode(self):
-        pass
+        with open(self.selectedFile, 'r') as f:
+            codeString = f.read()
+            #TODO:should do a parsing job here to remove docstring and if __name__ == __main__
+        return codeString
 
     def parseArguments(self):
-        print(self.arguments)
-        if 'examples' in self.arguments:
-            print(list(self.arguments['examples']))
-            self.exampleCarousel(list(self.arguments['examples']))
+        if "examples" in self.arguments:
+            print(self.arguments['examples'].split(","))
+            self.exampleCarousel(list(self.arguments['examples'].split(",")))
 
 
 manager = ExampleManager(args)
-manager.generateHTMLHighlightedCode("print ('Hello World')\nclass Hello:\n\tdef __init__(self):\n\tpass")
+manager.generateHTMLHighlightedCode("print ('Hello World')\nclass Hello:\n\tdef __init__(self):\n\t\tself.data = []")
 

@@ -93,13 +93,59 @@ body .il { color: #666666 } /* Literal.Number.Integer.Long */
 <body>
 <h2></h2>
 
-<table class="sourcetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="source"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Hello</span><span class="p">:</span>
-	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-	<span class="k">pass</span>
+<table class="sourcetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></div></td><td class="code"><div class="source"><pre><span></span><span class="kn">from</span> <span class="nn">raytracing</span> <span class="kn">import</span> <span class="n">ImagingPath</span><span class="p">,</span> <span class="n">Space</span><span class="p">,</span> <span class="n">Lens</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="sd">&#39;&#39;&#39;An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\</span>
+<span class="sd">This will use the default objectHeight and fanAngle but they can be changed with:</span>
+<span class="sd">path.objectHeight = 1.0</span>
+<span class="sd">path.fanAngle = 0.5</span>
+<span class="sd">path.fanNumber = 5</span>
+<span class="sd">path.rayNumber = 3&#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">example</span><span class="p">():</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">ImagingPath</span><span class="p">()</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Demo #1: lens f = 5cm, infinite diameter&quot;</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Space</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Lens</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Space</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">createRayTracePlot</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;tempFig.pdf&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">_showPlot</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">example</span><span class="p">()</span>
 </pre></div>
 </td></tr></table></body>
 </html>
