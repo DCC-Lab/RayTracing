@@ -8,20 +8,10 @@ from matplotlib import pyplot as plt
    rays are blocked.'''
 
 
-def example():
-    path = ImagingPath()
-    path.label = "Demo #3: Finite lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=2.5))
-    path.append(Space(d=3))
-    path.append(Space(d=17))
-    fig, axes = plt.subplots(figsize=(10, 7))
-    path.createRayTracePlot(axes=axes)
-    plt.savefig('tempFig.pdf', dpi=600)
-
-    if __name__ == "__main__":
-        path._showPlot()
-
-
-if __name__ == "__main__":
-    example()
+path = ImagingPath()
+path.label = "Demo #3: Finite lens"
+path.append(Space(d=10))
+path.append(Lens(f=5, diameter=2.5))
+path.append(Space(d=3))
+path.append(Space(d=17))
+path.display()

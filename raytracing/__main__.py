@@ -3,6 +3,10 @@ from pygments import highlight
 import pygments.lexers
 import pygments.formatters
 import webbrowser
+from unittest.mock import patch
+from matplotlib import pyplot as plt
+import tempfile
+import base64
 import os
 
 
@@ -12,14 +16,16 @@ ap.add_argument("-e", "--examples", required=False, default='', help="Specific e
 args = vars(ap.parse_args())
 examples = args['examples']
 
-args = {"examples": "1, 2, 3"}
-
 
 class ExampleManager:
     def __init__(self, arguments):
         self.arguments = arguments
         self.exampleDirPath = os.path.dirname(os.path.realpath(__file__)) + "\..\examples\\argsExamples"
         self.outputExampleFilePath = self.exampleDirPath + "\exampleFile.html"
+        self.figureFilePath = self.exampleDirPath + "\\tempFig.png"
+        self.selectedFileIndex = 0
+        self.figureObject = None
+        self.base64Figure = None
         self.selectedFile = None
         self.formatter = pygments.formatters.get_formatter_by_name('html',full=True, linenos=True, cssclass="source", style='default')
         self.lexer = pygments.lexers.get_lexer_by_name('python', stripall=True)
@@ -27,6 +33,7 @@ class ExampleManager:
 
     def exampleCarousel(self, exampleIndexList):
         for i in exampleIndexList:
+            self.selectedFileIndex = i
             self.selectedFile = self.exampleDirPath + '\example{}.py'.format(i)
             self.showExample()
 
@@ -38,13 +45,21 @@ class ExampleManager:
         self.generateFigureFromCode()
         self.generateHTMLHighlightedCode()
         self.mergeFigureAndHTML()
-        # OPEN HTML FILE.
 
     def mergeFigureAndHTML(self):
-        pass
+        with open(self.outputExampleFilePath, 'a+') as f:
+            f.write(''''<img class="icon" src="data:image/png;base64,{} ">'''.format(self.base64Figure))
+            f.close()
 
     def generateFigureFromCode(self):
         self.runExampleCode()
+        fig, axes = plt.subplots(figsize=(10, 7))
+        self.figureObject.createRayTracePlot(axes=axes)
+        with tempfile.TemporaryFile(suffix=".png") as tmpfile:
+            plt.savefig(tmpfile, format="png")
+            tmpfile.seek(0)
+            self.base64Figure = base64.b64encode(tmpfile.read()).decode()
+            print(self.base64Figure)
 
     def generateHTMLHighlightedCode(self, code=None):
         code = code
@@ -56,20 +71,28 @@ class ExampleManager:
         return highlightedCode
 
     def runExampleCode(self):
-        os.system('cmd /c python {}'.format(self.selectedFile))
+        with patch('matplotlib.pyplot.show') as p:
+            global path
+            exec(open(self.selectedFile).read(), globals())
+            self.figureObject = path
 
     def getExampleCode(self):
         with open(self.selectedFile, 'r') as f:
             codeString = f.read()
+            f.close()
             #TODO:should do a parsing job here to remove docstring and if __name__ == __main__
         return codeString
 
     def parseArguments(self):
         if "examples" in self.arguments:
             print(self.arguments['examples'].split(","))
-            self.exampleCarousel(list(self.arguments['examples'].split(",")))
+            self.exampleCarousel(list((self.arguments['examples'].replace(" ", "").split(","))))
 
 
-manager = ExampleManager(args)
-manager.generateHTMLHighlightedCode("print ('Hello World')\nclass Hello:\n\tdef __init__(self):\n\t\tself.data = []")
+if __name__ == "__main__":
+    args = {"examples": "1"}
+    manager = ExampleManager(args)
+
+else:
+    manager = ExampleManager(args)
 
