@@ -1071,6 +1071,14 @@ class ThickLens(Matrix):
 
         return pointsOfInterest
 
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ Returns a ThickLens() corresponding to a partial propagation
+        if the requested distance is smaller than the length of this element"""
+        if self.L <= upTo:
+            return self
+        else:
+            return ThickLens(self.n, self.R1, self.R2, upTo, self.apertureDiameter, self.label)
+
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
@@ -1094,6 +1102,14 @@ class DielectricSlab(ThickLens):
                               fill=True, transform=axes.transData,
                               clip_on=True)
         axes.add_patch(p)
+
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ Returns a DielectricSlab() corresponding to a partial propagation
+                if the requested distance is smaller than the length of this element"""
+        if self.L <= upTo:
+            return self
+        else:
+            return DielectricSlab(self.n, upTo, self.apertureDiameter, self.label)
 
 
 class Aperture(Matrix):
