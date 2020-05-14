@@ -200,6 +200,45 @@ class TestMatrixGroup(unittest.TestCase):
         mg.append(DielectricInterface(1.2541255, 1.33, 2, 1e5))
         self.assertTrue(mg.hasFiniteApertureDiameter())
 
+    @unittest.skip("Empty MatrixGroup raises IndexError")
+    def testLargestDiameterEmptyGroup(self):
+        mg = MatrixGroup()
+        self.assertIsNotNone(mg.largestDiameter())
+
+    def testLargestDiameter(self):
+        smallDiam = 10
+        bigDiam = 25
+        mg = MatrixGroup([Space(14, diameter=smallDiam), Lens(5), Space(5, diameter=bigDiam)])
+        self.assertEqual(mg.largestDiameter(), bigDiam)
+
+    def testFlipOrientationEmptyGroup(self):
+        mg = MatrixGroup()
+        self.assertIs(mg.flipOrientation(), mg)
+
+    def testFlipOrientation(self):
+        space = Space(10)
+        mg = MatrixGroup([space])
+        mg.flipOrientation()
+        self.assertListEqual(mg.elements, [space])
+        self.assertEqual(mg.A, space.A)
+        self.assertEqual(mg.B, space.B)
+        self.assertEqual(mg.C, space.C)
+        self.assertEqual(mg.D, space.D)
+        self.assertEqual(mg.L, space.L)
+
+        space = Space(10)
+        slab = DielectricSlab(1, 10)
+        interface = DielectricInterface(1, 1.33)
+        mg = MatrixGroup([space, slab, interface])
+        mg.flipOrientation()
+        supposedMatrix = space * slab * interface
+        self.assertListEqual(mg.elements, [interface, slab, space])
+        self.assertEqual(mg.A, supposedMatrix.A)
+        self.assertEqual(mg.B, supposedMatrix.B)
+        self.assertEqual(mg.C, supposedMatrix.C)
+        self.assertEqual(mg.D, supposedMatrix.D)
+        self.assertEqual(mg.L, supposedMatrix.L)
+
 
 if __name__ == '__main__':
     unittest.main()
