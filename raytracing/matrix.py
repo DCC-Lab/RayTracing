@@ -167,7 +167,7 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
+            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}\n".format(
                 rightSideBeam.n, self.frontIndex)
             warnings.warn(msg, UserWarning)
 
@@ -821,12 +821,16 @@ class Lens(Matrix):
 
 
 class CurvedMirror(Matrix):
-    """A curved mirror of radius R and infinite or finite diameter
-
+    """A curved mirror of radius R and infinite or finite diameter.
+    Note that a concave mirror (i.e. converging mirror) has a negative
+    radius of curvature if we want to keep the same sign convention.
+    (there was a mistake up to version 1.2.7 of the module)
     """
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
-        super(CurvedMirror, self).__init__(A=1, B=0, C=-2 / float(R), D=1,
+        warnings.warn("The sign of the radius of curvature in CurvedMirror was changed \
+in version 1.2.8 to maintain the sign convention\n",UserWarning)
+        super(CurvedMirror, self).__init__(A=1, B=0, C=2 / float(R), D=1,
                                            physicalLength=0,
                                            apertureDiameter=diameter,
                                            frontVertex=0,
@@ -847,6 +851,16 @@ class CurvedMirror(Matrix):
             pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
 
         return pointsOfInterest
+
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        In this case, R -> -R.  It is important to call the
+        super implementation because other things must be flipped (vertices for instance)
+        """
+        super(CurvedMirror, self).flipOrientation()
+
+        self.C = - self.C
+        return self
 
 
 class Space(Matrix):
@@ -1071,6 +1085,27 @@ class ThickLens(Matrix):
 
         return pointsOfInterest
 
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        In this case, R1 = -R2, and R2 = -R1.  It is important to call the
+        super implementation because other things must be flipped (vertices for instance)
+        """
+        super(ThickLens, self).flipOrientation()
+
+        temp = self.R1
+        self.R1 = -self.R2
+        self.R2 = -temp
+
+        R1 = self.R1
+        R2 = self.R2
+        t = self.L
+        n = self.n
+
+        self.A = t * (1.0 - n) / (n * R1) + 1
+        self.B = t / n
+        self.C = - (n - 1.0) * (1.0 / R1 - 1.0 / R2 + t * (n - 1.0) / (n * R1 * R2))
+        self.D = t * (n - 1.0) / (n * R2) + 1
+        return self
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
