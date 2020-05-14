@@ -314,6 +314,41 @@ class TestMatrix(unittest.TestCase):
         self.assertAlmostEqual(m1.B, m2.B,4)
         self.assertAlmostEqual(m1.C, m2.C,4)
         self.assertAlmostEqual(m1.D, m2.D,4)
+
+    def testConvergingCurvedMirror(self):
+        # Concave should be positive?
+        m = CurvedMirror(R=-100)
+        outRayDown = m*Ray(y=1,theta=0)
+        outRayUp = m*Ray(y=-1,theta=0)
+
+        # Ray is focussed to focal spot
+        self.assertTrue(m.C < 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testDivergingCurvedMirror(self):
+        m = CurvedMirror(R=100)
+        outRayUp = m*Ray(y=1,theta=0)
+        outRayDown = m*Ray(y=-1,theta=0)
+
+        # Ray is diverging
+        self.assertTrue(m.C > 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testCurvedMirrorFlip(self):
+        # Biconvex
+        m1 = CurvedMirror(R=100)
+        m2 = CurvedMirror(R=-100)
+        m2.flipOrientation()
+
+        self.assertAlmostEqual(m1.determinant, 1,4)
+        self.assertAlmostEqual(m2.determinant, 1,4)
+        self.assertAlmostEqual(m1.A, m2.A,4)
+        self.assertAlmostEqual(m1.B, m2.B,4)
+        self.assertAlmostEqual(m1.C, m2.C,4)
+        self.assertAlmostEqual(m1.D, m2.D,4)
+
     def testLensFocalLengths(self):
         m = Lens(f=5)
         self.assertEqual(m.effectiveFocalLengths(), (5, 5))
