@@ -319,23 +319,19 @@ class ImagingPath(MatrixGroup):
 
         return displayRange
 
-    def createFigure(self, limitObjectToFieldOfView=False,
-                     onlyChiefAndMarginalRays=False, comments=None):
+    def createRayTracePlot(
+            self, axes,
+            limitObjectToFieldOfView=False,
+            onlyChiefAndMarginalRays=False,
+            removeBlockedRaysCompletely=False):  # pragma: no cover
         """ Create a matplotlib plot to draw the rays and the elements.
 
             Three optional parameters:
             limitObjectToFieldOfView=False, to use the calculated field of view
             instead of the objectHeight
-
             onlyChiefAndMarginalRays=False, to only show principal rays
+            removeBlockedRaysCompletely=False to remove rays that are blocked.
          """
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
         axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
@@ -360,7 +356,6 @@ class ImagingPath(MatrixGroup):
                     "Infinite image size: cannot use\
                     limitObjectToFieldOfView=True.")
 
-
         else:
             note1 = "Object height: {0:.2f}".format(self.objectHeight)
 
@@ -376,7 +371,14 @@ class ImagingPath(MatrixGroup):
         axes.text(0.05, 0.15, note1 + "\n" + note2, transform=axes.transAxes,
                   fontsize=12, verticalalignment='top', clip_box=axes.bbox, clip_on=True)
 
-        return fig, axes
+        self.drawRayTraces(
+            axes,
+            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+        self.drawDisplayObjects(axes)
+
+        return axes
 
     def updateDisplay(self, axes):
         """ Callback function used to redraw the objects when zooming. """
@@ -397,17 +399,18 @@ class ImagingPath(MatrixGroup):
         """ Display the optical system and trace the rays. If comments are included
         they will be displayed on a graph in the bottom half of the plot.
         """
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+                              fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
 
-        fig, axes = self.createFigure(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                      onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                      comments=comments)
-
-        self.drawRayTraces(
-            axes,
-            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        self.drawDisplayObjects(axes)
+        self.createRayTracePlot(axes=axes,
+                                limitObjectToFieldOfView=limitObjectToFieldOfView,
+                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         axes.callbacks.connect('ylim_changed', self.updateDisplay)
         axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
@@ -420,16 +423,20 @@ class ImagingPath(MatrixGroup):
              removeBlockedRaysCompletely=False,
              comments=None):
 
-        fig, axes = self.createFigure(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                      onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                      comments=comments)
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+                              fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
 
-        self.drawRayTraces(
-            axes,
-            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+        self.createRayTracePlot(axes=axes,
+                                limitObjectToFieldOfView=limitObjectToFieldOfView,
+                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
-        self.drawDisplayObjects(axes)
+        axes.callbacks.connect('ylim_changed', self.updateDisplay)
         axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
 
         fig.savefig(filepath, dpi=600)
