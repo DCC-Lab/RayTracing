@@ -803,9 +803,10 @@ class Lens(Matrix):
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a thin lens at z """
         maxRayHeight = 0
-        for rayTrace in axes.lines:
-            if max(rayTrace._y) > maxRayHeight:
-                maxRayHeight = max(rayTrace._y)
+        for line in axes.lines:
+            if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
+                if max(line._y) > maxRayHeight:
+                    maxRayHeight = max(line._y)
 
         halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 

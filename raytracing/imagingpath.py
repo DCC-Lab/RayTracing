@@ -312,10 +312,10 @@ class ImagingPath(MatrixGroup):
                     displayRange = self.objectHeight * magnification
 
         if not self.hasFiniteApertureDiameter() and axes is not None:
-            if len(axes.lines) != 0:
-                for rayTrace in axes.lines:  # FIXME: need a more robust reference to rayTraces
-                    if max(abs(rayTrace._y)) * 2 > displayRange:
-                        displayRange = max(abs(rayTrace._y)) * 2
+            for line in axes.lines:
+                if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
+                    if max(abs(line._y)) * 2 > displayRange:
+                        displayRange = max(abs(line._y)) * 2
 
         return displayRange
 
@@ -482,7 +482,7 @@ class ImagingPath(MatrixGroup):
             binSize = 2.0 * halfHeight / (len(color) - 1)
             colorIndex = int(
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-            axes.plot(x, y, color[colorIndex], linewidth=linewidth)
+            axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
 
     def rearrangeRayTraceForPlotting(self, rayList,
                                      removeBlockedRaysCompletely=True):
