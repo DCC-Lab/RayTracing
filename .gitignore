@@ -189,3 +189,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 examples/argsExamples/tempFig.pdf
+
+.idea/RayTracing.iml
+
+.idea/misc.xml
