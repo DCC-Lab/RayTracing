@@ -1,20 +1,27 @@
 RayTracing API Reference
 ========================
-
-.. autoclass: raytracing.imagingpath.ImagingPath
-    :members:
-.. currentmodule:: raytracing
-
 .. automodule:: raytracing
 
-.. autosummary:
-   ImagingPath
 
-.. rubric:: Classes
+Matrix
+------------------
 
 .. autosummary::
-    :toctree: _autosummary
+
+    Matrix
+    Aperture
+    Lens
+
+MatrixGroup
+------------------
+
+.. autosummary::
 
     MatrixGroup
-    ImagingPath
 
+ImagingPath
+------------------
+
+.. autosummary::
+
+    ImagingPath
