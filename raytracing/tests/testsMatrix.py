@@ -246,6 +246,62 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m.frontVertex, 0)
         self.assertEqual(m.backVertex, 0)
 
+    def testDielectricInterfaceConvergingSign(self):
+        # Positive R is convex for ray
+        m = DielectricInterface(n1=1, n2=1.5, R=10)
+        outRayDown = m*Ray(y=1,theta=0)
+        outRayUp = m*Ray(y=-1,theta=0)
+
+        # Ray is focussed to focal spot
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testDielectricInterfaceDivergingSign(self):
+        # Negative R is concave for ray
+        m = DielectricInterface(n1=1, n2=1.5, R=-10)
+        outRayUp = m*Ray(y=1,theta=0)
+        outRayDown = m*Ray(y=-1,theta=0)
+
+        # Ray is diverging
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testThickConvergingLens(self):
+        # Biconvex
+        m = ThickLens(n=1.55, R1=100, R2=-100, thickness=3)
+        outRayDown = m*Ray(y=1,theta=0)
+        outRayUp = m*Ray(y=-1,theta=0)
+
+        # Ray is focussed to focal spot
+        self.assertTrue(m.C < 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testThickDivergingLens(self):
+        # Biconcave
+        m = ThickLens(n=1.55, R1=-100, R2=100, thickness=3)
+        outRayUp = m*Ray(y=1,theta=0)
+        outRayDown = m*Ray(y=-1,theta=0)
+
+        # Ray is diverging
+        self.assertTrue(m.C > 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testThickConvergingLensEquivalence(self):
+        # Biconvex
+        m = ThickLens(n=1.55, R1=100, R2=-100, thickness=3)
+
+        mEquivalent = MatrixGroup()
+        mEquivalent.append(DielectricInterface(n1=1, n2=1.55, R=100))
+        mEquivalent.append(Space(d=3))
+        mEquivalent.append(DielectricInterface(n1=1.55, n2=1.0, R=-100))
+
+        self.assertAlmostEqual(m.A, mEquivalent.A,3)
+        self.assertAlmostEqual(m.B, mEquivalent.B,3)
+        self.assertAlmostEqual(m.C, mEquivalent.C,3)
+        self.assertAlmostEqual(m.D, mEquivalent.D,3)
+
     def testLensFocalLengths(self):
         m = Lens(f=5)
         self.assertEqual(m.effectiveFocalLengths(), (5, 5))
