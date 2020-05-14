@@ -43,7 +43,7 @@ setuptools.setup(
     monte carlo design raytracing',
     packages=setuptools.find_packages(),
     install_requires=['matplotlib', 'numpy'],
-    python_requires='>=3',
+    python_requires='>=3.6',
     package_data = {
         # If any package contains *.txt or *.rst files, include them:
         '': ['*.png'],
