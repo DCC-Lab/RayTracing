@@ -1095,7 +1095,8 @@ class ThickLens(Matrix):
         R1 = self.R1
         R2 = self.R2
         t = self.L
-
+        n = self.n
+        
         self.A = t * (1.0 - n) / (n * R1) + 1
         self.B = t / n
         self.C = - (n - 1.0) * (1.0 / R1 - 1.0 / R2 + t * (n - 1.0) / (n * R1 * R2))

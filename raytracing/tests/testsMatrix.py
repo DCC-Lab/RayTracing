@@ -302,6 +302,18 @@ class TestMatrix(unittest.TestCase):
         self.assertAlmostEqual(m.C, mEquivalent.C,3)
         self.assertAlmostEqual(m.D, mEquivalent.D,3)
 
+    def testThickConvergingLensFlip(self):
+        # Biconvex
+        m1 = ThickLens(n=1.55, R1=200, R2=-100, thickness=3)
+        m2 = ThickLens(n=1.55, R1=100, R2=-200, thickness=3)
+        m2.flipOrientation()
+
+        self.assertAlmostEqual(m1.determinant, 1,4)
+        self.assertAlmostEqual(m2.determinant, 1,4)
+        self.assertAlmostEqual(m1.A, m2.A,4)
+        self.assertAlmostEqual(m1.B, m2.B,4)
+        self.assertAlmostEqual(m1.C, m2.C,4)
+        self.assertAlmostEqual(m1.D, m2.D,4)
     def testLensFocalLengths(self):
         m = Lens(f=5)
         self.assertEqual(m.effectiveFocalLengths(), (5, 5))
