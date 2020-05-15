@@ -1,7 +1,7 @@
 from raytracing import ImagingPath, Space, Lens, Aperture, DielectricSlab
 
 '''
-    Demo #7: Focussing through a dielectric slab
+    Demo #7 - Focussing through a dielectric slab
 '''
 
 

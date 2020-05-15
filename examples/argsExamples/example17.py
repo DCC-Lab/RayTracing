@@ -1,7 +1,7 @@
 from raytracing import ImagingPath, Space, Lens, thorlabs, eo, olympus
 
 '''
-Demo #17: Vendor Lenses
+Demo #17 - Vendor Lenses
 '''
 
 

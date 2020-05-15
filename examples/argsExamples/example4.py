@@ -1,6 +1,6 @@
 from raytracing import ImagingPath, Space, Lens, Aperture
 
-'''Demo #4: Aperture behind lens
+'''Demo #4 - Aperture behind lens
 Notice the aperture stop (AS) identified after the lens, not at the lens. Again, since there is no field stop,
 we cannot restrict the object to the field of view because it is infinite.'''
 

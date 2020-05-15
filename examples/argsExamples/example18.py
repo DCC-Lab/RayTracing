@@ -2,7 +2,7 @@ from raytracing import ImagingPath, Space, Lens, LaserPath, thorlabs, eo, olympu
 
 
 '''
-Demo #18: Laser beam and vendor lenses
+Demo #18 - Laser beam and vendor lenses
 '''
 
 

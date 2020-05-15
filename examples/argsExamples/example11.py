@@ -1,7 +1,7 @@
 from raytracing import ImagingPath, Space, ThickLens
 
 '''
-Demo #11: Thick diverging lens
+Demo #11 - Thick diverging lens
 '''
 
 

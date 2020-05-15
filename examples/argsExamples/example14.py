@@ -1,7 +1,7 @@
 from raytracing import ImagingPath, Space, Lens, Objective
 
 '''
-Demo #14 Path with generic objective
+Demo #14 - Path with generic objective
 '''
 
 

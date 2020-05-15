@@ -1,6 +1,6 @@
 from raytracing import ImagingPath, Space, Lens
 
-'''An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\
+'''Demo #1 - An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\
 This will use the default objectHeight and fanAngle but they can be changed with:
 path.objectHeight = 1.0
 path.fanAngle = 0.5

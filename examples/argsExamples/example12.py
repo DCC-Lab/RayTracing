@@ -1,7 +1,7 @@
 from raytracing import ImagingPath, Space, DielectricInterface
 
 '''
-Demo #12: Thick diverging lens built from individual elements
+Demo #12 - Thick diverging lens built from individual elements
 '''
 
 

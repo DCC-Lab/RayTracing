@@ -1,7 +1,7 @@
 from raytracing import ImagingPath, Space, Lens, Aperture
 
 '''
-    A retrofocus has a back focal length longer than the effective focal length. It comes from a diverging lens followed by a converging
+    Demo #10 - A retrofocus has a back focal length longer than the effective focal length. It comes from a diverging lens followed by a converging
     lens. We can always obtain the effective focal lengths and the back focal length of a system.
 '''
 

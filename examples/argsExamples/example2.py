@@ -1,6 +1,6 @@
 from raytracing import ImagingPath, Space, Lens
 
-'''Demo #2: Two lenses, infinite diameters
+'''Demo #2 - Two lenses, infinite diameters
 An object at z=0 (front edge) is used with default properties (see Demo #1).'''
 
 

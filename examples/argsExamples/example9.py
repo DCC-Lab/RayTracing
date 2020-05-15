@@ -1,7 +1,7 @@
 from raytracing import ImagingPath, Space, Lens, Aperture
 
 '''
-    Demo #9: Infinite telecentric 4f telescope
+    Demo #9 - Infinite telecentric 4f telescope
 '''
 
 

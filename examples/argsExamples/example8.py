@@ -2,7 +2,7 @@ from raytracing import ImagingPath, Space, Lens, Aperture
 
 
 '''
-    Demo #8: Virtual image at -2f with object at f/2
+    Demo #8 - Virtual image at -2f with object at f/2
 '''
 
 

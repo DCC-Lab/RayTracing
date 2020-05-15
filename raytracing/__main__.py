@@ -81,7 +81,7 @@ class ArgumentsManager:
     def generateHTMLHighlightedCode(self, code=""):
         if not code:
             code = self.getExampleCode()
-            code = re.sub("'''(.+?[\s\S]+?)'''\n+", "", code)
+            code = re.sub("'''\n*?(.+?[\s\S]+?)\n*?'''\n*", "", code)
         self.HTMLHighlightedCode = highlight(code, self.lexer, self.formatter)
 
         return self.HTMLHighlightedCode
@@ -105,7 +105,7 @@ class ArgumentsManager:
         return codeString
 
     def getDocstring(self, code):
-        matches = re.search("'''(.+?[\s\S]+?)'''", code)
+        matches = re.search("'''\n*?(.+?[\s\S]+?)\n*?'''", code)
         return(matches.group(1))
 
     def parseArguments(self):
