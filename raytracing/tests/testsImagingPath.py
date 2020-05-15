@@ -54,14 +54,13 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath(elements)
         self.assertTupleEqual(path.entrancePupil(), (None, None))
 
-    @unittest.skip("Skipping because of pupil problem!")
     def testEntrancePupilNoBackwardConjugate(self):
         space = Space(2)
         lens = Lens(10, 110)
         space2 = Space(10, diameter=50)
         elements = [space, lens, space2]
         path = ImagingPath(elements)
-        # TODO: Finish test when issue fixed
+        self.assertTupleEqual(path.entrancePupil(), (None, None))
 
     def testEntrancePupil(self):
         space = Space(2)
@@ -76,19 +75,20 @@ class TestImagingPath(unittest.TestCase):
         self.assertTupleEqual(path.entrancePupil(), (pupilPosition, stopDiameter / Mt))
 
     def testFieldStopInfiniteDiameter(self):
+        fieldStop = (None, inf)
         space = Space(10)
         lens = Lens(10)
         space2 = Space(20)
         path = ImagingPath([space, lens, space2, lens, space])
-        self.assertTupleEqual(path.fieldStop(), (None, inf))
+        self.assertTupleEqual(path.fieldStop(), fieldStop)
 
         path = ImagingPath([Lens(10, 450), space2, lens, space])
-        self.assertTupleEqual(path.fieldStop(), (None, inf))
+        self.assertTupleEqual(path.fieldStop(), fieldStop)
 
         path = ImagingPath([space, Lens(10, 450), space2, lens, space])
-        self.assertTupleEqual(path.fieldStop(), (None, inf))
+        self.assertTupleEqual(path.fieldStop(), fieldStop)
 
-    @unittest.skip("I think there is a problem with FieldStop...")
+    @unittest.skip
     def testFieldStop(self):
         space = Space(10)
         lens = Lens(10, 100)
@@ -98,8 +98,6 @@ class TestImagingPath(unittest.TestCase):
         print(path.apertureStop())
         # FIXME: I think this should be (30, 50)...
         self.assertTupleEqual(path.fieldStop(), (30, 50))
-
-
 
     # def testImagingPathInfiniteFieldOfView(self):
     #     path = ImagingPath()
@@ -116,16 +114,6 @@ class TestImagingPath(unittest.TestCase):
     #     path.append(System2f(f=10, diameter=10))
     #     path.append(Aperture(diameter=20))
     #     self.assertAlmostEqual(path.fieldOfView(), 20, 2)
-
-    def testEntrancePupilAIs0(self):
-        space = Space(2)
-        lens = Lens(10, 110)
-        space2 = Space(10, diameter=50)
-        elements = [space, lens, space2]
-        path = ImagingPath(elements)
-        self.assertIsNotNone(path.entrancePupil())
-
-
 
 
 if __name__ == '__main__':
