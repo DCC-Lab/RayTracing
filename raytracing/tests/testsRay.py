@@ -71,5 +71,13 @@ class TestRay(unittest.TestCase):
         self.assertIsNotNone(blockedray_desc)
         self.assertNotEqual(ray_desc, blockedray_desc)
 
+
+    def testEqual(self):
+        # This fails because we don't check if the other object is instance of Ray.
+        ray = Ray(10, 10)
+        other = "this is a ray"
+        self.assertNotEqual(ray, other)
+
+
 if __name__ == '__main__':
     unittest.main()
