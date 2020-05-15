@@ -17,7 +17,7 @@ ap.add_argument("-e", "--examples", required=False, default='', help="Specific e
 args = vars(ap.parse_args())
 
 
-class ExampleManager:
+class ArgumentsManager:
     def __init__(self, arguments):
         self.arguments = arguments
         self.exampleDirPath = os.path.dirname(os.path.realpath(__file__)) + "\..\examples\\argsExamples"
@@ -118,6 +118,6 @@ class ExampleManager:
 
 
 if __name__ == "__main__":
-    manager = ExampleManager(args)
+    manager = ArgumentsManager(args)
 
 
