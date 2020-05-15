@@ -73,9 +73,14 @@ class TestRay(unittest.TestCase):
 
 
     def testEqual(self):
-        # This fails because we don't check if the other object is instance of Ray.
         ray = Ray(10, 10)
         other = "this is a ray"
+        self.assertNotEqual(ray, other)
+
+        other = None
+        self.assertNotEqual(ray, other)
+
+        other = Matrix()
         self.assertNotEqual(ray, other)
 
 
