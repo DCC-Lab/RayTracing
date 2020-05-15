@@ -1077,7 +1077,8 @@ class ThickLens(Matrix):
         if self.L <= upTo:
             return self
         else:
-            return ThickLens(self.n, self.R1, self.R2, upTo, self.apertureDiameter, self.label)
+            return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, self.R1,
+                                                                                    self.apertureDiameter)
 
 
 class DielectricSlab(ThickLens):
@@ -1109,7 +1110,8 @@ class DielectricSlab(ThickLens):
         if self.L <= upTo:
             return self
         else:
-            return DielectricSlab(self.n, upTo, self.apertureDiameter, self.label)
+            return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, float("+inf"),
+                                                                                    self.apertureDiameter)
 
 
 class Aperture(Matrix):
