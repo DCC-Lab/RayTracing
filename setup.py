@@ -43,7 +43,7 @@ setuptools.setup(
     keywords='optics optical lens ray tracing matrix matrices aperture field stop\
     monte carlo design raytracing',
     packages=setuptools.find_packages(),
-    install_requires=['matplotlib'],
+    install_requires=['matplotlib', 'numpy'],
     python_requires='>=3',
     package_data = {
         # If any package contains *.txt or *.rst files, include them:
