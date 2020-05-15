@@ -1,5 +1,4 @@
 from raytracing import ImagingPath, Space, Lens
-from matplotlib import pyplot as plt
 
 '''Demo #3: A finite lens
    An object at z=0 (front edge) is used with default properties (see Demo #1). Notice the aperture stop (AS)
