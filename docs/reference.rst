@@ -3,6 +3,13 @@ RayTracing API Reference
 .. automodule:: raytracing
 
 
+Template
+------------------
+
+.. autosummary::
+
+    DocStringTemplate
+
 Matrix
 ------------------
 
