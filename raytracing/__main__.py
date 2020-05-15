@@ -25,7 +25,7 @@ class ArgumentsManager:
         self.selectedFileIndex = 0
         self.htmlTemporaryExampleFile = None
         self.HTMLDescription = None
-        self.figureObject = None
+        self.pathObject = None
         self.base64Figure = None
         self.selectedFile = None
         self.HTMLFigure = None
@@ -70,7 +70,7 @@ class ArgumentsManager:
     def generateFigureFromCode(self):
         self.runExampleCode()
         fig, axes = plt.subplots(figsize=(7, 5))
-        self.figureObject.createRayTracePlot(axes=axes)
+        self.pathObject.createRayTracePlot(axes=axes)
         with tempfile.TemporaryFile(suffix=".png") as tmpfile:
             plt.savefig(tmpfile, format="png")
             tmpfile.seek(0)
@@ -96,7 +96,7 @@ class ArgumentsManager:
         with patch('matplotlib.pyplot.show') as p:
             global path
             exec(open(self.selectedFile).read(), globals())
-            self.figureObject = path
+            self.pathObject = path
 
     def getExampleCode(self):
         with open(self.selectedFile, 'r') as f:
