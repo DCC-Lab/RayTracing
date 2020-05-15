@@ -111,7 +111,7 @@ class ArgumentsManager:
     def parseArguments(self):
         if self.arguments['examples']:
             if self.arguments['examples'] == 'all':
-                examplesIndexes = list(range(20))
+                examplesIndexes = list(range(1, 20))
             else:
                 examplesIndexes = list((self.arguments['examples'].replace(" ", "").split(",")))
             self.exampleCarousel(examplesIndexes)
