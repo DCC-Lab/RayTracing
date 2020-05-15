@@ -54,14 +54,51 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath(elements)
         self.assertTupleEqual(path.entrancePupil(), (None, None))
 
+    @unittest.skip("Skipping because of pupil problem!")
+    def testEntrancePupilNoBackwardConjugate(self):
+        space = Space(2)
+        lens = Lens(10, 110)
+        space2 = Space(10, diameter=50)
+        elements = [space, lens, space2]
+        path = ImagingPath(elements)
+        # TODO: Finish test when issue fixed
+
     def testEntrancePupil(self):
         space = Space(2)
-        tLens = Lens(10)
-        space2 = Space(10, diameter=125)
-        lens = Lens(4, 400)
-        elements = [space, tLens, space2, lens]
+        lens = Lens(10, 110)
+        space2 = Space(10)
+        lens2 = ThickLens(4, 12, -4, 2, 600)
+        elements = [space, lens, space2, lens2]
         path = ImagingPath(elements)
+        pupilPosition = 2
+        stopDiameter = 110
+        Mt = 1
+        self.assertTupleEqual(path.entrancePupil(), (pupilPosition, stopDiameter / Mt))
+
+    def testFieldStopInfiniteDiameter(self):
+        space = Space(10)
+        lens = Lens(10)
+        space2 = Space(20)
+        path = ImagingPath([space, lens, space2, lens, space])
+        self.assertTupleEqual(path.fieldStop(), (None, inf))
+
+        path = ImagingPath([Lens(10, 450), space2, lens, space])
+        self.assertTupleEqual(path.fieldStop(), (None, inf))
+
+        path = ImagingPath([space, Lens(10, 450), space2, lens, space])
+        self.assertTupleEqual(path.fieldStop(), (None, inf))
+
+    @unittest.skip("I think there is a problem with FieldStop...")
+    def testFieldStop(self):
+        space = Space(10)
+        lens = Lens(10, 100)
+        space2 = Space(20)
+        lens2 = Lens(10, 50)
+        path = ImagingPath([space, lens, space2, lens2, space])
         print(path.apertureStop())
+        # FIXME: I think this should be (30, 50)...
+        self.assertTupleEqual(path.fieldStop(), (30, 50))
+
 
 
     # def testImagingPathInfiniteFieldOfView(self):
