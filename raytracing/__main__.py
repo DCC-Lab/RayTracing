@@ -106,7 +106,7 @@ class ExampleManager:
 
     def getDocstring(self, code):
         matches = re.search("'''(.+?[\s\S]+?)'''", code)
-        return(matches.group(0))
+        return(matches.group(1))
 
     def parseArguments(self):
         if self.arguments['examples']:
