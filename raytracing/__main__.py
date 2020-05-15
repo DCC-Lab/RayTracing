@@ -62,6 +62,9 @@ class ExampleManager:
     def createTemporaryHTML(self):
         temp = tempfile.NamedTemporaryFile(delete=False)
         path = temp.name + '.html'
+        with open(path, 'w') as f:
+            f.write(''''<head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"></head>''')
+
         self.htmlTemporaryExampleFile = path
 
     def generateFigureFromCode(self):
@@ -74,7 +77,7 @@ class ExampleManager:
             self.base64Figure = base64.b64encode(tmpfile.read()).decode()
         self.HTMLFigure = ''''<div style="display:inline-block; vertical-align:top"><img class="icon" src="data:image/png;base64,{} "></div>'''.format(
             self.base64Figure)
-        
+
     def generateHTMLHighlightedCode(self, code=""):
         if not code:
             code = self.getExampleCode()
@@ -86,7 +89,8 @@ class ExampleManager:
     def generateHTMLDescription(self):
         code = self.getExampleCode()
         docString = self.getDocstring(code)
-        self.HTMLDescription = "<div style="">{}<div/>".format(docString)
+        self.HTMLDescription = '''<div class="alert alert-success" role="alert"><h4 class="alert-heading">Example Description</h4><div style="word-wrap: break-word;
+   width: 600px;">{}</div></div>'''.format(docString)
 
     def runExampleCode(self):
         with patch('matplotlib.pyplot.show') as p:
