@@ -1,4 +1,6 @@
 # Sphinx Documentation
+You can now browse the documentation online at https://raytracing.readthedocs.io/ 
+
 ## Contribute
 We need help to write the API documentation. 
 Since the documentation pages are auto-generated from the doctrings, 
