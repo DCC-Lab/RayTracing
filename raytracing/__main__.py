@@ -19,7 +19,7 @@ args = vars(ap.parse_args())
 class ArgumentsManager:
     def __init__(self, arguments):
         self.arguments = arguments
-        self.exampleDirPath = os.path.dirname(os.path.realpath(__file__)) + "\..\examples\\argsExamples"
+        self.exampleDirPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "examples","argsExamples")
 
         self.selectedFileIndex = 0
         self.htmlTemporaryExampleFile = None
@@ -37,7 +37,7 @@ class ArgumentsManager:
     def exampleCarousel(self, exampleIndexList):
         for i in exampleIndexList:
             self.selectedFileIndex = i
-            self.selectedFile = self.exampleDirPath + '\example{}.py'.format(i)
+            self.selectedFile = os.path.join(self.exampleDirPath, 'example{}.py'.format(i))
             self.generateExample()
             self.showExample()
 
@@ -62,7 +62,7 @@ class ArgumentsManager:
         temp = tempfile.NamedTemporaryFile(delete=False)
         path = temp.name + '.html'
         with open(path, 'w') as f:
-            f.write(''''<head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"></head>''')
+            f.write('''<head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"></head>''')
 
         self.htmlTemporaryExampleFile = path
 
