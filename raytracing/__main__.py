@@ -5,7 +5,6 @@ import pygments.formatters
 import webbrowser
 from unittest.mock import patch
 from matplotlib import pyplot as plt
-from pylatexenc import latexencode
 import tempfile
 import base64
 import re
