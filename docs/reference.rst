@@ -7,6 +7,7 @@ Template
 ------------------
 
 .. autosummary::
+    :toctree: modules
 
     DocStringTemplate
 
@@ -14,6 +15,7 @@ Matrix
 ------------------
 
 .. autosummary::
+    :toctree: modules
 
     Matrix
     Aperture
@@ -23,6 +25,7 @@ MatrixGroup
 ------------------
 
 .. autosummary::
+    :toctree: modules
 
     MatrixGroup
 
@@ -30,5 +33,6 @@ ImagingPath
 ------------------
 
 .. autosummary::
+    :toctree: modules
 
     ImagingPath
