@@ -2,6 +2,7 @@ from .ray import *
 from .gaussianbeam import *
 from .rays import *
 
+from typing import List
 import multiprocessing
 import sys
 import matplotlib.pyplot as plt
@@ -734,7 +735,7 @@ class Matrix(object):
                 closed=False,
                 color='0.7'))
 
-    def displayHalfHeight(self, minSize=0):
+    def displayHalfHeight(self, minSize: float = 0):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
 
@@ -788,27 +789,66 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
-    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw a thin lens at z """
+    def drawingsAt(self, x, xScale: float, yScale: float, minHeight: float = 0) -> List[patches.FancyArrow]:
+        """ The drawings for the lens at position x.
+
+        These drawings are built upon the matplotlib Patch class and can be applied to any figure.
+
+        Parameters:
+            x (float): Position on the x axis where to drawing has to go.
+            xScale, yScale (float): The x and y dimensions in data units of the figure on which the drawing is applied.
+
+                Used to properly scale the drawing properties that are not tied to the data (i.e. the width of an
+                arrow).
+
+        Other Parameters:
+            minHeight (float): A minimum height used for infinite lens. # Fixme: should default to None
+
+        Returns:
+            List[patches.FancyArrow]: A list of the created FancyArrow patch objects for the lens.
+
+        """
+        # FIXME: It is not possible to update the position of a patch.
+        #  So I have to request the position x when creating the patch. Not cool.
+        #  I need to investigate the use of transforms to translate the drawings after.
+
+        halfHeight = self.displayHalfHeight(minSize=minHeight)
+
+        arrowHeadHeight = 2*halfHeight * 0.1
+
+        heightFactor = halfHeight*2 / yScale
+        arrowHeadWidth = xScale * 0.01 * (heightFactor/0.2) ** (3/4)
+
+        drawingUp = patches.FancyArrow(
+            x=x, y=0, dx=0, dy=halfHeight,
+            width=arrowHeadWidth / 5, fc='k', ec='k',
+            head_length=arrowHeadHeight, head_width=arrowHeadWidth,
+            length_includes_head=True)
+        drawingDown = patches.FancyArrow(
+            x=x, y=0, dx=0, dy=-halfHeight,
+            width=arrowHeadWidth / 5, fc='k', ec='k',
+            head_length=arrowHeadHeight, head_width=arrowHeadWidth,
+            length_includes_head=True)
+
+        drawings = [drawingUp, drawingDown]
+
+        return drawings
+
+    def drawAt(self, x, axes, showLabels=False):
+        """ Draw a thin lens at x """
         maxRayHeight = 0
         for line in axes.lines:
             if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
                 if max(line._y) > maxRayHeight:
                     maxRayHeight = max(line._y)
 
-        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
+        (xScale, yScale) = self.axesToDataScale(axes)
 
-        (xScaling, yScaling) = self.axesToDataScale(axes)
-        arrowHeadHeight = 2*halfHeight * 0.1
+        drawings = self.drawingsAt(x, xScale, yScale, minHeight=maxRayHeight)
+        for drawing in drawings:
+            axes.add_patch(drawing)
 
-        heightFactor = halfHeight*2 / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
-
-        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        self.drawCardinalPoints(z, axes)
+        self.drawCardinalPoints(x, axes)
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
