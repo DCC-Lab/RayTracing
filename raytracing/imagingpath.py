@@ -437,26 +437,49 @@ class ImagingPath(MatrixGroup):
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
             axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
 
-    def drawObject(self, axes):  # pragma: no cover
-        """ Draw the object as defined by objectPosition, objectHeight """
-        (xScaling, yScaling) = self.axesToDataScale(axes)
+    def drawingOfObject(self, xScale: float, yScale: float) -> patches.FancyArrow:
+        """ The drawing of the object.
+
+        This drawing is built upon the matplotlib Patch class and can be applied to any figure.
+
+        Args:
+            xScale, yScale (float): The x and y dimensions in data units of the figure on which the drawing is applied.
+
+                Used to properly scale the drawing properties that are not tied to the data (i.e. the width of an
+                arrow).
+
+        Returns:
+            patches.FancyArrow: The created FancyArrow patch object.
+
+        """
 
         arrowHeadHeight = self.objectHeight * 0.1
 
-        heightFactor = self.objectHeight / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+        heightFactor = self.objectHeight / yScale
+        arrowHeadWidth = xScale * 0.01 * (heightFactor/0.2) ** (3/4)
 
-        axes.arrow(
-            self.objectPosition,
-            -self.objectHeight / 2,
-            0,
-            self.objectHeight,
+        drawing = patches.FancyArrow(
+            x=self.objectPosition,
+            y=-self.objectHeight / 2,
+            dx=0,
+            dy=self.objectHeight,
             width=arrowHeadWidth / 5,
             fc='b',
             ec='b',
             head_length=arrowHeadHeight,
             head_width=arrowHeadWidth,
             length_includes_head=True)
+
+        return drawing
+
+    def drawObject(self, axes):  # pragma: no cover
+        """ Apply the drawing of the object to the given Axes of a figure. """
+
+        (xScaling, yScaling) = self.axesToDataScale(axes)
+
+        drawing = self.drawingOfObject(xScaling, yScaling)
+
+        axes.add_patch(drawing)
 
     def drawImages(self, axes):  # pragma: no cover
         """ Draw all images (real and virtual) of the object defined by
