@@ -811,6 +811,7 @@ class Lens(Matrix):
         # FIXME: It is not possible to update the position of a patch.
         #  So I have to request the position x when creating the patch. Not cool.
         #  I need to investigate the use of transforms to translate the drawings after.
+        #    ALSO : If we can use transforms correctly we could scale the drawings after !!
 
         halfHeight = self.displayHalfHeight(minSize=minHeight)
 

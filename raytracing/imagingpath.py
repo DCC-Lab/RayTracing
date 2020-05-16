@@ -438,6 +438,7 @@ class ImagingPath(MatrixGroup):
             axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
 
     def drawingOfObject(self, xScale: float, yScale: float) -> patches.FancyArrow:
+        # FIXME: might have to return a list of drawings instead to keep a coherent signature across objects
         """ The drawing of the object.
 
         This drawing is built upon the matplotlib Patch class and can be applied to any figure.
