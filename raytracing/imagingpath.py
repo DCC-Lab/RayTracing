@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Union, List
 
 from .matrixgroup import *
 
@@ -472,30 +472,42 @@ class ImagingPath(MatrixGroup):
 
         return drawing
 
-    def drawObject(self, axes):  # pragma: no cover
+    def drawObject(self, axes):
         """ Apply the drawing of the object to the given Axes of a figure. """
 
-        (xScaling, yScaling) = self.axesToDataScale(axes)
+        (xScale, yScale) = self.axesToDataScale(axes)
 
-        drawing = self.drawingOfObject(xScaling, yScaling)
+        drawing = self.drawingOfObject(xScale, yScale)
 
         axes.add_patch(drawing)
 
-    def drawImages(self, axes):  # pragma: no cover
-        """ Draw all images (real and virtual) of the object defined by
-        objectPosition, objectHeight """
+    def drawingOfImages(self, xScale: float, yScale: float) -> List[patches.FancyArrow]:
+        """ The drawing of all the images (real and virtual).
 
-        (xScaling, yScaling) = self.axesToDataScale(axes)
+        These drawings are built upon the matplotlib Patch class and can be applied to any figure.
+
+        Args:
+            xScale, yScale (float): The x and y dimensions in data units of the figure on which the drawing is applied.
+
+                Used to properly scale the drawing properties that are not tied to the data (i.e. the width of an
+                arrow).
+
+        Returns:
+            List[patches.FancyArrow]: A list of the created FancyArrow patch object for each image.
+
+        """
+
         images = self.intermediateConjugates()
 
+        drawings = []
         for (imagePosition, magnification) in images:
             arrowHeight = abs(magnification * self.objectHeight)
             arrowHeadHeight = arrowHeight * 0.1
 
-            heightFactor = arrowHeight / yScaling
-            arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+            heightFactor = arrowHeight / yScale
+            arrowHeadWidth = xScale * 0.01 * (heightFactor/0.2) ** (3/4)
 
-            axes.arrow(
+            drawing = patches.FancyArrow(
                 imagePosition,
                 -magnification * self.objectHeight / 2,
                 0,
@@ -506,6 +518,18 @@ class ImagingPath(MatrixGroup):
                 head_length=arrowHeadHeight,
                 head_width=arrowHeadWidth,
                 length_includes_head=True)
+
+            drawings.append(drawing)
+
+        return drawings
+
+    def drawImages(self, axes):
+        """ Apply the drawings of the images (real and virtual) to the given Axes of a figure. """
+
+        (xScale, yScale) = self.axesToDataScale(axes)
+
+        for drawing in self.drawingOfImages(xScale, yScale):
+            axes.add_patch(drawing)
 
     def drawStops(self, z, axes):  # pragma: no cover
         """
@@ -594,7 +618,7 @@ class ImagingPath(MatrixGroup):
         self.drawDisplayObjects(axes)
 
     def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
+                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):
         """ Display the optical system and trace the rays. If comments are included
         they will be displayed on a graph in the bottom half of the plot.
         """
