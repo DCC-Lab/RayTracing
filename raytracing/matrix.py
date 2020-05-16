@@ -789,10 +789,21 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
-    def drawingsAt(self, x, xScale: float, yScale: float, minHeight: float = 0) -> List[patches.FancyArrow]:
-        """ The drawings for the lens at position x.
+    def drawings(self, xScale: float, yScale: float, minHeight: float = 0) -> List[patches.FancyArrow]:
+        """ The drawings for the lens. Positioned at x = 0.
 
         These drawings are built upon the matplotlib Patch class and can be applied to any figure.
+        Use a transform to translate the drawings at a desired position.
+
+        Example:
+            Translate the drawing to (x, y) in a given Axes.
+
+            >>> transform = transforms.Affine2D().translate(x, y)
+            >>> drawing.set_transform(transform + axes.transData)
+
+            Scale the drawing with (xScale, yScale):
+
+            >>> # TODO
 
         Parameters:
             x (float): Position on the x axis where to drawing has to go.
@@ -808,10 +819,7 @@ class Lens(Matrix):
             List[patches.FancyArrow]: A list of the created FancyArrow patch objects for the lens.
 
         """
-        # FIXME: It is not possible to update the position of a patch.
-        #  So I have to request the position x when creating the patch. Not cool.
-        #  I need to investigate the use of transforms to translate the drawings after.
-        #    ALSO : If we can use transforms correctly we could scale the drawings after !!
+        # FIXME: use transforms to scale the drawings after !! probably with Affine2D().scale()
 
         halfHeight = self.displayHalfHeight(minSize=minHeight)
 
@@ -821,12 +829,12 @@ class Lens(Matrix):
         arrowHeadWidth = xScale * 0.01 * (heightFactor/0.2) ** (3/4)
 
         drawingUp = patches.FancyArrow(
-            x=x, y=0, dx=0, dy=halfHeight,
+            x=0, y=0, dx=0, dy=halfHeight,
             width=arrowHeadWidth / 5, fc='k', ec='k',
             head_length=arrowHeadHeight, head_width=arrowHeadWidth,
             length_includes_head=True)
         drawingDown = patches.FancyArrow(
-            x=x, y=0, dx=0, dy=-halfHeight,
+            x=0, y=0, dx=0, dy=-halfHeight,
             width=arrowHeadWidth / 5, fc='k', ec='k',
             head_length=arrowHeadHeight, head_width=arrowHeadWidth,
             length_includes_head=True)
@@ -845,8 +853,12 @@ class Lens(Matrix):
 
         (xScale, yScale) = self.axesToDataScale(axes)
 
-        drawings = self.drawingsAt(x, xScale, yScale, minHeight=maxRayHeight)
+        drawings = self.drawings(xScale, yScale, minHeight=maxRayHeight)
         for drawing in drawings:
+            transform = transforms.Affine2D().translate(x, 0)
+            drawing.set_transform(transform + axes.transData)
+            # fixme?: Maybe we should wrap the patches (FancyArrow, etc) in our own class to wrap the transforms
+            #  inside...
             axes.add_patch(drawing)
 
         self.drawCardinalPoints(x, axes)
