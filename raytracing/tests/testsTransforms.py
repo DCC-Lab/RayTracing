@@ -223,13 +223,3 @@ class TestTransforms(unittest.TestCase):
             plt.title("Scale Transform after translation requires a reset\nDrawing is (0.1 x 10) at x=0 + Scale (2 x "
                       "2) + Translate x=10")
             plt.show()
-
-    def heightOf(self, drawing):
-        """ Initial total height of the drawing (not affected by the transforms). """
-        maxY = np.max(drawing.get_xy(), axis=0)[1]
-        minY = np.min(drawing.get_xy(), axis=0)[1]
-        return maxY - minY
-
-    def testScaleRatio(self):
-        pass
-

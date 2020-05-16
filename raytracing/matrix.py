@@ -13,6 +13,8 @@ import numpy as np
 import math
 import warnings
 
+from raytracing.drawing import Drawing
+
 
 def warningOnOneLine(message, category, filename, lineno, line=None):
     return ' %s:%s\n%s:%s' % (filename, lineno, category.__name__, message)
@@ -791,66 +793,35 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
-    def drawings(self, minHeight: float = None) -> List[patches.FancyArrow]:
-        """ The drawings for the lens. Positioned at x = 0.
-
-        These drawings are built upon the matplotlib Patch class and can be applied to any figure.
-        Use a transform to translate the drawings at a desired position.
-
-        Example:
-            Translate the drawing to (x, y) in a given Axes.
-
-            >>> transform = transforms.Affine2D().translate(x, y)
-            >>> drawing.set_transform(transform + axes.transData)
-
-            Scale the drawing before translation with (xScale, yScale):
-
-            >>> transform = transforms.Affine2D().scale(xScale, yScale) + transforms.Affine2D().translate(x, y)
-            >>> drawing.set_transform(transform + axes.transData)
-
-        Parameters:
-            x (float): Position on the x axis where to drawing has to go.
-            xScale, yScale (float): The x and y dimensions in data units of the figure on which the drawing is applied.
-
-                Used to properly scale the drawing properties that are not tied to the data (i.e. the width of an
-                arrow).
+    def drawing(self, minHeight: float = None) -> Drawing:
+        """ The drawing for the lens. Centered at (0, 0).
 
         Other Parameters:
             minHeight (:obj:`float`, optional): A minimum height used for infinite lens.
 
         Returns:
-            List[patches.FancyArrow]: A list of the created FancyArrow patch objects for the lens.
+            Drawing: The created Drawing object for the lens.
 
         """
         halfHeight = self.displayHalfHeight(minSize=minHeight)
 
         arrowHeadHeight = 2*halfHeight * 0.1
-
         arrowHeadWidth = 0.01
 
-        drawingUp = patches.FancyArrow(
+        arrowUp = patches.FancyArrow(
             x=0, y=0, dx=0, dy=halfHeight,
             width=arrowHeadWidth / 5, fc='k', ec='k',
             head_length=arrowHeadHeight, head_width=arrowHeadWidth,
             length_includes_head=True)
-        drawingDown = patches.FancyArrow(
+        arrowDown = patches.FancyArrow(
             x=0, y=0, dx=0, dy=-halfHeight,
             width=arrowHeadWidth / 5, fc='k', ec='k',
             head_length=arrowHeadHeight, head_width=arrowHeadWidth,
             length_includes_head=True)
 
-        drawings = [drawingUp, drawingDown]
+        return Drawing(arrowUp, arrowDown)
 
-        return drawings
-
-    def heightOf(self, drawing):
-        # FIXME TEMP: if we keep that it has to be moved inside a Drawing Class
-        """ Initial total height of the drawing (not affected by the transforms). """
-        maxY = np.max(drawing.get_xy(), axis=0)[1]
-        minY = np.min(drawing.get_xy(), axis=0)[1]
-        return maxY - minY
-
-    def drawAt(self, x, axes, showLabels=False):
+    def drawAt(self, z, axes, showLabels=False):
         """ Draw a thin lens at x """
 
         maxRayHeight = 0
@@ -860,21 +831,10 @@ class Lens(Matrix):
                     if max(line._y) > maxRayHeight:
                         maxRayHeight = max(line._y)
 
-        (xScale, yScale) = self.axesToDataScale(axes)
+        drawing = self.drawing(minHeight=maxRayHeight)
+        drawing.applyTo(axes, x=z)
 
-        drawings = self.drawings(minHeight=maxRayHeight)
-        for drawing in drawings:
-            halfHeightOfLens = self.heightOf(drawing)
-            heightFactor = halfHeightOfLens * 2 / yScale
-            xScaleFactor = xScale * (heightFactor / 0.2) ** (3 / 4)
-
-            transform = transforms.Affine2D().scale(xScaleFactor, 1) + transforms.Affine2D().translate(x, 0)
-            drawing.set_transform(transform + axes.transData)
-            # fixme?: We should wrap the patches (FancyArrow, etc) in our own Drawing class to wrap the transforms
-            #  inside...
-            axes.add_patch(drawing)
-
-        self.drawCardinalPoints(x, axes)
+        self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
