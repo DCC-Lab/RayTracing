@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
+import numpy as np
 import math
 import warnings
 
@@ -735,7 +736,7 @@ class Matrix(object):
                 closed=False,
                 color='0.7'))
 
-    def displayHalfHeight(self, minSize: float = 0):
+    def displayHalfHeight(self, minSize: float = None):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
 
@@ -745,8 +746,9 @@ class Matrix(object):
 
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
-        if minSize > halfHeight:
-            halfHeight = minSize
+        if minSize is not None:
+            if minSize > halfHeight:
+                halfHeight = minSize
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
@@ -789,7 +791,7 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
-    def drawings(self, xScale: float, yScale: float, minHeight: float = 0) -> List[patches.FancyArrow]:
+    def drawings(self, minHeight: float = None) -> List[patches.FancyArrow]:
         """ The drawings for the lens. Positioned at x = 0.
 
         These drawings are built upon the matplotlib Patch class and can be applied to any figure.
@@ -801,9 +803,10 @@ class Lens(Matrix):
             >>> transform = transforms.Affine2D().translate(x, y)
             >>> drawing.set_transform(transform + axes.transData)
 
-            Scale the drawing with (xScale, yScale):
+            Scale the drawing before translation with (xScale, yScale):
 
-            >>> # TODO
+            >>> transform = transforms.Affine2D().scale(xScale, yScale) + transforms.Affine2D().translate(x, y)
+            >>> drawing.set_transform(transform + axes.transData)
 
         Parameters:
             x (float): Position on the x axis where to drawing has to go.
@@ -813,20 +816,17 @@ class Lens(Matrix):
                 arrow).
 
         Other Parameters:
-            minHeight (float): A minimum height used for infinite lens. # Fixme: should default to None
+            minHeight (:obj:`float`, optional): A minimum height used for infinite lens.
 
         Returns:
             List[patches.FancyArrow]: A list of the created FancyArrow patch objects for the lens.
 
         """
-        # FIXME: use transforms to scale the drawings after !! probably with Affine2D().scale()
-
         halfHeight = self.displayHalfHeight(minSize=minHeight)
 
         arrowHeadHeight = 2*halfHeight * 0.1
 
-        heightFactor = halfHeight*2 / yScale
-        arrowHeadWidth = xScale * 0.01 * (heightFactor/0.2) ** (3/4)
+        arrowHeadWidth = 0.01
 
         drawingUp = patches.FancyArrow(
             x=0, y=0, dx=0, dy=halfHeight,
@@ -843,21 +843,34 @@ class Lens(Matrix):
 
         return drawings
 
+    def heightOf(self, drawing):
+        # FIXME TEMP: if we keep that it has to be moved inside a Drawing Class
+        """ Initial total height of the drawing (not affected by the transforms). """
+        maxY = np.max(drawing.get_xy(), axis=0)[1]
+        minY = np.min(drawing.get_xy(), axis=0)[1]
+        return maxY - minY
+
     def drawAt(self, x, axes, showLabels=False):
         """ Draw a thin lens at x """
+
         maxRayHeight = 0
-        for line in axes.lines:
-            if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
-                if max(line._y) > maxRayHeight:
-                    maxRayHeight = max(line._y)
+        if self.apertureDiameter == float('+Inf'):
+            for line in axes.lines:
+                if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
+                    if max(line._y) > maxRayHeight:
+                        maxRayHeight = max(line._y)
 
         (xScale, yScale) = self.axesToDataScale(axes)
 
-        drawings = self.drawings(xScale, yScale, minHeight=maxRayHeight)
+        drawings = self.drawings(minHeight=maxRayHeight)
         for drawing in drawings:
-            transform = transforms.Affine2D().translate(x, 0)
+            halfHeightOfLens = self.heightOf(drawing)
+            heightFactor = halfHeightOfLens * 2 / yScale
+            xScaleFactor = xScale * (heightFactor / 0.2) ** (3 / 4)
+
+            transform = transforms.Affine2D().scale(xScaleFactor, 1) + transforms.Affine2D().translate(x, 0)
             drawing.set_transform(transform + axes.transData)
-            # fixme?: Maybe we should wrap the patches (FancyArrow, etc) in our own class to wrap the transforms
+            # fixme?: We should wrap the patches (FancyArrow, etc) in our own Drawing class to wrap the transforms
             #  inside...
             axes.add_patch(drawing)
 
