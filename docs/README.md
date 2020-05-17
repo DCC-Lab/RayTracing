@@ -27,4 +27,14 @@ Then you can open `_build/html/index.html`.
 > For some reasons on my computer I have to leave the folder `docs` and call `docs/make html`
 
 ### Reminders
-- HTML Theme is set in `conf.py` -> `html_theme`.
+- When autogenerating the stub files from toctrees in reference.rst, note that sphinx-autogen requires to load a pythonpath to your project. 
+    
+    On windows the command is 
+    ```
+  $ set PYTHONPATH=C:\Path\to\project
+  $ sphinx-autogen -t docs/_templates docs/reference.rst
+  ```
+    On Mac/Linux:
+    ```
+  PYTHONPATH=. sphinx-autogen -t docs/_templates docs/index.rst
+  ```
