@@ -14,6 +14,7 @@ For now there's a temporary **template** in `raytracing/template.py`
 ```
 pip install sphinx
 pip install recommonmark
+pip install sphinx_rtd_theme
 ```
 The package `recommonmark` adds Markdown support.
 
