@@ -18,7 +18,10 @@ pip install sphinx_rtd_theme
 ```
 The package `recommonmark` adds Markdown support.
 
-### Build
+### Build online
+The online documentation can be updated directly from the [RayTracing project](https://readthedocs.org/projects/raytracing/) on ReadTheDocs.
+
+### Build local
 This is done locally. The build is git-ignored. 
 ```
 make html
