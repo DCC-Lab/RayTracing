@@ -272,9 +272,7 @@ Prepare many different examples, keep them in a directory and show figures.
 
 ### Confocal pinhole detection
 
-We can show the optical sectioning obtained from a confocal pinhole with the following example.
-
-**[Valerie, here]**
+In confocal laser scanning microscopy, the pinhole must match the size of the Airy disk formed at the sample to produce a good optical sectioning **[REF : J. Pawley, “Handbook of biological confocal microscopy”, Springer Science & Business Media, 985 (2010)]**. Indeed, a pinhole that is too small reduces the number of detected rays, therefore decreasing the signal-to-noise ratio. On the other hand, when the pinhole size is too big, the axial resolution is weakened. Here we present a way to use the RayTracing module to optimize the detection path of a confocal microscope by tuning the pinhole size. 
 
 ### Diffuse source from scattering medium
 
