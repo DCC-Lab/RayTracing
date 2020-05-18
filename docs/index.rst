@@ -17,8 +17,12 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   README-documentation
-   reference
+   RayTracing
+   Getting Started
+   Reference
+   Examples
+   Contribute
+   FAQ
 
 Indices and tables
 ^^^^^^^^^^^^^^^^^^
