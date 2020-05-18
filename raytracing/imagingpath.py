@@ -153,8 +153,11 @@ class ImagingPath(MatrixGroup):
             (stopPosition, stopDiameter) = self.apertureStop()
             transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
             (pupilPosition, matrixToPupil) = transferMatrixToApertureStop.backwardConjugate()
-            (Mt, Ma) = matrixToPupil.magnification()
-            return (-pupilPosition, stopDiameter / Mt)
+            if matrixToPupil is None:
+                return None, None
+            else:
+                (Mt, Ma) = matrixToPupil.magnification()
+                return (-pupilPosition, stopDiameter / Mt)
         else:
             return (None, None)
 
