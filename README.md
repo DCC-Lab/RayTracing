@@ -110,14 +110,14 @@ outputRays.display("Output profile")
 
 and you will get the following ray histograms:
 
-<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/inputProfile.png" alt="inputProfile" style="zoom:25%;" />
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/inputProfile.png" alt="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/inputProfile.png" style="zoom:25%;" />
 
-<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" alt="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" style="zoom:25%;" />
 
 ## Documentation
 
 The class hierarchy for optical elements (with parameters and defaults) is:
-![](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/class-hierarchy.png)
+![https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/hierarchy.png](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/hierarchy.png)
 
 Documentation is sparse at best.   You may obtain help by:
 
@@ -633,13 +633,9 @@ if 19 in examples:
 ```
 
 ![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simpleObjectImage.png)
-![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscope.png)
-![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/illumination.png)
-
-
-![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Figure1.png)
 ![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Microscope.png)
-![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Illumination.png)
+![https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Illumination.png](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/Illumination.png)
+
 
 ## Known limitations
 
