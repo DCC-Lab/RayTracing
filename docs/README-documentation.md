@@ -2,6 +2,8 @@
 
 This document describes where the documentation is, how to write or update documentation for the Raytracing module and how to publish updated documentation through ReadTheDocs.
 
+[TOC]
+
 ## Reading documentation
 
 If you are a user of the raytracing package, you probably want to read the documentation online at https://raytracing.readthedocs.io/ 
