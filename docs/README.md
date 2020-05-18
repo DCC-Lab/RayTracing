@@ -4,7 +4,7 @@ You can now browse the documentation online at https://raytracing.readthedocs.io
 ## Contribute
 We need help to write the API documentation. 
 Since the documentation pages are auto-generated from the doctrings, 
-please follow the required [Google Docstring](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google)
+please follow the required [Numpy Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html)
  format. 
 
 ## Developer Notes
