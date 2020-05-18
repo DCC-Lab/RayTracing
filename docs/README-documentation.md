@@ -2,19 +2,17 @@
 
 This document describes where the documentation is, how to write or update documentation for the Raytracing module and how to publish updated documentation through ReadTheDocs.
 
-[TOC]
-
 ## Reading documentation
 
 If you are a user of the raytracing package, you probably want to read the documentation online at https://raytracing.readthedocs.io/ 
 
 ## Writing documentation
 
-The documentation are auto-generated with the Sphynx documentation module from the comments directly from the code (i.e. docstrings). There are many different formats that can be used, but the one used in Raytracing is the [Numpy Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) format. 
+If you are a developer, you may be interested in updating the documentation. The documentation is auto-generated with the Sphynx documentation module from the comments directly from the code (i.e. docstrings). There are many different formats that can be used, but the one used in Raytracing is the [Numpy Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) format. 
 
 ## Publishing documentation (maintainers only)
 
-The documentation is published at each release, by the maintainers.  To create the documentation and publish it, follow the guidelines below.
+Maintainers of the package publish the documentation with each release. To create the documentation and publish it, follow the guidelines below.
 
 ### Requirements
 
