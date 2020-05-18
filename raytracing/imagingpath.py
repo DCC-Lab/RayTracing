@@ -303,23 +303,18 @@ class ImagingPath(MatrixGroup):
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
     def displayRange(self, axes=None):
-        """ The required display height to fit all elements, object, images and raytraces. """
+        """ We return the largest object in the ImagingPath for display purposes.
+        The object is considered only "half" because it starts on axis and goes up."""
+        
         displayRange = self.largestDiameter()
-        if displayRange == float('+Inf') or displayRange < self.objectHeight:
-            displayRange = self.objectHeight
+        if displayRange == float('+Inf') or displayRange <= 2*self.objectHeight:
+            displayRange = 2*self.objectHeight
 
         conjugates = self.intermediateConjugates()
         if len(conjugates) != 0:
             for (planePosition, magnification) in conjugates:
                 if displayRange < self.objectHeight * magnification:
                     displayRange = self.objectHeight * magnification
-
-        if not self.hasFiniteApertureDiameter() and axes is not None:
-            for line in axes.lines:
-                if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
-                    if max(abs(line._y)) * 2 > displayRange:
-                        displayRange = max(abs(line._y)) * 2
-
         return displayRange
 
     def createRayTracePlot(

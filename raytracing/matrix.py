@@ -1117,6 +1117,14 @@ class ThickLens(Matrix):
 
         return pointsOfInterest
 
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ Returns a ThickLens() or a Matrix() corresponding to a partial propagation
+        if the requested distance is smaller than the length of this element"""
+        if self.L <= upTo:
+            return self
+        else:
+            return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, self.R1,
+                                                                                    self.apertureDiameter)
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
         In this case, R1 = -R2, and R2 = -R1.  It is important to call the
@@ -1161,6 +1169,15 @@ class DielectricSlab(ThickLens):
                               fill=True, transform=axes.transData,
                               clip_on=True)
         axes.add_patch(p)
+
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
+                if the requested distance is smaller than the length of this element"""
+        if self.L <= upTo:
+            return self
+        else:
+            return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, float("+inf"),
+                                                                                    self.apertureDiameter)
 
 
 class Aperture(Matrix):

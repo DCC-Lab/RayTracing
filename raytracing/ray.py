@@ -94,7 +94,7 @@ class Ray:
         return description
 
     def __eq__(self, other):
-        if other is None:
+        if not isinstance(other, Ray):
             return False
         elif self.y != other.y:
             return False
