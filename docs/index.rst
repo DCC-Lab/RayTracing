@@ -17,7 +17,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   README
+   README-documentation
    reference
 
 Indices and tables
