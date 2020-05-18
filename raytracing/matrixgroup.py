@@ -91,6 +91,21 @@ class MatrixGroup(Matrix):
             transferMatrices.extend(elementTransferMatrices)
         return transferMatrices
 
+    def intermediateConjugates(self):
+        """ The list of position and magnification of conjugate planes """
+        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
+        matrices = self.transferMatrices()
+        planes = []
+        for element in matrices:
+            transferMatrix = element * transferMatrix
+            (distance, conjugate) = transferMatrix.forwardConjugate()
+            if distance is not None:
+                planePosition = transferMatrix.L + distance
+                if planePosition != 0 and conjugate is not None:
+                    magnification = conjugate.A
+                    planes.append([planePosition, magnification])
+        return planes
+
     def trace(self, inputRay):
         """Trace the input ray from first element until after the last element,
         indicating if the ray was blocked or not
@@ -132,7 +147,7 @@ class MatrixGroup(Matrix):
                 diameter = element.largestDiameter()
                 if diameter != float('+Inf') and diameter > maxDiameter:
                     maxDiameter = diameter
-        else:
+        elif len(self.elements) != 0:
             maxDiameter = self.elements[0].displayHalfHeight() * 2
 
         return maxDiameter
