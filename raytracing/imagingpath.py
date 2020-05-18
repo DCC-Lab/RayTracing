@@ -153,8 +153,11 @@ class ImagingPath(MatrixGroup):
             (stopPosition, stopDiameter) = self.apertureStop()
             transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
             (pupilPosition, matrixToPupil) = transferMatrixToApertureStop.backwardConjugate()
-            (Mt, Ma) = matrixToPupil.magnification()
-            return (-pupilPosition, stopDiameter / Mt)
+            if matrixToPupil is None:
+                return None, None
+            else:
+                (Mt, Ma) = matrixToPupil.magnification()
+                return (-pupilPosition, stopDiameter / Mt)
         else:
             return (None, None)
 
@@ -299,29 +302,42 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
+    def displayRange(self, axes=None):
+        """ The required display height to fit all elements, object, images and raytraces. """
+        displayRange = self.largestDiameter()
+        if displayRange == float('+Inf') or displayRange < self.objectHeight:
+            displayRange = self.objectHeight
+
+        conjugates = self.intermediateConjugates()
+        if len(conjugates) != 0:
+            for (planePosition, magnification) in conjugates:
+                if displayRange < self.objectHeight * magnification:
+                    displayRange = self.objectHeight * magnification
+
+        if not self.hasFiniteApertureDiameter() and axes is not None:
+            for line in axes.lines:
+                if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
+                    if max(abs(line._y)) * 2 > displayRange:
+                        displayRange = max(abs(line._y)) * 2
+
+        return displayRange
+
     def createRayTracePlot(
             self, axes,
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False,
             removeBlockedRaysCompletely=False):  # pragma: no cover
         """ Create a matplotlib plot to draw the rays and the elements.
-            
+
             Three optional parameters:
             limitObjectToFieldOfView=False, to use the calculated field of view
             instead of the objectHeight
-
             onlyChiefAndMarginalRays=False, to only show principal rays
-
             removeBlockedRaysCompletely=False to remove rays that are blocked.
-
          """
 
-        displayRange = 2 * self.largestDiameter()
-        if displayRange == float('+Inf'):
-            displayRange = self.objectHeight * 2
-
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
+        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
 
         note1 = ""
         note2 = ""
@@ -343,7 +359,6 @@ class ImagingPath(MatrixGroup):
                     "Infinite image size: cannot use\
                     limitObjectToFieldOfView=True.")
 
-
         else:
             note1 = "Object height: {0:.2f}".format(self.objectHeight)
 
@@ -363,6 +378,131 @@ class ImagingPath(MatrixGroup):
             axes,
             onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+        self.drawDisplayObjects(axes)
+
+        return axes
+
+    def updateDisplay(self, axes):
+        """ Callback function used to redraw the objects when zooming. """
+        for artist in axes.artists:
+            artist.remove()
+        axes.artists = []
+        for patch in axes.patches:
+            patch.remove()
+        axes.patches = []
+        for text in axes.texts:
+            text.remove()
+        axes.texts = []
+
+        self.drawDisplayObjects(axes)
+
+    def display(self, limitObjectToFieldOfView=False,
+                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
+        """ Display the optical system and trace the rays. If comments are included
+        they will be displayed on a graph in the bottom half of the plot.
+        """
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+                              fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
+
+        self.createRayTracePlot(axes=axes,
+                                limitObjectToFieldOfView=limitObjectToFieldOfView,
+                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+        axes.callbacks.connect('ylim_changed', self.updateDisplay)
+        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
+
+        self._showPlot()
+
+    def save(self, filepath,
+             limitObjectToFieldOfView=False,
+             onlyChiefAndMarginalRays=False,
+             removeBlockedRaysCompletely=False,
+             comments=None):
+
+        if comments is not None:
+            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            axesComments.axis('off')
+            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
+                              fontsize=10, verticalalignment='top')
+        else:
+            fig, axes = plt.subplots(figsize=(10, 7))
+
+        self.createRayTracePlot(axes=axes,
+                                limitObjectToFieldOfView=limitObjectToFieldOfView,
+                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+        axes.callbacks.connect('ylim_changed', self.updateDisplay)
+        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
+
+        fig.savefig(filepath, dpi=600)
+
+    def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
+                      removeBlockedRaysCompletely=True):  # pragma: no cover
+        """ Draw all ray traces corresponding to either
+        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber)
+        2. the principal rays (chief and marginal)
+
+            removeBlockedRaysCompletely=False to remove rays that are blocked.
+        """
+
+        color = ['b', 'r', 'g']
+
+        if onlyChiefAndMarginalRays:
+            halfHeight = self.objectHeight / 2.0
+            chiefRay = self.chiefRay(y=halfHeight - 0.01)
+            (marginalUp, marginalDown) = self.marginalRays(y=0)
+            rayGroup = (chiefRay, marginalUp)
+            linewidth = 1.5
+        else:
+            halfAngle = self.fanAngle / 2.0
+            halfHeight = self.objectHeight / 2.0
+            rayGroup = Ray.fanGroup(
+                yMin=-halfHeight,
+                yMax=halfHeight,
+                M=self.rayNumber,
+                radianMin=-halfAngle,
+                radianMax=halfAngle,
+                N=self.fanNumber)
+            linewidth = 0.5
+
+        manyRayTraces = self.traceMany(rayGroup)
+
+        for rayTrace in manyRayTraces:
+            (x, y) = self.rearrangeRayTraceForPlotting(
+                rayTrace, removeBlockedRaysCompletely)
+            if len(y) == 0:
+                continue  # nothing to plot, ray was fully blocked
+
+            rayInitialHeight = y[0]
+            binSize = 2.0 * halfHeight / (len(color) - 1)
+            colorIndex = int(
+                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
+            axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
+
+    def rearrangeRayTraceForPlotting(self, rayList,
+                                     removeBlockedRaysCompletely=True):
+        x = []
+        y = []
+        for ray in rayList:
+            if not ray.isBlocked:
+                x.append(ray.z)
+                y.append(ray.y)
+            elif removeBlockedRaysCompletely:
+                x = []
+                y = []
+            # else: # ray will simply stop drawing from here
+        return (x, y)
+
+    def drawDisplayObjects(self, axes):
+        """ Draw the object, images and all elements to the figure """
         if self.showObject:
             self.drawObject(axes)
 
@@ -377,96 +517,52 @@ class ImagingPath(MatrixGroup):
             self.drawPointsOfInterest(z=0, axes=axes)
             self.drawStops(z=0, axes=axes)
 
-        return axes
-
-    def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
-        """ Display the optical system and trace the rays. If comments are included
-        they will be displayed on a graph in the bottom half of the plot.
-
-        """
-
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
-
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        self._showPlot()
-
-    def save(self, filepath,
-             limitObjectToFieldOfView=False,
-             onlyChiefAndMarginalRays=False,
-             removeBlockedRaysCompletely=False,
-             comments=None):
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
-
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        fig.savefig(filepath, dpi=600)
-
     def drawObject(self, axes):  # pragma: no cover
         """ Draw the object as defined by objectPosition, objectHeight """
-        (xScaling, yScaling) = self.axesToDataScaling(axes)
-        arrowWidth = xScaling * 0.01
-        arrowHeight = yScaling * 0.03
+        (xScaling, yScaling) = self.axesToDataScale(axes)
+
+        arrowHeadHeight = self.objectHeight * 0.1
+
+        heightFactor = self.objectHeight / yScaling
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
 
         axes.arrow(
             self.objectPosition,
             -self.objectHeight / 2,
             0,
             self.objectHeight,
-            width=arrowWidth / 5,
+            width=arrowHeadWidth / 5,
             fc='b',
             ec='b',
-            head_length=arrowHeight,
-            head_width=arrowWidth,
+            head_length=arrowHeadHeight,
+            head_width=arrowHeadWidth,
             length_includes_head=True)
 
     def drawImages(self, axes):  # pragma: no cover
         """ Draw all images (real and virtual) of the object defined by 
         objectPosition, objectHeight """
 
-        (xScaling, yScaling) = self.axesToDataScaling(axes)
-        arrowWidth = xScaling * 0.01
-        arrowHeight = yScaling * 0.03
+        (xScaling, yScaling) = self.axesToDataScale(axes)
+        images = self.intermediateConjugates()
 
-        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
-        matrices = self.transferMatrices()
-        for element in matrices:
-            transferMatrix = element * transferMatrix
-            (distance, conjugate) = transferMatrix.forwardConjugate()
-            if distance is not None:
-                imagePosition = transferMatrix.L + distance
-                if imagePosition != 0 and conjugate is not None:
-                    magnification = conjugate.A
-                    axes.arrow(
-                        imagePosition,
-                        -magnification * self.objectHeight / 2,
-                        0,
-                        (magnification) * self.objectHeight,
-                        width=arrowWidth / 5,
-                        fc='r',
-                        ec='r',
-                        head_length=arrowHeight,
-                        head_width=arrowWidth,
-                        length_includes_head=True)
+        for (imagePosition, magnification) in images:
+            arrowHeight = abs(magnification * self.objectHeight)
+            arrowHeadHeight = arrowHeight * 0.1
+
+            heightFactor = arrowHeight / yScaling
+            arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+
+            axes.arrow(
+                imagePosition,
+                -magnification * self.objectHeight / 2,
+                0,
+                magnification * self.objectHeight,
+                width=arrowHeadWidth / 5,
+                fc='r',
+                ec='r',
+                head_length=arrowHeadHeight,
+                head_width=arrowHeadWidth,
+                length_includes_head=True)
 
     def drawStops(self, z, axes):  # pragma: no cover
         """
@@ -501,8 +597,9 @@ class ImagingPath(MatrixGroup):
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
             center = z + pupilPosition
-            (xScaling, _) = self.axesToDataScaling(axes)
-            width = xScaling * 0.01 / 2
+            (xScaling, yScaling) = self.axesToDataScale(axes)
+            heightFactor = halfHeight * 2 / yScaling
+            width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
 
             axes.add_patch(patches.Polygon(
                 [[center - width, halfHeight],
@@ -522,59 +619,3 @@ class ImagingPath(MatrixGroup):
         msg = "drawOpticalElements() was renamed drawAt()"
         warnings.warn(msg, DeprecationWarning)
         self.drawAt(z, axes, showLabels=self.showElementLabels)
-
-    def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
-                      removeBlockedRaysCompletely=True):  # pragma: no cover
-        """ Draw all ray traces corresponding to either 
-        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber) 
-        2. the principal rays (chief and marginal) """
-
-        color = ['b', 'r', 'g']
-
-        if onlyChiefAndMarginalRays:
-            halfHeight = self.objectHeight / 2.0
-            chiefRay = self.chiefRay(y=halfHeight - 0.01)
-            (marginalUp, marginalDown) = self.marginalRays(y=0)
-            rayGroup = (chiefRay, marginalUp)
-            linewidth = 1.5
-        else:
-            halfAngle = self.fanAngle / 2.0
-            halfHeight = self.objectHeight / 2.0
-            rayGroup = Ray.fanGroup(
-                yMin=-halfHeight,
-                yMax=halfHeight,
-                M=self.rayNumber,
-                radianMin=-halfAngle,
-                radianMax=halfAngle,
-                N=self.fanNumber)
-            linewidth = 0.5
-
-        manyRayTraces = self.traceMany(rayGroup)
-
-        for rayTrace in manyRayTraces:
-            (x, y) = self.rearrangeRayTraceForPlotting(
-                rayTrace, removeBlockedRaysCompletely)
-            if len(y) == 0:
-                continue  # nothing to plot, ray was fully blocked
-
-            rayInitialHeight = y[0]
-            binSize = 2.0 * halfHeight / (len(color) - 1)
-            colorIndex = int(
-                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-            axes.plot(x, y, color[colorIndex], linewidth=linewidth)
-
-    def rearrangeRayTraceForPlotting(
-            self,
-            rayList,
-            removeBlockedRaysCompletely=True):
-        x = []
-        y = []
-        for ray in rayList:
-            if not ray.isBlocked:
-                x.append(ray.z)
-                y.append(ray.y)
-            elif removeBlockedRaysCompletely:
-                x = []
-                y = []
-            # else: # ray will simply stop drawing from here
-        return (x, y)
