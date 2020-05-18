@@ -191,7 +191,7 @@ Documentation
 
 The class hierarchy for optical elements (with parameters and defaults)
 is:
-|https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/hierarchy.png|
+.. image:: https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/hierarchy.png
 
 Documentation is sparse at best. You may obtain help by:
 
