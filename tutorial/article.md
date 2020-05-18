@@ -34,7 +34,7 @@ Best viewed and edited with [Typora](http://typora.io).
 
 ### Rays through optical elements
 
-For completeness, we start with a very compact introduction to the ray matrix formalism to avoid.  The ABCD matrix formalism (or ray matrices) allows a ray (column vector) to be transformed from one reference plane to another through different optical elements (represented by matrices). A ray is defined as :
+For completeness, we start with a very compact introduction to the ray matrix formalism.  The ABCD matrix formalism (or ray matrices) allows a ray (column vector) to be transformed from one reference plane to another through different optical elements (represented by matrices). A ray is defined as :
 $$
 \mathbf{r} \equiv \Biggl[ \begin{matrix}
 y \\
@@ -63,7 +63,7 @@ $$
 $$
 **[Redo this figure better? translate, also add vertices and length ]** 
 
-<img src="article.assets/image-20200512140455081.png" alt="image-20200512140455081" style="zoom: 25%;" />
+<img src="article.assets/variables.png" alt="image-20200512140455081" style="zoom: 25%;" />
 
 There really are only two transformations that need to be described to recover the behavior of any optical elements: the propagation by a distance $d$ in any homogeneous medium, described by the simple following matrix :
 $$
@@ -104,7 +104,7 @@ From this, we can already extract important properties for any optical systems:
 3. **Principal planes:** Focal distances are measured from principal planes, which are planes of unity magnification in any systems where all the focusing power is concentrated. They are located at $L_\mathrm{PP_i} = \frac{{{n_1}/{n_2} - D}}{C}$ and $L_\mathrm{PP_o} = \frac{{1 - A}}{C}$. *[Explain and discuss signs, show a figure*]
 4. **Optical invariant:** Finally, it can be shown that the product $n ( y_1 \theta_2 - y_2 \theta_1)$ for any two rays at a given point is a constant throughout the system.  Therefore if a component cannot "support" a certain product, then it becomes clear the rays will be blocked.
 
-### Use of formalism c examples
+### Use of formalism in examples
 
 We can easily recover the position of an image with respect to the position of an object  with a thin lens matrix:
 $$
@@ -204,13 +204,7 @@ f \theta(t) \\
 $$
 The modulation pattern on $\theta(t)$ is translated to a raster scan in $y(t) = f\theta(t)$, as desired in scanning microscopes. 
 
-**[Recreate this table and translate]**
-
-<img src="article.assets/image-20200512135616564.png" alt="image-20200512135616564" style="zoom:25%;" />
-
-
-
-
+<img src="article.assets/matrices.png" alt="image-20200512135616564" style="zoom:25%;" />
 
 ## Apertures
 
