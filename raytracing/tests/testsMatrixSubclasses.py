@@ -131,7 +131,6 @@ class TestCurvedMirror(unittest.TestCase):
         self.assertAlmostEqual(m1.C, m2.C, 4)
         self.assertAlmostEqual(m1.D, m2.D, 4)
 
-
 class TestSpaceMatrix(unittest.TestCase):
 
     def testSpaceMatrix(self):
