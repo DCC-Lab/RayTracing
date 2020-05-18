@@ -272,7 +272,11 @@ Laser scanning microscope
 
 Confocal pinhole detection
 
-Diffuse source from scattering medium
+## Diffuse source from scattering medium
+
+
+
+[]
 
 Two-photon descanned detector
 
