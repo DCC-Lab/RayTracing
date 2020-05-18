@@ -12,13 +12,14 @@ class TestCurvedMirror(unittest.TestCase):
         self.assertIsNotNone(m)
 
     def testRayInMirror(self):
+        # Convex mirror is positive radius, concave is negative
         m1 = CurvedMirror(R=-10)
         outRay1 = m1*Ray(y=1,theta=0)
-        self.assertTrue(outRay1.theta > 0)
+        self.assertTrue(outRay1.theta < 0)
 
         m2 = CurvedMirror(R=10)
         outRay2 = m2*Ray(y=1,theta=0)
-        self.assertTrue(outRay2.theta <  0)
+        self.assertTrue(outRay2.theta >  0)
 
     def testRayInFlippedMirror(self):
         m1 = CurvedMirror(R=-10)
