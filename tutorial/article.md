@@ -264,33 +264,37 @@ Prepare many different examples, keep them in a directory and show figures.
 
 ## Practical examples solved with module
 
-Widefield microscope
+### Widefield microscope
 
-Simple scanning system
+### Simple scanning system
 
-Laser scanning microscope
+### Laser scanning microscope
 
-Confocal pinhole detection
+### Confocal pinhole detection
 
-Diffuse source from scattering medium
+We can show the optical sectioning obtained from a confocal pinhole with the following example.
 
-Two-photon descanned detector
+**[Valerie, here]**
+
+### Diffuse source from scattering medium
+
+### Two-photon descanned detector
 
 ​	Big detectors (R3896) versus small detectors (GaAsP)
 
-Illumination system
+### Illumination system
 
-Axicon
+### Axicon
 
-Fiber-based collection system
-
-
+### Fiber-based collection system
 
 
 
 
 
-Discussion and outlook:
+
+
+## Discussion and outlook:
 
 Examples of things that could be added:
 
@@ -310,5 +314,6 @@ Examples of things that could be added:
 
 7. Reflections
 
-8. 
+   
+
 
