@@ -38,23 +38,18 @@ class Ray:
     theta : float
         Initial angle of the ray
 
-    z : float
-        Initial position along the optical axis
-
-    isBlocked : bool
-        Whether or not the ray is already blocked
     """
 
-    def __init__(self, y=0, theta=0, z=0, isBlocked=False):
-        """A ray with height y and angle theta at position z.
+    def __init__(self, y=0, theta=0):
+        """A ray with height `y` and angle `theta`, initially at z=0.
 
         """
         self.y = y
         self.theta = theta
 
-        self.z = z
+        self.z = 0
+        self.isBlocked = False
         self.apertureDiameter = float("+Inf")
-        self.isBlocked = isBlocked
 
     @property
     def isNotBlocked(self):
@@ -80,7 +75,7 @@ class Ray:
         rays = []
         for i in range(N):
             theta = radianMin + float(i) * deltaRadian
-            rays.append(Ray(y, theta, z=0))
+            rays.append(Ray(y, theta))
 
         return rays
 
@@ -108,7 +103,7 @@ class Ray:
             for i in range(N):
                 theta = radianMin + float(i) * deltaRadian
                 y = yMin + float(j) * deltaHeight
-                rays.append(Ray(y, theta, z=0))
+                rays.append(Ray(y, theta))
 
         return rays
 
