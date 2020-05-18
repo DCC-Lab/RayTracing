@@ -48,6 +48,14 @@ class TestImagingPath(unittest.TestCase):
 
         self.assertEqual(path.displayRange, largestDiameter)
 
+   def testEntrancePupilAIs0(self):
+        space = Space(2)
+        lens = Lens(10, 110)
+        space2 = Space(10, diameter=50)
+        elements = [space, lens, space2]
+        path = ImagingPath(elements)
+        self.assertIsNotNone(path.entrancePupil())
+
 
 if __name__ == '__main__':
     unittest.main()
