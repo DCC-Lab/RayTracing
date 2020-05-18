@@ -9,15 +9,49 @@ class Ray:
     Simple static functions are defined to obtain a group of rays: fans
     originate from the same height but sweep a range of angles; fan groups
     are fans originating from different heights.
+
+    Attributes
+    ----------
+    y : float
+        Height, or distance of the ray from the optical axis, corresponding to the
+        ray matrix formalism.
+
+    theta : float
+        Angle the ray makes with the optical axis, corresponding to the
+        ray matrix formalism. Positive is up.
+
+    z : float
+        Position of the ray along the optical axis.
+
+    apertureDiameter : float
+        The diameter of any blocking aperture at the present position z.
+
+    isBlocked : bool
+        If the ray was blocked by an aperture, isBlocked is True
+
+
+    Parameters
+    ----------
+    y : float
+        Initial height of the ray.
+
+    theta : float
+        Initial angle of the ray
+
+    z : float
+        Initial position along the optical axis
+
+    isBlocked : bool
+        Whether or not the ray is already blocked
     """
 
     def __init__(self, y=0, theta=0, z=0, isBlocked=False):
-        # Ray matrix formalism
+        """A ray with height y and angle theta at position z.
+
+        """
         self.y = y
         self.theta = theta
 
-        # Position of this ray and the diameter of the aperture at that 
-        # position
         self.z = z
         self.apertureDiameter = float("+Inf")
         self.isBlocked = isBlocked
