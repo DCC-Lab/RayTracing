@@ -24,7 +24,6 @@ rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/*
 
 """
 
- 
 
 setuptools.setup(
     name="raytracing",
@@ -44,7 +43,7 @@ setuptools.setup(
     monte carlo design raytracing',
     packages=setuptools.find_packages(),
     install_requires=['matplotlib', 'numpy'],
-    python_requires='>=3',
+    python_requires='>=3.6',
     package_data = {
         # If any package contains *.txt or *.rst files, include them:
         '': ['*.png'],
@@ -60,13 +59,15 @@ setuptools.setup(
         'Topic :: Education',
 
         # Pick your license as you wish (should match "license" above)
-         'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: MIT License',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
 
         'Operating System :: OS Independent'
     ],
