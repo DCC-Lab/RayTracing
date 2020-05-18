@@ -3,16 +3,12 @@ from .gaussianbeam import *
 from .rays import *
 
 import multiprocessing
-import copy
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
 import math
-
-import time
-import tempfile
 import warnings
 
 
@@ -171,7 +167,7 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
+            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}\n".format(
                 rightSideBeam.n, self.frontIndex)
             warnings.warn(msg, UserWarning)
 
@@ -546,14 +542,14 @@ class Matrix(object):
         """
         self.isFlipped = not self.isFlipped
         # First and last interfaces. Used for BFL and FFL
-        tempVertex = self.frontVertex
-        self.backVertex = tempVertex
-        self.frontVertex = self.backVertex
+        tempVertex = self.backVertex
+        self.backVertex = self.frontVertex
+        self.frontVertex = tempVertex
 
         # Index of refraction at entrance and exit.
         tempIndex = self.frontIndex
         self.frontIndex = self.backIndex
-        self.backIndex = self.frontIndex
+        self.backIndex = tempIndex
 
         return self
 
@@ -683,7 +679,7 @@ class Matrix(object):
 
         center = z + self.L / 2.0
         axes.annotate(self.label, xy=(center, 0.0),
-                      xytext=(center, halfHeight * 1.5),
+                      xytext=(center, halfHeight * 1.4),
                       fontsize=8, xycoords='data', ha='center',
                       va='bottom', clip_box=axes.bbox, clip_on=True)
 
@@ -719,8 +715,9 @@ class Matrix(object):
 
             center = z + self.L / 2
             if self.L == 0:
-                (xScaling, _) = self.axesToDataScaling(axes)
-                width = xScaling * 0.01 / 2
+                (xScaling, yScaling) = self.axesToDataScale(axes)
+                heightFactor = halfHeight * 2 / yScaling
+                width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
             else:
                 width = self.L / 2
 
@@ -737,33 +734,30 @@ class Matrix(object):
                 closed=False,
                 color='0.7'))
 
-    def displayHalfHeight(self):
+    def displayHalfHeight(self, minSize=0):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
 
-        If the element is infinite, currently the half-height
-        will be '4'. If not, it is the apertureDiameter/2.
+        If the element is infinite, the half-height is currently
+         set to '4' or to the specified minimum half height.
+         If not, it is the apertureDiameter/2.
 
         """
-        halfHeight = 4  # FIXME: reasonable half height when infinite
+        halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
+        if minSize > halfHeight:
+            halfHeight = minSize
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
 
-    def axesToDataScaling(self, axes):
-        """ For drawing properly arrows and other things, sometimes
-        we need to draw along y in real space but in x in relative space
-        (i.e. relative to the width of the graph, not x coordinates).
-        There are transforms in matplotlib, but only between axes-display,
-        and data-display, not between data-axes.  Here we obtain the scaling
-        so we can set arrow properties intelligently """
+    def axesToDataScale(self, axes):
+        """ Display dimensions in data units.
+        Used to properly draw elements on the display
+        with appropriate data coordinates. """
 
-        fromDispToData = axes.transData.inverted()
-        fromAxesToDisp = axes.transAxes
-        scalingFromAxesToData = fromDispToData.transform(fromAxesToDisp.transform([[1, 1], [0, 0]]))
-        xScaling = abs(scalingFromAxesToData[1][0] - scalingFromAxesToData[0][0])
-        yScaling = abs(scalingFromAxesToData[1][1] - scalingFromAxesToData[0][1])
-        return (xScaling, yScaling)
+        xScale, yScale = axes.viewLim.bounds[2:]
+
+        return xScale, yScale
 
     def __str__(self):
         """ String description that allows the use of print(Matrix())
@@ -796,16 +790,24 @@ class Lens(Matrix):
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a thin lens at z """
+        maxRayHeight = 0
+        for line in axes.lines:
+            if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
+                if max(line._y) > maxRayHeight:
+                    maxRayHeight = max(line._y)
 
-        halfHeight = self.displayHalfHeight()  # real units, i.e. data
+        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 
-        (xScaling, yScaling) = self.axesToDataScaling(axes)
-        arrowWidth = xScaling * 0.01
-        arrowHeight = yScaling * 0.03
-        axes.arrow(z, 0, 0, halfHeight, width=arrowWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeight, head_width=arrowWidth, length_includes_head=True)
+        (xScaling, yScaling) = self.axesToDataScale(axes)
+        arrowHeadHeight = 2*halfHeight * 0.1
+
+        heightFactor = halfHeight*2 / yScaling
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+
+        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
+        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
     def pointsOfInterest(self, z):
@@ -825,12 +827,16 @@ class Lens(Matrix):
 
 
 class CurvedMirror(Matrix):
-    """A curved mirror of radius R and infinite or finite diameter
-
+    """A curved mirror of radius R and infinite or finite diameter.
+    Note that a concave mirror (i.e. converging mirror) has a negative
+    radius of curvature if we want to keep the same sign convention.
+    (there was a mistake up to version 1.2.7 of the module)
     """
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
-        super(CurvedMirror, self).__init__(A=1, B=0, C=-2 / float(R), D=1,
+        warnings.warn("The sign of the radius of curvature in CurvedMirror was changed \
+in version 1.2.8 to maintain the sign convention\n",UserWarning)
+        super(CurvedMirror, self).__init__(A=1, B=0, C=2 / float(R), D=1,
                                            physicalLength=0,
                                            apertureDiameter=diameter,
                                            frontVertex=0,
@@ -851,6 +857,16 @@ class CurvedMirror(Matrix):
             pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
 
         return pointsOfInterest
+
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        In this case, R -> -R.  It is important to call the
+        super implementation because other things must be flipped (vertices for instance)
+        """
+        super(CurvedMirror, self).flipOrientation()
+
+        self.C = - self.C
+        return self
 
 
 class Space(Matrix):
@@ -1075,6 +1091,27 @@ class ThickLens(Matrix):
 
         return pointsOfInterest
 
+    def flipOrientation(self):
+        """ We flip the element around (as in, we turn a lens around front-back).
+        In this case, R1 = -R2, and R2 = -R1.  It is important to call the
+        super implementation because other things must be flipped (vertices for instance)
+        """
+        super(ThickLens, self).flipOrientation()
+
+        temp = self.R1
+        self.R1 = -self.R2
+        self.R2 = -temp
+
+        R1 = self.R1
+        R2 = self.R2
+        t = self.L
+        n = self.n
+
+        self.A = t * (1.0 - n) / (n * R1) + 1
+        self.B = t / n
+        self.C = - (n - 1.0) * (1.0 / R1 - 1.0 / R2 + t * (n - 1.0) / (n * R1 * R2))
+        self.D = t * (n - 1.0) / (n * R2) + 1
+        return self
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces

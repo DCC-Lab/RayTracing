@@ -1,5 +1,5 @@
 import unittest
-import env  # modifies path
+import envtest # modifies path
 
 from raytracing import *
 
@@ -245,6 +245,109 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m.determinant, 1 / 1.5)
         self.assertEqual(m.frontVertex, 0)
         self.assertEqual(m.backVertex, 0)
+
+    def testDielectricInterfaceConvergingSign(self):
+        # Positive R is convex for ray
+        m = DielectricInterface(n1=1, n2=1.5, R=10)
+        outRayDown = m*Ray(y=1,theta=0)
+        outRayUp = m*Ray(y=-1,theta=0)
+
+        # Ray is focussed to focal spot
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testDielectricInterfaceDivergingSign(self):
+        # Negative R is concave for ray
+        m = DielectricInterface(n1=1, n2=1.5, R=-10)
+        outRayUp = m*Ray(y=1,theta=0)
+        outRayDown = m*Ray(y=-1,theta=0)
+
+        # Ray is diverging
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testThickConvergingLens(self):
+        # Biconvex
+        m = ThickLens(n=1.55, R1=100, R2=-100, thickness=3)
+        outRayDown = m*Ray(y=1,theta=0)
+        outRayUp = m*Ray(y=-1,theta=0)
+
+        # Ray is focussed to focal spot
+        self.assertTrue(m.C < 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testThickDivergingLens(self):
+        # Biconcave
+        m = ThickLens(n=1.55, R1=-100, R2=100, thickness=3)
+        outRayUp = m*Ray(y=1,theta=0)
+        outRayDown = m*Ray(y=-1,theta=0)
+
+        # Ray is diverging
+        self.assertTrue(m.C > 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testThickConvergingLensEquivalence(self):
+        # Biconvex
+        m = ThickLens(n=1.55, R1=100, R2=-100, thickness=3)
+
+        mEquivalent = MatrixGroup()
+        mEquivalent.append(DielectricInterface(n1=1, n2=1.55, R=100))
+        mEquivalent.append(Space(d=3))
+        mEquivalent.append(DielectricInterface(n1=1.55, n2=1.0, R=-100))
+
+        self.assertAlmostEqual(m.A, mEquivalent.A,3)
+        self.assertAlmostEqual(m.B, mEquivalent.B,3)
+        self.assertAlmostEqual(m.C, mEquivalent.C,3)
+        self.assertAlmostEqual(m.D, mEquivalent.D,3)
+
+    def testThickConvergingLensFlip(self):
+        # Biconvex
+        m1 = ThickLens(n=1.55, R1=200, R2=-100, thickness=3)
+        m2 = ThickLens(n=1.55, R1=100, R2=-200, thickness=3)
+        m2.flipOrientation()
+
+        self.assertAlmostEqual(m1.determinant, 1,4)
+        self.assertAlmostEqual(m2.determinant, 1,4)
+        self.assertAlmostEqual(m1.A, m2.A,4)
+        self.assertAlmostEqual(m1.B, m2.B,4)
+        self.assertAlmostEqual(m1.C, m2.C,4)
+        self.assertAlmostEqual(m1.D, m2.D,4)
+
+    def testConvergingCurvedMirror(self):
+        # Concave should be positive?
+        m = CurvedMirror(R=-100)
+        outRayDown = m*Ray(y=1,theta=0)
+        outRayUp = m*Ray(y=-1,theta=0)
+
+        # Ray is focussed to focal spot
+        self.assertTrue(m.C < 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testDivergingCurvedMirror(self):
+        m = CurvedMirror(R=100)
+        outRayUp = m*Ray(y=1,theta=0)
+        outRayDown = m*Ray(y=-1,theta=0)
+
+        # Ray is diverging
+        self.assertTrue(m.C > 0)
+        self.assertTrue(outRayDown.theta < 0)
+        self.assertTrue(outRayUp.theta > 0)
+
+    def testCurvedMirrorFlip(self):
+        # Biconvex
+        m1 = CurvedMirror(R=100)
+        m2 = CurvedMirror(R=-100)
+        m2.flipOrientation()
+
+        self.assertAlmostEqual(m1.determinant, 1,4)
+        self.assertAlmostEqual(m2.determinant, 1,4)
+        self.assertAlmostEqual(m1.A, m2.A,4)
+        self.assertAlmostEqual(m1.B, m2.B,4)
+        self.assertAlmostEqual(m1.C, m2.C,4)
+        self.assertAlmostEqual(m1.D, m2.D,4)
 
     def testLensFocalLengths(self):
         m = Lens(f=5)
