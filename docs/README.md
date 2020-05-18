@@ -7,8 +7,6 @@ Since the documentation pages are auto-generated from the doctrings,
 please follow the required [Google Docstring](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google)
  format. 
 
-For now there's a temporary **template** in `raytracing/template.py`
-
 ## Developer Notes
 ### Requirements
 ```

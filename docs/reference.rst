@@ -2,16 +2,6 @@ RayTracing API Reference
 ========================
 .. automodule:: raytracing
 
-
-Template
-------------------
-
-.. autosummary::
-    :template: autoClass.rst
-    :toctree: modules
-
-    DocStringTemplate
-
 Matrix
 ------------------
 
