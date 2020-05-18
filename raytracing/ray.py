@@ -10,39 +10,66 @@ class Ray:
     originate from the same height but sweep a range of angles; fan groups
     are fans originating from different heights.
 
-    Attributes
-    ----------
-    y : float
-        Height, or distance of the ray from the optical axis, corresponding to the
-        ray matrix formalism.
-
-    theta : float
-        Angle the ray makes with the optical axis, corresponding to the
-        ray matrix formalism. Positive is up.
-
-    z : float
-        Position of the ray along the optical axis.
-
-    apertureDiameter : float
-        The diameter of any blocking aperture at the present position z.
-
-    isBlocked : bool
-        If the ray was blocked by an aperture, isBlocked is True
-
-
     Parameters
     ----------
     y : float
-        Initial height of the ray.
+        Initial height of the ray (limitations? range? default?).
 
     theta : float
-        Initial angle of the ray
+        Initial angle of the ray (limitation? range? default?)
 
+    Returns
+    -------
+    output : data
+        if there is an output for the function
+
+    Raises
+    ------
+    BadException
+        Because you shouldn't have done that.
+
+    See Also
+    --------
+    some similar functions
+
+    Notes
+    -----
+    Notes about the implementation algorithm (if needed).
+
+    Examples
+    --------
+    These are written in doctest format, and should illustrate how to
+    use the function.
+    >>> a+b
+    0
     """
+    # Attributes
+    # ----------
+    # y : float
+    #     Height, or distance of the ray from the optical axis, corresponding to the
+    #     ray matrix formalism.
+    #
+    # theta : float
+    #     Angle the ray makes with the optical axis, corresponding to the
+    #     ray matrix formalism. Positive is up.
+    #
+    # z : float
+    #     Position of the ray along the optical axis.
+    #
+    # apertureDiameter : float
+    #     The diameter of any blocking aperture at the present position z.
+    #
+    # isBlocked : bool
+    #     If the ray was blocked by an aperture, isBlocked is True
+
+
 
     def __init__(self, y=0, theta=0):
-        """A ray with height `y` and angle `theta`, initially at z=0.
-
+        """
+        A ray with height `y` and angle `theta`, initially at z=0.
+         I suggest to remove the docstring for the init function since
+         this is the same with the class docstring, unless one of
+         the methods is used.
         """
         self.y = y
         self.theta = theta
@@ -64,6 +91,41 @@ class Ray:
         """A list of rays spanning from radianMin to radianMax to be used
         with Matrix.trace() or Matrix.traceMany()
 
+        Parameters
+        ----------
+        y : int
+            height
+        radianMin : int or None, optional
+            definition, range, ....
+        radianMax : {'quicksort', 'mergesort', 'heapsort', 'stable'}, optional
+            default?
+        N : int
+            This is the description of N
+
+        Returns
+        -------
+        output : data
+            if there is an output for the function
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        some similar functions
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
+
+        Examples
+        --------
+        These are written in doctest format, and should illustrate how to
+        use the function.
+        >>> a+b
+        0
         """
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
@@ -83,6 +145,47 @@ class Ray:
     def fanGroup(yMin, yMax, M, radianMin, radianMax, N):
         """ A list of rays spanning from yMin to yMax and radianMin to
         radianMax to be used with Matrix.trace() or Matrix.traceMany()
+
+
+        Parameters
+        ----------
+        yMin : int
+            min height
+        yMax : int
+            max height
+        M : int
+            This is the description of M
+        radianMin : int or None, optional
+            definition, range, ....
+        radianMax : {'quicksort', 'mergesort', 'heapsort', 'stable'}, optional
+            default?
+        N : int
+            This is the description of N
+
+        Returns
+        -------
+        output : data
+            if there is an output for the function
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        some similar functions
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
+
+        Examples
+        --------
+        These are written in doctest format, and should illustrate how to
+        use the function.
+        >>> a+b
+        0
         """
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
