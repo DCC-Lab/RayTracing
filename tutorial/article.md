@@ -41,7 +41,7 @@ y \\
 \theta \\
 \end{matrix} \Biggr]
 $$
-with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. A matrix is represented in general by:
+with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here **[Reference?]**. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. A matrix is represented in general by:
 
 $$
 \mathbf{M} = \Biggl[ 
@@ -61,7 +61,7 @@ $$
 $$
 \theta^\prime = C y + D \theta.
 $$
-**[Redo this figure better? translate, also add vertices and length ]** 
+**[Redo this figure better? translate, also add vertices and length - Val]** 
 
 <img src="article.assets/variables.png" alt="image-20200512140455081" style="zoom: 25%;" />
 
@@ -74,7 +74,7 @@ $$
 \end{matrix}
 \Biggr],
 $$
- and the crossing of a ray from a dielectric medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$ (with $R>0$ when convex):
+and the crossing of a ray from a dielectric medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$ (with $R>0$ when convex):
 $$
 \mathbf{D}(n_1, n_2, R) = 
 \Biggr[
@@ -204,7 +204,7 @@ f \theta(t) \\
 $$
 The modulation pattern on $\theta(t)$ is translated to a raster scan in $y(t) = f\theta(t)$, as desired in scanning microscopes. 
 
-<img src="article.assets/matrices.png" alt="image-20200512135616564" style="zoom:25%;" />
+<img src="article.assets/matrices.png" alt="image-20200512135616564" style="zoom:25%;" /> **[Reference for this figure?]**
 
 ## Apertures
 
