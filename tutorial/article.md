@@ -63,7 +63,7 @@ $$
 $$
 **[Redo this figure better? translate, also add vertices and length ]** 
 
-<img src="article.assets/image-20200512140455081.png" alt="image-20200512140455081" style="zoom: 25%;" />
+<img src="article.assets/variables.png" alt="image-20200512140455081" style="zoom: 25%;" />
 
 There really are only two transformations that need to be described to recover the behavior of any optical elements: the propagation by a distance $d$ in any homogeneous medium, described by the simple following matrix :
 $$
@@ -204,13 +204,7 @@ f \theta(t) \\
 $$
 The modulation pattern on $\theta(t)$ is translated to a raster scan in $y(t) = f\theta(t)$, as desired in scanning microscopes. 
 
-**[Recreate this table and translate]**
-
-<img src="article.assets/image-20200512135616564.png" alt="image-20200512135616564" style="zoom:25%;" />
-
-
-
-
+<img src="article.assets/matrices.png" alt="image-20200512135616564" style="zoom:25%;" />
 
 ## Apertures
 
