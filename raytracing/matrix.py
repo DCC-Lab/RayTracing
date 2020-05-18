@@ -1092,7 +1092,7 @@ class ThickLens(Matrix):
         return pointsOfInterest
 
     def transferMatrix(self, upTo=float('+Inf')):
-        """ Returns a ThickLens() corresponding to a partial propagation
+        """ Returns a ThickLens() or a Matrix() corresponding to a partial propagation
         if the requested distance is smaller than the length of this element"""
         if self.L <= upTo:
             return self
@@ -1145,7 +1145,7 @@ class DielectricSlab(ThickLens):
         axes.add_patch(p)
 
     def transferMatrix(self, upTo=float('+Inf')):
-        """ Returns a DielectricSlab() corresponding to a partial propagation
+        """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
                 if the requested distance is smaller than the length of this element"""
         if self.L <= upTo:
             return self
