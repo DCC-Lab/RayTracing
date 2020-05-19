@@ -5,11 +5,16 @@ from raytracing import *
 
 inf = float("+inf")
 
-# Change this to True if you want to run speed tests
-doBenchmark = False
-
 
 class TestMatrix(unittest.TestCase):
+    def testWarningsOnOneLine(self):
+        message = "This is a test."
+        filename = "test.py"
+        lineno = 10
+        category = UserWarning
+        warningsMessage = warningOnOneLine(message,category, filename, lineno)
+        self.assertEqual(warningsMessage, " test.py:10\nUserWarning:This is a test.")
+
     def testMatrix(self):
         m = Matrix()
         self.assertIsNotNone(m)
@@ -314,20 +319,6 @@ class TestMatrix(unittest.TestCase):
         for i in range(len(rays)):
             self.assertEqual(trace[i], rays[i])
 
-    @unittest.skipIf(not doBenchmark, "Not running speed tests.")
-    def testTraceManyThroughInParallelNoChunksFaster(self):
-        import time
-        rays = [Ray(y, y) for y in range(1_000_000)]
-        m = Matrix(physicalLength=1)
-        timeInitNoParallel = time.perf_counter_ns()
-        m.traceManyThrough(rays, False)
-        timeInitParallel = time.perf_counter_ns()
-        m.traceManyThroughInParallelNoChunks(rays)
-        finalTime = time.perf_counter_ns()
-        notParallelTime = timeInitParallel - timeInitNoParallel
-        parallelTime = finalTime - timeInitParallel
-        self.assertTrue(parallelTime < notParallelTime)
-
     def testPointsOfInterest(self):
         m = Matrix()
         self.assertListEqual(m.pointsOfInterest(1), [])
@@ -474,10 +465,15 @@ class TestMatrix(unittest.TestCase):
         strRepresentation += "\nf = +inf (afocal)\n".format(-1.0)
         self.assertEqual(str(m).strip(), strRepresentation.strip())
 
+    def testDisplayHalfHeight(self):
+        m = Matrix(apertureDiameter=10)
+        minSize = 2
+        self.assertEqual(m.displayHalfHeight(minSize), m.apertureDiameter / 2)
 
+        m.apertureDiameter = inf
+        self.assertEqual(m.displayHalfHeight(), 4)
 
-
-
+        self.assertEqual(m.displayHalfHeight(6), 6)
 
 
 if __name__ == '__main__':

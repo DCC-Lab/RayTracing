@@ -577,7 +577,8 @@ class Matrix(object):
 
         self._showPlot()
 
-    def _showPlot(self):  # internal, do not use
+    def _showPlot(self):  # pragma: no cover
+        # internal, do not use
         try:
             plt.plot()
             if sys.platform.startswith('win'):
@@ -717,7 +718,7 @@ class Matrix(object):
             if self.L == 0:
                 (xScaling, yScaling) = self.axesToDataScale(axes)
                 heightFactor = halfHeight * 2 / yScaling
-                width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
+                width = xScaling * 0.01 / 2 * (heightFactor / 0.2) ** (3 / 4)
             else:
                 width = self.L / 2
 
@@ -799,10 +800,10 @@ class Lens(Matrix):
         halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
-        arrowHeadHeight = 2*halfHeight * 0.1
+        arrowHeadHeight = 2 * halfHeight * 0.1
 
-        heightFactor = halfHeight*2 / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+        heightFactor = halfHeight * 2 / yScaling
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
 
         axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
@@ -835,7 +836,7 @@ class CurvedMirror(Matrix):
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
         warnings.warn("The sign of the radius of curvature in CurvedMirror was changed \
-in version 1.2.8 to maintain the sign convention\n",UserWarning)
+in version 1.2.8 to maintain the sign convention\n", UserWarning)
         super(CurvedMirror, self).__init__(A=1, B=0, C=2 / float(R), D=1,
                                            physicalLength=0,
                                            apertureDiameter=diameter,
@@ -1099,6 +1100,7 @@ class ThickLens(Matrix):
         else:
             return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, self.R1,
                                                                                     self.apertureDiameter)
+
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
         In this case, R1 = -R2, and R2 = -R1.  It is important to call the
@@ -1120,6 +1122,7 @@ class ThickLens(Matrix):
         self.C = - (n - 1.0) * (1.0 / R1 - 1.0 / R2 + t * (n - 1.0) / (n * R1 * R2))
         self.D = t * (n - 1.0) / (n * R2) + 1
         return self
+
 
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces

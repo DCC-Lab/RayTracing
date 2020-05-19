@@ -131,6 +131,7 @@ class TestCurvedMirror(unittest.TestCase):
         self.assertAlmostEqual(m1.C, m2.C, 4)
         self.assertAlmostEqual(m1.D, m2.D, 4)
 
+
 class TestSpaceMatrix(unittest.TestCase):
 
     def testSpaceMatrix(self):
@@ -402,6 +403,31 @@ class TestThickLens(unittest.TestCase):
         self.assertAlmostEqual(m1.C, m2.C, 4)
         self.assertAlmostEqual(m1.D, m2.D, 4)
 
+    def testTransferMatrix(self):
+        tl = ThickLens(1.33, 10, -6, 1, 20)
+        transMat = tl.transferMatrix()
+        self.assertEqual(tl.n, transMat.n)
+        self.assertEqual(tl.L, transMat.L)
+        self.assertEqual(tl.apertureDiameter, transMat.apertureDiameter)
+        self.assertEqual(tl.label, transMat.label)
+        self.assertEqual(tl.A, transMat.A)
+        self.assertEqual(tl.B, transMat.B)
+        self.assertEqual(tl.C, transMat.C)
+        self.assertEqual(tl.D, transMat.D)
+
+        originalTl = ThickLens(1.33, -100, 100, 4, 120)
+        transMat = originalTl.transferMatrix(2)
+        finalTl = Space(2, 1.33) * DielectricInterface(1, 1.33, -100, 120)
+        self.assertEqual(finalTl.backIndex, transMat.backIndex)
+        self.assertEqual(finalTl.frontIndex, transMat.frontIndex)
+        self.assertEqual(finalTl.L, transMat.L)
+        self.assertEqual(finalTl.apertureDiameter, transMat.apertureDiameter)
+        self.assertEqual(finalTl.label, transMat.label)
+        self.assertEqual(finalTl.A, transMat.A)
+        self.assertEqual(finalTl.B, transMat.B)
+        self.assertEqual(finalTl.C, transMat.C)
+        self.assertEqual(finalTl.D, transMat.D)
+
 
 class TestDielectricSlab(unittest.TestCase):
 
@@ -417,6 +443,31 @@ class TestDielectricSlab(unittest.TestCase):
         self.assertEqual(ds.L, 2)
         self.assertEqual(ds.apertureDiameter, inf)
         self.assertEqual(ds.label, "")
+
+    def testTransferMatrix(self):
+        ds = DielectricSlab(1, 10)
+        transMat = ds.transferMatrix()
+        self.assertEqual(ds.n, transMat.n)
+        self.assertEqual(ds.L, transMat.L)
+        self.assertEqual(ds.apertureDiameter, transMat.apertureDiameter)
+        self.assertEqual(ds.label, transMat.label)
+        self.assertEqual(ds.A, transMat.A)
+        self.assertEqual(ds.B, transMat.B)
+        self.assertEqual(ds.C, transMat.C)
+        self.assertEqual(ds.D, transMat.D)
+
+        originalDs = DielectricSlab(1.33, 10)
+        transMat = originalDs.transferMatrix(5)
+        finalDs = Space(5, 1.33) * DielectricInterface(1, 1.33)
+        self.assertEqual(finalDs.backIndex, transMat.backIndex)
+        self.assertEqual(finalDs.frontIndex, transMat.frontIndex)
+        self.assertEqual(finalDs.L, transMat.L)
+        self.assertEqual(finalDs.apertureDiameter, transMat.apertureDiameter)
+        self.assertEqual(finalDs.label, transMat.label)
+        self.assertEqual(finalDs.A, transMat.A)
+        self.assertEqual(finalDs.B, transMat.B)
+        self.assertEqual(finalDs.C, transMat.C)
+        self.assertEqual(finalDs.D, transMat.D)
 
 
 class TestAperture(unittest.TestCase):
