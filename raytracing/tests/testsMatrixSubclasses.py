@@ -28,9 +28,7 @@ class TestLens(unittest.TestCase):
         self.assertListEqual(l.pointsOfInterest(0), pointsInterest)
 
     def testLensPointsOfInterestNone(self):
-        f = 1
-        l = Lens(f=f)
-        l.C = 0
+        l = Lens(f=inf)
         self.assertListEqual(l.pointsOfInterest(0), [])
 
 
@@ -69,7 +67,7 @@ class TestCurvedMirror(unittest.TestCase):
         pointsInterest = [{'z': z + R / 2, 'label': "$F_f$"}, {'z': z - R / 2, 'label': "$F_b$"}]
         self.assertListEqual(cm.pointsOfInterest(z), pointsInterest)
 
-        cm.C = 0
+        cm = CurvedMirror(inf)
         self.assertListEqual(cm.pointsOfInterest(z), [])
 
     def testMatrix(self):
