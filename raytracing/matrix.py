@@ -295,12 +295,14 @@ class Matrix(object):
 
     @staticmethod
     def isIterable(obj):
+        isOk = True
         try:
+            # if obj is not iterable, boom, exception.
             iter(obj)
         except TypeError:
-            return False
-        finally:
-            return True
+            isOk = False
+
+        return isOk
 
     def traceManyThrough(self, inputRays, progress=True):
         """ Trace each ray from a list or a Rays() distribution from
