@@ -17,11 +17,11 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   RayTracing
-   Getting Started
+   raytracing
+   gettingStarted
    reference
-   Examples
-   Contribute
+   examples
+   contribute
    FAQ
 
 Indices and tables
