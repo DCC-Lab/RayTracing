@@ -8,6 +8,12 @@ inf = float("+inf")
 
 class TestMatrixGroup(unittest.TestCase):
 
+
+    def testLargestDiameterWithEmptyGroup(self):
+        m = MatrixGroup()
+        self.assertEqual(m.largestDiameter(), float("+inf"))
+
+
     def testMatrixGroup(self):
         mg = MatrixGroup()
         self.assertIsInstance(mg, MatrixGroup)
