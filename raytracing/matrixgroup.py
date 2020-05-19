@@ -141,8 +141,6 @@ class MatrixGroup(Matrix):
 
     def largestDiameter(self):
         """ Largest finite diameter in all elements """
-        if len(self.elements) == 0:
-            return float("+inf")
 
         maxDiameter = 0
         if self.hasFiniteApertureDiameter():
@@ -152,6 +150,8 @@ class MatrixGroup(Matrix):
                     maxDiameter = diameter
         elif len(self.elements) != 0:
             maxDiameter = self.elements[0].displayHalfHeight() * 2
+        else:
+            maxDiameter = float("+inf")
 
         return maxDiameter
 
