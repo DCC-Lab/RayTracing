@@ -82,9 +82,9 @@ from .components import *
 from .specialtylenses import *
 from .axicon import *
 
-import raytracing.thorlabs as thorlabs
-import raytracing.eo as eo
-import raytracing.olympus as olympus
+from . import thorlabs
+from . import eo
+from . import olympus
 
 """ Synonym of Matrix: Element 
 
