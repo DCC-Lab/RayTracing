@@ -12,7 +12,7 @@ class TestMatrix(unittest.TestCase):
         filename = "test.py"
         lineno = 10
         category = UserWarning
-        warningsMessage = warningOnOneLine(message,category, filename, lineno)
+        warningsMessage = warningOnOneLine(message, category, filename, lineno)
         self.assertEqual(warningsMessage, " test.py:10\nUserWarning:This is a test.")
 
     def testMatrix(self):
@@ -474,6 +474,15 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m.displayHalfHeight(), 4)
 
         self.assertEqual(m.displayHalfHeight(6), 6)
+
+    def testAxesToDataScale(self):
+        m = Matrix()
+        min, max = -10, 10
+        axes = plt.subplot()
+        axes.set_ylim(min, max)
+        axes.set_xlim(min, max)
+        val = len(range(min, max))
+        self.assertTupleEqual(m.axesToDataScale(axes), (val, val))
 
 
 if __name__ == '__main__':
