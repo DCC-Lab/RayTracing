@@ -7,19 +7,6 @@ inf = float("+inf")
 
 
 class TestMatrix(unittest.TestCase):
-    def testIsIterble(self):
-        string = "this is iterable"
-        self.assertTrue(Matrix.isIterable(string))
-
-        d = {"this": "is", "also": "iterable"}
-        self.assertTrue(Matrix.isIterable(d))
-
-        rays = Rays([Ray(), Ray(0, 1), Ray(10, 2)])
-        self.assertTrue(Matrix.isIterable(rays))
-
-        self.assertFalse(Matrix.isIterable(12.345))
-        self.assertFalse(Matrix.isIterable(TypeError))
-
     def testWarningsOnOneLine(self):
         message = "This is a test."
         filename = "test.py"
