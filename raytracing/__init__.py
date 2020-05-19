@@ -83,9 +83,6 @@ import raytracing.thorlabs as thorlabs
 import raytracing.eo as eo
 import raytracing.olympus as olympus
 
-""" Temporary Docstring Template """
-#from .template import *
-
 
 """ Synonym of Matrix: Element 
 
