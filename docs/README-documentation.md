@@ -92,6 +92,12 @@ pip install sphinx_rtd_theme
 The package `recommonmark` adds Markdown support.
 
 ### Files controlling the format
+|File|Usage|
+|---|---|
+|`conf.py`|Configure `html_theme` and `extensions`|
+|`index.rst`|Main index page|
+|`_templates/autoClass.rst`|Template used to auto-document classes|
+|`_templates/autoFunction.rst`|Template used to auto-document functions|
 
 *[FIXME: Information here on key files and their role in the Sphynx documentation system]*
 
