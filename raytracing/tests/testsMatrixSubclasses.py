@@ -328,6 +328,10 @@ class TestThickLens(unittest.TestCase):
         pointsInterest = [{'z': focusPos[0], 'label': "$F_f$"}, {'z': focusPos[1], 'label': "$F_b$"}]
         self.assertListEqual(tl.pointsOfInterest(z), pointsInterest)
 
+    def testThickLensNoPointsOfInterest(self):
+        tl = ThickLens(n=1, R1=100, R2=-100, thickness=2)
+        self.assertListEqual(tl.pointsOfInterest(0), [])
+
     def testMatrix(self):
         m = ThickLens(R1=-10, R2=20, n=1.5, thickness=1)
         self.assertIsNotNone(m)
