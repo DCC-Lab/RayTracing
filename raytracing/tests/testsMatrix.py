@@ -280,10 +280,22 @@ class TestMatrix(unittest.TestCase):
         for i in range(len(rays)):
             self.assertEqual(rays[i], traceManyThrough[i])
 
+
     def testTraceManyThroughOther(self):
         rays = tuple([Ray(), Ray()])
         m = Matrix(physicalLength=1)
         traceManyThrough = m.traceManyThrough(rays)
+
+    def testTraceManyThroughIterable(self):
+        iterable = (Ray(1, 0), Ray(0, 1))
+        rays = Rays(iterable)
+        m = Matrix(physicalLength=1)
+        
+        # This works
+        self.assertIsNotNone(m.traceManyThrough(rays))
+        # This now works
+        self.assertIsNotNone(m.traceManyThrough(iterable))
+
 
     def testTraceManyThroughOutput(self):
         import io
