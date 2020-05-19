@@ -8,12 +8,6 @@ inf = float("+inf")
 
 class TestMatrixGroup(unittest.TestCase):
 
-
-    def testLargestDiameterWithEmptyGroup(self):
-        m = MatrixGroup()
-        self.assertEqual(m.largestDiameter(), float("+inf"))
-
-
     def testMatrixGroup(self):
         mg = MatrixGroup()
         self.assertIsInstance(mg, MatrixGroup)
@@ -76,7 +70,6 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(transferMatrix.frontVertex, supposedTransfer.frontVertex)
         self.assertEqual(transferMatrix.backVertex, supposedTransfer.backVertex)
         self.assertEqual(transferMatrix.L, supposedTransfer.L)
-
 
     def testAppendNoElementInit(self):
         mg = MatrixGroup()
@@ -216,12 +209,15 @@ class TestMatrixGroup(unittest.TestCase):
         mg.append(DielectricInterface(1.2541255, 1.33, 2, 1e5))
         self.assertTrue(mg.hasFiniteApertureDiameter())
 
-
     def testLargestDiameter(self):
         smallDiam = 10
         bigDiam = 25
         mg = MatrixGroup([Space(14, diameter=smallDiam), Lens(5), Space(5, diameter=bigDiam)])
         self.assertEqual(mg.largestDiameter(), bigDiam)
+
+    def testLargestDiameterWithEmptyGroup(self):
+        m = MatrixGroup()
+        self.assertEqual(m.largestDiameter(), float("+inf"))
 
     def testFlipOrientationEmptyGroup(self):
         mg = MatrixGroup()
