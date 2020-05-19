@@ -1,5 +1,5 @@
 class Ray:
-    """A vector and a light ray as transformed by ABCD matrices
+    """A vector and a light ray as transformed by ABCD matrices.
 
     The Ray() has a height (y) and an angle with the optical axis (theta).
     It also has a position (z), the diameter of the aperture at that point
@@ -79,10 +79,8 @@ class Ray:
         self.apertureDiameter = float("+Inf")
 
     @property
-    def isNotBlocked(self):
-        """Opposite of isBlocked.  Convenience function for readability
-
-        """
+    def isNotBlocked(self) -> bool:
+        """Opposite of isBlocked. Convenience function for readability."""
 
         return not self.isBlocked
 
@@ -211,7 +209,7 @@ class Ray:
         return rays
 
     def __str__(self):
-        """ String description that allows the use of print(Ray()) """
+        """String description that allows the use of print(Ray())."""
 
         description = "\n /       \\ \n"
         description += "| {0:6.3f}  |\n".format(self.y)
@@ -226,6 +224,8 @@ class Ray:
         return description
 
     def __eq__(self, other):
+        """Define rays to be equal if they the same height and angle."""
+
         if not isinstance(other, Ray):
             return False
         elif self.y != other.y:
