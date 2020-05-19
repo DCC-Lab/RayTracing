@@ -381,6 +381,16 @@ class TestMatrix(unittest.TestCase):
         m = Matrix()
         self.assertTupleEqual(m.focusPositions(0), (None, None))
 
+    def testDielectricInterfaceEffectiveFocalLengths(self):
+        # Positive R is convex for ray
+        n1 = 1
+        n2 = 1.5
+        R = 10
+        m = DielectricInterface(n1=n1, n2=n2, R=R)
+        (f1, f2) = m.effectiveFocalLengths()
+        self.assertTrue(f2 == n2*R/(n2-n1))
+        self.assertTrue(f1 == n1*R/(n2-n1)) # flip R and n1,n2
+
     def testFiniteForwardConjugate(self):
         m1 = Lens(f=5) * Space(d=10)
         (d, m2) = m1.forwardConjugate()

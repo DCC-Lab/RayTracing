@@ -405,11 +405,15 @@ class Matrix(object):
         both focal lengths are the same.
         """
         if self.hasPower:
-            focalLength = -1.0 / self.C  # FIXME: Assumes n=1 on either side
+            focalLength2 = -1.0 / self.C # left (n1) to right (n2)
+            temporaryCopy = self
+            temporaryCopy.flipOrientation()
+            focalLength1 = -1.0 / self.C # right (n2) to left (n2)
         else:
-            focalLength = float("+Inf")
+            focalLength1 = float("+Inf")
+            focalLength2 = float("+Inf")
 
-        return (focalLength, focalLength)
+        return (focalLength1, focalLength2)
 
     def backFocalLength(self):
         """ The focal lengths measured from the back vertex.
@@ -424,8 +428,8 @@ class Matrix(object):
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
 
-        Currently, it is assumed the index is n=1 on either side and
-        both focal distances are the same.
+        The front and back focal lengths will be different if the index
+        of refraction is different on both sides.
         """
 
         if self.backVertex is not None and self.hasPower:
@@ -449,8 +453,8 @@ class Matrix(object):
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
 
-        Currently, it is assumed the index is n=1 on either side and
-        both focal distances are the same.
+        The front and back focal lengths will be different if the index
+        of refraction is different on both sides.
         """
 
         if self.frontVertex is not None and self.hasPower:
@@ -464,8 +468,8 @@ class Matrix(object):
     def focusPositions(self, z):
         """ Positions of both focal points on either side of the element.
 
-        Currently, it is assumed the index is n=1 on either side and both focal
-        distances are the same.
+        The front and back focal spots will be different if the index
+        of refraction is different on both sides.
         """
         if self.hasPower:
             (f1, f2) = self.focalDistances()
