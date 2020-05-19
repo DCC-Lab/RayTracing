@@ -8,7 +8,54 @@ If you are a user of the raytracing package, you probably want to read the docum
 
 ## Writing documentation
 
-If you are a developer, you may be interested in updating the documentation. The documentation is auto-generated with the Sphynx documentation module from the comments directly from the code (i.e. docstrings). There are many different formats that can be used, but the one used in Raytracing is the [Numpy Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) format. 
+If you are a developer, you may be interested in updating the documentation. The documentation is auto-generated with the Sphynx documentation module from the comments directly from the code (i.e. docstrings). There are many different formats that can be used, but the one used in Raytracing is the [Numpy Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) format. A template for numpy looks like this:
+
+```python
+    Parameters
+    ----------
+    y : float
+        Initial height of the ray. Defaults to 0.
+    theta : float
+        Initial angle of the ray. Defaults to 0.
+
+    Attributes
+    ----------
+    z : float
+        Position of the ray along the optical axis. Initialized at 0.
+    apertureDiameter : float
+        The diameter of any blocking aperture at the present position z. Initialized at +Inf.
+    isBlocked : bool
+        Whether or not the ray was blocked by an aperture. Initialized to False.
+
+    Returns
+    -------
+    output : data
+        if there is an output for the function
+
+    Raises
+    ------
+    BadException
+        Because you shouldn't have done that.
+
+    See Also
+    --------
+    Some similar functions
+
+    Notes
+    -----
+    Notes about the implementation algorithm (if needed).
+
+    Examples
+    --------
+    These are written in doctest format, and should illustrate how to
+    use the function.
+
+    >>> a+b
+    0
+
+```
+
+
 
 ## Publishing documentation (maintainers only)
 
