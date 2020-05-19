@@ -19,7 +19,7 @@ Contents
 
    RayTracing
    Getting Started
-   Reference
+   reference
    Examples
    Contribute
    FAQ
