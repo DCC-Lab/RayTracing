@@ -113,11 +113,11 @@ Olympus
     :template: autoClass.rst
     :toctree: modules
 
-    LUMPlanFL40X
-    XLUMPlanFLN20X
-    MVPlapo2XC
-    UMPLFN20XW
-    XLPLN25X
+    olympus.LUMPlanFL40X
+    olympus.XLUMPlanFLN20X
+    olympus.MVPlapo2XC
+    olympus.UMPLFN20XW
+    olympus.XLPLN25X
 
 Edmund Optics
 ------------------
@@ -126,10 +126,10 @@ Edmund Optics
     :template: autoClass.rst
     :toctree: modules
 
-    PN_33_921
-    PN_33_922
-    PN_88_593
-    PN_85_877
+    eo.PN_33_921
+    eo.PN_33_922
+    eo.PN_88_593
+    eo.PN_85_877
 
 Nikon
 ------------------
@@ -138,7 +138,7 @@ Nikon
     :template: autoClass.rst
     :toctree: modules
 
-    LWD16X
+    nikon.LWD16X
 
 Thorlabs
 ------------------
@@ -147,44 +147,44 @@ Thorlabs
     :template: autoClass.rst
     :toctree: modules
 
-    ACN254_100_A
-    ACN254_075_A
-    ACN254_050_A
-    ACN254_040_A
-    AC254_030_A
-    AC254_035_A
-    AC254_040_A
-    AC254_045_A
-    AC254_050_A
-    AC254_060_A
-    AC254_075_A
-    AC254_080_A
-    AC254_100_A
-    AC254_125_A
-    AC254_150_A
-    AC254_200_A
-    AC254_250_A
-    AC254_300_A
-    AC254_400_A
-    AC254_500_A
-    AC254_050_B
-    AC508_075_B
-    AC508_080_B
-    AC508_100_B
-    AC508_150_B
-    AC508_200_B
-    AC508_250_B
-    AC508_300_B
-    AC508_400_B
-    AC508_500_B
-    AC508_750_B
-    AC508_1000_B
-    LA1608_A
-    LA1134_A
-    LA1131_A
-    LA1422_A
-    LA1805_A
-    LA1274_A
+    thorlabs.ACN254_100_A
+    thorlabs.ACN254_075_A
+    thorlabs.ACN254_050_A
+    thorlabs.ACN254_040_A
+    thorlabs.AC254_030_A
+    thorlabs.AC254_035_A
+    thorlabs.AC254_040_A
+    thorlabs.AC254_045_A
+    thorlabs.AC254_050_A
+    thorlabs.AC254_060_A
+    thorlabs.AC254_075_A
+    thorlabs.AC254_080_A
+    thorlabs.AC254_100_A
+    thorlabs.AC254_125_A
+    thorlabs.AC254_150_A
+    thorlabs.AC254_200_A
+    thorlabs.AC254_250_A
+    thorlabs.AC254_300_A
+    thorlabs.AC254_400_A
+    thorlabs.AC254_500_A
+    thorlabs.AC254_050_B
+    thorlabs.AC508_075_B
+    thorlabs.AC508_080_B
+    thorlabs.AC508_100_B
+    thorlabs.AC508_150_B
+    thorlabs.AC508_200_B
+    thorlabs.AC508_250_B
+    thorlabs.AC508_300_B
+    thorlabs.AC508_400_B
+    thorlabs.AC508_500_B
+    thorlabs.AC508_750_B
+    thorlabs.AC508_1000_B
+    thorlabs.LA1608_A
+    thorlabs.LA1134_A
+    thorlabs.LA1131_A
+    thorlabs.LA1422_A
+    thorlabs.LA1805_A
+    thorlabs.LA1274_A
 
 Materials
 ------------------
