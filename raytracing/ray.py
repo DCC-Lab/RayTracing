@@ -2,7 +2,7 @@ class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
 
     The Ray() has a height (y) and an angle with the optical axis (theta).
-    It also has a position (z), the diameter of the aperture at that point
+    It also has a position (z) initially at z=0, the diameter of the aperture at that point
     when it propagated through, and a marker if it has been blocked by the
     aperture.
 
@@ -13,10 +13,23 @@ class Ray:
     Parameters
     ----------
     y : float
-        Initial height of the ray (limitations? range? default?).
+        Initial height of the ray. Defaults to 0.
 
     theta : float
-        Initial angle of the ray (limitation? range? default?)
+        Initial angle of the ray. Defaults to 0.
+
+    Attributes
+    ----------
+    z : float
+        Position of the ray along the optical axis. Initialized at 0.
+
+    apertureDiameter : float
+        The diameter of any blocking aperture at the present position z. Initialized at +Inf.
+
+    isBlocked : bool
+        Whether or not the ray was blocked by an aperture. Initialized to False.
+
+    # fixme: the following is a temporary template
 
     Returns
     -------
@@ -40,36 +53,12 @@ class Ray:
     --------
     These are written in doctest format, and should illustrate how to
     use the function.
+
     >>> a+b
     0
+
     """
-    # Attributes
-    # ----------
-    # y : float
-    #     Height, or distance of the ray from the optical axis, corresponding to the
-    #     ray matrix formalism.
-    #
-    # theta : float
-    #     Angle the ray makes with the optical axis, corresponding to the
-    #     ray matrix formalism. Positive is up.
-    #
-    # z : float
-    #     Position of the ray along the optical axis.
-    #
-    # apertureDiameter : float
-    #     The diameter of any blocking aperture at the present position z.
-    #
-    # isBlocked : bool
-    #     If the ray was blocked by an aperture, isBlocked is True
 
-
-
-        """
-        A ray with height `y` and angle `theta`, initially at z=0.
-         I suggest to remove the docstring for the init function since
-         this is the same with the class docstring, unless one of
-         the methods is used.
-        """
     def __init__(self, y: float = 0, theta: float = 0):
         self.y = y
         self.theta = theta
