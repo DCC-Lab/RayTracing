@@ -280,6 +280,11 @@ class TestMatrix(unittest.TestCase):
         for i in range(len(rays)):
             self.assertEqual(rays[i], traceManyThrough[i])
 
+    def testTraceManyThroughOther(self):
+        rays = tuple([Ray(), Ray()])
+        m = Matrix(physicalLength=1)
+        traceManyThrough = m.traceManyThrough(rays)
+
     def testTraceManyThroughOutput(self):
         import io
         from contextlib import redirect_stdout
