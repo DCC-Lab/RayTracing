@@ -64,19 +64,19 @@ class Ray:
 
 
 
-    def __init__(self, y=0, theta=0):
         """
         A ray with height `y` and angle `theta`, initially at z=0.
          I suggest to remove the docstring for the init function since
          this is the same with the class docstring, unless one of
          the methods is used.
         """
+    def __init__(self, y: float = 0, theta: float = 0):
         self.y = y
         self.theta = theta
 
-        self.z = 0
-        self.isBlocked = False
-        self.apertureDiameter = float("+Inf")
+        self.z: float = 0
+        self.isBlocked: bool = False
+        self.apertureDiameter: float = float("+Inf")
 
     @property
     def isNotBlocked(self) -> bool:
@@ -85,9 +85,9 @@ class Ray:
         return not self.isBlocked
 
     @staticmethod
-    def fan(y, radianMin, radianMax, N):
         """A list of rays spanning from radianMin to radianMax to be used
         with Matrix.trace() or Matrix.traceMany()
+    def fan(y: float, radianMin: float, radianMax: float, N: int):
 
         Parameters
         ----------
@@ -140,9 +140,9 @@ class Ray:
         return rays
 
     @staticmethod
-    def fanGroup(yMin, yMax, M, radianMin, radianMax, N):
         """ A list of rays spanning from yMin to yMax and radianMin to
         radianMax to be used with Matrix.trace() or Matrix.traceMany()
+    def fanGroup(yMin: float, yMax: float, M: int, radianMin: float, radianMax: float, N: int):
 
 
         Parameters
