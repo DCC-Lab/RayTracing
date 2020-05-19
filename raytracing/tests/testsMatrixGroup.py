@@ -3,9 +3,11 @@ from raytracing import *
 
 
 class TestMatrixGroup(unittest.TestCase):
+
+
     def testLargestDiameterWithEmptyGroup(self):
         m = MatrixGroup()
-        self.assertEqual(m.largestDiameter(), 0)
+        self.assertEqual(m.largestDiameter(), float("+inf"))
 
     def testLargestDiameterWithFiniteLens(self):
         m = MatrixGroup(elements=[Lens(f=5, diameter=10)])
