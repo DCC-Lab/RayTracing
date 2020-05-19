@@ -284,8 +284,7 @@ class TestMatrix(unittest.TestCase):
         iterable = (Ray(1, 0), Ray(0, 1))
         rays = Rays(iterable)
         m = Matrix(physicalLength=1)
-        rays = Rays(rays)
-
+        
         # This works
         self.assertIsNotNone(m.traceManyThrough(rays))
         # This now works
