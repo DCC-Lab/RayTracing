@@ -9,7 +9,6 @@ LambertianRays
    :show-inheritance:
 
    
-       .. automethod:: __init__
 
 
 .. rubric:: Methods
@@ -20,13 +19,6 @@ LambertianRays
 
     
         ~LambertianRays.__init__
-        ~LambertianRays.append
-        ~LambertianRays.display
-        ~LambertianRays.displayProgress
-        ~LambertianRays.load
-        ~LambertianRays.rayAnglesHistogram
-        ~LambertianRays.rayCountHistogram
-        ~LambertianRays.save
 
 
 

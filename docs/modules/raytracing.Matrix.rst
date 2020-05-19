@@ -9,7 +9,6 @@ Matrix
    :show-inheritance:
 
    
-       .. automethod:: __init__
 
 
 .. rubric:: Methods
@@ -20,7 +19,7 @@ Matrix
 
     
         ~Matrix.__init__
-        ~Matrix.axesToDataScaling
+        ~Matrix.axesToDataScale
         ~Matrix.backFocalLength
         ~Matrix.backwardConjugate
         ~Matrix.display
