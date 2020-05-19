@@ -47,7 +47,6 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(transferMatrix.C, supposedTransfer.C)
         self.assertEqual(transferMatrix.D, supposedTransfer.D)
 
-    @unittest.skip("Skipping because DielectricSlab and ThickLens don't override transferMatrix")
     def testTransferMatrixUpToInGroup(self):
         upTo = 10
         mg = MatrixGroup()
@@ -60,7 +59,18 @@ class TestMatrixGroup(unittest.TestCase):
         ds = DielectricSlab(1, 12)
         mg.elements.append(ds)
         transferMatrix = mg.transferMatrix(upTo)
-        supposedTransfer = DielectricSlab(1, 8) * space
+        supposedTransfer = ds.transferMatrix(8) * space
+        self.assertEqual(transferMatrix.A, supposedTransfer.A)
+        self.assertEqual(transferMatrix.B, supposedTransfer.B)
+        self.assertEqual(transferMatrix.C, supposedTransfer.C)
+        self.assertEqual(transferMatrix.D, supposedTransfer.D)
+        self.assertEqual(transferMatrix.A, supposedTransfer.A)
+        self.assertEqual(transferMatrix.frontIndex, supposedTransfer.frontIndex)
+        self.assertEqual(transferMatrix.backIndex, supposedTransfer.backIndex)
+        self.assertEqual(transferMatrix.frontVertex, supposedTransfer.frontVertex)
+        self.assertEqual(transferMatrix.backVertex, supposedTransfer.backVertex)
+        self.assertEqual(transferMatrix.L, supposedTransfer.L)
+
 
     def testAppendNoElementInit(self):
         mg = MatrixGroup()
@@ -200,10 +210,6 @@ class TestMatrixGroup(unittest.TestCase):
         mg.append(DielectricInterface(1.2541255, 1.33, 2, 1e5))
         self.assertTrue(mg.hasFiniteApertureDiameter())
 
-    @unittest.skip("Empty MatrixGroup raises IndexError")
-    def testLargestDiameterEmptyGroup(self):
-        mg = MatrixGroup()
-        self.assertIsNotNone(mg.largestDiameter())
 
     def testLargestDiameter(self):
         smallDiam = 10
