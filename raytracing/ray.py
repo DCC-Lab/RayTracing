@@ -74,46 +74,29 @@ class Ray:
         return not self.isBlocked
 
     @staticmethod
-        """A list of rays spanning from radianMin to radianMax to be used
-        with Matrix.trace() or Matrix.traceMany()
     def fan(y: float, radianMin: float, radianMax: float, N: int):
+        """A list of rays spanning from radianMin to radianMax.
+
+        Used with Matrix.trace() or Matrix.traceMany().
 
         Parameters
         ----------
-        y : int
-            height
-        radianMin : int or None, optional
-            definition, range, ....
-        radianMax : {'quicksort', 'mergesort', 'heapsort', 'stable'}, optional
-            default?
+        y : float
+            Height of the ray
+        radianMin : float
+            Minimum angle in radians of the fan.
+        radianMax : float
+            Maximum angle in radians of the fan.
         N : int
-            This is the description of N
+            The number of rays to create inside the fan.
 
         Returns
         -------
-        output : data
-            if there is an output for the function
+        rays : list of ray
+            The created list of rays that define this fan.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
-
-        See Also
-        --------
-        some similar functions
-
-        Notes
-        -----
-        Notes about the implementation algorithm (if needed).
-
-        Examples
-        --------
-        These are written in doctest format, and should illustrate how to
-        use the function.
-        >>> a+b
-        0
         """
+
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
         elif N == 1:
@@ -129,51 +112,34 @@ class Ray:
         return rays
 
     @staticmethod
-        """ A list of rays spanning from yMin to yMax and radianMin to
-        radianMax to be used with Matrix.trace() or Matrix.traceMany()
     def fanGroup(yMin: float, yMax: float, M: int, radianMin: float, radianMax: float, N: int):
+        """A list of rays spanning from yMin to yMax and radianMin to radianMax.
+
+        Used with Matrix.trace() or Matrix.traceMany().
 
 
         Parameters
         ----------
-        yMin : int
-            min height
-        yMax : int
-            max height
+        yMin : float
+            Minimum height of the fans.
+        yMax : float
+            Maximum height of the fans.
         M : int
-            This is the description of M
-        radianMin : int or None, optional
-            definition, range, ....
-        radianMax : {'quicksort', 'mergesort', 'heapsort', 'stable'}, optional
-            default?
+            The number of fans to create inside yMin and yMax.
+        radianMin : float
+            Minimum angle in radians of each fan.
+        radianMax : float
+            Maximum angle in radians of each fan.
         N : int
-            This is the description of N
+            The number of rays to create inside each fan.
 
         Returns
         -------
-        output : data
-            if there is an output for the function
+        rays : list of ray
+            The created list of rays that define these fan groups.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
-
-        See Also
-        --------
-        some similar functions
-
-        Notes
-        -----
-        Notes about the implementation algorithm (if needed).
-
-        Examples
-        --------
-        These are written in doctest format, and should illustrate how to
-        use the function.
-        >>> a+b
-        0
         """
+        
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
         elif N == 1:
