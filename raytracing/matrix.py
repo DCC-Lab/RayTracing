@@ -293,6 +293,15 @@ class Matrix(object):
 
         return manyRayTraces
 
+    @staticmethod
+    def isIterable(obj):
+        try:
+            iter(obj)
+        except TypeError:
+            return False
+        finally:
+            return True
+
     def traceManyThrough(self, inputRays, progress=True):
         """ Trace each ray from a list or a Rays() distribution from
         front edge of element to the back edge.
@@ -303,8 +312,10 @@ class Matrix(object):
         We assume that if the user will be happy to receive 
         Rays() as an output even if they passed a list of rays as inputs.
         """
+        if not self.isIterable(inputRays):
+            raise TypeError("'inputRays' argument is not iterable.")
 
-        if not isinstance(inputRays, Rays) and isinstance(inputRays, list):
+        if not isinstance(inputRays, Rays):
             inputRays = Rays(inputRays)
 
         outputRays = Rays()
