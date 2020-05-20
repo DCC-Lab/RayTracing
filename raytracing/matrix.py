@@ -38,6 +38,49 @@ class Matrix(object):
     is not infinite (default), then the object is assumed to limit the
     ray height to plus or minus apertureDiameter/2 from the front edge to the back
     edge of the element.
+
+    Parameters
+    ----------
+    A : float
+        Value of the index (1,1) in the ABCD matrix of the element. (default =1)
+    B : float
+        Value of the index (2,1) in the ABCD matrix of the element. (default =0)
+    C : float
+        Value of the index (1,2) in the ABCD matrix of the element. (default =0)
+    D : float
+        Value of the index (2,2) in the ABCD matrix of the element. (default =1)
+    physicalLength: float
+        Length of the object. (default =0)
+    frontVertex : (type?)
+        First interface used for FFL (default = None)
+    backVertex : (type?)
+        Last interface used for BFL (default = None)
+    frontIndex : float
+        Index of refraction at the entrance. (default = 1.0)
+        This value cannot be negative.
+    backIndex : float
+        Index of refractionb at exit. (default = 1.0)
+        This value cannot be negative.
+    apertureDiameter : float
+        Aperture of the element. (default = +Inf)
+        The diameter of the aperture should be a positive value.
+    label : string
+        The label of the element.
+
+    Returns
+    -------
+    element :
+        an element with a defined ABCD matrix and properties.
+
+    Raises
+    ------
+    BadException
+        Because you shouldn't have done that.
+
+    Notes
+    -----
+    Notes about the implementation algorithm (if needed).
+
     """
 
     __epsilon__ = 1e-5  # Anything smaller is zero
