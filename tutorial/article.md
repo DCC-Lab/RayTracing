@@ -254,7 +254,7 @@ Explain difference between matrix multiplications and tracing: tracing considers
 
 
 
-## Example use:
+## Examples use:
 
 Relevant examples of how to use the code.
 
@@ -266,31 +266,62 @@ Prepare many different examples, keep them in a directory and show figures.
 
 ### Widefield microscope
 
-### Simple scanning system
+* When the lenses in a 4f system are too small, we get vignetting.  We show a simple imaging system with vignetting, Field Stop poorly placed at a lens instead of the image with fix in next figure.
+* Simple 4f system with lenses too small, shows vignetting
+* 4f system with bigger lenses, show no more vignetting and good image size
+
+```python
+path = ImagingPath()
+# Simple 4f system of magnification 1:1
+path.append(Space(d=5))
+path.append(Lens(f=5), diameter=25.4)
+path.append(Space(d=10))
+path.append(Lens(f=5), diameter=25.4)
+path.append(Space(d=5))
+path.append(Aperture(diameter=10),label='Camera')
+#...
+
+
+
+
+
+```
+
+
+
+
 
 ### Laser scanning microscope
 
+* Scanning mirrror at focus gives sweeping line at other focus
+* Size of scanning field of view scanned by the galvo scanner
+
 ### Confocal pinhole detection
 
-In confocal laser scanning microscopy, the pinhole must match the size of the Airy disk formed at the sample to produce a good optical sectioning **[REF : J. Pawley, “Handbook of biological confocal microscopy”, Springer Science & Business Media, 985 (2010)]**. Indeed, a pinhole that is too small reduces the number of detected rays, therefore decreasing the signal-to-noise ratio. On the other hand, when the pinhole size is too big, the axial resolution is weakened. Here we present a way to use the RayTracing module to optimize the detection path of a confocal microscope by tuning the pinhole size. 
+**[1]. Pawley, James, ed. Handbook of biological confocal microscopy. Vol. 236. Springer Science & Business Media, 2006.
+[2]. Veilleux, Israel, et al. "In vivo cell tracking with video rate multimodality laser scanning microscopy." IEEE Journal of selected topics in quantum electronics 14.1 (2008): 10-18.**
 
-### Diffuse source from scattering medium
+**Add microscope setup in figure from [2]**
 
-### Two-photon descanned detector
+In confocal laser scanning microscopy, the pinhole must match the size of the focal spot formed at the sample to produce good optical sectioning [1]. Since the pinhole size plays an important role for the optimization of a confocal system, here we present a way to use the RayTracing module to better understand the impact of tuning the pinhole size of a confocal microscope. The way this works is by sending a large number of rays in the system and computing how many make it through the pinhole. As it can be noticed in Fig x(b), as soon as the pinhole diameter is smaller than the size fitting the focal spot, the transmission efficiency linearly decreases.
 
-​	Big detectors (R3896) versus small detectors (GaAsP)
+
 
 ### Illumination system
 
+Kohler illumination, invariant
+
+### Two-photon descanned detector
+
+* Diffuse source from scattering medium
+* Size of diffuse source dictates certain detection lenses and parameters
+* Big detectors (R3896) versus small detectors (GaAsP)
+
 ### Axicon
 
-### Fiber-based collection system
+Requires modification to formalism (minimal)
 
-
-
-
-
-
+Can can extent of the line from code
 
 ## Discussion and outlook:
 
@@ -311,7 +342,4 @@ Examples of things that could be added:
 6. 3D rays and 3D rendering 3D export of optical systems
 
 7. Reflections
-
-   
-
 
