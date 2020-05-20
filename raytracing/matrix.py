@@ -304,7 +304,12 @@ class Matrix(object):
         Rays() as an output even if they passed a list of rays as inputs.
         """
 
-        if not isinstance(inputRays, Rays) and isinstance(inputRays, list):
+        try:
+            iter(inputRays)
+        except TypeError:
+            raise TypeError("'inputRays' argument is not iterable.")
+
+        if not isinstance(inputRays, Rays):
             inputRays = Rays(inputRays)
 
         outputRays = Rays()

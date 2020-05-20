@@ -273,12 +273,24 @@ class TestMatrix(unittest.TestCase):
         traceMany = [rays * 2]
         self.assertListEqual(m.traceMany(rays), traceMany)
 
-    def testTraceManyThroughList(self):
+    def testTraceManyThroughIterable(self):
         rays = [Ray(y, y) for y in range(10)]
         m = Matrix(physicalLength=1)
-        traceManyThrough = m.traceManyThrough(rays)
+        iterable = tuple(rays)
+        raysObj = Rays(iterable)
+
+        traceManyThroughList = m.traceManyThrough(rays)
+        traceManyThroughTuple = m.traceManyThrough(iterable)
+        traceManyThroughRays = m.traceManyThrough(raysObj)
         for i in range(len(rays)):
-            self.assertEqual(rays[i], traceManyThrough[i])
+            self.assertEqual(rays[i], traceManyThroughList[i])
+            self.assertEqual(rays[i], traceManyThroughTuple[i])
+            self.assertEqual(rays[i], traceManyThroughRays[i])
+
+    def testTraceManyThroughNotIterable(self):
+        with self.assertRaises(TypeError):
+            m = Matrix()
+            m.traceManyThrough(self.assertIs)
 
     def testTraceManyThroughOutput(self):
         import io
@@ -304,20 +316,33 @@ class TestMatrix(unittest.TestCase):
         out = f.getvalue()
         self.assertEqual(out.strip(), "")
 
+    def testTraceManyThroughLastRayBlocked(self):
+        m = Matrix()
+        rays = Rays([Ray(), Ray(-1, -1)])
+        rays[-1].isBlocked = True
+        traceManyThrough = m.traceManyThrough(rays)
+        # One less ray, because last is blocked
+        self.assertEqual(len(traceManyThrough), len(rays) - 1)
+
     def testTraceManyThroughInParallel(self):
-        rays = [Ray(y, y) for y in range(10)]
+        rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
         trace = m.traceManyThroughInParallel(rays)
+        traceWithNumberProcesses = m.traceManyThroughInParallel(rays, processes=2)
         for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
             self.assertTrue(trace[i] in rays)
+            self.assertTrue(traceWithNumberProcesses[i] in rays)
 
     def testTraceManyThroughInParallelNoChunks(self):
-        rays = [Ray(y, y) for y in range(10)]
+        rays = [Ray(y, y) for y in range(5)]
         rays = Rays(rays=rays)
         m = Matrix(physicalLength=1)
         trace = m.traceManyThroughInParallelNoChunks(rays)
+        traceWithNumberProcesses = m.traceManyThroughInParallelNoChunks(rays, processes=2)
         for i in range(len(rays)):
             self.assertEqual(trace[i], rays[i])
+            self.assertEqual(traceWithNumberProcesses[i], rays[i])
 
     def testPointsOfInterest(self):
         m = Matrix()
