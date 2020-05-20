@@ -22,7 +22,7 @@ class TestMatrix(unittest.TestCase):
     def testMatrixProductMath(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
         m2 = Matrix(A=5, B=6, C=7, D=8)
-        m3 = m2 * m1        
+        m3 = m2 * m1
         self.assertEqual(m3.A, 1*5 + 3*6)
         self.assertEqual(m3.B, 2*5 + 4*6)
         self.assertEqual(m3.C, 1*7 + 3*8)
@@ -31,7 +31,7 @@ class TestMatrix(unittest.TestCase):
     def testMatrixProductLength(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
         m2 = Matrix(A=5, B=6, C=7, D=8)
-        m3 = m2 * m1        
+        m3 = m2 * m1
         self.assertEqual(m3.L, m1.L + m2.L)
         self.assertIsNone(m3.frontVertex)
         self.assertIsNone(m3.backVertex)
