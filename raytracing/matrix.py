@@ -155,8 +155,6 @@ class Matrix(object):
 
         Parameters
         ----------
-        self : object from Matrix class
-            including the ABCD matrix and other properties of an element.
         rightSideMatrix : object from Matrix class
             including the ABCD matrix and other properties of an element.
 
@@ -231,8 +229,6 @@ class Matrix(object):
 
         Parameters
         ----------
-        self : object from Matrix class
-            including the ABCD matrix and other properties of an element.
         rightSideRay : object from Ray class
             including the Ray properties
 
@@ -280,8 +276,6 @@ class Matrix(object):
 
         Parameters
         ----------
-        self : object from Matrix class
-            including the ABCD matrix and other properties of an element.
         rightSideBeam : object from GaussianBeam class
             including the beam properties
 
@@ -345,8 +339,6 @@ class Matrix(object):
 
         Parameters
         ----------
-        self : object from Matrix class
-            including the ABCD matrix and other properties of an element.
         upTo : float
             A distance that shows the propagation length (in m? mm? cm?)
 
@@ -363,9 +355,7 @@ class Matrix(object):
 
         See Also
         --------
-        raytracing.Matrix.mul_matrix
-        raytracing.Matrix.mul_ray
-        raytracing.GaussianBeam
+        raytracing.Matrix.transferMatrices
 
         Notes
         -----
