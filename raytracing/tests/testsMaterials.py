@@ -191,7 +191,17 @@ class TestFK51A(unittest.TestCase):
 
 
 class TestLAFN7(unittest.TestCase):
-    pass
+    def testLAFN7TypeErrors(self):
+        self.assertRaises(TypeError, LAFN7.n, None)
+        self.assertRaises(TypeError, LAFN7.n, 'test')
+
+    def testLAFN7ValueErrors(self):
+        self.assertRaises(ValueError, LAFN7.n, 100)
+        self.assertRaises(ValueError, LAFN7.n, 0)
+        self.assertRaises(ValueError, LAFN7.n, -100)
+
+    def testLAFN7(self):
+        self.assertEqual(1.5810761652641074, LAFN7.n(5))
 
 
 class TestN_LASF9(unittest.TestCase):
