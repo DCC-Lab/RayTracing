@@ -124,6 +124,8 @@ class Matrix(object):
 
     @property
     def determinant(self):
+        """Calculating the determinant of the ABCD matrix.
+        """
         return self.A * self.D - self.B * self.C
 
     def __mul__(self, rightSide):
@@ -146,9 +148,49 @@ class Matrix(object):
                  cannot be multiplied by a Matrix".format(rightSide))
 
     def mul_matrix(self, rightSideMatrix):
-        """ Multiplication of two matrices.  Total length of the
+        """ This function is used when the ray passed through two element.
+        Multiplication of two ABCD matrices.  Total length of the
         elements is calculated. Apertures are lost. We compute
         the first and last vertices.
+
+    Parameters
+    ----------
+    self : object from Matrix class
+        including the ABCD matrix and other properties of an element.
+    rightSideMatrix : object from Matrix class
+        including the ABCD matrix and other properties of an element.
+
+
+    Returns
+    -------
+    a : float
+        Value of the index (1,1) in the ABCD matrix of the combination of the two elements.
+    b : float
+        Value of the index (2,1) in the ABCD matrix of the combination of the two elements.
+    c : float
+        Value of the index (1,2) in the ABCD matrix of the combination of the two elements.
+    d : float
+        Value of the index (2,2) in the ABCD matrix of the combination of the two elements.
+    frontVertex : (type?)
+        First interface used for FFL
+    backVertex : (type?)
+        Last interface used for BFL
+    physicalLength: float
+        Length of the combination of the two elements.
+
+    Raises
+    ------
+    BadException
+        Because you shouldn't have done that.
+
+    See Also
+    --------
+    raytracing.Matrix.mul_ray
+    raytracing.Matrix.mul_beam
+
+    Notes
+    -----
+    Notes about the implementation algorithm (if needed).
 
         """
 
