@@ -201,6 +201,28 @@ class TestMatrixGroup(unittest.TestCase):
         path = mg.LaserPath()
         self.assertIsNotNone(path)
 
+    def testIntermediateConjugatesEmptyGroup(self):
+        mg = MatrixGroup()
+        self.assertListEqual(mg.intermediateConjugates(), [])
+
+    def testIntermediateConjugatesNoThickness(self):
+        mg = MatrixGroup([Lens(4), DielectricInterface(1, 1.33, 1)])
+        self.assertListEqual(mg.intermediateConjugates(), [])
+
+    def testIntermediateConjugatesNoConjugate(self):
+        mg = MatrixGroup([Matrix(1, 1, 1, 0, 1)])
+        self.assertListEqual(mg.intermediateConjugates(), [])
+
+    def testIntermediateConjugates(self):
+        mg = [Space(10), Lens(9)]
+        mg = MatrixGroup(mg)
+        intermediateConjugates = mg.intermediateConjugates()
+        results = [[10 / (10 / 9 - 1) + 10, 1 + (10 / 9) / (-10 / 9 + 1)]]
+        self.assertEqual(len(intermediateConjugates), 1)
+        self.assertEqual(len(intermediateConjugates[0]), 2)
+        self.assertAlmostEqual(intermediateConjugates[0][0], results[0][0])
+        self.assertAlmostEqual(intermediateConjugates[0][1], results[0][1])
+
     def testHasFiniteApertutreDiameter(self):
         space = Space(10, 1.2541255)
         mg = MatrixGroup([space])
