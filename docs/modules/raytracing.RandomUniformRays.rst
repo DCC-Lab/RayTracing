@@ -9,7 +9,6 @@ RandomUniformRays
    :show-inheritance:
 
    
-       .. automethod:: __init__
 
 
 .. rubric:: Methods
@@ -20,14 +19,7 @@ RandomUniformRays
 
     
         ~RandomUniformRays.__init__
-        ~RandomUniformRays.append
-        ~RandomUniformRays.display
-        ~RandomUniformRays.displayProgress
-        ~RandomUniformRays.load
         ~RandomUniformRays.randomRay
-        ~RandomUniformRays.rayAnglesHistogram
-        ~RandomUniformRays.rayCountHistogram
-        ~RandomUniformRays.save
 
 
 

@@ -9,7 +9,6 @@ RandomRays
    :show-inheritance:
 
    
-       .. automethod:: __init__
 
 
 .. rubric:: Methods
@@ -20,14 +19,7 @@ RandomRays
 
     
         ~RandomRays.__init__
-        ~RandomRays.append
-        ~RandomRays.display
-        ~RandomRays.displayProgress
-        ~RandomRays.load
         ~RandomRays.randomRay
-        ~RandomRays.rayAnglesHistogram
-        ~RandomRays.rayCountHistogram
-        ~RandomRays.save
 
 
 

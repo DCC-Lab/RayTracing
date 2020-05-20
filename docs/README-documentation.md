@@ -8,9 +8,21 @@ If you are a user of the raytracing package, you probably want to read the docum
 
 ## Writing documentation
 
-If you are a developer, you may be interested in updating the documentation. The documentation is auto-generated with the Sphynx documentation module from the comments directly from the code (i.e. docstrings). There are many different formats that can be used, but the one used in Raytracing is the [Numpy Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) format. A template for numpy looks like this:
+If you are a developer, you may be interested in updating the documentation. The documentation is auto-generated with the Sphynx documentation module from the docstrings directly in the code. There are many different formats that can be used, but the one used in Raytracing is the [Numpy Docstring](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) format. This format applied to the code looks like this:
 
 ```python
+class Ray:
+    """A vector and a light ray as transformed by ABCD matrices.
+
+    The Ray() has a height (y) and an angle with the optical axis (theta).
+    It also has a position (z) initially at z=0, the diameter of the aperture at that point
+    when it propagated through, and a marker if it has been blocked by the
+    aperture.
+
+    Simple static functions are defined to obtain a group of rays: fans
+    originate from the same height but sweep a range of angles; fan groups
+    are fans originating from different heights.
+    
     Parameters
     ----------
     y : float
@@ -52,10 +64,17 @@ If you are a developer, you may be interested in updating the documentation. The
 
     >>> a+b
     0
+    
+    """
+   
+    def __init__(self, y: float = 0, theta: float = 0):
+        self.y = y
+        self.theta = theta
 
+        self.z: float = 0
+        self.isBlocked: bool = False
+        self.apertureDiameter: float = float("+Inf")
 ```
-
-
 
 ## Publishing documentation (maintainers only)
 
@@ -73,11 +92,17 @@ pip install sphinx_rtd_theme
 The package `recommonmark` adds Markdown support.
 
 ### Files controlling the format
+|File|Usage|
+|---|---|
+|`conf.py`|Configure `html_theme` and `extensions`|
+|`index.rst`|Main index page|
+|`_templates/autoClass.rst`|Template used to auto-document classes|
+|`_templates/autoFunction.rst`|Template used to auto-document functions|
 
 *[FIXME: Information here on key files and their role in the Sphynx documentation system]*
 
 ### Build online
-The online documentation can be updated directly from the [RayTracing project](https://readthedocs.org/projects/raytracing/) on ReadTheDocs by the project administrator (currently dccote) to match the release from PyPI.
+The online documentation can be updated directly from the [RayTracing project](https://readthedocs.org/projects/raytracing/) on ReadTheDocs by the project administrators (currently dccote, jlbegin and elaheparham) to match the release from PyPI. The build is currently set on the master branch.
 
 ### Build local
 

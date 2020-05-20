@@ -9,7 +9,6 @@ Ray
    :show-inheritance:
 
    
-       .. automethod:: __init__
 
 
 .. rubric:: Methods

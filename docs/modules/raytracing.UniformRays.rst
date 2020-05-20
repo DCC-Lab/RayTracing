@@ -9,7 +9,6 @@ UniformRays
    :show-inheritance:
 
    
-       .. automethod:: __init__
 
 
 .. rubric:: Methods
@@ -20,13 +19,6 @@ UniformRays
 
     
         ~UniformRays.__init__
-        ~UniformRays.append
-        ~UniformRays.display
-        ~UniformRays.displayProgress
-        ~UniformRays.load
-        ~UniformRays.rayAnglesHistogram
-        ~UniformRays.rayCountHistogram
-        ~UniformRays.save
 
 
 

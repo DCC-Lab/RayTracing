@@ -9,7 +9,6 @@ RandomLambertianRays
    :show-inheritance:
 
    
-       .. automethod:: __init__
 
 
 .. rubric:: Methods
@@ -20,14 +19,7 @@ RandomLambertianRays
 
     
         ~RandomLambertianRays.__init__
-        ~RandomLambertianRays.append
-        ~RandomLambertianRays.display
-        ~RandomLambertianRays.displayProgress
-        ~RandomLambertianRays.load
         ~RandomLambertianRays.randomRay
-        ~RandomLambertianRays.rayAnglesHistogram
-        ~RandomLambertianRays.rayCountHistogram
-        ~RandomLambertianRays.save
 
 
 
