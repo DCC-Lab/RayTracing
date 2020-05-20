@@ -59,12 +59,12 @@ class Ray:
 
     """
 
-    def __init__(self, y: float = 0, theta: float = 0):
+    def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked:bool = False):
         self.y = y
         self.theta = theta
 
-        self.z: float = 0
-        self.isBlocked: bool = False
+        self.z = z
+        self.isBlocked = isBlocked
         self.apertureDiameter: float = float("+Inf")
 
     @property
