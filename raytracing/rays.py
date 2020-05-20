@@ -170,6 +170,12 @@ class Rays:
         self._thetaHistogram = None
         self._directionBinEdges = None
 
+        self._countHistogramParameters = None
+        self._xValuesCountHistogram = None
+
+        self._anglesHistogramParameters = None
+        self._xValuesAnglesHistogram = None
+
     def load(self, filePath, append=False):
         with open(filePath, 'rb') as infile:
             loadedRays = pickle.Unpickler(infile).load()
