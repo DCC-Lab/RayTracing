@@ -19,7 +19,7 @@ class TestN_BK7(unittest.TestCase):
         self.assertRaises(ValueError, N_BK7.n, -100)
 
     def testN_BK7(self):
-        self.assertEqual(N_BK7.n(5), 1.3965252243506636)
+        self.assertEqual(1.3965252243506636, N_BK7.n(5))
 
 
 class TestN_SF2(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestN_SF2(unittest.TestCase):
         self.assertRaises(ValueError, N_SF2.n, -100)
 
     def testN_SF2(self):
-        self.assertEqual(N_SF2.n(5), 1.5178527121226975)
+        self.assertEqual(1.5178527121226975, N_SF2.n(5))
 
 
 class TestSF2(unittest.TestCase):
@@ -47,7 +47,7 @@ class TestSF2(unittest.TestCase):
         self.assertRaises(ValueError, SF2.n, -100)
 
     def testSF2(self):
-        self.assertEqual(SF2.n(5), 1.5385861348077337)
+        self.assertEqual(1.5385861348077337, SF2.n(5))
 
 
 class TestSF5(unittest.TestCase):
