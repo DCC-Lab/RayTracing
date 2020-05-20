@@ -177,7 +177,17 @@ class TestN_BAK4(unittest.TestCase):
 
 
 class TestFK51A(unittest.TestCase):
-    pass
+    def testFK51ATypeErrors(self):
+        self.assertRaises(TypeError, FK51A.n, None)
+        self.assertRaises(TypeError, FK51A.n, 'test')
+
+    def testFK51AValueErrors(self):
+        self.assertRaises(ValueError, FK51A.n, 100)
+        self.assertRaises(ValueError, FK51A.n, 0)
+        self.assertRaises(ValueError, FK51A.n, -100)
+
+    def testFK51A(self):
+        self.assertEqual(1.4251526811342752, FK51A.n(5))
 
 
 class TestLAFN7(unittest.TestCase):
