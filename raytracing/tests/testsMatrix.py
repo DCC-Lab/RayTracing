@@ -39,44 +39,44 @@ class TestMatrix(unittest.TestCase):
 
     def testMatrixProductWithRayMath(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
-        rayIn = Ray(y=1, theta=45)
+        rayIn = Ray(y=1, theta=0.1)
         rayOut = m1 * rayIn
-        self.assertEqual(rayOut.y, 1 * 1 + 2 * 45)
-        self.assertEqual(rayOut.theta, 3 * 1 + 4 * 45)
+        self.assertEqual(rayOut.y, 1 * 1 + 2 * 0.1)
+        self.assertEqual(rayOut.theta, 3 * 1 + 4 * 0.1)
 
     def testMatrixProductOutpuRayLength(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=2)
-        rayIn = Ray(y=1, theta=45, z=1)
+        rayIn = Ray(y=1, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertEqual(rayOut.z, 2 + 1)
 
     def testMatrixProductOutputRayAperture(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=2)
-        rayIn = Ray(y=1, theta=45, z=1)
+        rayIn = Ray(y=1, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertEqual(rayOut.apertureDiameter, inf)
 
     def testMatrixProductWithRayGoesOverAperture(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
-        rayIn = Ray(y=6, theta=45, z=1)
+        rayIn = Ray(y=6, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
 
     def testMatrixProductWithRayGoesUnderAperture(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
-        rayIn = Ray(y=-6, theta=45, z=1)
+        rayIn = Ray(y=-6, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
 
     def testMatrixProductRayGoesInAperture(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
-        rayIn = Ray(y=-1, theta=45, z=1)
+        rayIn = Ray(y=-1, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertFalse(rayOut.isBlocked)
 
     def testMatrixProductRayAlreadyBlocked(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
-        rayIn = Ray(y=-1, theta=45, z=1, isBlocked=True)
+        rayIn = Ray(y=-1, theta=0.1, z=1, isBlocked=True)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
 
