@@ -233,7 +233,17 @@ class TestN_LAK22(unittest.TestCase):
 
 
 class TestN_SSK5(unittest.TestCase):
-    pass
+    def testN_LAK22TypeErrors(self):
+        self.assertRaises(TypeError, N_LAK22.n, None)
+        self.assertRaises(TypeError, N_LAK22.n, 'test')
+
+    def testN_LAK22ValueErrors(self):
+        self.assertRaises(ValueError, N_LAK22.n, 100)
+        self.assertRaises(ValueError, N_LAK22.n, 0)
+        self.assertRaises(ValueError, N_LAK22.n, -100)
+
+    def testN_LAK22(self):
+        self.assertEqual(1.528065402814606, N_LAK22.n(5))
 
 
 class TestE_FD10(unittest.TestCase):
