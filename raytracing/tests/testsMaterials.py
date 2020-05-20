@@ -93,7 +93,17 @@ class TestN_SF6HT(unittest.TestCase):
 
 
 class TestN_SF10(unittest.TestCase):
-    pass
+    def testN_SF10TypeErrors(self):
+        self.assertRaises(TypeError, N_SF10.n, None)
+        self.assertRaises(TypeError, N_SF10.n, 'test')
+
+    def testN_SF10ValueErrors(self):
+        self.assertRaises(ValueError, N_SF10.n, 100)
+        self.assertRaises(ValueError, N_SF10.n, 0)
+        self.assertRaises(ValueError, N_SF10.n, -100)
+
+    def testN_SF10(self):
+        self.assertEqual(1.5948478106562147, N_SF10.n(5))
 
 
 class TestN_SF11(unittest.TestCase):
