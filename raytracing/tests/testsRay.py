@@ -1,5 +1,5 @@
 import unittest
-import env # modifies path
+import envtest # modifies path
 from raytracing import *
 
 inf = float("+inf")
@@ -70,6 +70,19 @@ class TestRay(unittest.TestCase):
         blockedray_desc = "{0}".format(ray)
         self.assertIsNotNone(blockedray_desc)
         self.assertNotEqual(ray_desc, blockedray_desc)
+
+
+    def testEqual(self):
+        ray = Ray(10, 10)
+        other = "this is a ray"
+        self.assertNotEqual(ray, other)
+
+        other = None
+        self.assertNotEqual(ray, other)
+
+        other = Matrix()
+        self.assertNotEqual(ray, other)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -6,6 +6,7 @@ import matplotlib.patches as patches
 import matplotlib.path as mpath
 import matplotlib.transforms as transforms
 
+
 class MatrixGroup(Matrix):
     """MatrixGroup: A group of Matrix(), allowing
     the combination of several elements to be treated as a 
@@ -13,7 +14,7 @@ class MatrixGroup(Matrix):
     """
 
     def __init__(self, elements=None, label=""):
-        super(MatrixGroup, self).__init__(1,0,0,1,label=label)
+        super(MatrixGroup, self).__init__(1, 0, 0, 1, label=label)
 
         self.elements = []
 
@@ -33,7 +34,8 @@ class MatrixGroup(Matrix):
         if len(self.elements) != 0:
             lastElement = self.elements[-1]
             if lastElement.backIndex != matrix.frontIndex:
-                print("Mismatch of indices between element {0} and appended {1}".format(lastElement, matrix))
+                msg = "Mismatch of indices between element {0} and appended {1}".format(lastElement, matrix)
+                warnings.warn(msg, UserWarning)
 
         self.elements.append(matrix)
         transferMatrix = self.transferMatrix()
@@ -90,6 +92,21 @@ class MatrixGroup(Matrix):
             transferMatrices.extend(elementTransferMatrices)
         return transferMatrices
 
+    def intermediateConjugates(self):
+        """ The list of position and magnification of conjugate planes """
+        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
+        matrices = self.transferMatrices()
+        planes = []
+        for element in matrices:
+            transferMatrix = element * transferMatrix
+            (distance, conjugate) = transferMatrix.forwardConjugate()
+            if distance is not None:
+                planePosition = transferMatrix.L + distance
+                if planePosition != 0 and conjugate is not None:
+                    magnification = conjugate.A
+                    planes.append([planePosition, magnification])
+        return planes
+
     def trace(self, inputRay):
         """Trace the input ray from first element until after the last element,
         indicating if the ray was blocked or not
@@ -125,14 +142,16 @@ class MatrixGroup(Matrix):
     def largestDiameter(self):
         """ Largest finite diameter in all elements """
 
-        maxDiameter = 0.0
+        maxDiameter = 0
         if self.hasFiniteApertureDiameter():
             for element in self.elements:
                 diameter = element.largestDiameter()
                 if diameter != float('+Inf') and diameter > maxDiameter:
                     maxDiameter = diameter
-        else:
+        elif len(self.elements) != 0:
             maxDiameter = self.elements[0].displayHalfHeight() * 2
+        else:
+            maxDiameter = float("+inf")
 
         return maxDiameter
 
@@ -179,7 +198,6 @@ class MatrixGroup(Matrix):
             else:
                 labels[zStr] = label
 
-
         # Points of interest for each element
         for element in self.elements:
             pointsOfInterest = element.pointsOfInterest(zElement)
@@ -193,9 +211,9 @@ class MatrixGroup(Matrix):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = self.largestDiameter()/2
+        halfHeight = self.largestDiameter() / 2
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                         xycoords='data', fontsize=12,
-                         ha='center', va='bottom')
+                          xycoords='data', fontsize=12,
+                          ha='center', va='bottom')
