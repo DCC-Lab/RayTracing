@@ -26,6 +26,20 @@ class TestRays(unittest.TestCase):
         r = Rays(listOfRays)
         self.assertListEqual(r.rays, listOfRays)
 
+    def testRaysIterations(self):
+        raysList = [Ray(), Ray(2), Ray(1)]
+        rays = Rays(raysList)
+        index = 0
+        for ray in rays:
+            self.assertEqual(ray, raysList[index])
+            index += 1
+
+    def testRaysIterationsNone(self):
+        rays = Rays()
+        rays.rays = None
+        with self.assertRaises(StopIteration):
+            next(rays)
+
     def testRaysLen(self):
         r = Rays()
         self.assertEqual(len(r), 0)
@@ -36,6 +50,17 @@ class TestRays(unittest.TestCase):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         r = Rays(listOfRays)
         self.assertEqual(len(r), len(listOfRays))
+
+    def testRaysLenNone(self):
+        r = Rays()
+        r.rays = None
+        self.assertEqual(len(r), 0)
+
+    def testRaysGetRay(self):
+        raysList = [Ray(), Ray(1), Ray(-1)]
+        rays = Rays(raysList)
+        for i in range(len(raysList)):
+            self.assertEqual(rays[i], raysList[i])
 
     def testCountRays(self):
         r = Rays()
@@ -59,6 +84,13 @@ class TestRays(unittest.TestCase):
         r = Rays(listOfRays)
         self.assertListEqual(r.yValues, [0, 1, 1, 0])
 
+    def testYValuesNotNone(self):
+        r = Rays([Ray()])
+        # Don't do this, only for test purpose
+        yvalues = [0]
+        r._yValues = yvalues
+        self.assertListEqual(r.yValues, yvalues)
+
     def testThetaValues(self):
         r = Rays()
         self.assertListEqual(r.thetaValues, [])
@@ -69,6 +101,52 @@ class TestRays(unittest.TestCase):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         r = Rays(listOfRays)
         self.assertListEqual(r.thetaValues, [0, 1, -2, -1])
+
+    def testThetaValuesNotNone(self):
+        r = Rays([Ray()])
+        # Don't do this, only for test purpose
+        thetaValues = [0]
+        r._thetaValues = thetaValues
+        self.assertListEqual(r.thetaValues, thetaValues)
+
+    def testDisplayProgress(self):
+        import io
+        from contextlib import redirect_stdout
+
+        f = io.StringIO()
+        with redirect_stdout(f):
+            rays = [Ray(0, 0)]
+            rays = Rays(rays)
+            rays.progressLog = 1
+            rays.displayProgress()
+        out = f.getvalue()
+        self.assertEqual(out.strip(), "Progress 0/1 (0%)")
+
+    def testDisplayProgressSmallerProgressLog(self):
+        import io
+        from contextlib import redirect_stdout
+
+        f = io.StringIO()
+        with redirect_stdout(f):
+            rays = [Ray(), Ray(2, 0), Ray(1, 0), Ray(-1, 0)]
+            rays = Rays(rays)
+            rays.progressLog = 1
+            rays.displayProgress()
+        out = f.getvalue()
+        self.assertEqual(out.strip(), "Progress 0/4 (0%)")
+
+    def testDisplayProgressNothing(self):
+        import io
+        from contextlib import redirect_stdout
+
+        f = io.StringIO()
+        with redirect_stdout(f):
+            rays = [Ray(0, 0)]
+            rays = Rays(rays)
+            rays.iteration = 1
+            rays.displayProgress()
+        out = f.getvalue()
+        self.assertEqual(out.strip(), "")
 
     def testRayCountHistogram(self):
         r = Rays()
@@ -81,7 +159,15 @@ class TestRays(unittest.TestCase):
 
         r = [Ray(a, a) for a in range(50)]
         r = Rays(r)
-        self.assertTupleEqual(r.rayCountHistogram(minValue=0), ([a * 1.25 - 0.625 for a in range(2, 50)], []))
+        rayCountHist = r.rayCountHistogram(minValue=2)
+        comparison = ([(a - 1) * 1.175 + 1.4125 for a in range(2, 42)],
+                      [2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1,
+                       1, 2, 1, 1, 1, 1, 2])
+        self.assertEqual(len(rayCountHist[0]), len(comparison[0]))
+        self.assertEqual(len(rayCountHist[1]), len(comparison[1]))
+        for i in range(len(rayCountHist[0])):
+            self.assertAlmostEqual(rayCountHist[0][i], comparison[0][i])
+        self.assertListEqual(rayCountHist[1], comparison[1])
 
 
 if __name__ == '__main__':
