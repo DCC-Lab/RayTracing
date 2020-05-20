@@ -22,6 +22,78 @@ class TestN_BK7(unittest.TestCase):
         self.assertEqual(N_BK7.n(5), 1.3965252243506636)
 
 
+class TestN_SF2(unittest.TestCase):
+    pass
+
+
+class TestSF2(unittest.TestCase):
+    pass
+
+
+class TestSF5(unittest.TestCase):
+    pass
+
+
+class TestN_SF5(unittest.TestCase):
+    pass
+
+
+class TestN_SF6HT(unittest.TestCase):
+    pass
+
+
+class TestN_SF10(unittest.TestCase):
+    pass
+
+
+class TestN_SF11(unittest.TestCase):
+    pass
+
+
+class TestN_BAF10(unittest.TestCase):
+    pass
+
+
+class TestE_BAF11(unittest.TestCase):
+    pass
+
+
+class TestN_BAK1(unittest.TestCase):
+    pass
+
+
+class TestN_BAK4(unittest.TestCase):
+    pass
+
+
+class TestFK51A(unittest.TestCase):
+    pass
+
+
+class TestLAFN7(unittest.TestCase):
+    pass
+
+
+class TestN_LASF9(unittest.TestCase):
+    pass
+
+
+class TestN_LAK22(unittest.TestCase):
+    pass
+
+
+class TestN_SSK5(unittest.TestCase):
+    pass
+
+
+class TestE_FD10(unittest.TestCase):
+    pass
+
+
+class TestFusedSilica(unittest.TestCase):
+    pass
+
+
 if __name__ == '__main__':
     unittest.main()
 
