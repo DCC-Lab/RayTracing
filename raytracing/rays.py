@@ -30,6 +30,8 @@ class Rays:
         self._directionBinEdges = None
 
     def __len__(self) -> int:
+        if self.rays is None:
+            return 0
         return len(self.rays)
 
     @property
@@ -133,6 +135,9 @@ class Rays:
         return self
 
     def __next__(self) -> Ray:
+        if self.rays is None:
+            raise StopIteration
+
         if self.iteration < len(self.rays):
             ray = self.rays[self.iteration]
             self.iteration += 1
@@ -144,7 +149,8 @@ class Rays:
         return self.rays[item]
 
     def append(self, ray):
-        self.rays.append(ray)
+        if self.rays is not None:
+            self.rays.append(ray)
 
         # Invalidate cached values
         self._yValues = None
