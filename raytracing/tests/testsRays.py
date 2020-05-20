@@ -82,3 +82,7 @@ class TestRays(unittest.TestCase):
         r = [Ray(a, a) for a in range(50)]
         r = Rays(r)
         self.assertTupleEqual(r.rayCountHistogram(minValue=0), ([a * 1.25 - 0.625 for a in range(2, 50)], []))
+
+
+if __name__ == '__main__':
+    unittest.main()
