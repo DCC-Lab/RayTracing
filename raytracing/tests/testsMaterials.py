@@ -23,7 +23,17 @@ class TestN_BK7(unittest.TestCase):
 
 
 class TestN_SF2(unittest.TestCase):
-    pass
+    def testN_SF2TypeErrors(self):
+        self.assertRaises(TypeError, N_SF2.n, None)
+        self.assertRaises(TypeError, N_SF2.n, 'test')
+
+    def testN_SF2ValueErrors(self):
+        self.assertRaises(ValueError, N_SF2.n, 100)
+        self.assertRaises(ValueError, N_SF2.n, 0)
+        self.assertRaises(ValueError, N_SF2.n, -100)
+
+    def testN_SF2(self):
+        self.assertEqual(N_SF2.n(5), 1.5178527121226975)
 
 
 class TestSF2(unittest.TestCase):
