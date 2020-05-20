@@ -28,6 +28,12 @@ class TestLimits(unittest.TestCase):
     def testLimitsThatExistButPythonDoesNotConsider(self):
         self.assertEqual((1.0)**(inf), 1)
 
+        # This rounds off to 0.99999 on my computer and the test fails
+        # a = 3.3
+        # b = 0.1
+        # c = 3.0
+        # self.assertEqual(((a/c-b))**(inf), 1)
+
 
 
 if __name__ == '__main__':
