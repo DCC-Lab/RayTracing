@@ -261,7 +261,17 @@ class TestE_FD10(unittest.TestCase):
 
 
 class TestFusedSilica(unittest.TestCase):
-    pass
+    def testFusedSilicaTypeErrors(self):
+        self.assertRaises(TypeError, FusedSilica.n, None)
+        self.assertRaises(TypeError, FusedSilica.n, 'test')
+
+    def testFusedSilicaValueErrors(self):
+        self.assertRaises(ValueError, FusedSilica.n, 100)
+        self.assertRaises(ValueError, FusedSilica.n, 0)
+        self.assertRaises(ValueError, FusedSilica.n, -100)
+
+    def testFusedSilica(self):
+        self.assertEqual(1.3404572894914368, FusedSilica.n(5))
 
 
 if __name__ == '__main__':
