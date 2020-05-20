@@ -121,7 +121,17 @@ class TestN_SF11(unittest.TestCase):
 
 
 class TestN_BAF10(unittest.TestCase):
-    pass
+    def testN_BAF10TypeErrors(self):
+        self.assertRaises(TypeError, N_BAF10.n, None)
+        self.assertRaises(TypeError, N_BAF10.n, 'test')
+
+    def testN_BAF10ValueErrors(self):
+        self.assertRaises(ValueError, N_BAF10.n, 100)
+        self.assertRaises(ValueError, N_BAF10.n, 0)
+        self.assertRaises(ValueError, N_BAF10.n, -100)
+
+    def testN_BAF10(self):
+        self.assertEqual(1.5469302146171202, N_BAF10.n(5))
 
 
 class TestE_BAF11(unittest.TestCase):
