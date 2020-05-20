@@ -247,7 +247,17 @@ class TestN_SSK5(unittest.TestCase):
 
 
 class TestE_FD10(unittest.TestCase):
-    pass
+    def testE_FD10TypeErrors(self):
+        self.assertRaises(TypeError, E_FD10.n, None)
+        self.assertRaises(TypeError, E_FD10.n, 'test')
+
+    def testE_FD10ValueErrors(self):
+        self.assertRaises(ValueError, E_FD10.n, 100)
+        self.assertRaises(ValueError, E_FD10.n, 0)
+        self.assertRaises(ValueError, E_FD10.n, -100)
+
+    def testE_FD10(self):
+        self.assertEqual(1.5975207997018837, E_FD10.n(5))
 
 
 class TestFusedSilica(unittest.TestCase):
