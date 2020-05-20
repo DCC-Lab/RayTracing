@@ -1,17 +1,16 @@
 from raytracing import *
 import matplotlib.pyplot as plt
 
-pinholeDiameter = []
 pinholeModifier = {1/3:[], 1:[], 3:[]}
-
 
 for pinhole in pinholeModifier:
 
     finalRays = pinholeModifier[pinhole]
     print(finalRays)
+    print(pinhole)
     
     pinholeSize = 0.009374*pinhole
-    positions = [5.001000, 5.000800, 5.000500, 5.000300, 5.000150, 5.000100, 5.000050, 5.000025, 5, 4.999975, 4.999950, 4.999900, 4.999850, 4.999700, 0.999500, 4.999200, 4.999000]
+    positions = [5.001000, 5.000800, 5.000500, 5.000300, 5.000150, 5.000100, 5.000050, 5.000025, 5, 4.999975, 4.999950, 4.999900, 4.999850, 4.999700, 4.999500, 4.999200, 4.999000]
     print('.')
 
     for z in positions:
@@ -37,7 +36,9 @@ for pinhole in pinholeModifier:
 
         outputRays = illumination.traceManyThrough(inputRays, progress=False)
         finalRays.append(outputRays.count/inputRays.count)
-        pinholeDiameter.append(pinholeSize)
+
+    pinholeModifier[pinhole] = finalRays
+    print(pinholeModifier[pinhole])
 
 print(positions)
 plt.plot(positions, pinholeModifier[1/3])
