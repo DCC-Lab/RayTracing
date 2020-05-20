@@ -37,7 +37,17 @@ class TestN_SF2(unittest.TestCase):
 
 
 class TestSF2(unittest.TestCase):
-    pass
+    def testSF2TypeErrors(self):
+        self.assertRaises(TypeError, SF2.n, None)
+        self.assertRaises(TypeError, SF2.n, 'test')
+
+    def testSF2ValueErrors(self):
+        self.assertRaises(ValueError, SF2.n, 100)
+        self.assertRaises(ValueError, SF2.n, 0)
+        self.assertRaises(ValueError, SF2.n, -100)
+
+    def testSF2(self):
+        self.assertEqual(SF2.n(5), 1.5385861348077337)
 
 
 class TestSF5(unittest.TestCase):
