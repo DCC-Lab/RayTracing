@@ -153,44 +153,44 @@ class Matrix(object):
         elements is calculated. Apertures are lost. We compute
         the first and last vertices.
 
-    Parameters
-    ----------
-    self : object from Matrix class
-        including the ABCD matrix and other properties of an element.
-    rightSideMatrix : object from Matrix class
-        including the ABCD matrix and other properties of an element.
+        Parameters
+        ----------
+        self : object from Matrix class
+            including the ABCD matrix and other properties of an element.
+        rightSideMatrix : object from Matrix class
+            including the ABCD matrix and other properties of an element.
 
 
-    Returns
-    -------
-    a : float
-        Value of the index (1,1) in the ABCD matrix of the combination of the two elements.
-    b : float
-        Value of the index (2,1) in the ABCD matrix of the combination of the two elements.
-    c : float
-        Value of the index (1,2) in the ABCD matrix of the combination of the two elements.
-    d : float
-        Value of the index (2,2) in the ABCD matrix of the combination of the two elements.
-    frontVertex : (type?)
-        First interface used for FFL
-    backVertex : (type?)
-        Last interface used for BFL
-    physicalLength: float
-        Length of the combination of the two elements.
+        Returns
+        -------
+        a : float
+            Value of the index (1,1) in the ABCD matrix of the combination of the two elements.
+        b : float
+            Value of the index (2,1) in the ABCD matrix of the combination of the two elements.
+        c : float
+            Value of the index (1,2) in the ABCD matrix of the combination of the two elements.
+        d : float
+            Value of the index (2,2) in the ABCD matrix of the combination of the two elements.
+        frontVertex : (type?)
+            First interface used for FFL
+        backVertex : (type?)
+            Last interface used for BFL
+        physicalLength: float
+            Length of the combination of the two elements.
 
-    Raises
-    ------
-    BadException
-        Because you shouldn't have done that.
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
 
-    See Also
-    --------
-    raytracing.Matrix.mul_ray
-    raytracing.Matrix.mul_beam
+        See Also
+        --------
+        raytracing.Matrix.mul_ray
+        raytracing.Matrix.mul_beam
 
-    Notes
-    -----
-    Notes about the implementation algorithm (if needed).
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
 
         """
 
@@ -229,6 +229,35 @@ class Matrix(object):
         If the ray is beyond the aperture diameter it is labelled
         as "isBlocked = True" but can still propagate.
 
+        Parameters
+        ----------
+        self : object from Matrix class
+            including the ABCD matrix and other properties of an element.
+        rightSideRay : object from Ray class
+            including the Ray properties
+
+
+        Returns
+        -------
+        outputRay : an object from Ray class
+            New position of the input ray after passing through the element.
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.mul_matrix
+        raytracing.Matrix.mul_beam
+        raytracing.ray
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
+
+
         """
 
         outputRay = Ray()
@@ -247,7 +276,35 @@ class Matrix(object):
 
     def mul_beam(self, rightSideBeam):
         """ Multiplication of a coherent beam with complex radius
-        of curvature q by a matrix.
+        of curvature q by an ABCD matrix.
+
+        Parameters
+        ----------
+        self : object from Matrix class
+            including the ABCD matrix and other properties of an element.
+        rightSideBeam : object from GaussianBeam class
+            including the beam properties
+
+
+        Returns
+        -------
+        outputBeam : an object from GaussianBeam class
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.mul_matrix
+        raytracing.Matrix.mul_ray
+        raytracing.GaussianBeam
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
 
         """
         q = rightSideBeam.q
@@ -269,10 +326,12 @@ class Matrix(object):
 
         return outputBeam
 
+    @property
     def largestDiameter(self):
         """ Largest diameter of the element or group of elements """
         return self.apertureDiameter
 
+    @property
     def hasFiniteApertureDiameter(self):
         """ True if the element or group of elements have a finite aperture size """
         return self.apertureDiameter != float("+Inf")
@@ -283,6 +342,35 @@ class Matrix(object):
         provided, the transfer matrix will be from the front edge to the back edge.
         If the element has a null thickness, the matrix representing the element
         is returned.
+
+        Parameters
+        ----------
+        self : object from Matrix class
+            including the ABCD matrix and other properties of an element.
+        upTo : float
+            A distance that shows the propagation length (in m? mm? cm?)
+
+
+        Returns
+        -------
+        tramsferMatrix : an object from Matrix class
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.mul_matrix
+        raytracing.Matrix.mul_ray
+        raytracing.GaussianBeam
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
+
         """
 
         distance = upTo
