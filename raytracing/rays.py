@@ -24,7 +24,7 @@ class Rays:
 
             if not inputOk:
                 raise AttributeError("'rays' parameter must contain Ray instances only.")
-            self.rays = rays
+            self.rays = list(rays)
 
         self.iteration = 0
         self.progressLog = 10000
