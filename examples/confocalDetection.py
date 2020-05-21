@@ -43,9 +43,9 @@ for pinhole in pinholeModifier:
 
     pinholeModifier[pinhole] = finalRays # Incorporates the final list of transmission efficiencies into the dictionary
 
-plt.plot(positions, pinholeModifier[1/3], label='Pinhole Size S/3')
+plt.plot(positions, pinholeModifier[1/3], label='Pinhole Size S/3', linestyle='dashed')
 plt.plot(positions, pinholeModifier[1], label='Pinhole Size S')
-plt.plot(positions, pinholeModifier[3], label='Pinhole Size 3S')
+plt.plot(positions, pinholeModifier[3], label='Pinhole Size 3S', linestyle='dotted')
 plt.ylabel('Transmission efficiency')
 plt.xlabel('Position of the focal spot (nm)')
 plt.legend()
