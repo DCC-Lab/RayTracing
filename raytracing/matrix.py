@@ -528,7 +528,7 @@ class Matrix(object):
 
         """
         if self.A == 0:
-            return (None, None)
+            return (float("+inf"), None)
         distance = -self.B / self.A
         conjugateMatrix = self * Space(d=distance)
         return (distance, conjugateMatrix)
