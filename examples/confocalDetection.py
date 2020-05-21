@@ -1,3 +1,9 @@
+'''
+To obtain and plot the intensity of a point source at the pinhole of a confocal microscope (with variable pinhole size) as a function of 
+position of focal spot by sending a large number of rays in the system (changing the position of the focal spot provides an optical 
+sectioning process).
+'''
+
 from raytracing import *
 import matplotlib.pyplot as plt
 
@@ -32,7 +38,7 @@ for pinhole in pinholeModifier:
         illumination.append(Space(d=50))
         illumination.append(Aperture(diameter=pinholeSize))
 
-        outputRays = illumination.traceManyThrough(inputRays, progress=False) # Counts how many rays make it through the pinhole
+        outputRays = illumination.traceManyThrough(inputRays, progress=False) # Counts how many rays makes it through the pinhole
         finalRays.append(outputRays.count/inputRays.count) # Calculates the transmission efficiency
 
     pinholeModifier[pinhole] = finalRays # Incorporates the final list of transmission efficiencies into the dictionary
