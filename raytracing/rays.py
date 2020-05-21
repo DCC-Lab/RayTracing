@@ -70,6 +70,7 @@ class Rays:
             maxValue = max(self.yValues)
 
         if self._countHistogramParameters != (binCount, minValue, maxValue):
+            self._countHistogramParameters = (binCount, minValue, maxValue)
 
             (self._yHistogram, binEdges) = histogram(self.yValues,
                                                      bins=binCount,
@@ -93,6 +94,7 @@ class Rays:
             maxValue = max(self.thetaValues)
 
         if self._anglesHistogramParameters != (binCount, minValue, maxValue):
+            self._anglesHistogramParameters = (binCount, minValue, maxValue)
 
             (self._thetaHistogram, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
             self._thetaHistogram = list(self._thetaHistogram)
