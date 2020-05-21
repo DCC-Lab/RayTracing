@@ -105,7 +105,7 @@ class Rays:
 
         return (self._xValuesAnglesHistogram, self._thetaHistogram)
 
-    def display(self, title="Intensity profile", showTheta=True):
+    def display(self, title="Intensity profile", showTheta=True):  # pragma: no cover
         plt.ioff()
         fig, axes = plt.subplots(2)
         fig.suptitle(title)
