@@ -928,6 +928,23 @@ class Matrix(object):
         the element. A positive distance means the image is "distance"
         beyond the back of the element (or to the right, or after).
 
+        Returns
+        -------
+        forwardConjugate : object
+            index [0] output object is the distance of the image at the back of the element
+             and index [1] is the conjugate matrix.
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.backwardConjugate
+
+        Notes
+        -----
         M2 = Space(distance)*M1
         # M2.isImaging == True
 
@@ -950,6 +967,23 @@ class Matrix(object):
         object is "distance" in front of the element (or to the
         left, or before).
 
+        Returns
+        -------
+        backwardConjugate : object
+            index [0] output object is the distance of the image in front of the element
+             and index [1] is the conjugate matrix.
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.forwardConjugate
+
+        Notes
+        -----
         M2 = M1*Space(distance)
         # M2.isImaging == True
 
@@ -961,16 +995,55 @@ class Matrix(object):
         return (distance, conjugateMatrix)
 
     def magnification(self):
+        """ The magnification of the element
+
+        Returns
+        -------
+        magnification : array
+            index [0] output object is A in the matrix and
+            index [1] is D in the matrix.
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix
+
+        Notes
+        -----
+        The magnification can be calculated having both A and D.
+        """
+
         if self.isImaging:
             return (self.A, self.D)
         else:
             return (None, None)
 
     def flipOrientation(self):
-        """ We flip the element around (as in, we turn a lens around front-back).
-        This is useful for real elements and for groups. For individual objects,
-        it does not do anything because they are the same either way. However,
-        subclasses can override this function and act accordingly.
+        """We flip the element around (as in, we turn a lens around front-back).
+        This is useful for real elements and for groups.
+
+        Returns
+        -------
+        Matrix : object of Matrix class
+            An element with the properties of the flipped original element
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix
+
+        Notes
+        -----
+        For individual objects, it does not do anything because they are the same either way.
+        However, subclasses can override this function and act accordingly.
         """
         self.isFlipped = not self.isFlipped
         # First and last interfaces. Used for BFL and FFL
