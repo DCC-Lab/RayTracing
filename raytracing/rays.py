@@ -288,9 +288,9 @@ class RandomRays(Rays):
 
     def __getitem__(self, item):
         if self.rays is None:
-            raise NotImplemented("You cannot access RandomRays")
+            raise NotImplementedError("You cannot access RandomRays")
         elif len(self.rays) < item:
-            raise NotImplemented("You cannot access RandomRays")
+            raise NotImplementedError("You cannot access RandomRays")
         else:
             return self.rays[item]
 
@@ -301,7 +301,7 @@ class RandomRays(Rays):
         return self.randomRay()
 
     def randomRay(self) -> Ray:
-        raise NotImplemented("You must implement randomRay() in your subclass")
+        raise NotImplementedError("You must implement randomRay() in your subclass")
 
 
 class RandomUniformRays(RandomRays):
