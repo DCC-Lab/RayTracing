@@ -16,9 +16,9 @@ class TestRays(unittest.TestCase):
         raysFromArray = Rays(npArrayOfRays)
         rays = Rays(listOfRays)
         self.assertListEqual(raysFromList.rays, listOfRays)
-        self.assertTupleEqual(raysFromTuple.rays, tupleOfRays)
-        self.assertTrue(all(raysFromArray.rays == npArrayOfRays))
-        self.assertIsNotNone(Rays(rays))
+        self.assertListEqual(raysFromTuple.rays, listOfRays)
+        self.assertListEqual(raysFromArray.rays, listOfRays)
+        self.assertListEqual(Rays(rays).rays, listOfRays)
 
         with self.assertRaises(AttributeError) as error:
             # This should raise an exception
