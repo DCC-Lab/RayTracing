@@ -20,12 +20,12 @@ class TestRays(unittest.TestCase):
         self.assertListEqual(raysFromArray.rays, listOfRays)
         self.assertListEqual(Rays(rays).rays, listOfRays)
 
-        with self.assertRaises(AttributeError) as error:
+        with self.assertRaises(TypeError) as error:
             # This should raise an exception
             Rays("Ray(), Ray(1), Ray(1,1)")
         self.assertEqual(str(error.exception), "'rays' parameter must contain Ray instances only.")
 
-        with self.assertRaises(AttributeError) as error:
+        with self.assertRaises(TypeError) as error:
             # This should raise an exception
             Rays([Ray(), [1, 2], Ray()])
         self.assertEqual(str(error.exception), "'rays' parameter must contain Ray instances only.")

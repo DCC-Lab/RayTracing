@@ -20,10 +20,10 @@ class Rays:
             try:
                 inputOk = all([isinstance(ray, Ray) for ray in rays])
             except TypeError:  # The object is not iterable
-                raise AttributeError("'rays' parameter must be iterable (i.e. a list or a tuple).")
+                raise TypeError("'rays' parameter must be iterable (i.e. a list or a tuple).")
 
             if not inputOk:
-                raise AttributeError("'rays' parameter must contain Ray instances only.")
+                raise TypeError("'rays' parameter must contain Ray instances only.")
             self.rays = list(rays)
 
         self.iteration = 0
