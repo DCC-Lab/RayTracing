@@ -7,7 +7,6 @@ inf = float("+inf")
 
 class TestRays(unittest.TestCase):
 
-
     def testRays(self):
         r = Rays()
         self.assertIsNotNone(r)
@@ -26,6 +25,21 @@ class TestRays(unittest.TestCase):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         r = Rays(listOfRays)
         self.assertListEqual(r.rays, listOfRays)
+
+    def testRaysInitDifferentInputs(self):
+        listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
+        tupleOfRays = tuple(listOfRays)
+        npArrayOfRays = array(listOfRays)
+        raysFromList = Rays(listOfRays)
+        raysFromTuple = Rays(tupleOfRays)
+        raysFromArray = Rays(npArrayOfRays)
+        self.assertListEqual(raysFromList.rays, listOfRays)
+        self.assertTupleEqual(raysFromTuple.rays, tupleOfRays)
+        self.assertTrue(all(raysFromArray.rays == npArrayOfRays))
+
+        with self.assertRaises(AttributeError):
+            # This should raise an exception
+            Rays("Ray(), Ray(1), Ray(1,1)")
 
     def testRaysIterations(self):
         raysList = [Ray(), Ray(2), Ray(1)]
@@ -162,15 +176,15 @@ class TestRays(unittest.TestCase):
         r = Rays(r)
         rayCountHist = r.rayCountHistogram(minValue=2)
         comparison = ([(a - 1) * 1.175 + 1.4125 for a in range(2, 42)],
-                      [2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1,
-                       1, 2, 1, 1, 1, 1, 2])
+                      [2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1,
+                       1, 1, 2, 1, 1, 1, 1, 2])
         self.assertEqual(len(rayCountHist[0]), len(comparison[0]))
         self.assertEqual(len(rayCountHist[1]), len(comparison[1]))
         for i in range(len(rayCountHist[0])):
             self.assertAlmostEqual(rayCountHist[0][i], comparison[0][i])
         self.assertListEqual(rayCountHist[1], comparison[1])
 
-    def testRayCountHist(self):
+    def testRayCountHistAlreadyComputed(self):
         r = Rays([Ray()])
         init = r.rayCountHistogram()
         self.assertIsNotNone(init)  # First time compute
@@ -181,7 +195,7 @@ class TestRays(unittest.TestCase):
         final = r.rayCountHistogram(10)
         self.assertNotEqual(init, final)
 
-    def testRayAnglesHist(self):
+    def testRayAnglesHistAlreadyComputed(self):
         r = Rays([Ray()])
         init = r.rayAnglesHistogram()
         self.assertIsNotNone(init)  # First time compute
@@ -191,7 +205,6 @@ class TestRays(unittest.TestCase):
         self.assertTupleEqual(init, final)
         final = r.rayAnglesHistogram(10)
         self.assertNotEqual(init, final)
-
 
 
 if __name__ == '__main__':
