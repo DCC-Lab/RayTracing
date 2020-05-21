@@ -289,8 +289,6 @@ path.append(Aperture(diameter=10),label='Camera')
 
 
 
-
-
 ### Laser scanning microscope
 
 * Scanning mirrror at focus gives sweeping line at other focus
