@@ -256,8 +256,8 @@ class LambertianRays(Rays):
         if yMin is None:
             self.yMin = -yMax
 
-        self.thetaMax = -pi / 2
-        self.thetaMin = pi / 2
+        self.thetaMin = -pi / 2
+        self.thetaMax = pi / 2
         self.M = M
         self.N = N
         self.I = I
