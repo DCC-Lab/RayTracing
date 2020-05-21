@@ -523,8 +523,29 @@ class Matrix(object):
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
 
-        Returns a list of Ray() (i,e. a raytrace), one for each input ray.
-        See trace().
+        Parameters
+        ----------
+        inputRays : object of Ray class
+            A group of rays
+
+        Returns
+        -------
+        rayTrace : object of Ray class
+            List of Ray() (i,e. a raytrace), one for each input ray.
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.trace
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
         """
         manyRayTraces = []
         for inputRay in inputRays:
@@ -542,6 +563,34 @@ class Matrix(object):
 
         We assume that if the user will be happy to receive 
         Rays() as an output even if they passed a list of rays as inputs.
+
+        Parameters
+        ----------
+        inputRays : object of Ray class
+            A group of rays
+        progress : bool
+            if True, the progress of the raceTrough is shown (default=Trye)
+
+
+        Returns
+        -------
+        outputRays : object of Ray class
+            List of Ray() (i,e. a raytrace), one for each input ray.
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.traceThrough
+        raytracing.Matrix.traceMany
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
         """
 
         try:
@@ -576,6 +625,34 @@ class Matrix(object):
         if you create 8 processes on 8 CPU cores, you gain a factor of 
         approximately 8 in speed. We are not talking GPU acceleration, but
         still: 1 minute is shorter than 8 minutes.
+
+        Parameters
+        ----------
+        inputRays : object of Ray class
+            A group of rays
+        progress : bool
+            if True, the progress of the raceTrough is shown (default=Trye)
+        processes :    
+
+        Returns
+        -------
+        outputRays : object of Ray class
+            List of Ray() (i,e. a raytrace), one for each input ray.
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.traceThrough
+        raytracing.Matrix.traceMany
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
 
         One important technical issue: Pool accesses the array in multiple processes
         and cannot be dynamically generated (because it is not thread-safe).
