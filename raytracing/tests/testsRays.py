@@ -4,6 +4,10 @@ from raytracing import *
 
 inf = float("+inf")
 
+# Set to False if you don't want to test saving and/or loading a lot or rays
+# These tests can take a few seconds
+testSaveHugeFile = True
+
 
 class TestRays(unittest.TestCase):
 
@@ -247,6 +251,104 @@ class TestRays(unittest.TestCase):
         rays.rays = None
         rays.append(Ray())
         self.assertIsNone(rays.rays)
+
+    @unittest.skip("This should be fixed")
+    def testAppendInvalidInput(self):
+        rays = Rays()
+        with self.assertRaises(TypeError):
+            rays.append("This is a ray")
+
+
+class TestRaysSaveAndLoad(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.testRays = Rays([Ray(), Ray(1, 1), Ray(-1, 1), Ray(-1, -1)])
+        self.fileName = 'testFile.pkl'
+        with open(self.fileName, 'wb') as file:
+            pickle.Pickler(file).dump(self.testRays.rays)
+        time.sleep(1)  # Make sure everything is ok
+
+    def tearDown(self) -> None:
+        if os.path.exists(self.fileName):
+            os.remove(self.fileName)  # We remove the test file
+
+    def testLoadFileDoesntExists(self):
+        file = r"this file\doesn't\exists"
+        rays = Rays()
+        with self.assertRaises(FileNotFoundError):
+            rays.load(file)
+
+    def assertLoadNotFailed(self, rays: Rays, name: str = None, append: bool = False):
+        if name is None:
+            name = self.fileName
+        try:
+            rays.load(name, append)
+        except Exception as exception:
+            self.fail(f"An exception was raised:\n{exception}")
+
+    def testLoad(self):
+        rays = Rays()
+        self.assertLoadNotFailed(rays)
+        self.assertListEqual(rays.rays, self.testRays.rays)
+
+        rays.rays = None
+        self.assertLoadNotFailed(rays)
+        self.assertListEqual(rays.rays, self.testRays.rays)
+
+        finalRays = self.testRays.rays[:]  # We copy with [:]
+        finalRays.extend(self.testRays.rays[:])
+        self.assertLoadNotFailed(rays, append=True)  # We append
+        self.assertListEqual(rays.rays, finalRays)
+
+        self.assertLoadNotFailed(rays)  # We don't append, we override
+        self.assertListEqual(rays.rays, self.testRays.rays)
+
+    def assertSaveNotFailed(self, rays: Rays, name: str, deleteNow: bool = True):
+        try:
+            rays.save(name)
+        except Exception as exception:
+            self.fail(f"An exception was raised:\n{exception}")
+        finally:
+            if os.path.exists(name) and deleteNow:
+                os.remove(name)  # We delete the temp file
+
+    def testSaveInEmptyFile(self):
+        rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
+        name = "emptyFile.pkl"
+        self.assertSaveNotFailed(rays, name)
+
+    def testSaveInFileNotEmpty(self):
+        rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
+        self.assertSaveNotFailed(rays, self.fileName)
+
+    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
+    def testSaveHugeFile(self):
+        nbRays = 100_000
+        raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
+        rays = Rays(raysList)
+        self.assertSaveNotFailed(rays, "hugeFile.pkl")
+
+    def testSaveThenLoad(self):
+        raysList = [Ray(), Ray(-1), Ray(2), Ray(3)]
+        rays = Rays(raysList)
+        name = "testSaveAndLoad.pkl"
+        self.assertSaveNotFailed(rays, name, False)
+        raysLoad = Rays()
+        self.assertLoadNotFailed(raysLoad, name)
+        self.assertListEqual(raysLoad.rays, rays.rays)
+        os.remove(name)
+
+    @unittest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
+    def testSaveThenLoadHugeFile(self):
+        nbRays = 100_000
+        raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
+        rays = Rays(raysList)
+        name = "hugeFile.pkl"
+        self.assertSaveNotFailed(rays, name, False)
+        raysLoad = Rays()
+        self.assertLoadNotFailed(raysLoad, name)
+        self.assertListEqual(raysLoad.rays, rays.rays)
+        os.remove(name)
 
 
 if __name__ == '__main__':
