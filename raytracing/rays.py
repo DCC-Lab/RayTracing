@@ -167,6 +167,8 @@ class Rays:
         return self.rays[item]
 
     def append(self, ray):
+        if not isinstance(ray, Ray):
+            raise TypeError("'ray' must be a 'Ray' object.")
         if self.rays is not None:
             self.rays.append(ray)
 
