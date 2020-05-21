@@ -632,7 +632,8 @@ class Matrix(object):
             A group of rays
         progress : bool
             if True, the progress of the raceTrough is shown (default=Trye)
-        processes :    
+        processes : (tyoe?)
+            ???????
 
         Returns
         -------
@@ -647,13 +648,11 @@ class Matrix(object):
 
         See Also
         --------
-        raytracing.Matrix.traceThrough
+        raytracing.Matrix.traceManyThrough
         raytracing.Matrix.traceMany
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
-
         One important technical issue: Pool accesses the array in multiple processes
         and cannot be dynamically generated (because it is not thread-safe).
         We explicitly generate the list before the computation, then we split
@@ -691,14 +690,18 @@ class Matrix(object):
         """If B=0, then the matrix is from a conjugate plane to another
         (i.e. object at the front edge and image at the back edge).
 
-        In this case, A = transverse magnification, D = angular magnification
-        As usual, C = -1/f (always).
+        In this case:
+        A = transverse magnification
+        D = angular magnification
+        And as usual, C = -1/f (always).
         """
 
         return abs(self.B) < Matrix.__epsilon__
 
     @property
     def hasPower(self):
+        """ If True, then c=!0
+        """
         return self.C != 0
 
     def pointsOfInterest(self, z):
@@ -714,15 +717,39 @@ class Matrix(object):
 
         return []
 
+
     def focalDistances(self):
-        """ Synonym of effectiveFocalLengths() """
+        """ This is the synonym of effectiveFocalLengths()
+
+        Returns
+        -------
+        focalDistances : array
+            Returns the FFL and BFL
+        """
 
         return self.effectiveFocalLengths()
+
 
     def effectiveFocalLengths(self):
         """ The effective focal lengths calculated from the power (C)
         of the matrix.
 
+        Returns
+        -------
+        effectiveFocalLengths : array
+            Returns the FFL and BFL
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.focalDistances
+
+        Notes
+        -----
         Currently, it is assumed the index is n=1 on either side and
         both focal lengths are the same.
         """
