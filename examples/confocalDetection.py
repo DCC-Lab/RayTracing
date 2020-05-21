@@ -41,9 +41,10 @@ for pinhole in pinholeModifier:
     print(pinholeModifier[pinhole])
 
 print(positions)
-plt.plot(positions, pinholeModifier[1/3])
-plt.plot(positions, pinholeModifier[1])
-plt.plot(positions, pinholeModifier[3]) 
+plt.plot(positions, pinholeModifier[1/3], label='Pinhole Size S/3')
+plt.plot(positions, pinholeModifier[1], label='Pinhole Size S')
+plt.plot(positions, pinholeModifier[3], label='Pinhole Size 3S')
 plt.ylabel('Transmission efficiency')
 plt.xlabel('Position of the focal spot (mm)')
+plt.legend()
 plt.show()
