@@ -11,6 +11,7 @@ class TestMaterial(unittest.TestCase):
 class TestMaterialSubclasses(unittest.TestCase):
     def setUp(self) -> None:
         self.subclasses = []
+        self.fails = []
 
         for material in dir(materials):
             object = getattr(materials, material)
@@ -20,20 +21,29 @@ class TestMaterialSubclasses(unittest.TestCase):
             except TypeError:
                 pass
 
+    def tearDown(self):
+        self.assertEqual([], self.fails)
+
     def testMaterialSubclassesTypeError(self):
         for subclass in self.subclasses:
-            self.assertRaises(TypeError, subclass.n, None)
-            self.assertRaises(TypeError, subclass.n, 'test')
+            try:
+                self.assertRaises(TypeError, subclass.n, None)
+                self.assertRaises(TypeError, subclass.n, 'test')
+            except AssertionError:
+                self.fails.append('TypeError for subclass {}'.format(subclass.__name__))
 
     def testMaterialSubclassesValueErrors(self):
         for subclass in self.subclasses:
-            self.assertRaises(ValueError, subclass.n, 100)
-            self.assertRaises(ValueError, subclass.n, 0)
-            self.assertRaises(ValueError, subclass.n, -100)
+            try:
+                self.assertRaises(ValueError, subclass.n, 100)
+                self.assertRaises(ValueError, subclass.n, 0)
+                self.assertRaises(ValueError, subclass.n, -100)
+            except AssertionError:
+                self.fails.append('ValueError for subclass {}'.format(subclass.__name__))
 
     def testMaterialSubclasses(self):
         for subclass in self.subclasses:
-            print(subclass)
+            pass
 
 
 class TestN_BK7(unittest.TestCase):
