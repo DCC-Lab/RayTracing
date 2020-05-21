@@ -223,6 +223,31 @@ class TestRays(unittest.TestCase):
         final = r.rayAnglesHistogram(maxValue=1)
         self.assertNotEqual(init, final)
 
+    def testAppend(self):
+        r = Rays([Ray(1, 1)])
+        self.assertListEqual(r.rays, [Ray(1, 1)])
+        r.append(Ray())
+        self.assertListEqual(r.rays, [Ray(1, 1), Ray()])
+
+        r.rayAnglesHistogram()
+        r.rayCountHistogram()
+        r.append(Ray(2, 0))
+        self.assertIsNone(r._yValues)
+        self.assertIsNone(r._thetaValues)
+        self.assertIsNone(r._yHistogram)
+        self.assertIsNone(r._thetaHistogram)
+        self.assertIsNone(r._directionBinEdges)
+        self.assertIsNone(r._countHistogramParameters)
+        self.assertIsNone(r._xValuesCountHistogram)
+        self.assertIsNone(r._anglesHistogramParameters)
+        self.assertIsNone(r._xValuesAnglesHistogram)
+
+    def testAppendNone(self):
+        rays = Rays()
+        rays.rays = None
+        rays.append(Ray())
+        self.assertIsNone(rays.rays)
+
 
 if __name__ == '__main__':
     unittest.main()
