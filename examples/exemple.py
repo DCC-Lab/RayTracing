@@ -3,6 +3,9 @@ import os
 sys.path.insert(0, os.path.abspath('../'))
 
 from raytracing import *
+'''
+Too small lenses in a 4f system causes vignetting. This code calculates accurate optical system parameters to avoid vignetting and obtain a good image size. 
+'''
 
 path = ImagingPath()
 path.name = "Telescope"
