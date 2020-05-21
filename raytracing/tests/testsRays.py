@@ -7,6 +7,21 @@ inf = float("+inf")
 
 class TestRays(unittest.TestCase):
 
+    def testRaysInitDifferentInputs(self):
+        listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
+        tupleOfRays = tuple(listOfRays)
+        npArrayOfRays = array(listOfRays)
+        raysFromList = Rays(listOfRays)
+        raysFromTuple = Rays(tupleOfRays)
+        raysFromArray = Rays(npArrayOfRays)
+        self.assertListEqual(raysFromList.rays, listOfRays)
+        self.assertTupleEqual(raysFromTuple.rays, tupleOfRays)
+        self.assertTrue(all(raysFromArray.rays == npArrayOfRays))
+
+        with self.assertRaises(Exception):
+            # This should raise an exception
+            Rays("Ray(), Ray(1), Ray(1,1)")
+
     def testRayCountHist(self):
         r = Rays([Ray()])
         init = r.rayCountHistogram()
