@@ -14,13 +14,26 @@ class TestRays(unittest.TestCase):
         raysFromList = Rays(listOfRays)
         raysFromTuple = Rays(tupleOfRays)
         raysFromArray = Rays(npArrayOfRays)
+        rays = Rays(listOfRays)
         self.assertListEqual(raysFromList.rays, listOfRays)
         self.assertTupleEqual(raysFromTuple.rays, tupleOfRays)
         self.assertTrue(all(raysFromArray.rays == npArrayOfRays))
+        self.assertIsNotNone(Rays(rays))
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError) as error:
             # This should raise an exception
             Rays("Ray(), Ray(1), Ray(1,1)")
+        self.assertEqual(str(error.exception), "'rays' parameter must contain Ray instances only.")
+
+        with self.assertRaises(AttributeError) as error:
+            # This should raise an exception
+            Rays([Ray(), [1, 2], Ray()])
+        self.assertEqual(str(error.exception), "'rays' parameter must contain Ray instances only.")
+
+        with self.assertRaises(AttributeError) as error:
+            # This should raise an exception
+            Rays(Matrix())
+        self.assertEqual(str(error.exception), "'rays' parameter must be iterable (i.e. a list or a tuple).")
 
     def testRayCountHist(self):
         r = Rays([Ray()])

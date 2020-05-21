@@ -17,6 +17,13 @@ class Rays:
         if rays is None:
             self.rays = []
         else:
+            try:
+                inputOk = all([isinstance(ray, Ray) for ray in rays])
+            except TypeError:  # The object is not iterable
+                raise AttributeError("'rays' parameter must be iterable (i.e. a list or a tuple).")
+
+            if not inputOk:
+                raise AttributeError("'rays' parameter must contain Ray instances only.")
             self.rays = rays
 
         self.iteration = 0
