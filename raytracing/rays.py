@@ -29,6 +29,12 @@ class Rays:
         self._thetaHistogram = None
         self._directionBinEdges = None
 
+        self._countHistogramParameters = None
+        self._xValuesCountHistogram = None
+
+        self._anglesHistogramParameters = None
+        self._xValuesAnglesHistogram = None
+
     def __len__(self) -> int:
         if self.rays is None:
             return 0
@@ -53,15 +59,17 @@ class Rays:
         return self._thetaValues
 
     def rayCountHistogram(self, binCount=None, minValue=None, maxValue=None):
-        if self._yHistogram is None:
-            if binCount is None:
-                binCount = 40
 
-            if minValue is None:
-                minValue = min(self.yValues)
+        if binCount is None:
+            binCount = 40
 
-            if maxValue is None:
-                maxValue = max(self.yValues)
+        if minValue is None:
+            minValue = min(self.yValues)
+
+        if maxValue is None:
+            maxValue = max(self.yValues)
+
+        if self._countHistogramParameters != (binCount, minValue, maxValue):
 
             (self._yHistogram, binEdges) = histogram(self.yValues,
                                                      bins=binCount,
@@ -70,27 +78,30 @@ class Rays:
             xValues = []
             for i in range(len(binEdges) - 1):
                 xValues.append((binEdges[i] + binEdges[i + 1]) / 2)
+            self._xValuesCountHistogram = xValues
 
-        return (xValues, self._yHistogram)
+        return (self._xValuesCountHistogram, self._yHistogram)
 
     def rayAnglesHistogram(self, binCount=None, minValue=None, maxValue=None):
-        if self._thetaHistogram is None:
-            if binCount is None:
-                binCount = 40
+        if binCount is None:
+            binCount = 40
 
-            if minValue is None:
-                minValue = min(self.thetaValues)
+        if minValue is None:
+            minValue = min(self.thetaValues)
 
-            if maxValue is None:
-                maxValue = max(self.thetaValues)
+        if maxValue is None:
+            maxValue = max(self.thetaValues)
+
+        if self._anglesHistogramParameters != (binCount, minValue, maxValue):
 
             (self._thetaHistogram, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
             self._thetaHistogram = list(self._thetaHistogram)
             xValues = []
             for i in range(len(binEdges) - 1):
                 xValues.append((binEdges[i] + binEdges[i + 1]) / 2)
+            self._xValuesAnglesHistogram = xValues
 
-        return (xValues, self._thetaHistogram)
+        return (self._xValuesAnglesHistogram, self._thetaHistogram)
 
     def display(self, title="Intensity profile", showTheta=True):
         plt.ioff()
@@ -158,6 +169,12 @@ class Rays:
         self._yHistogram = None
         self._thetaHistogram = None
         self._directionBinEdges = None
+
+        self._countHistogramParameters = None
+        self._xValuesCountHistogram = None
+
+        self._anglesHistogramParameters = None
+        self._xValuesAnglesHistogram = None
 
     def load(self, filePath, append=False):
         with open(filePath, 'rb') as infile:
