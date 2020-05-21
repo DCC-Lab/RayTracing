@@ -6,9 +6,6 @@ pinholeModifier = {1/3:[], 1:[], 3:[]}
 for pinhole in pinholeModifier:
 
     finalRays = pinholeModifier[pinhole]
-    print(finalRays)
-    print(pinhole)
-    
     pinholeSize = 0.009374*pinhole
     positions = [5.001000, 5.000800, 5.000500, 5.000300, 5.000150, 5.000100, 5.000050, 5.000025, 5, 4.999975, 4.999950, 4.999900, 4.999850, 4.999700, 4.999500, 4.999200, 4.999000]
     print('.')
@@ -38,9 +35,7 @@ for pinhole in pinholeModifier:
         finalRays.append(outputRays.count/inputRays.count)
 
     pinholeModifier[pinhole] = finalRays
-    print(pinholeModifier[pinhole])
 
-print(positions)
 plt.plot(positions, pinholeModifier[1/3], label='Pinhole Size S/3')
 plt.plot(positions, pinholeModifier[1], label='Pinhole Size S')
 plt.plot(positions, pinholeModifier[3], label='Pinhole Size 3S')
