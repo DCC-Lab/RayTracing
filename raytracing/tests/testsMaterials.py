@@ -1,11 +1,39 @@
 import unittest
-import env # modifies path
+import envtest # modifies path
 from raytracing import *
 
 
 class TestMaterial(unittest.TestCase):
     def testMaterialInvalid(self):
         self.assertRaises(TypeError, Material.n, 5)
+
+
+class TestMaterialSubclasses(unittest.TestCase):
+    def setUp(self) -> None:
+        self.subclasses = []
+
+        for material in dir(materials):
+            object = getattr(materials, material)
+            try:
+                if (object != Material) and issubclass(object, Material):
+                    self.subclasses.append(object)
+            except TypeError:
+                pass
+
+    def testMaterialSubclassesTypeError(self):
+        for subclass in self.subclasses:
+            self.assertRaises(TypeError, subclass.n, None)
+            self.assertRaises(TypeError, subclass.n, 'test')
+
+    def testMaterialSubclassesValueErrors(self):
+        for subclass in self.subclasses:
+            self.assertRaises(ValueError, subclass.n, 100)
+            self.assertRaises(ValueError, subclass.n, 0)
+            self.assertRaises(ValueError, subclass.n, -100)
+
+    def testMaterialSubclasses(self):
+        for subclass in self.subclasses:
+            print(subclass)
 
 
 class TestN_BK7(unittest.TestCase):
