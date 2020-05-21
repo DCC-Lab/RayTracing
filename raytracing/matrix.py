@@ -769,6 +769,25 @@ class Matrix(object):
         focal lengths is always measured from the principal planes, but the
         BFL and FFL are measured from the vertex.
 
+        Returns
+        -------
+        backFocalLength : float
+            Returns the BFL
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.focalDistances
+        raytracing.Matrix.effectiveFocalLengths
+        raytracing.Matrix.frontFocalLength
+
+
+        Notes
+        -----
         If the matrix is the result of the product of several matrices,
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
@@ -794,6 +813,25 @@ class Matrix(object):
         focal lengths is always measured from the principal planes, but the
         BFL and FFL are measured from the vertices.
 
+        Returns
+        -------
+        frontFocalLength : float
+            Returns the FFL
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.focalDistances
+        raytracing.Matrix.effectiveFocalLengths
+        raytracing.Matrix.backFocalLength
+
+
+        Notes
+        -----
         If the matrix is the result of the product of several matrices,
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
@@ -813,9 +851,32 @@ class Matrix(object):
     def focusPositions(self, z):
         """ Positions of both focal points on either side of the element.
 
+        Parameters
+        ----------
+        z : float
+            what does this parameter shows?
+
+        Returns
+        -------
+        focusPositions : array
+            An array of front focal position and the back focal position.
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.effectiveFocalLengths
+        raytracing.Matrix.principalPlanePositions
+
+        Notes
+        -----
         Currently, it is assumed the index is n=1 on either side and both focal
         distances are the same.
         """
+
         if self.hasPower:
             (f1, f2) = self.focalDistances()
             (p1, p2) = self.principalPlanePositions(z)
@@ -826,6 +887,28 @@ class Matrix(object):
     def principalPlanePositions(self, z):
         """ Positions of the input and output principal planes.
 
+        Parameters
+        ----------
+        z : float
+            what does this parameter shows?
+
+        Returns
+        -------
+        principalPlanePositions : array
+            An array of front principal plane position and the back principal plane position.
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.effectiveFocalLengths
+        raytracing.Matrix.focusPositions
+
+        Notes
+        -----
         Currently, it is assumed the index is n=1 on either side.
         """
         if self.hasPower:
