@@ -389,6 +389,34 @@ class Matrix(object):
         marginal rays are used.
 
         This quantity is L = n (y1 theta2 - y2 theta1)
+
+        Parameters
+        ----------
+        ray1 : object of Ray class
+            A ray at height y1 and angle theta1
+        ray2 : object of Ray class
+            A ray at height y2 and angle theta2
+        z : float
+            A distance that shows propagation length
+
+        Returns
+        -------
+        lagrangeInvariant : float
+            The value of the lagrange invariant constant for ray1 and ray2
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.transferMatrices
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
         """
 
         matrix = self.transferMatrix(upTo=z)
@@ -413,6 +441,31 @@ class Matrix(object):
         of the element. We therefore check before entering the element and after having
         propagated through the element. For now, this will suffice.
         If the length is null, the ray is traced in a single step
+
+        Parameters
+        ----------
+        ray : object of Ray class
+            A ray at height y and angle theta
+
+        Returns
+        -------
+        rayTrace : List of ray(s)
+            The value of output ray(s) for the input ray(s) through the matrix
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.traceThrough
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
+
         """
 
         rayTrace = []
@@ -435,6 +488,30 @@ class Matrix(object):
         but will not consider apertures.  By "tracing" a ray, we do consider
         all apertures in the system.  If a ray is blocked, its property
         isBlocked will be true, and isNotBlocked will be false.
+
+        Parameters
+        ----------
+        inputRay : object of Ray class
+            A ray at height y and angle theta
+
+        Returns
+        -------
+        rayTrace : object of Ray class
+            The height and angle of output ray for the input ray through the matrix
+
+
+        Raises
+        ------
+        BadException
+            Because you shouldn't have done that.
+
+        See Also
+        --------
+        raytracing.Matrix.trace
+
+        Notes
+        -----
+        Notes about the implementation algorithm (if needed).
 
         """
 
