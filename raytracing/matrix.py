@@ -200,6 +200,28 @@ class Matrix(object):
         BadException
             Because you shouldn't have done that.
 
+        Examples
+        --------
+        Consider a Lense (f=3) and a free space (d=2). The equal ABCD matrix
+        of this system can be calculated as the following
+
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=3)
+        >>> M1= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
+        >>> # M2 is an ABCD matrix of free space (d=2)
+        >>> M2= Matrix(A=1,B=2,C=0,D=1,label='freeSpace')
+        >>> print('Total ABCD matrix :' , M1.mul_matrix(M2))
+        Total ABCD matrix :
+         /             \
+        |  1.000    2.000 |
+        |               |
+        | -0.333    0.333 |
+         \             /
+        f=3.000
+
+
+
+
         See Also
         --------
         raytracing.Matrix.mul_ray
