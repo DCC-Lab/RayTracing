@@ -10,16 +10,11 @@ class TestMaterial(unittest.TestCase):
 
 class TestMaterialSubclasses(unittest.TestCase):
     def setUp(self) -> None:
-        self.subclasses = []
+        self.materials = []
         self.fails = []
 
-        for material in dir(materials):
-            object = getattr(materials, material)
-            try:
-                if (object != Material) and issubclass(object, Material):
-                    self.subclasses.append(object)
-            except TypeError:
-                pass
+        for material in Material.__subclasses__():
+            self.subclasses.append(material)
 
     def tearDown(self):
         self.assertEqual([], self.fails)
