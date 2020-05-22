@@ -1,16 +1,20 @@
 import matplotlib.pyplot as plt
 import sys
+import itertools
+from raytracing.drawing import *
 
 
-class LayoutHelper:
-    __instance = None
-
-    def __new__(cls):
-        """ Singleton """
-        if LayoutHelper.__instance is None:
-            LayoutHelper.__instance = object.__new__(cls)
-        # LayoutHelper.__instance.val = val
-        return LayoutHelper.__instance
+class FigureManager:
+    # # Singleton setup
+    # # Not sure we want a singleton since that probably means we can't work on two imagingPaths at the same time
+    #
+    # __instance = None
+    # def __new__(cls):
+    #     """ Singleton """
+    #     if LayoutHelper.__instance is None:
+    #         LayoutHelper.__instance = object.__new__(cls)
+    #     # LayoutHelper.__instance.val = val
+    #     return LayoutHelper.__instance
 
     def __init__(self):
         self.figure = None
@@ -19,7 +23,15 @@ class LayoutHelper:
         self.styles = ['publication', 'presentation', 'teaching']
         self.outputFormats = ['pdf', 'png', 'screen']
 
-    def createFigure(self, style='presentation'):
+        self.drawings = []
+
+        # ok. A Drawing should contain its own Aperture and labels set at a specific position.
+        # FigureManager can display them, request their position to check they do not overlap.
+        # If they overlap he can ask to update their position
+        # * Labels do not need size rescaling but position update (delta Y is -5% of displayRange ish)
+        # But there's also some Labels that are not necessarily tied to a drawing. like A/F stops
+
+    def createFigure(self, style='presentation', comments=None):
         if style == 'teaching':
             self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             self.axesComments.axis('off')
@@ -27,6 +39,37 @@ class LayoutHelper:
                                    fontsize=10, verticalalignment='top')
         else:
             self.figure, self.axes = plt.subplots(figsize=(10, 7))
+
+        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+
+    def draw(self):
+        for drawing in self.drawings:
+            drawing.applyTo(self.axes)
+
+        self.updateDisplayRange()
+        self.update()
+
+    def add(self, drawing: Drawing):
+        self.drawings.append(drawing)
+
+    def updateDisplayRange(self):
+        """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all drawings."""
+        halfHeight = 0
+
+        for drawing in self.drawings:
+            if drawing.halfHeight() > halfHeight:
+                halfHeight = drawing.halfHeight()
+
+        self.axes.autoscale()
+        self.axes.set_ylim(-halfHeight * 1.5, halfHeight * 1.5)
+
+    def update(self):
+        """Update all figure drawings to properly rescale their dimensions with the display range."""
+        for drawing in self.drawings:
+            drawing.update()
+
+    def onZoomCallback(self, axes):
+        self.update()
 
     def drawPoint(self, x, y, label=None):
         """ Primitive to draw a point with or without labels """
