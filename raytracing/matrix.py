@@ -273,9 +273,9 @@ class Matrix(object):
         A propagation of a ray at height 10 with angle 10 can be written as the following:
 
         >>> from raytracing import *
-        >>> # M1 is an ABCD matrix of a lens (f=3)
+        >>> # M1 is an ABCD matrix of a lens (f=10)
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
-        >>> # R is a ray at the
+        >>> # R is a ray
         >>> R= Ray(y=10,theta=10)
         >>> print('The output ray of Lens M1 :' , M1.mul_ray(R))
         The output ray of Lens M1 :
@@ -328,7 +328,7 @@ class Matrix(object):
         return outputRay
 
     def mul_beam(self, rightSideBeam):
-        """ Multiplication of a coherent beam with complex radius
+        """This function calculates the multiplication of a coherent beam with complex radius
         of curvature q by an ABCD matrix.
 
         Parameters
@@ -339,24 +339,26 @@ class Matrix(object):
 
         Returns
         -------
-        outputBeam : an object from GaussianBeam class
+        outputBeam : object from GaussianBeam class
+            The properties of the beam at the output of the system with the defined ABCD matrix
 
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=10)
+        >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
+        >>> # B is a Gaussian Beam
+        >>> B=GaussianBeam(q=complex(1,1),w=1,R=5,n=1)
+        >>> print('The output properties of are:' , M1.mul_beam(B))
+        The output ray of Lens M1 : Complex radius: (0.976+1.22j)
+        w(z): 0.020, R(z): 2.500, z: 5.000, λ: 632.8 nm
+        zo: 1.220, wo: 0.016, wo position: -0.976
 
         See Also
         --------
         raytracing.Matrix.mul_matrix
         raytracing.Matrix.mul_ray
         raytracing.GaussianBeam
-
-        Notes
-        -----
-        Notes about the implementation algorithm (if needed).
-
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
@@ -377,14 +379,22 @@ class Matrix(object):
 
         return outputBeam
 
-    @property
     def largestDiameter(self):
-        """ Largest diameter of the element or group of elements """
+        """
+        Returns
+        -------
+        LargestDiameter : float
+            Largest diameter of the element or group of elements
+        """
         return self.apertureDiameter
 
-    @property
     def hasFiniteApertureDiameter(self):
-        """ True if the element or group of elements have a finite aperture size """
+        """
+        Returns
+        -------
+        apertureDiameter : bool
+            If True, the element or group of elements have a finite aperture size
+        """
         return self.apertureDiameter != float("+Inf")
 
     def transferMatrix(self, upTo=float('+Inf')):
@@ -397,18 +407,27 @@ class Matrix(object):
         Parameters
         ----------
         upTo : float
-            A distance that shows the propagation length (in m? mm? cm?)
-
+            A distance that shows the propagation length (default=Inf)
 
         Returns
         -------
-        tramsferMatrix : an object from Matrix class
+        tramsferMatrix : object from Matrix class
+            The matrix for the propagation length through the system
 
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=2)
+        >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
+        >>> transferM=M1.transferMatrix(upTo=5)
+        >>> print('The transfer matrix is:', transferM)
+        The transfer matrix is:
+         /             \
+        |  1.000    0.000 |
+        |               |
+        | -0.100    1.000 |
+         \             /
+        f=10.000
 
         See Also
         --------
@@ -416,8 +435,7 @@ class Matrix(object):
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
-
+        The upTo parameter should have a value greater than the physical distance of the system.
         """
 
         distance = upTo
@@ -445,8 +463,6 @@ class Matrix(object):
         In ImagingPath(), if no rays are provided, the chief and
         marginal rays are used.
 
-        This quantity is L = n (y1 theta2 - y2 theta1)
-
         Parameters
         ----------
         ray1 : object of Ray class
@@ -461,19 +477,26 @@ class Matrix(object):
         lagrangeInvariant : float
             The value of the lagrange invariant constant for ray1 and ray2
 
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M is an ABCD matrix of a lens (f=10)
+        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,label='Lens')
+        >>> # R1 and R2 are two rays
+        >>> R1=Ray(y=5,theta=20)
+        >>> R2=Ray(y=2,theta=10)
+        >>> LagrangeInv=M.lagrangeInvariant(R1,R2)
+        >>> print('The lagrange invariant value for R1 and R2 is:', LagrangeInv)
+        The lagrange invariant value for R1 and R2 is: -10.0
 
         See Also
         --------
         raytracing.Matrix.transferMatrices
+        raytracing.ImagingPath.lagrangeInvariant
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
+        To use this function, the physicalLength of the system should be zero.
         """
 
         matrix = self.transferMatrix(upTo=z)
