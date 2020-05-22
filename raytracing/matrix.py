@@ -566,14 +566,10 @@ class Matrix(object):
         return rayTrace
 
     def traceThrough(self, inputRay):
-        """ Returns the last ray after propagating through the system,
-        including apertures.
-
-        Contrary to trace(), this only returns the last ray.
+        """Contrary to trace(), this only returns the last ray.
         Mutiplying the ray by the transfer matrix will give the correct ray
         but will not consider apertures.  By "tracing" a ray, we do consider
-        all apertures in the system.  If a ray is blocked, its property
-        isBlocked will be true, and isNotBlocked will be false.
+        all apertures in the system.
 
         Parameters
         ----------
@@ -583,29 +579,35 @@ class Matrix(object):
         Returns
         -------
         rayTrace : object of Ray class
-            The height and angle of output ray for the input ray through the matrix
+            The height and angle of the last ray after propagating through the system,
+            including apertures.
 
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M is an ABCD matrix of a lens (f=10)
+        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
+        >>> # R1 is a ray
+        >>> R1=Ray(y=5,theta=20)
+        >>> Tr=M.traceThrough(R1)
+        >>> print('the height of traced ray is' , Tr.y,  'and the angle is', Tr.theta)
+        the height of traced ray is 5.0 and the angle is 19.5
 
         See Also
         --------
         raytracing.Matrix.trace
+        raytracing.Matrix.traceMany
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
-
+        If a ray is blocked, its property isBlocked will be true, and isNotBlocked will be false.
         """
 
         rayTrace = self.trace(inputRay)
         return rayTrace[-1]
 
     def traceMany(self, inputRays):
-        """ Trace each ray from a group of rays from front edge of element to
+        """This function trace each ray from a group of rays from front edge of element to
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
 
@@ -619,19 +621,15 @@ class Matrix(object):
         rayTrace : object of Ray class
             List of Ray() (i,e. a raytrace), one for each input ray.
 
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        (needs clarification)
 
         See Also
         --------
         raytracing.Matrix.trace
-
-        Notes
-        -----
-        Notes about the implementation algorithm (if needed).
+        raytracing.Matrix.traceThrough
+        raytracing.Matrix.traceManyThrough
         """
         manyRayTraces = []
         for inputRay in inputRays:
