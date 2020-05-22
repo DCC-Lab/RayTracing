@@ -168,15 +168,14 @@ class Matrix(object):
 
     def mul_matrix(self, rightSideMatrix):
         """ This function is used when the ray passed through two element.
-        Multiplication of two ABCD matrices.  Total length of the
-        elements is calculated. Apertures are lost. We compute
+        The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
+        Total length of the elements is calculated (z). Apertures are lost. We compute
         the first and last vertices.
 
         Parameters
         ----------
         rightSideMatrix : object from Matrix class
             including the ABCD matrix and other properties of an element.
-
 
         Returns
         -------
@@ -194,11 +193,6 @@ class Matrix(object):
             Last interface used for BFL
         physicalLength: float
             Length of the combination of the two elements.
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
 
         Examples
         --------
@@ -219,9 +213,6 @@ class Matrix(object):
          \             /
         f=3.000
 
-
-
-
         See Also
         --------
         raytracing.Matrix.mul_ray
@@ -229,8 +220,8 @@ class Matrix(object):
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
-
+        If there is m ore that two elements, the multplication should be repeated
+        to add each element to calculate the total ABCD matrix of the system.
         """
 
         a = self.A * rightSideMatrix.A + self.B * rightSideMatrix.C
@@ -263,26 +254,52 @@ class Matrix(object):
         return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L)
 
     def mul_ray(self, rightSideRay):
-        """ Multiplication of a ray by a matrix.  New position of
-        ray is updated by the physical length of the matrix.
-        If the ray is beyond the aperture diameter it is labelled
-        as "isBlocked = True" but can still propagate.
+        """This function does the multiplication of a ray by a matrix.
+        The output shows the propagated ray throught the system.
+        New position of ray is updated by the physical length of the matrix.
 
         Parameters
         ----------
         rightSideRay : object from Ray class
             including the Ray properties
 
-
         Returns
         -------
         outputRay : an object from Ray class
             New position of the input ray after passing through the element.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        A propagation of a ray at height 10 with angle 10 can be written as the following:
+
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=3)
+        >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
+        >>> # R is a ray at the
+        >>> R= Ray(y=10,theta=10)
+        >>> print('The output ray of Lens M1 :' , M1.mul_ray(R))
+        The output ray of Lens M1 :
+         /       \
+        | 10.000  |
+        |         |
+        |  9.000  |
+         \       /
+        z = 5.000
+
+        And after a free space (d=2)
+
+        >>> # M2 is an ABCD matrix of free space (d=2)
+        >>> M2= Matrix(A=1,B=2,C=0,D=1,physicalLength=2,label='freeSpace')
+        >>> M=M1.mul_matrix(M2)
+        >>> print('The output ray of Lens M1 and free space M2 :' , M.mul_ray(R))
+        The output ray of Lens M1 and free space M2 :
+         /       \
+        | 30.000  |
+        |         |
+        |  7.000  |
+         \       /
+        z = 7.000
+
 
         See Also
         --------
@@ -292,9 +309,8 @@ class Matrix(object):
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
-
-
+        If the ray is beyond the aperture diameter it is labelled
+        as "isBlocked = True" but the propagation can still be calculated.
         """
 
         outputRay = Ray()
