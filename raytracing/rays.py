@@ -22,6 +22,7 @@ or when analysing the resulting rays that reached a plane in ImagingPath,
 MatrixGroup or any tracing function. 
 """
 
+
 class Rays:
     def __init__(self, rays=None):
         if rays is None:
@@ -232,6 +233,7 @@ class Rays:
     # https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
     # and https://stackoverflow.com/questions/3122049/drawing-an-anti-aliased-line-with-thepython-imaging-library
 
+
 class UniformRays(Rays):
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, M=100, N=100):
         self.yMax = yMax
@@ -284,18 +286,18 @@ class RandomRays(Rays):
         self.thetaMin = thetaMin
         if thetaMin is None:
             self.thetaMin = -thetaMax
-        super(RandomRays, self).__init__(rays=None)
+        super(RandomRays, self).__init__(rays=None)  # Even with this, rays = []
 
     def __len__(self) -> int:
         return self.maxCount
 
     def __getitem__(self, item):
-        if self.rays is None:
+        if self.rays is None:  # This can never happen, rays = []
             raise NotImplementedError("You cannot access RandomRays")
         elif len(self.rays) < item:
             raise NotImplementedError("You cannot access RandomRays")
         else:
-            return self.rays[item]
+            return self.rays[item]  # This always lead to IndexError, rays is always []
 
     def __next__(self) -> Ray:
         if self.iteration >= self.maxCount:
