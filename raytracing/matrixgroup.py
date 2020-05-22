@@ -169,7 +169,7 @@ class MatrixGroup(Matrix):
 
         return self
 
-    def drawAt(self, z, axes, showLabels=True):
+    def drawAt(self, z, axes, showLabels=True):  # pragma: no cover
         """ Draw each element of this group """
         for element in self.elements:
             element.drawAt(z, axes)
@@ -179,7 +179,7 @@ class MatrixGroup(Matrix):
                 element.drawLabels(z, axes)
             z += element.L
 
-    def drawPointsOfInterest(self, z, axes):
+    def drawPointsOfInterest(self, z, axes):  # pragma: no cover
         """
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
