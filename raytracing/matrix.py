@@ -1370,6 +1370,14 @@ class Matrix(object):
 class Lens(Matrix):
     """A thin lens of focal f, null thickness and infinite or finite diameter
 
+    Parameters
+    ----------
+    f : float
+        The focal length of the lens
+    diameter : float
+        The diameter (default=Inf)
+    label : string
+        The label of the lens
     """
 
     def __init__(self, f, diameter=float('+Inf'), label=''):
@@ -1381,7 +1389,17 @@ class Lens(Matrix):
                                    label=label)
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw a thin lens at z """
+        """ Draw a thin lens at z
+
+        Parameters
+        ----------
+        z : float
+            The position of the lens
+        axes : int?
+            the axis on which the lens is placed
+        showLabels : bool
+            If True, the label for the lens is shown (default=False)
+        """
         maxRayHeight = 0
         for line in axes.lines:
             if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
@@ -1404,8 +1422,19 @@ class Lens(Matrix):
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            Position of the lens
+        label : string
+            (is it the input?)the label to be used.  Can include LaTeX math code.
+
+        Returns
+        -------
+        pointsOfInterest : List
+            List of points of interest for the input element
+
         """
         (f1, f2) = self.focusPositions(z)
 
@@ -1420,7 +1449,19 @@ class Lens(Matrix):
 
 class CurvedMirror(Matrix):
     """A curved mirror of radius R and infinite or finite diameter.
-    Note that a concave mirror (i.e. converging mirror) has a negative
+
+    Parameters
+    ----------
+    R : float
+        the radius of curvature of the mirror
+    diameter : float
+        The diameter of the element (default=Inf)
+    label : string
+        The label of the curved mirror
+
+    Notes
+    -----
+    A concave mirror (i.e. converging mirror) has a negative
     radius of curvature if we want to keep the same sign convention.
     (there was a mistake up to version 1.2.7 of the module)
     """
@@ -1437,8 +1478,19 @@ in version 1.2.8 to maintain the sign convention\n", UserWarning)
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            Position of the lens
+        label : string
+            (is it in the input?)the label to be used.  Can include LaTeX math code.
+
+        Returns
+        -------
+        pointsOfInterest : List
+            List of points of interest for the input element
+
         """
         (f1, f2) = self.focusPositions(z)
 
@@ -1451,7 +1503,10 @@ in version 1.2.8 to maintain the sign convention\n", UserWarning)
         return pointsOfInterest
 
     def flipOrientation(self):
-        """ We flip the element around (as in, we turn a lens around front-back).
+        """ This function flips the element around (as in, we turn a lens around front-back).
+
+        Notes
+        -----
         In this case, R -> -R.  It is important to call the
         super implementation because other things must be flipped (vertices for instance)
         """
@@ -1463,6 +1518,17 @@ in version 1.2.8 to maintain the sign convention\n", UserWarning)
 
 class Space(Matrix):
     """Free space of length d
+
+    Parameters
+    ----------
+    d : float
+        the length of the free space
+    n : float
+        The refraction index of the space. This value cannot be negative. (default=1)
+    diameter : float
+        The diameter of the free space (default=Inf)
+    label : string
+        The label of the free space
 
     """
 
@@ -1480,12 +1546,24 @@ class Space(Matrix):
                                     label=label)
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw nothing because free space is nothing. """
+        """This function draws nothing because free space is not visible. """
         return
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a Matrix() corresponding to a partial propagation
-        if the requested distance is smaller than the length of this element"""
+        if the requested distance is smaller than the length of this element
+
+        Parameters
+        ----------
+        upTo : float
+            The length of the propagation (default=Inf)
+
+        Returns
+        -------
+        transferMatrix : object of class Matrix
+            the corresponding matrix to the propagation
+
+        """
         distance = upTo
         if distance < self.L:
             return Space(distance)
@@ -1497,6 +1575,17 @@ class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
     after the interface
 
+    Parameters
+    ----------
+    n1 : float
+        The refraction index before the surface
+    n2 : float
+        The refraction index after the interface
+    R : float (Optional)
+        The radius of the dielectric interface
+
+    Notes
+    -----
     A convex interface from the perspective of the ray has R > 0
     """
 
@@ -1522,6 +1611,18 @@ class DielectricInterface(Matrix):
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a curved surface starting at 'z'.
         We are not able yet to determine the color to fill with.
+
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : int??
+            The axes of the curved surface?
+        showLabels : bool (Optional)
+            If True, the label of the curved surface is shown. (default=False)
+
+        Notes
+        -----
         It is possible to draw a
         quadratic bezier curve that looks like an arc, see:
         https://pomax.github.io/bezierinfo/#circles_cubic
@@ -1552,6 +1653,9 @@ class DielectricInterface(Matrix):
 
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
+
+        Notes
+        -----
         This is useful for real elements and for groups. For individual objects,
         it does not do anything because they are the same either way. However,
         subclasses can override this function and act accordingly.
@@ -1572,6 +1676,24 @@ class ThickLens(Matrix):
     """A thick lens of first radius R1 and then R2, with an index n
     and length d
 
+    Parameters
+    ----------
+    n : float
+        The refraction index of the thick lens. This value cannot be negative.
+    R1 : float
+        The first radius of thick lens
+    R2 : float
+        The second radius of the thick lens
+    thickness : float
+        The length of the thick lens. This value cannot be negative.
+    diameter : float (Optional)
+        The diameter of the thick lens. (default=Inf)
+    label : string (Optional)
+        The label of the thick lens
+
+
+    Notes
+    -----
     A biconvex lens has R1 > 0 and R2 < 0.
     """
 
@@ -1597,6 +1719,17 @@ class ThickLens(Matrix):
         """ Draw a faint blue box with slightly curved interfaces
         of length 'thickness' starting at 'z'.
 
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : int??
+            The axes of the curved surface?
+        showLabels : bool (Optional)
+            If True, the label of the curved surface is shown. (default=False)
+
+        Notes
+        -----
         An arc would be perfect, but matplotlib does not allow to fill
         an arc, hence we must use a patch and Bezier curve.
         We might as well draw it properly: it is possible to draw a
@@ -1647,6 +1780,14 @@ class ThickLens(Matrix):
         The thick lens requires special care because the corners are not
         separated by self.L: the curvature makes the edges shorter.
         We are picky and draw it right.
+
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : int??
+            The axes of the curved surface?
+
         """
 
         if self.apertureDiameter != float('+Inf'):
@@ -1670,8 +1811,18 @@ class ThickLens(Matrix):
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            Position of the element
+        label : string
+            (is it in the input?)the label to be used.  Can include LaTeX math code.
+
+        Returns
+        -------
+        pointsOfInterest : List
+            List of points of interest for the input element
         """
         (f1, f2) = self.focusPositions(z)
 
@@ -1685,7 +1836,19 @@ class ThickLens(Matrix):
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a ThickLens() or a Matrix() corresponding to a partial propagation
-        if the requested distance is smaller than the length of this element"""
+        if the requested distance is smaller than the length of this element
+
+        Parameters
+        ----------
+        upTo : float
+            The length of the propagation (default=Inf)
+
+        Returns
+        -------
+        transferMatrix : object of class Matrix
+            the corresponding matrix to the propagation
+
+        """
         if self.L <= upTo:
             return self
         else:
@@ -1694,6 +1857,9 @@ class ThickLens(Matrix):
 
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
+
+        Notes
+        -----
         In this case, R1 = -R2, and R2 = -R1.  It is important to call the
         super implementation because other things must be flipped (vertices for instance)
         """
@@ -1718,6 +1884,17 @@ class ThickLens(Matrix):
 class DielectricSlab(ThickLens):
     """A slab of dielectric material of index n and length d, with flat faces
 
+    Parameters
+    ----------
+    n : float
+        The refraction index of the dielectric. This value cannot be negative
+    thickness : float
+        The thickness of the dielectric
+    diameter : float
+        The diameter of the dielectric. (default=Inf)
+    label : string
+        the label of the element
+
     """
 
     def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
@@ -1730,6 +1907,16 @@ class DielectricSlab(ThickLens):
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a faint blue box of length L starting at 'z'.
 
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : int??
+            The axes of the curved surface?
+        showLabels : bool (Optional)
+            If True, the label of the curved surface is shown. (default=False)
+
+
         """
         halfHeight = self.displayHalfHeight()
         p = patches.Rectangle((z, -halfHeight), self.L,
@@ -1740,7 +1927,19 @@ class DielectricSlab(ThickLens):
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
-                if the requested distance is smaller than the length of this element"""
+                if the requested distance is smaller than the length of this element
+
+        Parameters
+        ----------
+        upTo : float
+            The length of the propagation (default=Inf)
+
+        Returns
+        -------
+        transferMatrix : object of class Matrix
+            the corresponding matrix to the propagation
+
+        """
         if self.L <= upTo:
             return self
         else:
@@ -1751,6 +1950,15 @@ class DielectricSlab(ThickLens):
 class Aperture(Matrix):
     """An aperture of finite diameter, null thickness.
 
+    Parameters
+    ----------
+    diameter : float
+        The diameter of the aperture to be considered
+    label : string
+        The label of the aperture
+            
+    Notes
+    -----
     If the ray is beyond the finite diameter, the ray is blocked.
     """
 
