@@ -10,11 +10,8 @@ class TestMaterial(unittest.TestCase):
 
 class TestMaterialSubclasses(unittest.TestCase):
     def setUp(self) -> None:
-        self.materials = []
+        self.materials = Material.__subclasses__()
         self.fails = []
-
-        for material in Material.__subclasses__():
-            self.materials.append(material)
 
     def tearDown(self):
         self.assertEqual([], self.fails)
