@@ -11,7 +11,6 @@ testSaveHugeFile = True
 
 class TestRays(unittest.TestCase):
 
-
     def testRays(self):
         r = Rays()
         self.assertIsNotNone(r)
@@ -27,7 +26,6 @@ class TestRays(unittest.TestCase):
         r = Rays([])
         self.assertListEqual(r.rays, [])
 
-    @unittest.skip("This should be fixed soon")
     def testRaysInitDifferentInputs(self):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         tupleOfRays = tuple(listOfRays)
@@ -37,12 +35,20 @@ class TestRays(unittest.TestCase):
         raysFromArray = Rays(npArrayOfRays)
 
         self.assertListEqual(raysFromList.rays, listOfRays)
-        self.assertTupleEqual(raysFromTuple.rays, tupleOfRays)
-        self.assertTrue(all(raysFromArray.rays == npArrayOfRays))
+        self.assertListEqual(raysFromTuple.rays, list(tupleOfRays))
+        self.assertListEqual(raysFromArray.rays, list(npArrayOfRays))
 
-        with self.assertRaises(AttributeError):
-            # This should raise an exception
+        with self.assertRaises(TypeError):
+            # This should raise an TypeError exception
             Rays("Ray(), Ray(1), Ray(1,1)")
+
+        with self.assertRaises(TypeError):
+            # This should raise an TypeError exception
+            Rays([Ray(), [1, 2], Ray()])
+
+        with self.assertRaises(TypeError):
+            # This should raise an TypeError exception
+            Rays(Matrix())
 
     def testRaysIterations(self):
         raysList = [Ray(), Ray(2), Ray(1)]
@@ -119,25 +125,6 @@ class TestRays(unittest.TestCase):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         r = Rays(listOfRays)
         self.assertListEqual(r.thetaValues, [0, 1, -2, -1])
-
-    def testThetaValuesNotNone(self):
-        rays = Rays(listOfRays)
-        self.assertListEqual(raysFromList.rays, listOfRays)
-        self.assertListEqual(raysFromTuple.rays, listOfRays)
-        self.assertListEqual(raysFromArray.rays, listOfRays)
-        self.assertListEqual(Rays(rays).rays, listOfRays)
-
-        with self.assertRaises(TypeError) as error:
-            # This should raise an TypeError exception
-            Rays("Ray(), Ray(1), Ray(1,1)")
-
-        with self.assertRaises(TypeError) as error:
-            # This should raise an TypeError exception
-            Rays([Ray(), [1, 2], Ray()])
-
-        with self.assertRaises(TypeError) as error:
-            # This should raise an TypeError exception
-            Rays(Matrix())
 
     def testRayCountHist(self):
         r = Rays([Ray()])
@@ -273,7 +260,6 @@ class TestRays(unittest.TestCase):
         rays.append(Ray())
         self.assertIsNone(rays.rays)
 
-    @unittest.skip("This should be fixed")
     def testAppendInvalidInput(self):
         rays = Rays()
         with self.assertRaises(TypeError):

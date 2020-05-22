@@ -44,7 +44,6 @@ class TestUniformRays(unittest.TestCase):
 
 class TestLambertianRays(unittest.TestCase):
 
-    @unittest.skip("thetaMax and thetaMin are swapped. Should be fixed soon.")
     def testLambertianRays(self):
         rays = LambertianRays(10, 0, 10, 10, 10)
         self.assertIsNotNone(rays)
@@ -63,7 +62,7 @@ class TestLambertianRays(unittest.TestCase):
                     allRays.append(Ray(y, theta))
         self.assertListEqual(rays.rays, allRays)
 
-    @unittest.skip("thetaMax and thetaMin are swapped. Should be fixed soon.")
+
     def testLambertianRaysNoneInArgs(self):
         rays = LambertianRays(10, None, 10, 10, 10)
         self.assertIsNotNone(rays)
@@ -77,10 +76,11 @@ class TestLambertianRays(unittest.TestCase):
         allRays = []
         for theta in linspace(-pi / 2, pi / 2, 10):
             intensity = int(10 * cos(theta))
-            for y in linspace(0, 10, 10):
+            for y in linspace(-10, 10, 10):
                 for _ in range(intensity):
-                    allRays.append(Ray(y, theta))
+                    allRays.append(Ray(y+1, theta))
         self.assertListEqual(rays.rays, allRays)
+
 
 
 class TestRandomRays(unittest.TestCase):
@@ -103,7 +103,6 @@ class TestRandomRays(unittest.TestCase):
         self.assertEqual(rays.thetaMax, pi / 2)
         self.assertEqual(rays.thetaMin, -pi / 2)
 
-    @unittest.skip("Should be fixed soon.")
     def testRandomRay(self):
         rays = RandomRays()
         with self.assertRaises(NotImplementedError):
@@ -113,7 +112,6 @@ class TestRandomRays(unittest.TestCase):
         rays = RandomRays(maxCount=10)
         self.assertEqual(len(rays), 10)
 
-    @unittest.skip("Should be fixed soon.")
     def testNext(self):
         rays = RandomRays()
         with self.assertRaises(NotImplementedError):
