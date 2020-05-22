@@ -9,29 +9,28 @@ class TestMaterial(unittest.TestCase):
 
 
 class TestMaterialSubclasses(unittest.TestCase):
-    @property
-    def subclasses(self):
-        return Material.__subclasses__()
-    
+    def setUp(self) -> None:
+        self.materials = Material.__subclasses__()
+
     def testMaterialSubclassesTypeError(self):
         fails = []
-        for subclass in self.subclasses:
+        for material in self.materials:
             try:
-                self.assertRaises(TypeError, subclass.n, None)
-                self.assertRaises(TypeError, subclass.n, 'test')
+                self.assertRaises(TypeError, material.n, None)
+                self.assertRaises(TypeError, material.n, 'test')
             except AssertionError:
-                fails.append('TypeError for subclass {}'.format(subclass.__name__))
+                fails.append('TypeError for subclass {}'.format(material.__name__))
         self.assertEqual([], fails)
 
     def testMaterialSubclassesValueErrors(self):
         fails = []
-        for subclass in self.subclasses:
+        for material in self.materials:
             try:
-                self.assertRaises(ValueError, subclass.n, 100)
-                self.assertRaises(ValueError, subclass.n, 0)
-                self.assertRaises(ValueError, subclass.n, -100)
+                self.assertRaises(ValueError, material.n, 100)
+                self.assertRaises(ValueError, material.n, 0)
+                self.assertRaises(ValueError, material.n, -100)
             except AssertionError:
-                fails.append('ValueError for subclass {}'.format(subclass.__name__))
+                fails.append('ValueError for subclass {}'.format(material.__name__))
         self.assertEqual([], fails)
 
     def testMaterialSubclasses(self):
@@ -44,10 +43,10 @@ class TestMaterialSubclasses(unittest.TestCase):
                              1.4251526811342752, 1.5810761652641074, 1.7197092324835102, 1.528065402814606,
                              1.541289278092723, 1.5975207997018837, 1.3404572894914368]
 
-        for subclass in self.subclasses:
-            n = subclass.n(5)
+        for material in self.materials:
+            n = material.n(5)
             if n not in refractiveIndexes:
-                fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(subclass.__name__, str(n)))
+                fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(material.__name__, str(n)))
         self.assertEqual([], fails)
 
 
