@@ -49,33 +49,43 @@ class Matrix(object):
         Value of the index (1,2) in the ABCD matrix of the element. (default =0)
     D : float
         Value of the index (2,2) in the ABCD matrix of the element. (default =1)
-    physicalLength: float
+    physicalLength: float (Optional)
         Length of the object. (default =0)
-    frontVertex : (type?)
+    frontVertex : (type?) (Optional)
         First interface used for FFL (default = None)
-    backVertex : (type?)
+    backVertex : (type?) (Optional)
         Last interface used for BFL (default = None)
-    frontIndex : float
+    frontIndex : float (Optional)
         Index of refraction at the entrance. (default = 1.0)
         This value cannot be negative.
-    backIndex : float
+    backIndex : float (Optional)
         Index of refractionb at exit. (default = 1.0)
         This value cannot be negative.
-    apertureDiameter : float
+    apertureDiameter : float (Optional)
         Aperture of the element. (default = +Inf)
         The diameter of the aperture should be a positive value.
-    label : string
+    label : string (Optional)
         The label of the element.
 
     Returns
     -------
-    element :
+    Matrix : object
         an element with a defined ABCD matrix and properties.
 
-    Raises
-    ------
-    BadException
-        Because you shouldn't have done that.
+    Examples
+    --------
+    An ABCD matrix of a free space of length 3 can be defined as follows
+
+    >>> from raytracing import *
+    >>> M= Matrix(A=1,B=3,C=0,D=1)
+    >>> print(M)
+    /                \
+    |  1.000    3.000 |
+    |                 |
+    |  0.000    1.000 |
+     \               /
+    f = +inf (afocal)
+
 
     Notes
     -----
@@ -122,9 +132,18 @@ class Matrix(object):
         self.isFlipped = False
         super(Matrix, self).__init__()
 
-    @property
     def determinant(self):
         """Calculating the determinant of the ABCD matrix.
+
+        Examples
+        --------
+        >>> from raytracing import *
+
+        >>> # M is an ABCD matrix of a lens (f=3)
+        >>> M= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
+        >>> print('the determinant of matrix is equal to :' , M.determinant)
+        the determinant of matrix is equal to : 1.0
+
         """
         return self.A * self.D - self.B * self.C
 
@@ -1956,7 +1975,7 @@ class Aperture(Matrix):
         The diameter of the aperture to be considered
     label : string
         The label of the aperture
-            
+
     Notes
     -----
     If the ray is beyond the finite diameter, the ray is blocked.
