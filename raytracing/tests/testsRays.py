@@ -21,19 +21,16 @@ class TestRays(unittest.TestCase):
         self.assertListEqual(Rays(rays).rays, listOfRays)
 
         with self.assertRaises(TypeError) as error:
-            # This should raise an exception
+            # This should raise an TypeError exception
             Rays("Ray(), Ray(1), Ray(1,1)")
-        self.assertEqual(str(error.exception), "'rays' parameter must contain Ray instances only.")
 
         with self.assertRaises(TypeError) as error:
-            # This should raise an exception
+            # This should raise an TypeError exception
             Rays([Ray(), [1, 2], Ray()])
-        self.assertEqual(str(error.exception), "'rays' parameter must contain Ray instances only.")
 
-        with self.assertRaises(AttributeError) as error:
-            # This should raise an exception
+        with self.assertRaises(TypeError) as error:
+            # This should raise an TypeError exception
             Rays(Matrix())
-        self.assertEqual(str(error.exception), "'rays' parameter must be iterable (i.e. a list or a tuple).")
 
     def testRayCountHist(self):
         r = Rays([Ray()])
