@@ -380,7 +380,8 @@ class Matrix(object):
         return outputBeam
 
     def largestDiameter(self):
-        """
+        """ Largest diameter for a group of elements
+
         Returns
         -------
         LargestDiameter : float
@@ -389,7 +390,8 @@ class Matrix(object):
         return self.apertureDiameter
 
     def hasFiniteApertureDiameter(self):
-        """
+        """If the system has a finite aperture size
+
         Returns
         -------
         apertureDiameter : bool
@@ -507,12 +509,11 @@ class Matrix(object):
         return matrix.backIndex * (outputRay1.theta * outputRay2.y - outputRay1.y * outputRay2.theta)
 
     def trace(self, ray):
-        """Returns a list of rays (i.e. a ray trace) for the input ray through the matrix.
-
-        Mutiplying the ray by the transfer matrix will give the correct ray
-        but will not consider apertures.  By "tracing" a ray, we do consider
-        all apertures in the system.  If a ray is blocked, its property
-        isBlocked will be true, and isNotBlocked will be false.
+        """This function mutiplies the ray by the transfer matrix and it will
+        give the correct ray but will not consider apertures.
+        By "tracing" a ray, we do consider all apertures in the system.
+        If a ray is blocked, its property isBlocked will be true, and
+        isNotBlocked will be false.
 
         Because we want to manage blockage by apertures, we need to perform a two-step process
         for elements that have a finite, non-null length: where is the ray blocked exactly?
@@ -520,7 +521,6 @@ class Matrix(object):
         The aperture diameter for a finite-length element is constant across the length
         of the element. We therefore check before entering the element and after having
         propagated through the element. For now, this will suffice.
-        If the length is null, the ray is traced in a single step
 
         Parameters
         ----------
@@ -530,22 +530,28 @@ class Matrix(object):
         Returns
         -------
         rayTrace : List of ray(s)
-            The value of output ray(s) for the input ray(s) through the matrix
+            A list of rays (i.e. a ray trace) for the input ray through the matrix.
 
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M is an ABCD matrix of a lens (f=10)
+        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=0,label='Lens')
+        >>> # R1 is a ray
+        >>> R1=Ray(y=5,theta=20)
+        >>> Tr=M.trace(R1)
+        >>> print('the height of traced ray is' , Tr[0].y,  'and the angle is', Tr[0].theta)
+        the height of traced ray is 5.0 and the angle is 19.5
 
         See Also
         --------
         raytracing.Matrix.traceThrough
+        raytracing.Matrix.mul_ray
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
-
+        Currently, the output of the function is returned as a list and if you want to
+        refer to to the properties of the output ray, you should use the index 0 of the output list.
         """
 
         rayTrace = []
