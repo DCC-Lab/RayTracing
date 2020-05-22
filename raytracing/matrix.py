@@ -1060,8 +1060,11 @@ class Matrix(object):
 
     def display(self):  # pragma: no cover
         """ Display this component, without any ray tracing but with
-        all of its cardinal points and planes. If the component has no
-        power (i.e. C == 0) this will fail.
+        all of its cardinal points and planes.
+
+        Notes
+        -----
+        If the component has no power (i.e. C == 0) this will fail.
         """
 
         fig, axes = plt.subplots(figsize=(10, 7))
@@ -1102,6 +1105,17 @@ class Matrix(object):
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
 
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : int?
+            The axes on which the element is placed?
+        showLabels : bool
+            If True, the label of the element will be shown (default=False)
+
+        Notes
+        -----
         Default is a black box of appropriate length.
         """
         halfHeight = self.largestDiameter() / 2
@@ -1114,19 +1128,44 @@ class Matrix(object):
         axes.add_patch(p)
 
     def drawVertices(self, z, axes):  # pragma: no cover
-        """ Draw vertices of the system """
+        """ Draw vertices of the system
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : int?
+            The axes on which the element is placed?
+        """
+
         axes.plot([z + self.frontVertex, z + self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
         halfHeight = self.displayHalfHeight()
         axes.text(z + self.frontVertex, 0, '$V_f$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
         axes.text(z + self.backVertex, 0, '$V_b$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
 
     def drawCardinalPoints(self, z, axes):  # pragma: no cover
-        """ Draw the focal points of a thin lens as black dots """
+        """Draw the focal points of a thin lens as black dots
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : int?
+            The axes on which the element is placed?
+        """
         (f1, f2) = self.focusPositions(z)
         axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
 
     def drawPrincipalPlanes(self, z, axes):  # pragma: no cover
-        """ Draw the principal planes """
+        """Draw the principal planes
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : int?
+            The axes on which the element is placed?
+        """
         halfHeight = self.displayHalfHeight()
         (p1, p2) = self.principalPlanePositions(z=z)
 
@@ -1176,6 +1215,15 @@ class Matrix(object):
     def drawLabels(self, z, axes):  # pragma: no cover
         """ Draw element labels on plot with starting edge at 'z'.
 
+        Parameters
+        ----------
+        z : float
+            the starting position of the labels on display
+        axes : int?
+            The axes on which labels is placed?
+
+        Notes
+        -----
         Labels are drawn 50% above the display height
         """
         if self.hasFiniteApertureDiameter():
@@ -1193,6 +1241,13 @@ class Matrix(object):
         """
         Labels of general points of interest are drawn below the
         axis, at 25% of the largest diameter.
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the label on display
+        axes : int?
+            The axes on which the label is placed?
 
         """
         labels = {}  # Gather labels at same z
@@ -1214,6 +1269,14 @@ class Matrix(object):
     def drawAperture(self, z, axes):  # pragma: no cover
         """ Draw the aperture size for this element.  Any element may
         have a finite aperture size, so this function is general for all elements.
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the apreture
+        axes : int?
+            The axes on which the apreture is placed?
+
         """
 
         if self.apertureDiameter != float('+Inf'):
@@ -1245,8 +1308,18 @@ class Matrix(object):
         an element, whether it is infinite or not.
 
         If the element is infinite, the half-height is currently
-         set to '4' or to the specified minimum half height.
-         If not, it is the apertureDiameter/2.
+        set to '4' or to the specified minimum half height.
+        If not, it is the apertureDiameter/2.
+
+        Parameters
+        ----------
+        minSize : float
+            The minimum size to be considered as the aperture half height
+
+        Returns
+        -------
+        halfHeight : float
+            The half height of the optical element
 
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
@@ -1259,7 +1332,20 @@ class Matrix(object):
     def axesToDataScale(self, axes):
         """ Display dimensions in data units.
         Used to properly draw elements on the display
-        with appropriate data coordinates. """
+        with appropriate data coordinates.
+
+        Parameters
+        ----------
+        axes : int?
+            what does axes do here?
+
+        Returns
+        -------
+        xScale: float
+            The scale of x axes
+        yScale : float
+            The scale of y axes
+        """
 
         xScale, yScale = axes.viewLim.bounds[2:]
 
