@@ -17,8 +17,8 @@ class Drawing:
     Examples:
         Create a Drawing from multiple patches
 
-        >>> arrowUp = patches.FancyArrow(x=0, y=0, dx=0, dy=-5, width=0.1)
-        >>> arrowDown = patches.FancyArrow(x=0, y=0, dx=0, dy=-5, width=0.1)
+        >>> arrowUp = ArrowPatch(dy=5, headLengthRatio=0.2)
+        >>> arrowDown = ArrowPatch(dy=-5, headLengthRatio=0.2)
         >>> lensDrawing = Drawing(arrowUp, arrowDown)
 
         Apply the Drawing on a figure at x=10
@@ -37,14 +37,23 @@ class Drawing:
 
     """
 
-    def __init__(self, *components: patches.Patch):
+    def __init__(self, *components: patches.Patch, label: str = None,
+                 x=0, y=0, fixedWidth=False):
         self.components: List[patches.Patch] = [*components]  # could be renamed to drawings, parts, patches, artists...
+        self.label = None
 
         self.axes = None
-        self.x = None
-        self.y = None
+        self.x = x
+        self.y = y
+        self.useAutoScale = not fixedWidth
 
-    def applyTo(self, axes: plt.Axes, x: float = 0, y: float = 0):
+        if label is not None:
+            self.createLabel(label)
+
+    def createLabel(self, label: str):
+        self.label = Label(text=label, y=self.halfHeight() * 1.2)
+
+    def applyTo(self, axes: plt.Axes, x: float = None, y: float = None):
         """ Apply the Drawing on a figure at a given position (x, y) with auto-scale.
 
         Args:
@@ -55,12 +64,18 @@ class Drawing:
         """
 
         self.axes = axes
-        self.x, self.y = x, y
+        if x is not None:
+            self.x = x
+        if y is not None:
+            self.y = y
 
         self.update()
 
         for component in self.components:
             self.axes.add_patch(component)
+
+        if self.label is not None:
+            self.axes.add_artist(self.label)
 
     def update(self, x: float = None, y: float = None):
         """ Update the drawing's position and scaling.
@@ -84,40 +99,44 @@ class Drawing:
         for component in self.components:
             component.set_transform(scaling + translation + self.axes.transData)
 
+        if self.label is not None:
+            self.label.set_transform(translation + self.axes.transData)
+
     def scaling(self):
         """ Used internally to compute the required scale transform so that the width of the objects stay the same
         respective to the Axes. """
+        if not self.useAutoScale:
+            return 1, 1
 
         xScale, yScale = self.axesToDataScale()
 
-        heightFactor = self.height() / yScale
+        heightFactor = self.halfHeight() * 2 / yScale
         xScaling = xScale * (heightFactor / 0.2) ** (3 / 4)
 
         return xScaling, 1
 
     def axesToDataScale(self):
         """ Dimensions of the figure in data units. """
-
         xScale, yScale = self.axes.viewLim.bounds[2:]
 
         return xScale, yScale
 
-    def height(self):
-        """ Initial total height of the drawing (not affected by the transforms).
+    def halfHeight(self) -> float:
+        """ Maximum absolute Y-value of the drawing (not affected by the transforms).
         Used internally to auto-scale. """
-
-        top, bottom = [], []
-
+        halfHeight = 0
         for component in self.components:
-            top.append(np.max(component.get_xy(), axis=0)[1])
-            bottom.append(np.min(component.get_xy(), axis=0)[1])
+            componentMaxY = np.max(np.abs(component.get_xy()), axis=0)[1]
+            if componentMaxY > halfHeight:
+                halfHeight = componentMaxY
+        return halfHeight
 
-        height = np.max(top) - np.min(bottom)
-
-        return height
+    def append(self, component: patches.Patch):
+        self.components.append(component)
 
     def remove(self):
         """ Remove the Drawing from the figure. """
 
         for component in self.components:
             component.remove()
+
