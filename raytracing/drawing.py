@@ -140,3 +140,48 @@ class Drawing:
         for component in self.components:
             component.remove()
 
+
+class ArrowPatch(patches.FancyArrow):
+    """Define a FancyArrow patch with default RayTracing style created at (0,0).
+    Use with Drawing class to set position and scaling.
+
+    Examples
+    --------
+        Create a black arrow of height +5
+        >>> arrow = ArrowPatch(dy=5)
+
+        Set position and label by creating a Drawing object
+        >>> drawing = Drawing(arrow, x=10, label='Image')
+    """
+
+    def __init__(self, dy: float, color='k', width=0.002, headLengthRatio=0.1):
+        super(ArrowPatch, self).__init__(x=0, y=0, dx=0, dy=dy,
+                                         fc=color, ec=color,
+                                         width=width, length_includes_head=True,
+                                         head_width=width * 5, head_length=abs(dy) * headLengthRatio)
+
+
+class StopPatch(patches.Polygon):
+    """Define a Polygon patch with default RayTracing style used for aperture stops.
+    Use with Drawing class to set position and scaling.
+
+    Examples
+    --------
+        Create aperture stops for a lens
+        >>> stopAbove = StopPatch(y=halfHeight)
+        >>> stopBelow = StopPatch(y=-halfHeight)
+
+        Create aperture stops for a thick lens
+        >>> stopAbove = StopPatch(y=halfHeight, width=0.1)
+        >>> stopBelow = StopPatch(y=-halfHeight, width=0.1)
+
+        Create thick lens Drawing with a fixed width (autoScale Off)
+        >>> drawing = Drawing(thickLens, stopAbove, stopBelow, fixedWidth=True)
+    """
+    def __init__(self, y: float, width=0.01):
+        super(StopPatch, self).__init__([[- width/2, y],
+                                         [+ width/2, y]],
+                                        linewidth=3,
+                                        closed=False,
+                                        color='0.7')
+
