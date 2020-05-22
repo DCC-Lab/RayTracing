@@ -11,6 +11,7 @@ testSaveHugeFile = True
 
 class TestRays(unittest.TestCase):
 
+
     def testRays(self):
         r = Rays()
         self.assertIsNotNone(r)
@@ -34,6 +35,7 @@ class TestRays(unittest.TestCase):
         raysFromList = Rays(listOfRays)
         raysFromTuple = Rays(tupleOfRays)
         raysFromArray = Rays(npArrayOfRays)
+
         self.assertListEqual(raysFromList.rays, listOfRays)
         self.assertTupleEqual(raysFromTuple.rays, tupleOfRays)
         self.assertTrue(all(raysFromArray.rays == npArrayOfRays))
@@ -119,6 +121,25 @@ class TestRays(unittest.TestCase):
         self.assertListEqual(r.thetaValues, [0, 1, -2, -1])
 
     def testThetaValuesNotNone(self):
+        rays = Rays(listOfRays)
+        self.assertListEqual(raysFromList.rays, listOfRays)
+        self.assertListEqual(raysFromTuple.rays, listOfRays)
+        self.assertListEqual(raysFromArray.rays, listOfRays)
+        self.assertListEqual(Rays(rays).rays, listOfRays)
+
+        with self.assertRaises(TypeError) as error:
+            # This should raise an TypeError exception
+            Rays("Ray(), Ray(1), Ray(1,1)")
+
+        with self.assertRaises(TypeError) as error:
+            # This should raise an TypeError exception
+            Rays([Ray(), [1, 2], Ray()])
+
+        with self.assertRaises(TypeError) as error:
+            # This should raise an TypeError exception
+            Rays(Matrix())
+
+    def testRayCountHist(self):
         r = Rays([Ray()])
         # Don't do this, only for test purpose
         thetaValues = [0]

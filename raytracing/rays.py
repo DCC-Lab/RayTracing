@@ -4,20 +4,36 @@ import matplotlib.pyplot as plt
 import pickle
 import time
 import os
+import collections.abc as collections
 
-""" A group of rays kept as a list, to be used as a starting
-point (i.e. an object) or as a cumulative detector (i.e. at an image
-or output plane) for ImagingPath, MatrixGroup or any tracing function.
-Subclasses can provide a computed ray for Monte Carlo simulation.
+""" A source or a detector of rays
+
+We can obtain intensity distributions at from given plane by propagating
+many rays and collecting them at another plane. `Rays` is the base class
+that provides the essential mechanisms to obtain histograms on a list 
+of rays (created or collected). This list of rays is a property of the base
+class.  Subclasses are specific to a given ray distribution (Lambertian for 
+instance) and will create each ray on demand, then store them as they go
+in the rays list. 
+
+It is an iterable object, which means it can be used in an expression 
+like `for ray in rays:` which is convenient both when propagating rays 
+or when analysing the resulting rays that reached a plane in ImagingPath, 
+MatrixGroup or any tracing function. 
 """
-
 
 class Rays:
     def __init__(self, rays=None):
         if rays is None:
             self.rays = []
         else:
-            self.rays = rays
+            if isinstance(rays, collections.Iterable):
+                if all([isinstance(ray, Ray) for ray in rays]):
+                    self.rays = list(rays)
+                else:
+                    raise TypeError("'rays' elements must be of type Ray.")
+            else:
+                raise TypeError("'rays' must be iterable (i.e. a list or a tuple of Ray).")
 
         self.iteration = 0
         self.progressLog = 10000
@@ -162,6 +178,8 @@ class Rays:
         return self.rays[item]
 
     def append(self, ray):
+        if not isinstance(ray, Ray):
+            raise TypeError("'ray' must be a 'Ray' object.")
         if self.rays is not None:
             self.rays.append(ray)
 
@@ -216,21 +234,6 @@ class Rays:
     # https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
     # and https://stackoverflow.com/questions/3122049/drawing-an-anti-aliased-line-with-thepython-imaging-library
 
-    # @property
-    # def intensityError(self):
-    #     return list(map(lambda x : sqrt(x), self.distribution))
-
-    # @property
-    # def normalizedIntensity(self):
-    #     maxValue = max(self.values)
-    #     return list(map(lambda x : x/maxValue, self.distribution))
-
-    # @property
-    # def normalizedIntensityError(self):
-    #     maxValue = max(self.distribution)
-    #     return list(map(lambda x : x/maxValue, self.error))
-
-
 class UniformRays(Rays):
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, M=100, N=100):
         self.yMax = yMax
@@ -258,8 +261,8 @@ class LambertianRays(Rays):
         if yMin is None:
             self.yMin = -yMax
 
-        self.thetaMax = -pi / 2
-        self.thetaMin = pi / 2
+        self.thetaMin = -pi / 2
+        self.thetaMax = pi / 2
         self.M = M
         self.N = N
         self.I = I
@@ -290,9 +293,9 @@ class RandomRays(Rays):
 
     def __getitem__(self, item):
         if self.rays is None:
-            raise NotImplemented("You cannot access RandomRays")
+            raise NotImplementedError("You cannot access RandomRays")
         elif len(self.rays) < item:
-            raise NotImplemented("You cannot access RandomRays")
+            raise NotImplementedError("You cannot access RandomRays")
         else:
             return self.rays[item]
 
@@ -303,7 +306,7 @@ class RandomRays(Rays):
         return self.randomRay()
 
     def randomRay(self) -> Ray:
-        raise NotImplemented("You must implement randomRay() in your subclass")
+        raise NotImplementedError("You must implement randomRay() in your subclass")
 
 
 class RandomUniformRays(RandomRays):
