@@ -18,4 +18,5 @@ class TestRandomRays(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             rays[11]  # Ok, 11 > 10
 
-        self.assertIsNotNone(rays[-1])  # This should be ok, according to the code, but it doesn't make sense
+        with self.assertRaises(NotImplementedError):
+            rays[-1]
