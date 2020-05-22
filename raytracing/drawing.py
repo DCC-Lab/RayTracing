@@ -97,6 +97,7 @@ class Drawing:
 
     def axesToDataScale(self):
         """ Dimensions of the figure in data units. """
+
         xScale, yScale = self.axes.viewLim.bounds[2:]
 
         return xScale, yScale
@@ -117,5 +118,6 @@ class Drawing:
 
     def remove(self):
         """ Remove the Drawing from the figure. """
+
         for component in self.components:
             component.remove()
