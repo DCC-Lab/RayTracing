@@ -9,41 +9,35 @@ class TestMaterial(unittest.TestCase):
 
 
 class TestMaterialSubclasses(unittest.TestCase):
-    def setUp(self) -> None:
-        self.subclasses = []
-        self.fails = []
-
-        for material in dir(materials):
-            object = getattr(materials, material)
-            try:
-                if (object != Material) and issubclass(object, Material):
-                    self.subclasses.append(object)
-            except TypeError:
-                pass
-
-    def tearDown(self):
-        self.assertEqual([], self.fails)
-
+    @property
+    def subclasses(self):
+        return Material.__subclasses__()
+    
     def testMaterialSubclassesTypeError(self):
+        fails = []
         for subclass in self.subclasses:
             try:
                 self.assertRaises(TypeError, subclass.n, None)
                 self.assertRaises(TypeError, subclass.n, 'test')
             except AssertionError:
-                self.fails.append('TypeError for subclass {}'.format(subclass.__name__))
+                fails.append('TypeError for subclass {}'.format(subclass.__name__))
+        self.assertEqual([], fails)
 
     def testMaterialSubclassesValueErrors(self):
+        fails = []
         for subclass in self.subclasses:
             try:
                 self.assertRaises(ValueError, subclass.n, 100)
                 self.assertRaises(ValueError, subclass.n, 0)
                 self.assertRaises(ValueError, subclass.n, -100)
             except AssertionError:
-                self.fails.append('ValueError for subclass {}'.format(subclass.__name__))
+                fails.append('ValueError for subclass {}'.format(subclass.__name__))
+        self.assertEqual([], fails)
 
     def testMaterialSubclasses(self):
         ''' These are sample values of refractive indexes for each subclass of material for a wavelength of 5 micron.
-        In case of a new category of material, make sur to add the sample value to the list. '''
+        In case of a new category of material, make sure to add the sample value to the list. '''
+        fails = []
         refractiveIndexes = [1.3965252243506636, 1.5178527121226975, 1.5385861348077337, 1.5612286489801115,
                              1.539610715563772, 1.664053106820355, 1.5948478106562147, 1.6396821789377511,
                              1.5469302146171202, 1.5713583894047798, 1.4716376125966693, 1.459391121152617,
@@ -53,7 +47,8 @@ class TestMaterialSubclasses(unittest.TestCase):
         for subclass in self.subclasses:
             n = subclass.n(5)
             if n not in refractiveIndexes:
-                self.fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(subclass.__name__, str(n)))
+                fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(subclass.__name__, str(n)))
+        self.assertEqual([], fails)
 
 
 if __name__ == '__main__':
