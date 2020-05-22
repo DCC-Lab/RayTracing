@@ -68,8 +68,35 @@ class FigureManager:
         for drawing in self.drawings:
             drawing.update()
 
+        self.checkLabels()
+
     def onZoomCallback(self, axes):
         self.update()
+
+    def checkLabels(self):
+        labels, bboxes = [], []
+        for drawing in self.drawings:
+            if drawing.label is not None:
+                drawing.label.resetPosition()
+                bbox = drawing.label.get_tightbbox(self.figure.canvas.get_renderer())
+                if bbox is not None:  # (i.e. not out of view)
+                    dataBox = bbox.inverse_transformed(self.axes.transData)
+                    labels.append(drawing.label)
+                    bboxes.append(dataBox)
+
+        self.checkBBoxOverlap(labels, bboxes)
+
+    def checkBBoxOverlap(self, labels, bboxes):
+        for (a, b) in itertools.combinations(range(len(bboxes)), 2):
+            if bboxes[a].overlaps(bboxes[b]):
+                if bboxes[b].x1 > bboxes[a].x1:
+                    requiredSpacing = bboxes[a].x1 - bboxes[b].x0
+                else:
+                    requiredSpacing = bboxes[a].x0 - bboxes[b].x1
+                requiredSpacing *= 1.2
+
+                labels[a].offset(dx=- requiredSpacing/2)
+                labels[b].offset(dx=requiredSpacing/2)
 
     def drawPoint(self, x, y, label=None):
         """ Primitive to draw a point with or without labels """
