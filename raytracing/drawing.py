@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib import patches, transforms
+from matplotlib import text as mplText
 from typing import List
 import numpy as np
 
@@ -185,3 +186,29 @@ class StopPatch(patches.Polygon):
                                         closed=False,
                                         color='0.7')
 
+
+class Label(mplText.Text):
+    def __init__(self, text: str, x=0.0, y=0.0):
+        super(Label, self).__init__(x=x, y=y, text=text, fontsize=8, horizontalalignment='center')
+
+        self.offset = 0
+
+    @property
+    def position(self):
+        return self.get_position()
+
+    @position.setter
+    def position(self, xy: tuple):
+        self.set_position(xy)
+
+    def offset(self, dx):
+        self.offset = dx
+
+        x, y = self.get_position()
+        self.set_position((x + self.offset, y))
+
+    def resetPosition(self):
+        x, y = self.get_position()
+        self.set_position((x - self.offset, y))
+
+        self.offset = 0
