@@ -621,15 +621,6 @@ class ImagingPath(MatrixGroup):
         """ Display the optical system and trace the rays. If comments are included
         they will be displayed on a graph in the bottom half of the plot.
 
-        todo: how do we see LayoutHelper being used/called ? inside ImagingPath?
-        ImagingPath.display():
-            layout = LayoutHelper()
-            for element in self.elements:
-                layout.drawAt(z=?, element.drawing())
-            layout.display()
-
-        # does displaying a layout makes sense? aren't we displaying a figure instead?
-
         """
         if comments is not None:
             fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
