@@ -635,8 +635,8 @@ if 19 in examples:
 ```
 
 ![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simpleObjectImage.png)
-![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscope.png)
-![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/illumination.png)
+![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscopeSimple.png)
+![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/kholerIllumination.png)
 
 ## Known limitations
 
