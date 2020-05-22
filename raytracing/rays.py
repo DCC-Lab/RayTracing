@@ -286,18 +286,14 @@ class RandomRays(Rays):
         self.thetaMin = thetaMin
         if thetaMin is None:
             self.thetaMin = -thetaMax
-        super(RandomRays, self).__init__(rays=None)  # Even with this, rays = []
+        super(RandomRays, self).__init__()  # Even with this, rays = []
+        self.rays = None
 
     def __len__(self) -> int:
         return self.maxCount
 
     def __getitem__(self, item):
-        if self.rays is None:  # This can never happen, rays = []
-            raise NotImplementedError("You cannot access RandomRays")
-        elif len(self.rays) < item:
-            raise NotImplementedError("You cannot access RandomRays")
-        else:
-            return self.rays[item]  # This always lead to IndexError, rays is always []
+        raise NotImplementedError("You cannot access RandomRays")
 
     def __next__(self) -> Ray:
         if self.iteration >= self.maxCount:
