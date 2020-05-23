@@ -1,7 +1,7 @@
 from raytracing import *
 
 '''
-In any imaging systems, lenses diameter are of great importance as they calculate Field Stop and Aperture Stop. It is AS that controls light acceptance of light and poorly placed FS causes vignetting and it has an impact on image quality.
+In any imaging systems, lenses diameter are of great importance as they calculate Field Stop and Aperture Stop. It is AS that controls light acceptance and poorly placed FS causes vignetting and it has an impact on image quality.
 
 The following code shows a simple imaging system with three different paths containing different lens diameter.
 
