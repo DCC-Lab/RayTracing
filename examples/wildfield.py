@@ -1,7 +1,13 @@
 from raytracing import *
 
 '''
-Too small lenses in a 4f system causes vignetting. This code calculates accurate optical system parameters to avoid vignetting and obtain a good image size. 
+In any imaging systems, lenses diameter are of great importance as they calculate Field Stop and Aperture Stop. It is AS that controls light acceptance of light and poorly placed FS causes vignetting and it has an impact on image quality.
+
+The following code shows a simple imaging system with three different paths containing different lens diameter.
+
+1. The first one shows that if both lenses are too small, the AS is the first lens and the FS is the second lens. We get  vignetting, since Field Stop is poorly placed at a lens instead of the image
+2. The Second one shows that the second lens is smaller than the first one, so the AS is on the second lens, FS as the camera.
+3. The last one shows that both lenses are big enough to make the first lens the AS and the “camera” as FS.
 '''
 
 path = ImagingPath()
