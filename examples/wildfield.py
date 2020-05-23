@@ -13,10 +13,10 @@ path.name = "Telescope"
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=20))
 path.append(Space(d=100))
-path.append(Lens(f=75,diameter=20))
-path.append(Space(d=75))
+path.append(Lens(f=35,diameter=20))
+path.append(Space(d=35))
 path.append(Aperture(diameter=20,label='Camera'))
-path.append(Space(d=75))
+path.append(Space(d=35))
 path.display()
 
 
@@ -26,10 +26,10 @@ path.name = "Telescope"
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=30))
 path.append(Space(d=100))
-path.append(Lens(f=75,diameter=25))
-path.append(Space(d=75))
+path.append(Lens(f=35,diameter=25))
+path.append(Space(d=35))
 path.append(Aperture(diameter=20,label='Camera'))
-path.append(Space(d=75))
+path.append(Space(d=35))
 path.display()
 
 
@@ -39,21 +39,8 @@ path.name = "Telescope"
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=30))
 path.append(Space(d=100))
-path.append(Lens(f=75,diameter=30))
-path.append(Space(d=75))
+path.append(Lens(f=35,diameter=30))
+path.append(Space(d=35))
 path.append(Aperture(diameter=20,label='Camera'))
-path.append(Space(d=75))
+path.append(Space(d=35))
 path.display()
-
-
-
-
-
-
-
-
-
-
-
-
-
