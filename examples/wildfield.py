@@ -16,6 +16,8 @@ path.append(Space(d=50))
 path.append(Space(d=100))
 path.append(Lens(f=100,diameter=20))
 path.append(Space(d=100))
+path.append(Aperture(diameter=10,label='Camera'))
+path.append(Space(d=100))
 path.display()
 
 
@@ -28,6 +30,8 @@ path.append(Space(d=50))
 path.append(Space(d=100))
 path.append(Lens(f=100,diameter=25))
 path.append(Space(d=100))
+path.append(Aperture(diameter=10,label='Camera'))
+path.append(Space(d=100))
 path.display()
 
 
@@ -39,6 +43,8 @@ path.append(Lens(f=50,diameter=25))
 path.append(Space(d=50))
 path.append(Space(d=100))
 path.append(Lens(f=100,diameter=25))
+path.append(Space(d=100))
+path.append(Aperture(diameter=10,label='Camera'))
 path.append(Space(d=100))
 path.display()
 
