@@ -12,12 +12,41 @@ from raytracing import *
 
 
 path = ImagingPath()
-path.objectHeight = 1
+path.objectHeight = 15
 path.append(Space(d=5))
-path.append(Lens(f=5), diameter=25.4)
+path.append(Lens(f=5, diameter=25.4))
 path.append(Space(d=10))
-path.append(Lens(f=5), diameter=25.4)
+path.append(Lens(f=5, diameter=20))
 path.append(Space(d=5))
-path.append(Aperture(diameter=10),label='Camera')
+path.append(Aperture(diameter=10,label='Camera'))
+path.append(Space(d=5))
 
+# print(path.imageSize())
+path.display()
+
+
+path = ImagingPath()
+path.objectHeight = 15
+path.append(Space(d=5))
+path.append(Lens(f=5, diameter=25.4))
+path.append(Space(d=10))
+path.append(Lens(f=5, diameter=25.4))
+path.append(Space(d=5))
+path.append(Aperture(diameter=10,label='Camera'))
+path.append(Space(d=5))
+
+# print(path.imageSize())
+path.display()
+
+path = ImagingPath()
+path.objectHeight = 15
+path.append(Space(d=5))
+path.append(Lens(f=5, diameter=20))
+path.append(Space(d=10))
+path.append(Lens(f=5, diameter=20))
+path.append(Space(d=5))
+path.append(Aperture(diameter=10,label='Camera'))
+path.append(Space(d=5))
+
+# print(path.imageSize())
 path.display()
