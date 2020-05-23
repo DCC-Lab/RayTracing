@@ -1,4 +1,4 @@
-iimport sys
+import sys
 import os
 sys.path.insert(0, os.path.abspath('../'))
 
@@ -44,6 +44,10 @@ path.append(Space(d=75))
 path.append(Aperture(diameter=20,label='Camera'))
 path.append(Space(d=75))
 path.display()
+
+
+
+
 
 
 
