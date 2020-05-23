@@ -14,6 +14,8 @@ path.append(Space(d=50))
 path.append(Space(d=100))
 path.append(Lens(f=100,diameter=20))
 path.append(Space(d=100))
+path.display()
+
 
 
 path = ImagingPath()
@@ -24,6 +26,8 @@ path.append(Space(d=50))
 path.append(Space(d=100))
 path.append(Lens(f=100,diameter=30))
 path.append(Space(d=100))
+path.display()
+
 
 
 path = ImagingPath()
@@ -34,6 +38,8 @@ path.append(Space(d=50))
 path.append(Space(d=100))
 path.append(Lens(f=100,diameter=25))
 path.append(Space(d=100))
+path.display()
+
 
 
 
