@@ -11,12 +11,12 @@ Too small lenses in a 4f system causes vignetting. This code calculates accurate
 path = ImagingPath()
 path.name = "Telescope"
 path.append(Space(d=50))
-path.append(Lens(f=50,diameter=20))
+path.append(Lens(f=50,diameter=30))
 path.append(Space(d=100))
-path.append(Lens(f=35,diameter=20))
-path.append(Space(d=35))
-path.append(Aperture(diameter=20,label='Camera'))
-path.append(Space(d=35))
+path.append(Lens(f=50,diameter=30))
+path.append(Space(d=50))
+path.append(Aperture(diameter=15,label='Camera'))
+path.append(Space(d=50))
 path.display()
 
 
@@ -24,12 +24,12 @@ path.display()
 path = ImagingPath()
 path.name = "Telescope"
 path.append(Space(d=50))
-path.append(Lens(f=50,diameter=30))
+path.append(Lens(f=50,diameter=40))
 path.append(Space(d=100))
-path.append(Lens(f=35,diameter=25))
-path.append(Space(d=35))
-path.append(Aperture(diameter=20,label='Camera'))
-path.append(Space(d=35))
+path.append(Lens(f=50,diameter=35))
+path.append(Space(d=50))
+path.append(Aperture(diameter=15,label='Camera'))
+path.append(Space(d=50))
 path.display()
 
 
@@ -37,10 +37,14 @@ path.display()
 path = ImagingPath()
 path.name = "Telescope"
 path.append(Space(d=50))
-path.append(Lens(f=50,diameter=30))
+path.append(Lens(f=50,diameter=40))
 path.append(Space(d=100))
-path.append(Lens(f=35,diameter=30))
-path.append(Space(d=35))
-path.append(Aperture(diameter=20,label='Camera'))
-path.append(Space(d=35))
+path.append(Lens(f=50,diameter=40))
+path.append(Space(d=50))
+path.append(Aperture(diameter=15,label='Camera'))
+path.append(Space(d=50))
 path.display()
+
+
+
+
