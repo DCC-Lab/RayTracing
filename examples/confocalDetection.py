@@ -12,7 +12,7 @@ pinholeModifier = {1/3:[], 1:[], 3:[]} # Dictionary having a pinhole factor with
 for pinhole in pinholeModifier:
 
     finalRays = pinholeModifier[pinhole]
-    pinholeSize = 0.009374*pinhole # Ideal size of the pinhole times a certain factor
+    #pinholeSize = 0.009374*pinhole # Ideal size of the pinhole times a certain factor
     positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -300, -500, -800, -1000] # list of all relative positions from the ideal focal spot position in nm
     print(".")
 
@@ -36,6 +36,7 @@ for pinhole in pinholeModifier:
         illumination.append(Space(d=90))
         illumination.append(Lens(f=50))
         illumination.append(Space(d=50))
+        pinholeSize = illumination.imageSize()*pinhole # Ideal size of the pinhole times a certain factor
         illumination.append(Aperture(diameter=pinholeSize))
 
         outputRays = illumination.traceManyThrough(inputRays, progress=False) # Counts how many rays makes it through the pinhole
