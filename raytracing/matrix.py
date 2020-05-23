@@ -614,7 +614,8 @@ class Matrix(object):
         Parameters
         ----------
         inputRays : object of Ray class
-            A group of rays
+            A List of rays, each object includes two ray. The fisr is the properties
+            of the input ray and the second is the properties of the output ray.
 
         Returns
         -------
@@ -623,7 +624,35 @@ class Matrix(object):
 
         Examples
         --------
-        (needs clarification)
+        First, a list of 10 uniformly distributed random ray is generated
+        and then the output of the system for the rays are calculated.
+
+        >>> from raytracing import *
+        >>> # M is an ABCD matrix of a lens (f=10)
+        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
+        >>> # inputRays is a group of random rays with uniform distribution at center
+        >>> nRays = 10
+        >>> inputRays = RandomUniformRays(yMax=0, maxCount=nRays)
+        >>> Tr=M.traceMany(inputRays)
+        >>> #index[0] of the first object in the list is the first input
+        >>> print('The properties of the first input ray:', Tr[0][0])
+        The properties of the first input ray:
+         /       \
+        |  0.000  |
+        |         |
+        |  1.113  |
+         \       /
+        z = 0.000
+
+        >>> #index[1] of the first object in the list is the first output
+        >>> print('The properties of the first output ray:', Tr[0][1])
+        The properties of the first output ray:
+         /       \
+        |  0.000  |
+        |         |
+        |  1.113  |
+         \       /
+        z = 2.000
 
         See Also
         --------
@@ -639,14 +668,11 @@ class Matrix(object):
         return manyRayTraces
 
     def traceManyThrough(self, inputRays, progress=True):
-        """ Trace each ray from a list or a Rays() distribution from
+        """This function trace each ray from a list or a Rays() distribution from
         front edge of element to the back edge.
         Input can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list of rays.
         UniformRays, LambertianRays() etc... can be used.
-
-        We assume that if the user will be happy to receive 
-        Rays() as an output even if they passed a list of rays as inputs.
 
         Parameters
         ----------
@@ -661,11 +687,20 @@ class Matrix(object):
         outputRays : object of Ray class
             List of Ray() (i,e. a raytrace), one for each input ray.
 
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M is an ABCD matrix of a lens (f=10)
+        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
+        >>> # inputRays is a group of random rays with uniform distribution at center
+        >>> nRays = 3
+        >>> inputRays = RandomUniformRays(yMax=5, yMin=0, maxCount=nRays)
+        >>> Tr=M.traceManyThrough(inputRays)
+        >>> print('heights of the output rays:', Tr.yValues)
+        heights of the output rays: [4.323870378874155, 2.794064779525441, 0.7087442942835853]
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        >>>> print('angles of the output rays:', Tr.thetaValues)
+        angles of the output rays: [-1.499826089814585, 0.7506850963379516, -0.44348989046728904]
 
         See Also
         --------
@@ -674,7 +709,8 @@ class Matrix(object):
 
         Notes
         -----
-        Notes about the implementation algorithm (if needed).
+        We assume that if the user will be happy to receive
+        Rays() as an output even if they passed a list of rays as inputs.
         """
 
         try:
@@ -769,11 +805,25 @@ class Matrix(object):
 
         return Rays(rays=outputRays)
 
-    @property
     def isImaging(self):
         """If B=0, then the matrix is from a conjugate plane to another
         (i.e. object at the front edge and image at the back edge).
 
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=10)
+        >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
+        >>> print('isImaging:' , M1.isImaging)
+        isImaging: True
+
+        >>> # M2 is an ABCD matrix of free space (d=2)
+        >>> M2= Matrix(A=1,B=2,C=0,D=1,physicalLength=2,label='Lens')
+        >>> print('isImaging:' , M2.isImaging)
+        isImaging: False
+
+        Notes
+        -----
         In this case:
         A = transverse magnification
         D = angular magnification
@@ -782,9 +832,21 @@ class Matrix(object):
 
         return abs(self.B) < Matrix.__epsilon__
 
-    @property
     def hasPower(self):
         """ If True, then c=!0
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=10)
+        >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
+        >>> print('hasPower:' , M1.hasPower)
+        hasPower: True
+
+        >>> # M2 is an ABCD matrix of free space (d=2)
+        >>> M2= Matrix(A=1,B=2,C=0,D=1,physicalLength=2,label='Lens')
+        >>> print('hasPower:' , M2.hasPower)
+        hasPower: False
         """
         return self.C != 0
 
@@ -809,6 +871,10 @@ class Matrix(object):
         -------
         focalDistances : array
             Returns the FFL and BFL
+
+        Examples
+        --------
+
         """
 
         return self.effectiveFocalLengths()
