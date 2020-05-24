@@ -197,7 +197,7 @@ class Label(mplText.Text):
     def __init__(self, text: str, x=0.0, y=0.0):
         super(Label, self).__init__(x=x, y=y, text=text, fontsize=8, horizontalalignment='center')
 
-        self.offset = 0
+        self.offset = 0.0
 
     @property
     def position(self):
@@ -207,14 +207,19 @@ class Label(mplText.Text):
     def position(self, xy: tuple):
         self.set_position(xy)
 
-    def offset(self, dx):
-        self.offset = dx
+    def translate(self, dx: float):
+        """Translate the label in the x-axis by a small amount 'dx'.
+
+        The offset is stackable and can be removed with the method resetPosition().
+        Used by the FigureManager to solve overlapping issues with the labels.
+        """
+        self.offset += dx
 
         x, y = self.get_position()
-        self.set_position((x + self.offset, y))
+        self.set_position((x + dx, y))
 
     def resetPosition(self):
         x, y = self.get_position()
         self.set_position((x - self.offset, y))
 
-        self.offset = 0
+        self.offset = 0.0
