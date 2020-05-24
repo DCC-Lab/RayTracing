@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib import patches, transforms
 from matplotlib import text as mplText
+from matplotlib.backend_bases import RendererBase
 from typing import List
 import numpy as np
 
@@ -206,6 +207,20 @@ class Label(mplText.Text):
     @position.setter
     def position(self, xy: tuple):
         self.set_position(xy)
+
+    def isRendered(self, renderer: RendererBase):
+        if self.get_tightbbox(renderer) is None:
+            return False
+        return True
+
+    def boundingBox(self, axes: plt.Axes, figure: plt.Figure, stretch=1.2) -> transforms.BboxBase:
+        """Bounding box of the label drawn on a figure.
+        Stretched in the x-axis to give more free space to the labels."""
+
+        displayBox = self.get_tightbbox(figure.canvas.get_renderer())
+        dataBox = displayBox.inverse_transformed(axes.transData)
+        dataBox = dataBox.expanded(sw=stretch, sh=1)
+        return dataBox
 
     def translate(self, dx: float):
         """Translate the label in the x-axis by a small amount 'dx'.
