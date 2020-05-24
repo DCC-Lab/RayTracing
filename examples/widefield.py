@@ -6,11 +6,11 @@ It is AS that controls light acceptance and poorly placed FS causes vignetting a
 
 The following code shows a simple imaging system with three different paths containing different lens diameter.
 
-1. The first one shows that if both lenses are too small, the AS is the first lens and the FS is the second lens. 
+(a). The first one shows that if both lenses are too small, the AS is the first lens and the FS is the second lens. 
     We get vignetting on the final image, since the FS is poorly placed at a lens instead of the detector's camera. 
-2. The second one shows that the second lens is smaller than the first one, so the AS is on the second lens, 
+(b). The second one shows that the second lens is smaller than the first one, so the AS is on the second lens, 
     FS as the camera.
-3. The last one shows that both lenses are big enough to make the first lens the AS and the detector's camera the FS.
+(c). The last one shows that both lenses are big enough to make the first lens the AS and the detector's camera the FS.
 '''
 
 path = ImagingPath()
