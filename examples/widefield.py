@@ -17,9 +17,9 @@ path = ImagingPath()
 path.fanNumber = 3
 path.objectHeight = 10
 path.append(Space(d=50))
-path.append(Lens(f=50, diameter=12))
+path.append(Lens(f=50, diameter=15))
 path.append(Space(d=100))
-path.append(Lens(f=50, diameter=12))
+path.append(Lens(f=50, diameter=15))
 path.append(Space(d=50))
 path.append(Aperture(diameter=10, label='Camera'))
 path.append(Space(d=50))
