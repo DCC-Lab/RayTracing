@@ -40,7 +40,8 @@ class FigureManager:
         else:
             self.figure, self.axes = plt.subplots(figsize=(10, 7))
 
-        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+    def add(self, drawing: Drawing):
+        self.drawings.append(drawing)
 
     def draw(self):
         for drawing in self.drawings:
@@ -49,8 +50,8 @@ class FigureManager:
         self.updateDisplayRange()
         self.update()
 
-    def add(self, drawing: Drawing):
-        self.drawings.append(drawing)
+    def onZoomCallback(self, axes):
+        self.update()
 
     def updateDisplayRange(self):
         """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all drawings."""
@@ -117,6 +118,8 @@ class FigureManager:
         raise (NotImplemented)
 
     def display(self):
+        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+
         self._showPlot()
 
     def _showPlot(self):  # internal, do not use
@@ -134,3 +137,6 @@ class FigureManager:
 
         except KeyboardInterrupt:
             plt.close()
+
+    def reset(self):
+        pass
