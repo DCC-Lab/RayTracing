@@ -1,3 +1,4 @@
+
 from raytracing import *
 
 '''
@@ -7,11 +8,11 @@ The following code shows a simple imaging system with three different paths cont
 
 1. The first one shows that if both lenses are too small, the AS is the first lens and the FS is the second lens. We get  vignetting, since Field Stop is poorly placed at a lens instead of the image
 2. The Second one shows that the second lens is smaller than the first one, so the AS is on the second lens, FS as the camera.
-3. The last one shows that both lenses are large enough to make the first lens the AS and the “camera” as FS.
+3. The last one shows that both lenses are big enough to make the first lens the AS and the “camera” as FS.
 '''
 
 path = ImagingPath()
-path.name = "Telescope"
+path.objectHeight = 20
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=30))
 path.append(Space(d=100))
@@ -24,7 +25,7 @@ path.display()
 
 
 path = ImagingPath()
-path.name = "Telescope"
+path.objectHeight = 20
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=40))
 path.append(Space(d=100))
@@ -37,7 +38,7 @@ path.display()
 
 
 path = ImagingPath()
-path.name = "Telescope"
+path.objectHeight = 20
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=40))
 path.append(Space(d=100))
