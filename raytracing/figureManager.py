@@ -65,39 +65,69 @@ class FigureManager:
         self.axes.set_ylim(-halfHeight * 1.5, halfHeight * 1.5)
 
     def update(self):
-        """Update all figure drawings to properly rescale their dimensions with the display range."""
+        """Update all figure drawings to properly rescale their dimensions with the display range.
+        Fix overlapping labels if any. """
         for drawing in self.drawings:
             drawing.update()
 
-        self.checkLabels()
+        self.resetLabelOffsets()
+        self.fixLabelOverlaps()
 
-    def onZoomCallback(self, axes):
-        self.update()
+    def resetLabelOffsets(self):
+        """Reset previous offsets applied to the labels.
 
-    def checkLabels(self):
-        labels, bboxes = [], []
+        Used with a zoom callback to properly replace the labels.
+        """
         for drawing in self.drawings:
-            if drawing.label is not None:
+            if drawing.hasLabel:
                 drawing.label.resetPosition()
-                bbox = drawing.label.get_tightbbox(self.figure.canvas.get_renderer())
-                if bbox is not None:  # (i.e. not out of view)
-                    dataBox = bbox.inverse_transformed(self.axes.transData)
+
+    def getRenderedLabels(self) -> List[Label]:
+        """List of labels rendered inside the current display."""
+        labels = []
+        for drawing in self.drawings:
+            if drawing.hasLabel:
+                if drawing.label.isRenderedOn(self.figure):
                     labels.append(drawing.label)
-                    bboxes.append(dataBox)
+        return labels
 
-        self.checkBBoxOverlap(labels, bboxes)
+    def fixLabelOverlaps(self, maxIteration: int = 5):
+        """Iteratively identify overlapping label pairs and move them apart in x-axis."""
+        labels = self.getRenderedLabels()
+        if len(labels) < 2:
+            return
 
-    def checkBBoxOverlap(self, labels, bboxes):
-        for (a, b) in itertools.combinations(range(len(bboxes)), 2):
-            if bboxes[a].overlaps(bboxes[b]):
-                if bboxes[b].x1 > bboxes[a].x1:
-                    requiredSpacing = bboxes[a].x1 - bboxes[b].x0
-                else:
-                    requiredSpacing = bboxes[a].x0 - bboxes[b].x1
-                requiredSpacing *= 1.2
+        i = 0
+        while i < maxIteration:
+            noOverlap = True
+            boxes = [label.boundingBox(self.axes, self.figure) for label in labels]
+            for (a, b) in itertools.combinations(range(len(labels)), 2):
+                boxA, boxB = boxes[a], boxes[b]
 
-                labels[a].offset(dx=- requiredSpacing/2)
-                labels[b].offset(dx=requiredSpacing/2)
+                if boxA.overlaps(boxB):
+                    noOverlap = False
+                    if boxB.x1 > boxA.x1:
+                        requiredSpacing = boxA.x1 - boxB.x0
+                    else:
+                        requiredSpacing = boxA.x0 - boxB.x1
+                    requiredSpacing *= 1.2
+
+                    self.translateLabel(labels[a], boxA, dx=-requiredSpacing/2)
+                    self.translateLabel(labels[b], boxB, dx=requiredSpacing/2)
+
+            i += 1
+            if noOverlap:
+                break
+
+    def translateLabel(self, label, bbox, dx):
+        """Internal method to translate a label and make sure it stays inside the display."""
+        label.translate(dx)
+
+        xMin, xMax = self.axes.get_xlim()
+        if bbox.x0 + dx < xMin:
+            label.translate(xMin - (bbox.x0 + dx))
+        elif bbox.x1 + dx > xMax:
+            label.translate(xMax - (bbox.x1 + dx))
 
     def drawPoint(self, x, y, label=None):
         """ Primitive to draw a point with or without labels """

@@ -18,8 +18,9 @@ class TestFigureManager(unittest.TestCase):
                       StopPatch(y=-5)]
 
         figure.add(Drawing(ArrowPatch(dy=5, color='b'), x=0, label="Object"))
-        figure.add(Drawing(ArrowPatch(dy=-5, color='r'), x=7.8, label="Image"))
-        figure.add(Drawing(*components, x=8, label="Lens"))
+        figure.add(Drawing(ArrowPatch(dy=-5, color='r'), x=7.6, label="Label 1"))
+        figure.add(Drawing(ArrowPatch(dy=-5, color='r'), x=7.8, label="Label 2"))
+        figure.add(Drawing(*components, x=8, label="Label 3"))
 
         figure.draw()
 

@@ -208,8 +208,9 @@ class Label(mplText.Text):
     def position(self, xy: tuple):
         self.set_position(xy)
 
-    def isRendered(self, renderer: RendererBase):
-        if self.get_tightbbox(renderer) is None:
+    def isRenderedOn(self, figure: plt.Figure):
+        """Whether the label is rendered on the given figure (i.e. visible when displayed)."""
+        if self.get_tightbbox(figure.canvas.get_renderer()) is None:
             return False
         return True
 
@@ -234,6 +235,7 @@ class Label(mplText.Text):
         self.set_position((x + dx, y))
 
     def resetPosition(self):
+        """Remove the effect of previous translations."""
         x, y = self.get_position()
         self.set_position((x - self.offset, y))
 
