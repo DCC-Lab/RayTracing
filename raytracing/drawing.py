@@ -54,6 +54,12 @@ class Drawing:
     def createLabel(self, label: str):
         self.label = Label(text=label, y=self.halfHeight() * 1.2)
 
+    @property
+    def hasLabel(self) -> bool:
+        if self.label is None:
+            return False
+        return True
+
     def applyTo(self, axes: plt.Axes, x: float = None, y: float = None):
         """ Apply the Drawing on a figure at a given position (x, y) with auto-scale.
 
