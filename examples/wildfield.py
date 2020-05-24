@@ -12,7 +12,7 @@ The following code shows a simple imaging system with three different paths cont
 '''
 
 path = ImagingPath()
-path.objectHeight = 20
+path.objectHeight = 10
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=30))
 path.append(Space(d=100))
@@ -25,7 +25,7 @@ path.display()
 
 
 path = ImagingPath()
-path.objectHeight = 20
+path.objectHeight = 10
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=40))
 path.append(Space(d=100))
@@ -38,7 +38,7 @@ path.display()
 
 
 path = ImagingPath()
-path.objectHeight = 20
+path.objectHeight = 10
 path.append(Space(d=50))
 path.append(Lens(f=50,diameter=40))
 path.append(Space(d=100))
