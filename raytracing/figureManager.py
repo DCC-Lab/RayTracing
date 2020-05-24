@@ -110,7 +110,6 @@ class FigureManager:
                         requiredSpacing = boxA.x1 - boxB.x0
                     else:
                         requiredSpacing = boxA.x0 - boxB.x1
-                    requiredSpacing *= 1.2
 
                     self.translateLabel(labels[a], boxA, dx=-requiredSpacing/2)
                     self.translateLabel(labels[b], boxB, dx=requiredSpacing/2)
