@@ -26,6 +26,7 @@ for pinhole in pinholeModifier:
     for z in positions:
 
         newPositions = 5 + (z*0.000001)  # Working distance of the objective + position
+        #print(newPositions)
         nRays = 10000  # Number of total rays produced by the focal spot
         # Production of rays from a focal spot with a radius of 250 nm
         inputRays = RandomUniformRays(yMax=0.000250, yMin=-0.000250, maxCount=nRays)
@@ -44,7 +45,10 @@ for pinhole in pinholeModifier:
         illumination.append(Space(d=90))
         illumination.append(Lens(f=50))
         illumination.append(Space(d=50))
-        pinholeSize = illumination.imageSize()*pinhole  # Ideal size of the pinhole times a certain factor
+        pinholeSize = 0.009375 * pinhole
+        #pinholeSize = illumination.imageSize()*pinhole  # Ideal size of the pinhole times a certain factor
+        #print(pinholeSize)
+        #print(illumination.imageSize())
         illumination.append(Aperture(diameter=pinholeSize))
 
         # Counts how many rays make it through the pinhole
