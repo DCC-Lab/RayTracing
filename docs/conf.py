@@ -12,6 +12,7 @@
 
 import os
 import sys
+import shutil
 import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('..'))
@@ -27,8 +28,7 @@ author = 'DCC-Lab'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.napoleon', 'recommonmark', 'sphinx_rtd_theme']
-
+extensions = ['sphinx.ext.graphviz', 'sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.napoleon', 'recommonmark', 'sphinx_rtd_theme', 'sphinx.ext.inheritance_diagram', 'sphinx_automodapi.automodapi']
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -51,3 +51,9 @@ html_static_path = ['_static']
 
 # explicit master doc for ReadTheDocs build
 master_doc = 'index'
+
+# Inheritance-diagram params
+inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
+                              color='dodgerblue1', style='filled')
+inheritance_graph_attrs = dict(rankdir="LR", size='"6.0, 8.0"',
+                               fontsize=14, ratio='compress')
