@@ -273,7 +273,6 @@ class ImagingPath(MatrixGroup):
         """
         fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
-        print(distance, conjugateMatrix)
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
 
