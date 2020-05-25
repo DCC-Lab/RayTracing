@@ -51,16 +51,16 @@ class Matrix(object):
         Value of the index (2,2) in the ABCD matrix of the element. (default =1)
     physicalLength: float (Optional)
         Length of the object. (default =0)
-    frontVertex : (type?) (Optional)
+    frontVertex : float (Optional)
         First interface used for FFL (default = None)
-    backVertex : (type?) (Optional)
+    backVertex : float (Optional)
         Last interface used for BFL (default = None)
     frontIndex : float (Optional)
         Index of refraction at the entrance. (default = 1.0)
-        This value cannot be negative.
+        This value cannot be less than 1.0.
     backIndex : float (Optional)
         Index of refractionb at exit. (default = 1.0)
-        This value cannot be negative.
+        This value cannot be less than 1.0.
     apertureDiameter : float (Optional)
         Aperture of the element. (default = +Inf)
         The diameter of the aperture should be a positive value.
