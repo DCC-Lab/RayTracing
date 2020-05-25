@@ -35,7 +35,7 @@ class TestMaterialSubclasses(unittest.TestCase):
         self.assertEqual([], fails)
 
     def testMaterialSubclasses(self):
-        ''' These are sample values of refractive indexes for each subclass of material for a wavelength of 5 micron.
+        ''' These are sample values of refractive indices for each subclass of material for a wavelength of 0.6 micron.
         In case of a new category of material, make sure to add the sample value to the list. Indices can be found on :
         https://refractiveindex.info/ '''
         fails = []
