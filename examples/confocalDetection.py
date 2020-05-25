@@ -3,6 +3,9 @@ To obtain and plot the intensity of a point source at the pinhole of a confocal 
  as a function of position of focal spot by sending a large number of rays in the system (changing the position of the
  focal spot provides an optical sectioning process).
 """
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../'))
 
 from raytracing import *
 import matplotlib.pyplot as plt
