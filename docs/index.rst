@@ -11,12 +11,10 @@ makes use of ABCD matrices and does not consider aberrations (spherical or
 chromatic). Since it uses the ABCD formalism (or Ray matrices, or Gauss
 matrices) it can perform tracing of rays and gaussian laser beams.
 
-.. inheritance-diagram:: raytracing.MatrixGroup
-.. inheritance-diagram:: raytracing.LaserPath
-   :parts: 1
+.. automod-diagram:: raytracing
 
-.. automodapi:: raytracing
-   :include-all-objects:
+
+
 Contents
 ^^^^^^^^
 

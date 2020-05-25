@@ -53,7 +53,8 @@ html_static_path = ['_static']
 master_doc = 'index'
 
 # Inheritance-diagram params
-inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
-                              color='dodgerblue1', style='filled')
-inheritance_graph_attrs = dict(rankdir="LR", size='"6.0, 8.0"',
-                               fontsize=14, ratio='compress')
+# inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
+#                               color='dodgerblue1', style='filled')
+# inheritance_graph_attrs = dict(rankdir="LR", size='"6.0, 8.0"',
+#                                fontsize=14, ratio='compress')
+graphviz_output_format = 'svg'
