@@ -1252,7 +1252,7 @@ class Matrix(object):
 
         Examples
         --------
-        >>> # M1 is an ABCD matrix of an object
+        >>> # Mat is an ABCD matrix of an object
         >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,label='Lens')
         >>> Mat.display()
         >>> flippedMat=Mat.flipOrientation()
@@ -1296,6 +1296,21 @@ class Matrix(object):
     def display(self):  # pragma: no cover
         """ Display this component, without any ray tracing but with
         all of its cardinal points and planes.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # Mat is an ABCD matrix of an object
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,
+        >>>            frontIndex=1.5,backIndex=1,label='Lens')
+        >>> Mat.display()
+
+        And the result is shown in the following figure:
+
+        .. image:: display.png
+            :width: 70%
+            :align: center
+
 
         Notes
         -----
