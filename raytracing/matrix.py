@@ -1628,6 +1628,20 @@ class Lens(Matrix):
         The diameter (default=Inf)
     label : string
         The label of the lens
+
+    Examples
+    --------
+    >>> from raytracing import *
+    >>> #define a lens with f=5 and diameter 20
+    >>> L=Lens(f=5,diameter=20,label='Lens')
+    >>> print('The transfer matrix of Lens :', L)
+    The transfer matrix of Lens :
+     /             \
+    |  1.000    0.000 |
+    |               |
+    | -0.200    1.000 |
+     \             /
+    f=5.000
     """
 
     def __init__(self, f, diameter=float('+Inf'), label=''):
@@ -1709,6 +1723,21 @@ class CurvedMirror(Matrix):
     label : string
         The label of the curved mirror
 
+    Examples
+    --------
+    >>> from raytracing import *
+    >>> #define a curved mirror with R=5 and diameter 20
+    >>> M=CurvedMirror(R=5,diameter=20,label='curved mirror')
+    >>> print('The transfer matrix of curved mirror :' ,M)
+    The transfer matrix of curved mirror :
+     /             \
+    |  1.000    0.000 |
+    |               |
+    | -0.400    1.000 |
+     \             /
+    f=2.500
+
+
     Notes
     -----
     A concave mirror (i.e. converging mirror) has a negative
@@ -1780,6 +1809,19 @@ class Space(Matrix):
     label : string
         The label of the free space
 
+    Examples
+    --------
+    >>> from raytracing import *
+    >>> #define a free space of length 3, refraction index 1 and diameter 20
+    >>> S=Space(d=3,n=1,diameter=20,label='free space')
+    >>> print('The transfer matrix of free space :' ,S)
+    The transfer matrix of free space :
+     /             \
+    |  1.000    3.000 |
+    |               |
+    |  0.000    1.000 |
+     \             /
+    f = +inf (afocal)
     """
 
     def __init__(self, d, n=1, diameter=float('+Inf'), label=''):
@@ -1940,6 +1982,20 @@ class ThickLens(Matrix):
         The diameter of the thick lens. (default=Inf)
     label : string (Optional)
         The label of the thick lens
+
+    Examples
+    --------
+    >>> from raytracing import *
+    >>> #define a thick lens with desired parameters
+    >>> TLens=ThickLens(n=1.5,R1=4,R2=6,thickness=3,diameter=20,label='thick lens')
+    >>> print('The transfer matrix of thick lens :' ,TLens)
+    The transfer matrix of thick lens :
+     /             \
+    |  0.750    2.000 |
+    |               |
+    | -0.062    1.167 |
+     \             /
+    f=16.000
 
 
     Notes
@@ -2145,6 +2201,19 @@ class DielectricSlab(ThickLens):
     label : string
         the label of the element
 
+    Examples
+    --------
+    >>> from raytracing import *
+    >>> #define a dielectric with refraction index of 1.5
+    >>> D=DielectricSlab(n=1.5,thickness=5,diameter=20,label='Dielectric')
+    >>> print('The transfer matrix of dielectric slab :' ,D)
+    The transfer matrix of dielectric slab :
+     /                \
+    |  1.000    3.333 |
+    |                 |
+    | -0.000    1.000 |
+     \               /
+    f = +inf (afocal)
     """
 
     def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
@@ -2206,6 +2275,20 @@ class Aperture(Matrix):
         The diameter of the aperture to be considered
     label : string
         The label of the aperture
+
+    Examples
+    --------
+    >>> from raytracing import *
+    >>> #define an aperture of diameter 10
+    >>> A=Aperture(diameter=10,label='aperture')
+    >>> print('The transfer matrix of aperture :' ,A)
+    The transfer matrix of aperture :
+     /                \
+    |  1.000    0.000 |
+    |                 |
+    |  0.000    1.000 |
+     \               /
+    f = +inf (afocal)
 
     Notes
     -----
