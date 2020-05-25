@@ -1359,8 +1359,8 @@ class Matrix(object):
         ----------
         z : float
             the starting position of the element on display
-        axes : int?
-            The axes on which the element is placed?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         showLabels : bool
             If True, the label of the element will be shown (default=False)
 
@@ -1384,8 +1384,8 @@ class Matrix(object):
         ----------
         z : float
             the starting position of the element on display
-        axes : int?
-            The axes on which the element is placed?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         """
 
         axes.plot([z + self.frontVertex, z + self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
@@ -1400,8 +1400,8 @@ class Matrix(object):
         ----------
         z : float
             the starting position of the element on display
-        axes : int?
-            The axes on which the element is placed?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         """
         (f1, f2) = self.focusPositions(z)
         axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
@@ -1413,8 +1413,8 @@ class Matrix(object):
         ----------
         z : float
             the starting position of the element on display
-        axes : int?
-            The axes on which the element is placed?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         """
         halfHeight = self.displayHalfHeight()
         (p1, p2) = self.principalPlanePositions(z=z)
@@ -1469,8 +1469,8 @@ class Matrix(object):
         ----------
         z : float
             the starting position of the labels on display
-        axes : int?
-            The axes on which labels is placed?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
 
         Notes
         -----
@@ -1496,8 +1496,8 @@ class Matrix(object):
         ----------
         z : float
             the starting position of the label on display
-        axes : int?
-            The axes on which the label is placed?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
 
         """
         labels = {}  # Gather labels at same z
@@ -1524,8 +1524,8 @@ class Matrix(object):
         ----------
         z : float
             the starting position of the apreture
-        axes : int?
-            The axes on which the apreture is placed?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
 
         """
 
@@ -1586,8 +1586,8 @@ class Matrix(object):
 
         Parameters
         ----------
-        axes : int?
-            what does axes do here?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
 
         Returns
         -------
@@ -1645,8 +1645,8 @@ class Lens(Matrix):
         ----------
         z : float
             The position of the lens
-        axes : int?
-            the axis on which the lens is placed
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         showLabels : bool
             If True, the label for the lens is shown (default=False)
         """
@@ -1866,8 +1866,8 @@ class DielectricInterface(Matrix):
         ----------
         z : float
             The starting position of the curved surface
-        axes : int??
-            The axes of the curved surface?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         showLabels : bool (Optional)
             If True, the label of the curved surface is shown. (default=False)
 
@@ -1973,8 +1973,8 @@ class ThickLens(Matrix):
         ----------
         z : float
             The starting position of the curved surface
-        axes : int??
-            The axes of the curved surface?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         showLabels : bool (Optional)
             If True, the label of the curved surface is shown. (default=False)
 
@@ -2035,8 +2035,8 @@ class ThickLens(Matrix):
         ----------
         z : float
             The starting position of the curved surface
-        axes : int??
-            The axes of the curved surface?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
 
         """
 
@@ -2161,8 +2161,8 @@ class DielectricSlab(ThickLens):
         ----------
         z : float
             The starting position of the curved surface
-        axes : int??
-            The axes of the curved surface?
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
         showLabels : bool (Optional)
             If True, the label of the curved surface is shown. (default=False)
 
