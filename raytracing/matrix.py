@@ -760,12 +760,6 @@ class Matrix(object):
         outputRays : object of Ray class
             List of Ray() (i,e. a raytrace), one for each input ray.
 
-
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
-
         See Also
         --------
         raytracing.Matrix.traceManyThrough
@@ -874,7 +868,18 @@ class Matrix(object):
 
         Examples
         --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=5)
+        >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=0,label='Lens')
+        >>> f1=M1.focalDistances()
+        >>> print('focal distances:' , f1)
+        focal distances: (5.0, 5.0)
 
+        This function has the same out put as effectiveFocalLengths()
+
+        >>> f2=M1.effectiveFocalLengths()
+        >>> print('focal distances:' , f2)
+        focal distances: (5.0, 5.0)
         """
 
         return self.effectiveFocalLengths()
@@ -889,14 +894,23 @@ class Matrix(object):
         effectiveFocalLengths : array
             Returns the FFL and BFL
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
-
         See Also
         --------
         raytracing.Matrix.focalDistances
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=5)
+        >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=0,label='Lens')
+        >>> f2=M1.effectiveFocalLengths()
+        >>> print('focal distances:' , f2)
+        focal distances: (5.0, 5.0)
+
+        This function has the same out put as effectiveFocalLengths()
+        >>> f1=M1.focalDistances()
+        >>> print('focal distances:' , f1)
+        focal distances: (5.0, 5.0)
 
         Notes
         -----
@@ -924,10 +938,17 @@ class Matrix(object):
         backFocalLength : float
             Returns the BFL
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        Since this function returns the BFL, if the focal distance of an object is 5
+        and the back vertex is 2, we expect to have back focal length of 3, as the following example:
+
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=5)
+        >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=0,backVertex=2,label='Lens')
+        >>> BFL=M1.backFocalLength()
+        >>> print('the back focal distance:' , BFL)
+        the back focal distance: 3.0
 
         See Also
         --------
@@ -968,10 +989,18 @@ class Matrix(object):
         frontFocalLength : float
             Returns the FFL
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        In the following example, we have defined an object(f=5) with physical length of 4.
+        And the front vertex is placed one unit before the front principal plane.
+        There for the front focal length will be 4.
+
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=5)
+        >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=4,frontVertex=-1,label='Lens')
+        >>> FFL=M1.frontFocalLength()
+        >>> print('the front focal distance:' , FFL)
+        the front focal distance: 4.0
 
         See Also
         --------
@@ -1004,27 +1033,32 @@ class Matrix(object):
         Parameters
         ----------
         z : float
-            what does this parameter shows?
+            The position in which the object is placed
 
         Returns
         -------
         focusPositions : array
             An array of front focal position and the back focal position.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=5)
+        >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=4,frontVertex=-1,backVertex=5,label='Lens')
+        >>> Position0=M1.focusPositions(z=0)
+        >>> print('focal positions (F,B):' , Position0)
+        focal positions (F,B): (-5.0, 9.0)
+
+        And if we move object 2 units:
+
+        >>> Position2=M1.focusPositions(z=2)
+        >>> print('focal positions (F,B):' , Position2)
+        focal positions (F,B): (-3.0, 11.0)
 
         See Also
         --------
         raytracing.Matrix.effectiveFocalLengths
         raytracing.Matrix.principalPlanePositions
-
-        Notes
-        -----
-        Currently, it is assumed the index is n=1 on either side and both focal
-        distances are the same.
         """
 
         if self.hasPower:
@@ -1047,19 +1081,19 @@ class Matrix(object):
         principalPlanePositions : array
             An array of front principal plane position and the back principal plane position.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of a lens (f=5)
+        >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=3,frontVertex=-1,backVertex=5,label='Lens')
+        >>> Position0=M1.principalPlanePositions(z=0)
+        >>> print('PP positions (F,B):' , Position0)
+        PP positions (F,B): (0.0, 3.0)
 
         See Also
         --------
         raytracing.Matrix.effectiveFocalLengths
         raytracing.Matrix.focusPositions
-
-        Notes
-        -----
-        Currently, it is assumed the index is n=1 on either side.
         """
         if self.hasPower:
             p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
@@ -1084,10 +1118,25 @@ class Matrix(object):
             index [0] output object is the distance of the image at the back of the element
              and index [1] is the conjugate matrix.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of an object
+        >>> M1= Matrix(A=1,B=-2,C=3,D=1,physicalLength=0,label='Lens')
+        >>> Image=M1.forwardConjugate()
+        >>> print('The position of the image:' , Image[0])
+        The position of the image: 2.0
+
+        And to see the conjugate matrix you can call index 1 of the output.
+
+        >>> print('conjugate matrix:' , Image[1])
+        conjugate matrix:
+         /               \
+        |  7.000    0.000 |
+        |                 |
+        |  3.000    1.000 |
+         \               /
+        f=-0.333
 
         See Also
         --------
@@ -1096,7 +1145,7 @@ class Matrix(object):
         Notes
         -----
         M2 = Space(distance)*M1
-        # M2.isImaging == True
+        M2.isImaging == True
 
         """
 
