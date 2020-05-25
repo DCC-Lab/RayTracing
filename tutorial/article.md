@@ -61,7 +61,7 @@ $$
 $$
 \theta^\prime = C y + D \theta.
 $$
-**[Redo this figure better? translate, also add vertices and length - Val]** 
+**[Redo this figure better? translate, also add vertices and length ]** 
 
 <img src="article.assets/variables.png" alt="image-20200512140455081" style="zoom: 25%;" />
 
@@ -74,7 +74,7 @@ $$
 \end{matrix}
 \Biggr],
 $$
-and the crossing of a ray from a dielectric medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$ (with $R>0$ when convex):
+ and the crossing of a ray from a dielectric medium of index $n_1$ to a medium of index $n_2$ through a curved interface of radius $R$ (with $R>0$ when convex):
 $$
 \mathbf{D}(n_1, n_2, R) = 
 \Biggr[
@@ -254,7 +254,7 @@ Explain difference between matrix multiplications and tracing: tracing considers
 
 
 
-## Examples use:
+## Example use:
 
 Relevant examples of how to use the code.
 
@@ -264,35 +264,13 @@ Prepare many different examples, keep them in a directory and show figures.
 
 ## Practical examples solved with module
 
-### Widefield microscope
+###Widefield microscope
 
-* When the lenses in a 4f system are too small, we get vignetting.  We show a simple imaging system with vignetting, Field Stop poorly placed at a lens instead of the image with fix in next figure.
-* Simple 4f system with lenses too small, shows vignetting
-* 4f system with bigger lenses, show no more vignetting and good image size
+###Simple scanning system
 
-```python
-path = ImagingPath()
-# Simple 4f system of magnification 1:1
-path.append(Space(d=5))
-path.append(Lens(f=5), diameter=25.4)
-path.append(Space(d=10))
-path.append(Lens(f=5), diameter=25.4)
-path.append(Space(d=5))
-path.append(Aperture(diameter=10),label='Camera')
-#...
+###Laser scanning microscope
 
-
-
-
-
-```
-
-
-
-### Laser scanning microscope
-
-* Scanning mirrror at focus gives sweeping line at other focus
-* Size of scanning field of view scanned by the galvo scanner
+###Diffuse source from scattering medium
 
 ### Confocal pinhole detection
 
@@ -301,27 +279,29 @@ path.append(Aperture(diameter=10),label='Camera')
 
 **Add microscope setup in figure from [2]**
 
-In confocal laser scanning microscopy, the pinhole must match the size of the focal spot formed at the sample to produce good optical sectioning [1]. Since the pinhole size plays an important role for the optimization of a confocal system, here we present a way to use the RayTracing module to better understand the impact of tuning the pinhole size of a confocal microscope. The way this works is by sending a large number of rays in the system and computing how many make it through the pinhole. As it can be noticed in Fig x(b), as soon as the pinhole diameter is smaller than the size fitting the focal spot, the transmission efficiency linearly decreases.
+In confocal laser scanning microscopy, the pinhole must match the size of the Airy disk formed at the sample to produce a good optical sectioning [1]. Since the pinhole size plays an important role for the optimization of a confocal system, here we present a way to use the RayTracing module to better understand the impact of tuning the pinhole size of a confocal microscope. The way this works is by sending a large number of rays in the system and computing how many make it through the pinhole. As it can be noticed in Fig x(b), as soon as the pinhole diameter is smaller than the size fitting the focal spot, the transmission efficiency linearly decreases.
+
+<img src="/Users/valeriepineaunoel/Desktop/Figure_1.png" alt="Figure_1" style="zoom:33%;" />
+
+**Caption : Figure x(b) shows the transmission efficiency according to the different pinhole size of the confocal microscope Figx(a) [2].**
+
+###Two-photon descanned detector
+
+###Big detectors (R3896) versus small detectors (GaAsP)
+
+###Illumination system
+
+###Axicon
+
+###Fiber-based collection system
 
 
 
-### Illumination system
 
-Kohler illumination, invariant
 
-### Two-photon descanned detector
 
-* Diffuse source from scattering medium
-* Size of diffuse source dictates certain detection lenses and parameters
-* Big detectors (R3896) versus small detectors (GaAsP)
 
-### Axicon
-
-Requires modification to formalism (minimal)
-
-Can can extent of the line from code
-
-## Discussion and outlook:
+Discussion and outlook:
 
 Examples of things that could be added:
 
@@ -340,4 +320,6 @@ Examples of things that could be added:
 6. 3D rays and 3D rendering 3D export of optical systems
 
 7. Reflections
+
+8. 
 
