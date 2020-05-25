@@ -1,5 +1,6 @@
 import unittest
 import envtest # modifies path
+import numpy as np
 from raytracing import *
 
 
@@ -35,18 +36,21 @@ class TestMaterialSubclasses(unittest.TestCase):
 
     def testMaterialSubclasses(self):
         ''' These are sample values of refractive indexes for each subclass of material for a wavelength of 5 micron.
-        In case of a new category of material, make sure to add the sample value to the list. '''
+        In case of a new category of material, make sure to add the sample value to the list. Indices can be found on :
+        https://refractiveindex.info/ '''
         fails = []
-        refractiveIndexes = [1.3965252243506636, 1.5178527121226975, 1.5385861348077337, 1.5612286489801115,
-                             1.539610715563772, 1.664053106820355, 1.5948478106562147, 1.6396821789377511,
-                             1.5469302146171202, 1.5713583894047798, 1.4716376125966693, 1.459391121152617,
-                             1.4251526811342752, 1.5810761652641074, 1.7197092324835102, 1.528065402814606,
-                             1.541289278092723, 1.5975207997018837, 1.3404572894914368]
+        refractiveIndices = {'N_BK7': 1.5163, 'N_SF2': 1.6465, 'SF2': 1.6465, 'SF5': 1.6714, 'N_SF5': 1.6714,
+                             'N_SF6HT': 1.8033, 'N_SF10': 1.7267, 'N_SF11': 1.7829, 'N_BAF10': 1.6692,
+                             'E_BAF11': 1.6659, 'N_BAK1': 1.5719, 'N_BAK4': 1.5682, 'FK51A': 1.4862, 'LAFN7': 1.7482,
+                             'N_LASF9': 1.8486,'N_LAK22': 1.6504, 'N_SSK5': 1.6576, 'E_FD10': 1.7267,
+                             'FusedSilica': 1.4580}
 
         for material in self.materials:
-            n = material.n(5)
-            if n not in refractiveIndexes:
-                fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(material.__name__, str(n)))
+            name = material.__name__
+            n = material.n(0.6)
+
+            if bool(np.isclose(n, refractiveIndices[name], 1e-4)) is False:
+                fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(name, n))
         self.assertEqual([], fails)
 
 
