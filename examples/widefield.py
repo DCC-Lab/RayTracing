@@ -33,7 +33,7 @@ path.display(limitObjectToFieldOfView=True,onlyChiefAndMarginalRays=True)
 
 
 path = ImagingPath()
-path.label="(a) Suboptimal Aperture Stop at second lens, but without vignetting"
+path.label="(b) Suboptimal Aperture Stop at second lens, but without vignetting"
 path.append(Space(d=50))
 path.append(Lens(f=50, diameter=40, label="First lens"))
 path.append(Space(d=100))
