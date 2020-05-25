@@ -1172,10 +1172,26 @@ class Matrix(object):
             index [0] output object is the distance of the image in front of the element
              and index [1] is the conjugate matrix.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of an object
+        >>> M1= Matrix(A=1,B=-3,C=1,D=1,physicalLength=0,label='Lens')
+        >>> Image=M1.backwardConjugate()
+        >>> print('The position of the image:' , Image[0])
+        The position of the image: 3.0
+
+        And to see the conjugate matrix you can call index 1 of the output.
+
+        >>> print('conjugate matrix:' , Image[1])
+        conjugate matrix:
+         /               \
+        |  1.000    0.000 |
+        |                 |
+        |  1.000    4.000 |
+         \               /
+        f=-1.000
+
 
         See Also
         --------
@@ -1184,8 +1200,7 @@ class Matrix(object):
         Notes
         -----
         M2 = M1*Space(distance)
-        # M2.isImaging == True
-
+        M2.isImaging == True
         """
         if self.A == 0:
             return (float("+inf"), None)
@@ -1194,7 +1209,7 @@ class Matrix(object):
         return (distance, conjugateMatrix)
 
     def magnification(self):
-        """ The magnification of the element
+        """The magnification of the element
 
         Returns
         -------
@@ -1202,10 +1217,15 @@ class Matrix(object):
             index [0] output object is A in the matrix and
             index [1] is D in the matrix.
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # M1 is an ABCD matrix of an object
+        >>> Mat= Matrix(A=2,B=0,C=1,D=3,physicalLength=0,label='Lens')
+        >>> M=Mat.magnification()
+        >>> print('(A , D): (',M[0],',',M[1],')')
+        (A , D): ( 2.0 , 3.0 )
+
 
         See Also
         --------
@@ -1230,10 +1250,26 @@ class Matrix(object):
         Matrix : object of Matrix class
             An element with the properties of the flipped original element
 
-        Raises
-        ------
-        BadException
-            Because you shouldn't have done that.
+        Examples
+        --------
+        >>> # M1 is an ABCD matrix of an object
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,label='Lens')
+        >>> Mat.display()
+        >>> flippedMat=Mat.flipOrientation()
+        >>> flippedMat.display()
+
+        The original object:
+
+        .. image:: flipOrientation_before.png
+            :width: 70%
+            :align: center
+
+        The flipped object:
+
+        .. image:: flipOrientation_after.png
+            :width: 70%
+            :align: center
+
 
         See Also
         --------
