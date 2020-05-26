@@ -18,6 +18,67 @@ class ImagingPath(MatrixGroup):
     Usage is to create the ImagingPath(), then append() elements
     and display(). You may change objectHeight, fanAngle, fanNumber
     and rayNumber.
+
+    Parameters
+    ----------
+    elements : (type?))
+        definitiion (default=None).
+    label : string
+        The label for the imaging path
+
+    Attributes
+    ----------
+    objectHeight : float
+        The full height of object can be defined using this attribute (default=10.0)
+    objectPosition : float
+        This attribute defines the position of the object which must be defined zero for now. (default=0)
+    fanAngle : float
+        this value indicates full fan angle in radians for rays (max? min?) (default=0.1)
+    fanNumber : int
+        This value indicates the number of ray(s) in fan (default=9)
+    precision : float
+        The accuracy to be considered when calculating the field stop (default=0.001)
+    maxHeight : float
+        The maximum height to be considered when calculating the field stop (default=10000.0)
+    showObject : bool
+        If True, the object will be shown on display (default=True)
+    showImage : bool
+        If True, the image will be shown on display (default=True)
+    showEntrancePupil : bool
+        If True, the entrance pupil will be shown on display (default=False)
+    showElementLabels : bool
+        If True, the labels of the elements will be shown on display (default=True)
+    showPointsOfInterest : bool
+        If True, the points of interests will be shown on display (default=True)
+    showPointsOfInterestLabels : bool
+        If True, the labels of the points of interests will be shown on display (default=True)
+    showPlanesAcrossPointsOfInterest : bool
+        If True, the planes across the points of interests will be shown (default=True)
+
+    Examples
+    --------
+    >>> from raytracing import *
+    >>> path = ImagingPath() # define an imaging path
+    >>> #set the desire properties
+    >>> path.objectHeight=4
+    >>> path.fanAngle=0.1
+    >>> path.fanNumber=5
+    >>> # use append() to add elements to the imaging path
+    >>> path.append(Space(d=20))
+    >>> path.append(Lens(f=20,label="f=20"))
+    >>> path.append(Space(d=30))
+    >>> path.append(Lens(f=10,label="f=10"))
+    >>> path.append(Space(d=10))
+    >>> #display the imeging path
+    >>> path.display()
+
+    And the following figure will be plotted:
+
+    .. image:: imagepath_example.png
+                :width: 70%
+                :align: center
+
+
     """
 
     def __init__(self, elements=None, label=""):
