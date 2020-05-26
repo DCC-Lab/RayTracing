@@ -207,6 +207,10 @@ class Rays:
     def load(self, filePath, append=False):
         with open(filePath, 'rb') as infile:
             loadedRays = pickle.Unpickler(infile).load()
+            if not isinstance(loadedRays, collections.Iterable):
+                raise IOError(f"{filePath} does not contain an iterable of Ray objects.")
+            if not all([isinstance(ray, Ray) for ray in loadedRays]):
+                raise IOError(f"{filePath} must contain only Ray objects.")
             if append and self._rays is not None:
                 self._rays.extend(loadedRays)
             else:
