@@ -403,7 +403,8 @@ class Matrix(object):
         Returns
         -------
         LargestDiameter : float
-            Largest diameter of the element or group of elements
+            Largest diameter of the element or group of elements. For a `Matrix`
+            this will simply be the aperture diameter of this element.
         """
         return self.apertureDiameter
 
@@ -479,7 +480,7 @@ class Matrix(object):
         """ The Lagrange invariant is a quantity that is conserved
         for any two rays in the system. It is often seen with the
         chief ray and marginal ray in an imaging system, but it is
-        actually very general and any rays can be used.
+        actually very general and any two rays can be used.
         In ImagingPath(), if no rays are provided, the chief and
         marginal rays are used.
 
@@ -527,9 +528,9 @@ class Matrix(object):
         return matrix.backIndex * (outputRay1.theta * outputRay2.y - outputRay1.y * outputRay2.theta)
 
     def trace(self, ray):
-        """This function mutiplies the ray by the transfer matrix and it will
-        give the correct ray but will not consider apertures.
-        By "tracing" a ray, we do consider all apertures in the system.
+        """The ray matrix formalism, through multiplication of a ray by 
+        a matrix, will give the correct ray but will never consider apertures.
+        By "tracing" a ray, we explicitly consider all apertures in the system.
         If a ray is blocked, its property isBlocked will be true, and
         isNotBlocked will be false.
 
@@ -548,7 +549,7 @@ class Matrix(object):
         Returns
         -------
         rayTrace : List of ray(s)
-            A list of rays (i.e. a ray trace) for the input ray through the matrix.
+            A list of rays (i.e. a ray trace) for the input ray through the matrix. 
 
         Examples
         --------
@@ -568,8 +569,14 @@ class Matrix(object):
 
         Notes
         -----
-        Currently, the output of the function is returned as a list and if you want to
-        refer to to the properties of the output ray, you should use the index 0 of the output list.
+        Currently, the output of the function is returned as a list. It is
+        sufficient to trace (i.e. display) the ray to draw lines between the points.
+        For some elements, (zero physical length), there will be a single element. For
+        other elements there may be more.  For groups of elements, there can be any 
+        number of rays in the list.
+
+		If you only care about the final ray that has propagated through, use 
+		`traceThrough()`
         """
 
         rayTrace = []
