@@ -1,3 +1,4 @@
+import envexamples
 from raytracing import *
 from numpy import *
 import matplotlib.pyplot as plt
