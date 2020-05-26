@@ -1,10 +1,6 @@
-# The raytracing module needs to be installed in your "site" path.
-# Type: python -m site --user-site
-# to see what this directory is (mine on macOS is /Users/dccote/.local/lib/python3.6/site-packages)
-
+import envexamples
 import sys
 import os
-sys.path.insert(0, os.path.abspath('../'))
 
 from raytracing import *
 
