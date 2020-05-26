@@ -54,7 +54,7 @@ class TestLambertianRays(unittest.TestCase):
             intensity = int(12 * cos(theta))
             for y in linspace(-1, 1, 10):
                 for _ in range(intensity):
-                    raysList.append(Ray(y + 1, theta))
+                    raysList.append(Ray(y, theta))
         self.assertListEqual(rays.rays, raysList)
 
     def testLambertianRaysNoneArgs(self):
