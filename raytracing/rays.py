@@ -264,7 +264,7 @@ class UniformRays(Rays):
 
 
 class LambertianRays(Rays):
-    def __init__(self, yMax, yMin=None, M=100, N=100, I=100):
+    def __init__(self, yMax=1.0, yMin=None, M=100, N=100, I=100):
         self.yMax = yMax
         self.yMin = yMin
         if yMin is None:
