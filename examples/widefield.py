@@ -1,7 +1,4 @@
 import envexamples
-import os
-import sys
-
 from raytracing import *
 
 '''
