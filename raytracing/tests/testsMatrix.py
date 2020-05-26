@@ -334,16 +334,6 @@ class TestMatrix(unittest.TestCase):
             self.assertTrue(trace[i] in rays)
             self.assertTrue(traceWithNumberProcesses[i] in rays)
 
-    def testTraceManyThroughInParallelNoChunks(self):
-        rays = [Ray(y, y) for y in range(5)]
-        rays = Rays(rays=rays)
-        m = Matrix(physicalLength=1)
-        trace = m.traceManyThroughInParallelNoChunks(rays)
-        traceWithNumberProcesses = m.traceManyThroughInParallelNoChunks(rays, processes=2)
-        for i in range(len(rays)):
-            self.assertEqual(trace[i], rays[i])
-            self.assertEqual(traceWithNumberProcesses[i], rays[i])
-
     def testPointsOfInterest(self):
         m = Matrix()
         self.assertListEqual(m.pointsOfInterest(1), [])

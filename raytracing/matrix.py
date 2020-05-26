@@ -137,6 +137,7 @@ class Matrix(object):
         self.isFlipped = False
         super(Matrix, self).__init__()
 
+    @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
         which is often 1.0
@@ -813,6 +814,7 @@ class Matrix(object):
 
         return Rays(rays=outputRaysList)
 
+    @property
     def isImaging(self):
         """If B=0, then the matrix represents that transfer from a conjugate
         plane to another (i.e. object at the front edge and image at the
@@ -841,6 +843,7 @@ class Matrix(object):
 
         return abs(self.B) < Matrix.__epsilon__
 
+    @property
     def hasPower(self):
         """ If True, then there is a non-null focal length because C!=0
 
