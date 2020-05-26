@@ -19,6 +19,32 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, 1)
         self.assertListEqual(mg.elements, [])
 
+    def testMatrixGroupAcceptsAnything(self):
+        class Toto:
+            def __init__(self):
+                self.L = "Hello"
+
+        try:
+            mg = MatrixGroup(["Matrix", Matrix()])  # Raises an attribute error, because of "Matrix"
+        except AttributeError:
+            pass
+        # But a similar MatrixGroup, like:
+        try:
+            mg = MatrixGroup([Toto(), Matrix()])  # Raises a type error, because of Toto()
+        except TypeError:
+            pass
+        # Same thing if input is not a container of other objects (str is, but only for str, so it doesn't count)
+        try:
+            mg = MatrixGroup(123)
+        except TypeError:
+            pass
+
+        # But...
+        try:
+            mg = MatrixGroup("This is a string")
+        except AttributeError:
+            pass
+
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
         transferMat = mg.transferMatrix()
