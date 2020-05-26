@@ -5,6 +5,75 @@ from raytracing import *
 inf = float("+inf")
 
 
+class TestUniformRays(unittest.TestCase):
+    def testRays(self):
+        rays = UniformRays(1, -1, 1, -1, 10, 11)
+        self.assertIsNotNone(rays)
+        self.assertEqual(rays.yMax, 1)
+        self.assertEqual(rays.yMin, -1)
+        self.assertEqual(rays.thetaMax, 1)
+        self.assertEqual(rays.thetaMin, -1)
+        self.assertEqual(rays.M, 10)
+        self.assertEqual(rays.N, 11)
+
+        raysList = []
+        for y in linspace(-1, 1, 10):
+            for theta in linspace(-1, 1, 11):
+                raysList.append(Ray(y, theta))
+        self.assertListEqual(rays.rays, raysList)
+
+    def testRaysWithNoneArgs(self):
+        rays = UniformRays()
+        self.assertIsNotNone(rays)
+        self.assertEqual(rays.yMax, 1)
+        self.assertEqual(rays.yMin, -1)
+        self.assertEqual(rays.thetaMax, pi / 2)
+        self.assertEqual(rays.thetaMin, -pi / 2)
+        self.assertEqual(rays.M, 100)
+        self.assertEqual(rays.N, 100)
+
+        raysList = []
+        for y in linspace(-1, 1, 100):
+            for theta in linspace(-pi / 2, pi / 2, 100):
+                raysList.append(Ray(y, theta))
+        self.assertListEqual(rays.rays, raysList)
+
+
+class TestLambertianRays(unittest.TestCase):
+
+    def testLambertianRays(self):
+        rays = LambertianRays(1, -1, 10, 11, 12)
+        self.assertEqual(rays.yMin, -1)
+        self.assertEqual(rays.yMax, 1)
+        self.assertEqual(rays.M, 10)
+        self.assertEqual(rays.N, 11)
+        self.assertEqual(rays.I, 12)
+
+        raysList = []
+        for theta in linspace(-pi / 2, pi / 2, 11):
+            intensity = int(12 * cos(theta))
+            for y in linspace(-1, 1, 10):
+                for _ in range(intensity):
+                    raysList.append(Ray(y + 1, theta))
+        self.assertListEqual(rays.rays, raysList)
+
+    def testLambertianRaysNoneArgs(self):
+        rays = LambertianRays()
+        self.assertEqual(rays.yMin, -1)
+        self.assertEqual(rays.yMax, 1)
+        self.assertEqual(rays.M, 100)
+        self.assertEqual(rays.N, 100)
+        self.assertEqual(rays.I, 100)
+
+        raysList = []
+        for theta in linspace(-pi / 2, pi / 2, 100):
+            intensity = int(100 * cos(theta))
+            for y in linspace(-1, 1, 100):
+                for _ in range(intensity):
+                    raysList.append(Ray(y, theta))
+        self.assertListEqual(rays.rays, raysList)
+
+
 class TestRandomRays(unittest.TestCase):
 
     def testRandomRays(self):
