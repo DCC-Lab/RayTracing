@@ -24,26 +24,22 @@ class TestMatrixGroup(unittest.TestCase):
             def __init__(self):
                 self.L = "Hello"
 
-        try:
-            mg = MatrixGroup(["Matrix", Matrix()])  # Raises an attribute error, because of "Matrix"
-        except AttributeError:
-            pass
-        # But a similar MatrixGroup, like:
-        try:
-            mg = MatrixGroup([Toto(), Matrix()])  # Raises a type error, because of Toto()
-        except TypeError:
-            pass
-        # Same thing if input is not a container of other objects (str is, but only for str, so it doesn't count)
-        try:
-            mg = MatrixGroup(123)
-        except TypeError:
-            pass
+        with self.assertRaises(TypeError) as exception:
+            MatrixGroup(["Matrix", Matrix()])
+        self.assertEqual(str(exception.exception), "'matrix' must be a Matrix instance.")
 
-        # But...
-        try:
-            mg = MatrixGroup("This is a string")
-        except AttributeError:
-            pass
+        with self.assertRaises(TypeError) as exception2:
+            MatrixGroup([Toto(), Matrix()])
+        self.assertEqual(str(exception2.exception), str(exception.exception))
+
+        with self.assertRaises(TypeError) as exception:
+            MatrixGroup(123)
+        self.assertEqual(str(exception.exception),
+                         "'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
+
+        with self.assertRaises(TypeError) as exception2:
+            MatrixGroup(TypeError)
+        self.assertEqual(str(exception2.exception), str(exception.exception))
 
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
@@ -144,6 +140,12 @@ class TestMatrixGroup(unittest.TestCase):
             with self.assertRaises(UserWarning):
                 mg.append(otherElement)
 
+    def testAppendNotCorrectType(self):
+        mg = MatrixGroup()
+
+        with self.assertRaises(TypeError):
+            mg.append(10)
+
     def testMatrixGroupWithElements(self):
         elements = []
         f1 = 10
@@ -214,6 +216,13 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertListEqual(mgTrace, trace)
         self.assertEqual(mg._lastRayToBeTraced, trace[0])
         self.assertTrue(mgTrace[-1].isBlocked)
+
+    def testTraceIncorrectType(self):
+        s = Space(2, diameter=5)
+        l = Lens(6, diameter=5)
+        mg = MatrixGroup([s, l])
+        with self.assertRaises(TypeError):
+            mg.trace("Ray")
 
     @unittest.skip("Importation problem...")
     def testImagingPath(self):
