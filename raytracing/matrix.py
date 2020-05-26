@@ -740,11 +740,6 @@ class Matrix(object):
         Rays() as an output even if they passed a list of rays as inputs.
         """
 
-        try:
-            iter(inputRays)
-        except TypeError:
-            raise TypeError("'inputRays' argument is not iterable.")
-
         if not isinstance(inputRays, Rays):
             inputRays = Rays(inputRays)
 
@@ -876,7 +871,6 @@ class Matrix(object):
 
         return []
 
-
     def focalDistances(self):
         """ This is the synonym of effectiveFocalLengths()
 
@@ -902,7 +896,6 @@ class Matrix(object):
         """
 
         return self.effectiveFocalLengths()
-
 
     def effectiveFocalLengths(self):
         """ The effective focal lengths calculated from the power (C)
