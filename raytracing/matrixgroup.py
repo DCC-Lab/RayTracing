@@ -148,13 +148,14 @@ class MatrixGroup(Matrix):
                 return True
         return False
 
+    @property
     def largestDiameter(self):
         """ Largest finite diameter in all elements """
 
         maxDiameter = 0
         if self.hasFiniteApertureDiameter():
             for element in self.elements:
-                diameter = element.largestDiameter()
+                diameter = element.largestDiameter
                 if diameter != float('+Inf') and diameter > maxDiameter:
                     maxDiameter = diameter
         elif len(self.elements) != 0:
@@ -220,7 +221,7 @@ class MatrixGroup(Matrix):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = self.largestDiameter() / 2
+        halfHeight = self.largestDiameter / 2
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),

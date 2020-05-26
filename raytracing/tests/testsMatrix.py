@@ -200,10 +200,10 @@ class TestMatrix(unittest.TestCase):
     def testApertureDiameter(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=2)
         self.assertTrue(m1.hasFiniteApertureDiameter())
-        self.assertEqual(m1.largestDiameter(), 2.0)
+        self.assertEqual(m1.largestDiameter, 2.0)
         m2 = Matrix(A=1, B=2, C=3, D=4)
         self.assertFalse(m2.hasFiniteApertureDiameter())
-        self.assertEqual(m2.largestDiameter(), float("+inf"))
+        self.assertEqual(m2.largestDiameter, float("+inf"))
 
     def testTransferMatrix(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)

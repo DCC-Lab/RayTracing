@@ -281,15 +281,15 @@ class TestMatrixGroup(unittest.TestCase):
         smallDiam = 10
         bigDiam = 25
         mg = MatrixGroup([Space(14, diameter=smallDiam), Lens(5), Space(5, diameter=bigDiam)])
-        self.assertEqual(mg.largestDiameter(), bigDiam)
+        self.assertEqual(mg.largestDiameter, bigDiam)
 
     def testLargestDiameterNoFiniteAperture(self):
         mg = MatrixGroup([Space(10), Lens(5)])
-        self.assertEqual(mg.largestDiameter(), 8)
+        self.assertEqual(mg.largestDiameter, 8)
 
     def testLargestDiameterWithEmptyGroup(self):
         m = MatrixGroup()
-        self.assertEqual(m.largestDiameter(), float("+inf"))
+        self.assertEqual(m.largestDiameter, float("+inf"))
 
     def testFlipOrientationEmptyGroup(self):
         mg = MatrixGroup()

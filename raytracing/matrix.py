@@ -398,6 +398,7 @@ class Matrix(object):
 
         return outputBeam
 
+    @property
     def largestDiameter(self):
         """ Largest diameter for a group of elements
 
@@ -1336,7 +1337,7 @@ class Matrix(object):
         """
 
         fig, axes = plt.subplots(figsize=(10, 7))
-        displayRange = 2 * self.largestDiameter()
+        displayRange = 2 * self.largestDiameter
         if displayRange == float('+Inf'):
             displayRange = self.displayHalfHeight() * 4
 
@@ -1386,7 +1387,7 @@ class Matrix(object):
         -----
         Default is a black box of appropriate length.
         """
-        halfHeight = self.largestDiameter() / 2
+        halfHeight = self.largestDiameter / 2
         if halfHeight == float("+Inf"):
             halfHeight = self.displayHalfHeight()
 
@@ -1495,7 +1496,7 @@ class Matrix(object):
         Labels are drawn 50% above the display height
         """
         if self.hasFiniteApertureDiameter():
-            halfHeight = self.largestDiameter() / 2.0
+            halfHeight = self.largestDiameter / 2.0
         else:
             halfHeight = self.displayHalfHeight()
 
@@ -2115,7 +2116,7 @@ class ThickLens(Matrix):
         """
 
         if self.apertureDiameter != float('+Inf'):
-            h = self.largestDiameter() / 2.0
+            h = self.largestDiameter / 2.0
             phi1 = math.asin(h / abs(self.R1))
             corner1 = z + self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
 
