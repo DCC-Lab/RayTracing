@@ -5,6 +5,7 @@ import pickle
 import time
 import os
 import collections.abc as collections
+import warnings
 
 """ A source or a detector of rays
 
@@ -22,14 +23,15 @@ or when analysing the resulting rays that reached a plane in ImagingPath,
 MatrixGroup or any tracing function. 
 """
 
+
 class Rays:
     def __init__(self, rays=None):
         if rays is None:
-            self.rays = []
+            self._rays = []
         else:
             if isinstance(rays, collections.Iterable):
                 if all([isinstance(ray, Ray) for ray in rays]):
-                    self.rays = list(rays)
+                    self._rays = list(rays)
                 else:
                     raise TypeError("'rays' elements must be of type Ray.")
             else:
@@ -52,9 +54,15 @@ class Rays:
         self._xValuesAnglesHistogram = None
 
     def __len__(self) -> int:
-        if self.rays is None:
+        if self._rays is None:
             return 0
-        return len(self.rays)
+        return len(self._rays)
+
+    @property
+    def rays(self):
+        # Even if "read only" property, we can change the content of the list.
+        # We return a copy with [:]
+        return self._rays[:]
 
     @property
     def count(self):
@@ -164,24 +172,24 @@ class Rays:
         return self
 
     def __next__(self) -> Ray:
-        if self.rays is None:
+        if self._rays is None:
             raise StopIteration
 
-        if self.iteration < len(self.rays):
-            ray = self.rays[self.iteration]
+        if self.iteration < len(self._rays):
+            ray = self._rays[self.iteration]
             self.iteration += 1
             return ray
 
         raise StopIteration
 
     def __getitem__(self, item):
-        return self.rays[item]
+        return self._rays[item]
 
     def append(self, ray):
         if not isinstance(ray, Ray):
             raise TypeError("'ray' must be a 'Ray' object.")
-        if self.rays is not None:
-            self.rays.append(ray)
+        if self._rays is not None:
+            self._rays.append(ray)
 
         # Invalidate cached values
         self._yValues = None
@@ -199,14 +207,14 @@ class Rays:
     def load(self, filePath, append=False):
         with open(filePath, 'rb') as infile:
             loadedRays = pickle.Unpickler(infile).load()
-            if append and self.rays is not None:
-                self.rays.extend(loadedRays)
+            if append and self._rays is not None:
+                self._rays.extend(loadedRays)
             else:
-                self.rays = loadedRays
+                self._rays = loadedRays
 
     def save(self, filePath):
         with open(filePath, 'wb') as outfile:
-            pickle.Pickler(outfile).dump(self.rays)
+            pickle.Pickler(outfile).dump(self._rays)
 
         # We save the data to disk using a module called Pickler
         # Some asynchronous magic is happening here with Pickle
@@ -233,6 +241,7 @@ class Rays:
     # For 2D histogram:
     # https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
     # and https://stackoverflow.com/questions/3122049/drawing-an-anti-aliased-line-with-thepython-imaging-library
+
 
 class UniformRays(Rays):
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, M=100, N=100):
@@ -286,24 +295,32 @@ class RandomRays(Rays):
         self.thetaMin = thetaMin
         if thetaMin is None:
             self.thetaMin = -thetaMax
-        super(RandomRays, self).__init__(rays=None)
+        super(RandomRays, self).__init__()
 
     def __len__(self) -> int:
         return self.maxCount
 
     def __getitem__(self, item):
-        if self.rays is None:
-            raise NotImplementedError("You cannot access RandomRays")
-        elif len(self.rays) < item:
-            raise NotImplementedError("You cannot access RandomRays")
-        else:
-            return self.rays[item]
+        if item < 0:
+            # Convert negative index to positive (i.e. -1 == len - 1)
+            item += self.maxCount
+
+        if item < 0 or item >= self.maxCount:
+            raise IndexError(f"Index {item} out of bound, min = 0, max {self.maxCount}.")
+
+        while len(self._rays) <= item:
+            warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
+            self.randomRay()
+
+        return self._rays[item]
 
     def __next__(self) -> Ray:
         if self.iteration >= self.maxCount:
             raise StopIteration
+        # This should be able to know if enough rays. If not enough, generate them
+        ray = self[self.iteration]
         self.iteration += 1
-        return self.randomRay()
+        return ray
 
     def randomRay(self) -> Ray:
         raise NotImplementedError("You must implement randomRay() in your subclass")
@@ -315,17 +332,25 @@ class RandomUniformRays(RandomRays):
                                                 maxCount=maxCount)
 
     def randomRay(self) -> Ray:
+        if len(self._rays) == self.maxCount:
+            raise AttributeError("Cannot generate more random rays, maximum count achieved")
+
         theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
         y = self.yMin + random.random() * (self.yMax - self.yMin)
-        return Ray(y=y, theta=theta)
+        ray = Ray(y=y, theta=theta)
+        self.append(ray)
+        return ray
 
 
 class RandomLambertianRays(RandomRays):
-    def __init__(self, yMax, yMin=None, maxCount=10000):
-        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=-pi / 2, thetaMin=pi / 2,
+    def __init__(self, yMax=1.0, yMin=None, maxCount=10000):
+        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=pi / 2, thetaMin=-pi / 2,
                                                    maxCount=maxCount)
 
     def randomRay(self) -> Ray:
+        if len(self._rays) == self.maxCount:
+            raise AttributeError("Cannot generate more random rays, maximum count achieved")
+
         theta = 0
         while (True):
             theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
@@ -335,4 +360,6 @@ class RandomLambertianRays(RandomRays):
                 break
 
         y = self.yMin + random.random() * (self.yMax - self.yMin)
-        return Ray(y, theta)
+        ray = Ray(y, theta)
+        self.append(ray)
+        return ray

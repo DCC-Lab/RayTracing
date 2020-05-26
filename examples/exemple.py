@@ -1,7 +1,4 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath('../'))
-
+import envexamples
 from raytracing import *
 
 path = ImagingPath()
