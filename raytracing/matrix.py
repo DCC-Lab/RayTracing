@@ -52,18 +52,18 @@ class Matrix(object):
     physicalLength: float (Optional)
         Length of the object. (default =0)
     frontVertex : float (Optional)
-        First interface used for FFL (default = None)
+        Position of the front interface, from which FFL is calculated (default = None)
     backVertex : float (Optional)
-        Last interface used for BFL (default = None)
+        Position of the back interface, from which BFL is calculated (default = None)
     frontIndex : float (Optional)
-        Index of refraction at the entrance. (default = 1.0)
+        Index of refraction at the entrance (front). (default = 1.0)
         This value cannot be less than 1.0.
     backIndex : float (Optional)
-        Index of refractionb at exit. (default = 1.0)
+        Index of refraction at exit (back). (default = 1.0)
         This value cannot be less than 1.0.
     apertureDiameter : float (Optional)
         Aperture of the element. (default = +Inf)
-        The diameter of the aperture should be a positive value.
+        The diameter of the aperture must be a positive value.
     label : string (Optional)
         The label of the element.
 
@@ -89,7 +89,12 @@ class Matrix(object):
 
     Notes
     -----
-    Notes about the implementation algorithm (if needed).
+    The vertices are not mandatory: they represent the first (front) and second
+    (back) physical interfaces.  It is possible to have None (e.g., freespace)
+    1 (dielectric interface) or 2 (any lens).
+
+    The front and back indices are important in the calculation of the determinant
+    and the effective focal lengths.
 
     """
 
@@ -133,7 +138,8 @@ class Matrix(object):
         super(Matrix, self).__init__()
 
     def determinant(self):
-        """Calculating the determinant of the ABCD matrix.
+        """The determinant of the ABCD matrix is always frontIndex/backIndex,
+        which is often 1.0
 
         Examples
         --------
@@ -141,18 +147,27 @@ class Matrix(object):
 
         >>> # M is an ABCD matrix of a lens (f=3)
         >>> M= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
-        >>> print('the determinant of matrix is equal to :' , M.determinant)
+        >>> print('the determinant of matrix is equal to :' , M.determinant())
         the determinant of matrix is equal to : 1.0
 
         """
         return self.A * self.D - self.B * self.C
 
     def __mul__(self, rightSide):
-        """Operator overloading allowing easy to read matrix multiplication
+        """Operator overloading allowing easy-to-read matrix multiplication
+        with other `Matrix`, with a `Ray` or a `GaussianBeam`.
 
         For instance, with M1 = Matrix() and M2 = Matrix(), one can write
         M3 = M1*M2. With r = Ray(), one can apply the M1 transform to a ray
-        with r = M1*r
+        with rOut = M1*r
+
+        Examples
+        --------
+        >>> from raytracing import *
+
+        >>> M1= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
+        >>> M2= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
+        >>> print('product M2*M1 :' , M2*M1)
 
         """
         if isinstance(rightSide, Matrix):
@@ -167,9 +182,9 @@ class Matrix(object):
                  cannot be multiplied by a Matrix".format(rightSide))
 
     def mul_matrix(self, rightSideMatrix):
-        """ This function is used when the ray passed through two element.
+        """ This function is used to combine two elements into a single matrix.
         The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
-        Total length of the elements is calculated (z). Apertures are lost. We compute
+        Total length of the elements is calculated (z) but apertures are lost. We compute
         the first and last vertices.
 
         Parameters
@@ -179,6 +194,8 @@ class Matrix(object):
 
         Returns
         -------
+        A matrix with:
+
         a : float
             Value of the index (1,1) in the ABCD matrix of the combination of the two elements.
         b : float
@@ -196,7 +213,7 @@ class Matrix(object):
 
         Examples
         --------
-        Consider a Lense (f=3) and a free space (d=2). The equal ABCD matrix
+        Consider a Lens (f=3) and a free space (d=2). The equal ABCD matrix
         of this system can be calculated as the following
 
         >>> from raytracing import *
@@ -220,8 +237,9 @@ class Matrix(object):
 
         Notes
         -----
-        If there is m ore that two elements, the multplication should be repeated
-        to add each element to calculate the total ABCD matrix of the system.
+        If there is more than two elements, the multplication can be repeated
+        to calculate the total ABCD matrix of the system. When combining matrices,
+        any apertures are lost.
         """
 
         a = self.A * rightSideMatrix.A + self.B * rightSideMatrix.C
@@ -255,7 +273,7 @@ class Matrix(object):
 
     def mul_ray(self, rightSideRay):
         """This function does the multiplication of a ray by a matrix.
-        The output shows the propagated ray throught the system.
+        The output shows the propagated ray through the system.
         New position of ray is updated by the physical length of the matrix.
 
         Parameters
