@@ -273,7 +273,6 @@ class ImagingPath(MatrixGroup):
         """
         fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
-        print(distance, conjugateMatrix)
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
 
@@ -306,7 +305,7 @@ class ImagingPath(MatrixGroup):
         """ We return the largest object in the ImagingPath for display purposes.
         The object is considered only "half" because it starts on axis and goes up."""
         
-        displayRange = self.largestDiameter()
+        displayRange = self.largestDiameter
         if displayRange == float('+Inf') or displayRange <= 2*self.objectHeight:
             displayRange = 2*self.objectHeight
 
@@ -534,7 +533,7 @@ class ImagingPath(MatrixGroup):
         """
         AS and FS are drawn at 110% of the largest diameter
         """
-        halfHeight = self.largestDiameter() / 2
+        halfHeight = self.largestDiameter / 2
 
         (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
         if apertureStopPosition is not None:
