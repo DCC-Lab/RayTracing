@@ -58,12 +58,6 @@ class TestRays(unittest.TestCase):
             self.assertEqual(ray, raysList[index])
             index += 1
 
-    def testRaysIterationsNone(self):
-        rays = Rays()
-        rays.rays = None
-        with self.assertRaises(StopIteration):
-            next(rays)
-
     def testRaysLen(self):
         r = Rays()
         self.assertEqual(len(r), 0)
@@ -75,10 +69,6 @@ class TestRays(unittest.TestCase):
         r = Rays(listOfRays)
         self.assertEqual(len(r), len(listOfRays))
 
-    def testRaysLenNone(self):
-        r = Rays()
-        r.rays = None
-        self.assertEqual(len(r), 0)
 
     def testRaysGetRay(self):
         raysList = [Ray(), Ray(1), Ray(-1)]
@@ -254,11 +244,6 @@ class TestRays(unittest.TestCase):
         self.assertIsNone(r._anglesHistogramParameters)
         self.assertIsNone(r._xValuesAnglesHistogram)
 
-    def testAppendNone(self):
-        rays = Rays()
-        rays.rays = None
-        rays.append(Ray())
-        self.assertIsNone(rays.rays)
 
     def testAppendInvalidInput(self):
         rays = Rays()
@@ -297,8 +282,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         rays = Rays()
         self.assertLoadNotFailed(rays)
         self.assertListEqual(rays.rays, self.testRays.rays)
-
-        rays.rays = None
+        rays._rays = []
         self.assertLoadNotFailed(rays)
         self.assertListEqual(rays.rays, self.testRays.rays)
 
