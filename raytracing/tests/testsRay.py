@@ -83,6 +83,17 @@ class TestRay(unittest.TestCase):
         other = Matrix()
         self.assertNotEqual(ray, other)
 
+        other = Ray(0, 10)
+        self.assertNotEqual(ray, other)
+
+        other = Ray(10, 0)
+        self.assertNotEqual(ray, other)
+
+        other = Ray(10,10)
+        self.assertEqual(ray, other)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
