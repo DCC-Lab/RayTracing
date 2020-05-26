@@ -813,20 +813,10 @@ class Matrix(object):
 
         return Rays(rays=outputRaysList)
 
-    def traceManyThroughInParallelNoChunks(self, inputRays, progress=True, processes=None):
-        if processes is None:
-            processes = multiprocessing.cpu_count()
-
-        manyInputRays = list(inputRays)
-
-        with multiprocessing.Pool(processes=processes) as pool:
-            outputRays = pool.map(self.traceThrough, manyInputRays)
-
-        return Rays(rays=outputRays)
-
     def isImaging(self):
-        """If B=0, then the matrix is from a conjugate plane to another
-        (i.e. object at the front edge and image at the back edge).
+        """If B=0, then the matrix represents that transfer from a conjugate
+        plane to another (i.e. object at the front edge and image at the
+        back edge).
 
         Examples
         --------
@@ -852,7 +842,7 @@ class Matrix(object):
         return abs(self.B) < Matrix.__epsilon__
 
     def hasPower(self):
-        """ If True, then c=!0
+        """ If True, then there is a non-null focal length because C!=0
 
         Examples
         --------
@@ -889,7 +879,7 @@ class Matrix(object):
         Returns
         -------
         focalDistances : array
-            Returns the FFL and BFL
+            Returns the effective focal lengths on either side.
 
         Examples
         --------
