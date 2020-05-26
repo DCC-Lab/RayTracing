@@ -19,6 +19,28 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, 1)
         self.assertListEqual(mg.elements, [])
 
+    def testMatrixGroupAcceptsAnything(self):
+        class Toto:
+            def __init__(self):
+                self.L = "Hello"
+
+        with self.assertRaises(TypeError) as exception:
+            MatrixGroup(["Matrix", Matrix()])
+        self.assertEqual(str(exception.exception), "'matrix' must be a Matrix instance.")
+
+        with self.assertRaises(TypeError) as exception2:
+            MatrixGroup([Toto(), Matrix()])
+        self.assertEqual(str(exception2.exception), str(exception.exception))
+
+        with self.assertRaises(TypeError) as exception:
+            MatrixGroup(123)
+        self.assertEqual(str(exception.exception),
+                         "'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
+
+        with self.assertRaises(TypeError) as exception2:
+            MatrixGroup(TypeError)
+        self.assertEqual(str(exception2.exception), str(exception.exception))
+
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
         transferMat = mg.transferMatrix()
@@ -118,6 +140,12 @@ class TestMatrixGroup(unittest.TestCase):
             with self.assertRaises(UserWarning):
                 mg.append(otherElement)
 
+    def testAppendNotCorrectType(self):
+        mg = MatrixGroup()
+
+        with self.assertRaises(TypeError):
+            mg.append(10)
+
     def testMatrixGroupWithElements(self):
         elements = []
         f1 = 10
@@ -188,6 +216,13 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertListEqual(mgTrace, trace)
         self.assertEqual(mg._lastRayToBeTraced, trace[0])
         self.assertTrue(mgTrace[-1].isBlocked)
+
+    def testTraceIncorrectType(self):
+        s = Space(2, diameter=5)
+        l = Lens(6, diameter=5)
+        mg = MatrixGroup([s, l])
+        with self.assertRaises(TypeError):
+            mg.trace("Ray")
 
     @unittest.skip("Importation problem...")
     def testImagingPath(self):

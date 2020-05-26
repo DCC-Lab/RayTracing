@@ -1,15 +1,11 @@
 from .matrix import *
-from .ray import *
 
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.path as mpath
-import matplotlib.transforms as transforms
+import collections.abc as collections
 
 
 class MatrixGroup(Matrix):
     """MatrixGroup: A group of Matrix(), allowing
-    the combination of several elements to be treated as a 
+    the combination of several elements to be treated as a
     whole, or treated explicitly as a sequence when needed.
     """
 
@@ -19,10 +15,13 @@ class MatrixGroup(Matrix):
         self.elements = []
 
         if elements is not None:
+            if not isinstance(elements, collections.Iterable):
+                raise TypeError("'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
+
             for element in elements:
                 self.append(element)
 
-        # Solely for performance reason: it is common to raytrace 
+        # Solely for performance reason: it is common to raytrace
         # groups of rays that are similar (to mimick intensities)
         # We keep the last ray and the last ray trace for optimization
         self._lastRayToBeTraced = None
@@ -31,6 +30,9 @@ class MatrixGroup(Matrix):
     def append(self, matrix):
         """ Add an element at the end of the path """
         lastElement = None
+        if not isinstance(matrix, Matrix):
+            raise TypeError("'matrix' must be a Matrix instance.")
+
         if len(self.elements) != 0:
             lastElement = self.elements[-1]
             if lastElement.backIndex != matrix.frontIndex:
@@ -117,7 +119,8 @@ class MatrixGroup(Matrix):
         ray, it will be indicated.
 
         """
-
+        if not isinstance(inputRay, (Ray, GaussianBeam)):
+            raise TypeError("'inputRay' must be a Ray or a GaussianBeam.")
         ray = inputRay
         if ray != self._lastRayToBeTraced:
             rayTrace = [ray]
