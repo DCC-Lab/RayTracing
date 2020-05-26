@@ -439,7 +439,7 @@ class TestMatrix(unittest.TestCase):
 
     def testInfiniteBackConjugate(self):
         m = Matrix(A=0)
-        self.assertTupleEqual(m.backwardConjugate(), (None, None))
+        self.assertTupleEqual(m.backwardConjugate(), (float("+inf"), None))
 
     def testFiniteBackConjugate(self):
         m1 = Space(d=10) * Lens(f=5)
