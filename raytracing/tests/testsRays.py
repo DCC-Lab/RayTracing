@@ -69,7 +69,6 @@ class TestRays(unittest.TestCase):
         r = Rays(listOfRays)
         self.assertEqual(len(r), len(listOfRays))
 
-
     def testRaysGetRay(self):
         raysList = [Ray(), Ray(1), Ray(-1)]
         rays = Rays(raysList)
@@ -244,7 +243,6 @@ class TestRays(unittest.TestCase):
         self.assertIsNone(r._anglesHistogramParameters)
         self.assertIsNone(r._xValuesAnglesHistogram)
 
-
     def testAppendInvalidInput(self):
         rays = Rays()
         with self.assertRaises(TypeError):
@@ -258,7 +256,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         self.fileName = 'testFile.pkl'
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testRays.rays)
-        time.sleep(1)  # Make sure everything is ok
+        time.sleep(0.5)  # Make sure everything is ok
 
     def tearDown(self) -> None:
         if os.path.exists(self.fileName):
@@ -293,6 +291,33 @@ class TestRaysSaveAndLoad(unittest.TestCase):
 
         self.assertLoadNotFailed(rays)  # We don't append, we override
         self.assertListEqual(rays.rays, self.testRays.rays)
+
+    def testLoadWrongFileContent(self):
+        wrongObj = 7734
+        fileName = 'wrongObj.pkl'
+        with open(fileName, 'wb') as file:
+            pickle.Pickler(file).dump(wrongObj)
+        time.sleep(0.5)  # Make sure everything is ok
+
+        try:
+            with self.assertRaises(IOError):
+                Rays().load(fileName)
+        except AssertionError as exception:
+            self.fail(str(exception))
+        finally:
+            os.remove(fileName)
+
+        wrongIterType = [Ray(), Ray(1), [1, 1]]
+        with open(fileName, 'wb') as file:
+            pickle.Pickler(file).dump(wrongIterType)
+        time.sleep(0.5)
+        try:
+            with self.assertRaises(IOError):
+                Rays().load(fileName)
+        except AssertionError as exception:
+            self.fail(str(exception))
+        finally:
+            os.remove(fileName)
 
     def assertSaveNotFailed(self, rays: Rays, name: str, deleteNow: bool = True):
         try:
