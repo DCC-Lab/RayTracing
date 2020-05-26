@@ -140,6 +140,17 @@ class TestMatrixGroup(unittest.TestCase):
             with self.assertRaises(UserWarning):
                 mg.append(otherElement)
 
+    def testAppendSpaceMustAdoptIndexOfRefraction(self):
+        mEquivalent = MatrixGroup()
+        d1 = DielectricInterface(n1=1, n2=1.55, R=100)
+        s  = Space(d=3)
+        d2 = DielectricInterface(n1=1.55, n2=1.0, R=-100)
+        mEquivalent.append(d1)
+        mEquivalent.append(s)
+        mEquivalent.append(d2)
+        self.assertEqual(d1.backIndex, s.frontIndex)
+        self.assertEqual(d2.frontIndex, s.backIndex)
+
     def testAppendNotCorrectType(self):
         mg = MatrixGroup()
 
