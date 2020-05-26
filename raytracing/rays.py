@@ -302,25 +302,15 @@ class RandomRays(Rays):
         if item < 0:
             # Convert negative index to positive (i.e. -1 == len - 1)
             item += self.maxCount
-        if item < 0:
-            # If item is still negative, out of bound! (i.e. if len = 5, -5 -> 0, -6 -> -1)
-            raise IndexError(f"Index {item} out of bound, min = 0.")
-        generatedNo = len(self._rays)
-        if item < generatedNo:
-            # There is enough generated rays
-            return self._rays[item]
-        elif item < self.maxCount:
-            # There is not enough generated rays
-            missingNo = item - generatedNo + 1
-            if missingNo > 1000:
-                warnings.warn(f"Generating {missingNo} rays. This can take a few seconds.", UserWarning)
-            while missingNo != 0:
-                self.randomRay()
-                missingNo -= 1
-            return self._rays[item]
-        else:
-            # Out of bound
-            raise IndexError(f"Index {item} out of bound, max = {self.maxCount}.")
+
+        if item < 0 or item >= self.maxCount:
+            raise IndexError(f"Index {item} out of bound, min = 0, max {self.maxCount}.")
+
+        while len(self._rays) <= item:
+            warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
+            self.randomRay()
+
+        return self._rays[item]
 
     def __next__(self) -> Ray:
         if self.iteration >= self.maxCount:
