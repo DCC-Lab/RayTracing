@@ -62,7 +62,6 @@ class TestLambertianRays(unittest.TestCase):
                     allRays.append(Ray(y, theta))
         self.assertListEqual(rays.rays, allRays)
 
-
     def testLambertianRaysNoneInArgs(self):
         rays = LambertianRays(10, None, 10, 10, 10)
         self.assertIsNotNone(rays)
@@ -78,9 +77,8 @@ class TestLambertianRays(unittest.TestCase):
             intensity = int(10 * cos(theta))
             for y in linspace(-10, 10, 10):
                 for _ in range(intensity):
-                    allRays.append(Ray(y+1, theta))
+                    allRays.append(Ray(y, theta))
         self.assertListEqual(rays.rays, allRays)
-
 
 
 class TestRandomRays(unittest.TestCase):
