@@ -37,12 +37,12 @@ class MatrixGroup(Matrix):
             lastElement = self.elements[-1]
             if lastElement.backIndex != matrix.frontIndex:
                 if isinstance(matrix, Space): # For Space(), we fix it
-                    msg = "Fixing mismatched indices between last element and appended Space(). Use Space(d=someDistance, n=someIndex)."
+                    msg = "Fixing mismatched indices between last element and appended Space(). Use Space(d=someDistance, n=someIndex).\n"
                     warnings.warn(msg, UserWarning)
                     matrix.frontIndex = lastElement.backIndex
                     matrix.backIndex = matrix.frontIndex
                 else:
-                    msg = "Mismatch of indices between last element and appended element"
+                    msg = "Mismatch of indices between last element and appended element\n"
                     raise ValueError(msg)
 
         self.elements.append(matrix)
