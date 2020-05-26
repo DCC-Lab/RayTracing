@@ -307,7 +307,7 @@ class RandomRays(Rays):
             raise IndexError(f"Index {item} out of bound, min = 0, max {self.maxCount}.")
 
         while len(self._rays) <= item:
-            warnings.warn(f"Generating missing rays. This can take a few seconds.\n", UserWarning)
+            warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
             self.randomRay()
 
         return self._rays[item]

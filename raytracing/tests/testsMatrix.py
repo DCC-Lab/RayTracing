@@ -7,13 +7,13 @@ inf = float("+inf")
 
 
 class TestMatrix(unittest.TestCase):
-    def testWarningsOnOneLine(self):
+    def testWarningsFormat(self):
         message = "This is a test."
         filename = "test.py"
         lineno = 10
         category = UserWarning
-        warningsMessage = warningOnOneLine(message, category, filename, lineno)
-        self.assertEqual(warningsMessage, " test.py:10\nUserWarning:This is a test.")
+        warningsMessage = warningLineFormat(message, category, filename, lineno)
+        self.assertEqual(warningsMessage, "\ntest.py:10\nUserWarning:This is a test.\n")
 
     def testMatrix(self):
         m = Matrix()

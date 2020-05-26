@@ -62,7 +62,7 @@ class AchromatDoubletLens(MatrixGroup):
         self.apertureDiameter = diameter
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
-            msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}\n".format(self.tc1 + self.tc2, self.L)
+            msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1 + self.tc2, self.L)
             warnings.warn(msg, UserWarning)
 
         # After having built the lens, we confirm that the expected effective
@@ -70,12 +70,12 @@ class AchromatDoubletLens(MatrixGroup):
         (f, f) = self.focalDistances()
         if abs((f - fa) / fa) > 0.01:
             msg = "Doublet {2}: Obtained effective focal length {0:.4} is not within 1% of " \
-                  "expected {1:.4}\n".format(f, fa, self.label)
+                  "expected {1:.4}".format(f, fa, self.label)
             warnings.warn(msg, UserWarning)
         BFL = self.backFocalLength()
         if abs((BFL - fb) / fb) > 0.01:
             msg = "Doublet {2}: Obtained back focal length {0:.4} is not within 1% of " \
-                  "expected {1:.4}\n".format(BFL, fb, self.label)
+                  "expected {1:.4}".format(BFL, fb, self.label)
             warnings.warn(msg, UserWarning)
 
         h = self.largestDiameter() / 2.0
@@ -86,7 +86,7 @@ class AchromatDoubletLens(MatrixGroup):
         corner3 = self.backVertex + self.R3 * (1.0 - math.cos(phi3))
         if abs(((corner3 - corner1) / self.te) - 1.0) > 0.05:
             msg = "Doublet {2}: obtained thickness {0:.1f} does not match expected " \
-                  "{1:0.1f}\n".format(corner3 - corner1, self.te, self.label)
+                  "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
     def drawAt(self, z, axes, showLabels=False):
@@ -248,7 +248,7 @@ class Objective(MatrixGroup):
         if not Objective.warningDisplayed:
             msg = "Objective class not fully tested. \
 No guarantee that apertures and field of view will exactly \
-reproduce the objective.\n"
+reproduce the objective."
             warnings.warn(msg, FutureWarning)
             Objective.warningDisplayed = True
 

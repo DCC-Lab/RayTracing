@@ -12,11 +12,11 @@ import math
 import warnings
 
 
-def warningOnOneLine(message, category, filename, lineno, line=None):
-    return ' %s:%s\n%s:%s' % (filename, lineno, category.__name__, message)
+def warningLineFormat(message, category, filename, lineno, line=None):
+    return '\n%s:%s\n%s:%s\n' % (filename, lineno, category.__name__, message)
 
 
-warnings.formatwarning = warningOnOneLine
+warnings.formatwarning = warningLineFormat
 
 
 class Matrix(object):
@@ -381,7 +381,7 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}\n".format(
+            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
                 rightSideBeam.n, self.frontIndex)
             warnings.warn(msg, UserWarning)
 
@@ -1765,7 +1765,7 @@ class CurvedMirror(Matrix):
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
         warnings.warn("The sign of the radius of curvature in CurvedMirror was changed \
-in version 1.2.8 to maintain the sign convention\n", UserWarning)
+in version 1.2.8 to maintain the sign convention", UserWarning)
         super(CurvedMirror, self).__init__(A=1, B=0, C=2 / float(R), D=1,
                                            physicalLength=0,
                                            apertureDiameter=diameter,
