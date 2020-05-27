@@ -7,6 +7,7 @@ inf = float("+inf")
 
 class TestLaserPath(unittest.TestCase):
 
+
     def testLaserPathNoElements(self):
         lasPath = LaserPath()
         self.assertIsNone(lasPath.inputBeam)
