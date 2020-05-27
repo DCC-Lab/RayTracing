@@ -55,33 +55,33 @@ class ImagingPath(MatrixGroup):
     showPlanesAcrossPointsOfInterest : bool
         If True, the planes across the points of interests will be shown (default=True)
 
-    Examples
-    --------
-    >>> from raytracing import *
-    >>> path = ImagingPath() # define an imaging path
-    >>> #set the desire properties
-    >>> path.objectHeight=4
-    >>> path.fanAngle=0.1
-    >>> path.fanNumber=5
-    >>> # use append() to add elements to the imaging path
-    >>> path.append(Space(d=20))
-    >>> path.append(Lens(f=20,label="f=20"))
-    >>> path.append(Space(d=30))
-    >>> path.append(Lens(f=10,label="f=10"))
-    >>> path.append(Space(d=10))
-    >>> #display the imeging path
-    >>> path.display()
 
-    And the following figure will be plotted:
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> #set the desire properties
+        >>> path.objectHeight=4
+        >>> path.fanAngle=0.1
+        >>> path.fanNumber=5
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> #display the imeging path
+        >>> path.display()
 
-    .. image:: imagepath_example.png
-                :width: 70%
-                :align: center
+        And the following figure will be plotted:
 
-
+        .. image:: ImagingPath.png
+                    :width: 70%
+                    :align: center
     """
 
     def __init__(self, elements=None, label=""):
+
         self.objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
         self.fanAngle = 0.1  # full fan angle for rays
@@ -103,14 +103,48 @@ class ImagingPath(MatrixGroup):
         super(ImagingPath, self).__init__(elements=elements, label=label)
 
     def chiefRay(self, y=None):
-        """ Chief ray for a height y (i.e., the ray that goes
-        through the center of the aperture stop). If no height
-        is provided, then we use the limit of the field of view.
+        """This function returns the chief ray for a height y on object.
+        The chief ray for height y is the ray that goes
+        through the center of the aperture stop.
 
+        Parameters
+        ----------
+        y : float
+        The starting height of the chief ray on the onject (default=None)
+        If no height is provided, then the function uses the limit of the field of view.
+
+        Returns
+        -------
+        chiefRay : object of Ray class
+            The properties (i.e. height and the angle of the chief.)
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=2,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print(path.chiefRay())
+        /       \
+        |  6.668  |
+        |         |
+        | -0.333  |
+         \       /
+        z = 0.000
+
+        Notes
+        -----
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
         (which we are looking for) will end at y=0 at the
         aperture stop.
+        If the element B in the transfer matrix for the imaging path is zero, there is no value for
+        the height and angle that makes a proper chief ray. So the function will return Null.
+
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
