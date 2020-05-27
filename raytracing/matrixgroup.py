@@ -10,6 +10,7 @@ class MatrixGroup(Matrix):
     """
 
     def __init__(self, elements=None, label=""):
+        self.iteration = 0
         super(MatrixGroup, self).__init__(1, 0, 0, 1, label=label)
 
         self.elements = []
@@ -36,7 +37,7 @@ class MatrixGroup(Matrix):
         if len(self.elements) != 0:
             lastElement = self.elements[-1]
             if lastElement.backIndex != matrix.frontIndex:
-                if isinstance(matrix, Space): # For Space(), we fix it
+                if isinstance(matrix, Space):  # For Space(), we fix it
                     msg = "Fixing mismatched indices between last element and appended Space(). Use Space(d=someDistance, n=someIndex)."
                     warnings.warn(msg, UserWarning)
                     matrix.frontIndex = lastElement.backIndex
@@ -54,12 +55,6 @@ class MatrixGroup(Matrix):
         self.L = transferMatrix.L
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
-
-    def ImagingPath(self):
-        return ImagingPath(elements=self.elements, label=self.label)
-
-    def LaserPath(self):
-        return LaserPath(elements=self.elements, label=self.label)
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
@@ -227,3 +222,16 @@ class MatrixGroup(Matrix):
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
                           xycoords='data', fontsize=12,
                           ha='center', va='bottom')
+
+    def __iter__(self):
+        self.iteration = 0
+        return self
+
+    def __next__(self):
+        if self.elements is None:
+            raise StopIteration
+        if self.iteration < len(self.elements):
+            element = self.elements[self.iteration]
+            self.iteration += 1
+            return element
+        raise StopIteration
