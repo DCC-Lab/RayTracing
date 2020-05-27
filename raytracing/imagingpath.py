@@ -641,7 +641,32 @@ class ImagingPath(MatrixGroup):
 
     def displayRange(self, axes=None):
         """ We return the largest object in the ImagingPath for display purposes.
-        The object is considered only "half" because it starts on axis and goes up."""
+        The object is considered only "half" because it starts on axis and goes up.
+
+        Returns
+        -------
+        displayRange : float
+            The maximum height of the objects in an imaging path
+
+        Examples
+        --------
+        In the following example, we have defined three elements in an imaging path:
+        An object (height=3), a first lens (height=5) and a second lens (height=7).
+        The height of the second lens is returned as the display range.
+
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> # use append() to add elements to the imaging path
+        >>> path.objectHeight=3
+        >>> path.append(Space(d=10))
+        >>> path.append(Lens(f=10,diameter=5,label="f=10"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=20,diameter=7,label="f=20"))
+        >>> path.append(Space(d=20))
+        >>> print('display range :', path.displayRange())
+        display range : 7
+
+        """
         
         displayRange = self.largestDiameter()
         if displayRange == float('+Inf') or displayRange <= 2*self.objectHeight:
@@ -659,13 +684,20 @@ class ImagingPath(MatrixGroup):
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False,
             removeBlockedRaysCompletely=False):  # pragma: no cover
-        """ Create a matplotlib plot to draw the rays and the elements.
+        """ This function create a matplotlib plot to draw the rays and the elements.
 
-            Three optional parameters:
-            limitObjectToFieldOfView=False, to use the calculated field of view
-            instead of the objectHeight
-            onlyChiefAndMarginalRays=False, to only show principal rays
-            removeBlockedRaysCompletely=False to remove rays that are blocked.
+            Parameters
+            ----------
+            axes : object from matplotlib.pyplot.axes class
+                Add an axes to the current figure and make it the current axes.
+            limitObjectToFieldOfView : bool (Optional)
+                If True, the object will be limited to the field of view and
+                the calculated field of view will be used instead of the objectHeight(default=False)
+            onlyChiefAndMarginalRays : bool (Optional)
+                If True, only the principal rays will appear on the plot (default=False)
+            removeBlockedRaysCompletely : bool (Optional)
+                If True, the blocked rays are removed (default=False)
+
          """
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
@@ -716,7 +748,14 @@ class ImagingPath(MatrixGroup):
         return axes
 
     def updateDisplay(self, axes):
-        """ Callback function used to redraw the objects when zooming. """
+        """ Callback function used to redraw the objects when zooming.
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
         for artist in axes.artists:
             artist.remove()
         axes.artists = []
@@ -731,8 +770,20 @@ class ImagingPath(MatrixGroup):
 
     def display(self, limitObjectToFieldOfView=False,
                 onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
-        """ Display the optical system and trace the rays. If comments are included
-        they will be displayed on a graph in the bottom half of the plot.
+        """ Display the optical system and trace the rays.
+
+        Parameters
+        ----------
+        limitObjectToFieldOfView : bool (Optional)
+            If True, the object will be limited to the field of view and
+            the calculated field of view will be used instead of the objectHeight(default=False)
+        onlyChiefAndMarginalRays : bool (Optional)
+            If True, only the principal rays will appear on the plot (default=False)
+        removeBlockedRaysCompletely : bool (Optional)
+            If True, the blocked rays are removed (default=False)
+        comments : strring
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+
         """
         if comments is not None:
             fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
@@ -782,7 +833,15 @@ class ImagingPath(MatrixGroup):
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber)
         2. the principal rays (chief and marginal)
 
-            removeBlockedRaysCompletely=False to remove rays that are blocked.
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        onlyChiefAndMarginalRays : bool
+            If True, only the principal rays will appear on the plot
+        removeBlockedRaysCompletely : bool (Optional)
+            If True, the blocked rays are removed (default=False).
+
         """
 
         color = ['b', 'r', 'g']
@@ -821,6 +880,17 @@ class ImagingPath(MatrixGroup):
 
     def rearrangeRayTraceForPlotting(self, rayList,
                                      removeBlockedRaysCompletely=True):
+        """
+        This function removes the rays that are blocked in the imaging path.
+
+        Parameters
+        ----------
+        rayList : List of Rays
+            an object from rays class or a list of rays
+        removeBlockedRaysCompletely : bool
+            If True, the blocked rays will be removed of the list (default=True)
+
+        """
         x = []
         y = []
         for ray in rayList:
