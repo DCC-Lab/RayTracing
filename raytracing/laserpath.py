@@ -54,10 +54,10 @@ class LaserPath(MatrixGroup):
 
         (q1, q2) = self.eigenModes()
         q = []
-        if q1.isFinite:
+        if q1 is not None and q1.isFinite:
             q.append(q1)
 
-        if q2.isFinite:
+        if q2 is not None and q2.isFinite:
             q.append(q2)
 
         return q

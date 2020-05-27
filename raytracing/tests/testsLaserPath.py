@@ -19,7 +19,7 @@ class TestLaserPath(unittest.TestCase):
 
     def testLaserModes(self):
         lp = LaserPath()
-        lp.laserModes()
+        self.assertListEqual(lp.laserModes(), [])
 
 
 if __name__ == '__main__':
