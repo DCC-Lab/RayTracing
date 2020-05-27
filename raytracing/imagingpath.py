@@ -296,9 +296,9 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('The position of aperture stop is:', path.apertureStop()[0])
-        >>> print('The diameter of aperture stop is',path.apertureStop()[1])
+        >>> print('The diameter of aperture stop is:',path.apertureStop()[1])
         The position of aperture stop is: 20.0
-        The diameter of aperture stop is 5
+        The diameter of aperture stop is: 5
 
         Also, as the following, you can use display() to follow the rays in the imaging path and view the
         aperture stop and field stop. Since the diameter of the first lens (f=20) is limited,
@@ -315,6 +315,7 @@ class ImagingPath(MatrixGroup):
         --------
         rayreacing.ImagingPath.apertureStopPosition
         raytracing.ImagingPath.apertureStopDiameter
+        rayreacing.ImagingPath.fieldStop
 
         Notes
         -----
@@ -345,7 +346,7 @@ class ImagingPath(MatrixGroup):
             return (apertureStopPosition, apertureStopDiameter)
 
     def entrancePupil(self):
-        """ The entrance pupil is the image of the aperture stop
+        """The entrance pupil is the image of the aperture stop
         as seen from the object. To obtain this image, we simply
         need to know the transfer matrix to the aperture stop,
         then find the "backward" conjugate, which means finding
@@ -355,8 +356,25 @@ class ImagingPath(MatrixGroup):
         the "object" is at the front and the "image" is at the back,
         so we need to invert the magnification.
 
-        Returns the pupilPosition relative to input reference plane
-        (positive means to the right) and its diameter.
+        Returns
+        -------
+         entrancePupil : (float,float)
+            the position of the pupil relative to input reference plane
+            (positive means to the right) and its diameter.
+
+        Examples
+        --------
+        >>> path = ImagingPath() # define an imaging path
+        >>> path.objectHeight=6
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=5,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print('The (position,diameter) of entrance pupil:', path.entrancePupil())
+        The (position,diameter) of entrance pupil: (20.0, 5.0)
+
         """
 
         if self.hasFiniteApertureDiameter():
@@ -372,11 +390,50 @@ class ImagingPath(MatrixGroup):
             return (None, None)
 
     def fieldStop(self):
-        """ The field stop is the aperture that limits the image
-        size (or field of view)
+        """ The field stop is the aperture that limits the image size (or field of view)
+        It is possible to have finite diameter elements but
+        still an infinite field of view and therefore no Field stop.
+        In fact, if only a single element has a finite diameter,
+        there is no field stop (only an aperture stop). The limit
+        is arbitrarily set to maxHeight.
 
-        Returns the position and diameter of the field stop.
+        Returns
+        -------
+        fieldStop : (float,float)
+            the outpu is the (position, diameter) of the field stop.
+            If there are no elements of finite diameter (i.e. all
+            optical elements are infinite in diameters), then there
+            is no field stop and no aperture stop in the system
+            and their sizes are infinite.
 
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> path.objectHeight=6
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=5,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print('The position of field stop is:', path.apertureStop()[0])
+        >>> print('The diameter of field stop is:',path.apertureStop()[1])
+        The position of field stop is: 50.0
+        The diameter of field stop is: 10
+
+        Also, as the following, you can use display() to follow the rays in the imaging path and view the
+        aperture stop and field stop. The second lens in the imaging path (f=10) is the field stop.
+
+        >>> path.display()
+
+        .. image:: apertureStop.png
+            :width: 70%
+            :align: center
+
+
+        Notes
+        -----
         Strategy: We want to find the exact height from the object
         where it is blocked by an aperture (which will become the
         field stop). We look for the point that separates the
@@ -395,16 +452,6 @@ class ImagingPath(MatrixGroup):
         because the precision can be very high without a long calculation
         time.
 
-        It is possible to have finite diameter elements but
-        still an infinite field of view and therefore no Field stop.
-        In fact, if only a single element has a finite diameter,
-        there is no field stop (only an aperture stop). The limit
-        is arbitrarily set to maxHeight.
-
-        If there are no elements of finite diameter (i.e. all
-        optical elements are infinite in diameters), then there
-        is no field stop and no aperture stop in the system
-        and their sizes are infinite.
         """
         (apertureStopPosition, dummy) = self.apertureStop()
 
