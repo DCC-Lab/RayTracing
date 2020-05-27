@@ -14,6 +14,13 @@ class TestLaserPath(unittest.TestCase):
         lp = LaserPath()
         self.assertTupleEqual(lp.eigenModes(), (None, None))
 
+        lp = LaserPath([CurvedMirror(-10)])
+        self.assertNotEqual(lp.eigenModes(), (None, None))
+
+    def testLaserModes(self):
+        lp = LaserPath()
+        lp.laserModes()
+
 
 if __name__ == '__main__':
     unittest.main()
