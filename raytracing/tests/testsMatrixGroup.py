@@ -319,6 +319,11 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, supposedMatrix.D)
         self.assertEqual(mg.L, supposedMatrix.L)
 
+    def testInitWithAnotherMatrixGroup(self):
+        mg = MatrixGroup([Lens(5)])
+        mg2 = MatrixGroup(mg)
+        self.assertListEqual(mg.elements, mg2.elements)
+
 
 if __name__ == '__main__':
     unittest.main()
