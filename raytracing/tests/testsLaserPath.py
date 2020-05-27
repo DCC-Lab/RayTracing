@@ -7,7 +7,6 @@ inf = float("+inf")
 
 class TestLaserPath(unittest.TestCase):
 
-
     def testLaserPathNoElements(self):
         lasPath = LaserPath()
         self.assertIsNone(lasPath.inputBeam)
@@ -29,7 +28,6 @@ class TestLaserPath(unittest.TestCase):
         with self.assertRaises(TypeError):
             LaserPath(elements)
 
-    @unittest.skip("Fixed soon")
     def testEigenModesNoPower(self):
         lp = LaserPath([Space(10)])
         self.assertTupleEqual(lp.eigenModes(), (None, None))
@@ -47,7 +45,6 @@ class TestLaserPath(unittest.TestCase):
         self.assertEqual(beam1.q, beam2.q)
         self.assertEqual(beam1.q, 0)
 
-    @unittest.skip("Fixed soon")
     def testLaserModesNoPower(self):
         lp = LaserPath([Space(10)])
         self.assertListEqual(lp.laserModes(), [])
@@ -60,9 +57,25 @@ class TestLaserPath(unittest.TestCase):
         self.assertEqual(beam.q.real, -5)
         self.assertAlmostEqual(beam.q.imag, 5 * 3 ** 0.5)
 
-        lp = Laser
+        elements = [Space(1, 1.33), DielectricInterface(1.33, 1, 1), ThickLens(1.33, -10, -5, -20)]
+        lp = LaserPath(elements)
+        laserModes = lp.laserModes()
+        self.assertEqual(len(laserModes), 1)
+        beam = laserModes[0]
+        self.assertAlmostEqual(beam.q.real, -5.90770102)
+        self.assertAlmostEqual(beam.q.imag, 1.52036515)
 
+        lp = LaserPath([Space(10), CurvedMirror(5)])
+        self.assertListEqual(lp.laserModes(), [])
+        lp = LaserPath()
+        self.assertListEqual(lp.laserModes(), [])
 
+    def testRearrangeBeamTraceForPlotting(self):
+        x = [x for x in range(1, 6)]
+        y = [y for y in range(1, 6)]
+        rayList = [GaussianBeam(w=x_, z=y_) for (x_, y_) in zip(x, y)]
+        lp = LaserPath()
+        self.assertTupleEqual(lp.rearrangeBeamTraceForPlotting(rayList), (x, y))
 
 if __name__ == '__main__':
     unittest.main()
