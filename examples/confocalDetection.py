@@ -18,6 +18,10 @@ pinholeModifier = {1/3: [], 1: [], 3: []}
 
 # list of all relative positions from the ideal focal spot position in nm
 positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -300, -500, -800, -1000]
+# Number of total rays produced by the focal spot
+nRays = 10000 
+# Production of rays from a focal spot with a radius of 250 nm
+inputRays = RandomUniformRays(yMax=0.000250, yMin=-0.000250, maxCount=nRays)
 
 for pinhole in pinholeModifier:
 
@@ -29,9 +33,6 @@ for pinhole in pinholeModifier:
 
         newPositions = 5 + (z*0.000001)  # Working distance of the objective + position
         #print(newPositions)
-        nRays = 10000  # Number of total rays produced by the focal spot
-        # Production of rays from a focal spot with a radius of 250 nm
-        inputRays = RandomUniformRays(yMax=0.000250, yMin=-0.000250, maxCount=nRays)
 
         illumination = ImagingPath()
         illumination.append(Space(d=newPositions))
