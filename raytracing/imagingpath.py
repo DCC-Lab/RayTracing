@@ -103,20 +103,20 @@ class ImagingPath(MatrixGroup):
         super(ImagingPath, self).__init__(elements=elements, label=label)
 
     def chiefRay(self, y=None):
-        """This function returns the chief ray for a height y on object.
+        """This function returns the chief ray for a height y at object.
         The chief ray for height y is the ray that goes
         through the center of the aperture stop.
 
         Parameters
         ----------
         y : float
-        The starting height of the chief ray on the onject (default=None)
-        If no height is provided, then the function uses the limit of the field of view.
+            The starting height of the chief ray at the object (default=None)
+            If no height is provided, then the function uses the limit of the field of view.
 
         Returns
         -------
         chiefRay : object of Ray class
-            The properties (i.e. height and the angle of the chief.)
+            The properties (i.e. height and the angle of the chief ray.)
 
         Examples
         --------
@@ -136,15 +136,19 @@ class ImagingPath(MatrixGroup):
          \       /
         z = 0.000
 
+        See Also
+        --------
+        raytracing.ImagingPath.marginalRays
+
         Notes
         -----
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
         (which we are looking for) will end at y=0 at the
         aperture stop.
-        If the element B in the transfer matrix for the imaging path is zero, there is no value for
-        the height and angle that makes a proper chief ray. So the function will return Null.
-
+        If the element B in the transfer matrix for the imaging path
+        is zero, there is no value for the height and angle that makes
+        a proper chief ray. So the function will return Null.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
@@ -160,20 +164,66 @@ class ImagingPath(MatrixGroup):
         return Ray(y=y, theta=-A * y / B)
 
     def marginalRays(self, y=0):
-        """ Marginal rays for a height y at object
-        (i.e., the rays that hit the upper and lower
-        edges of the aperture stop). In general, this could
-        be any height, not just y=0. However, we usually
-        only want y=0 which is implicitly called
-        "the marginal ray (of the system)", and both rays
-        will be symmetrically oriented on either side of the
-        optical axis.
+        """This function calculates the marginal rays for a height y at object.
+        The marginal rays for height y, are the rays that hit the upper and lower
+        edges of the aperture stop.
 
+        Parameters
+        ----------
+        y : float
+            The starting height of the marginal rays at the object (default=0)
+            In general, this could be any height, not just y=0. However, we usually
+            want y=0 which is implicitly called "the marginal ray (of the system)",
+
+
+        Returns
+        -------
+        marginalRays : object of Rays class
+            The properties (i.e. heights and the angles of the marginal rays.).
+            If the default value is used at the input (y=0), both rays will be
+            symmetrically oriented on either side of the optical axis.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=2,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print( 'the first and the second marginal rays are :', path.marginalRays()[0],path.marginalRays()[1])
+        the first and the second marginal rays are :
+         /       \
+        |  0.000  |
+        |         |
+        |  0.050  |
+         \       /
+        z = 0.000
+         /       \
+        |  0.000  |
+        |         |
+        | -0.050  |
+         \       /
+        z = 0.000
+
+        As it can be seen in the example, the marginal rays of the system
+        are symmetrically oriented on either side of the optical axis.
+
+        See Also
+        --------
+        raytracing.ImagingPath.chiefRay
+        raytracing.ImagingPath.axialRays
+
+        Notes
+        -----
         The calculation is simple: obtain the transfer matrix
         to the aperture stop, then we know that the input ray
-        (which we are looking for) will end at y= plus/minus diameter/2 at the
-        aperture stop. We return the largest angle first, for
+        (which we are looking for) will end at y= +/-(diameter/2) at the
+        aperture stop. We return the largest (positive) angle first, for
         convenience.
+
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
@@ -189,26 +239,91 @@ class ImagingPath(MatrixGroup):
         return [Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown)]
 
     def axialRays(self, y):
-        """ Synonym of marginal rays """
+        """This function is the synonym of marginalRays and calculates the
+         marginal rays for a height y at object.
+
+        Parameters
+        ----------
+        y : float
+            The starting height of the marginal rays at the object.
+            In general, this could be any height, not just y=0. However, we usually
+            want y=0 which is implicitly called "the marginal ray (of the system)",
+
+
+        Returns
+        -------
+        axialRays : object of Rays class
+            The properties (i.e. heights and the angles of the marginal rays.).
+            If the value y=0 is used at the input, both output rays will be
+            symmetrically oriented on either side of the optical axis.
+
+        Raises
+        ------
+        BadException
+            the value y at the input does not have a default value. If a value
+            is not defined there will be a TypeError.
+
+
+        See Also
+        --------
+        raytracing.ImagingPath.marginalRays
+        raytracing.ImagingPath.chiefRay
+        """
         return self.marginalRays(y)
 
     def apertureStop(self):
-        """ The aperture in the system that limits the cone of angles
-        originating from zero height at the object plane.
+        """The "aperture stop" is an aperture in the system that limits
+        the cone of angles originating from zero height at the object plane.
 
-        Returns the position and diameter of the aperture stop
+        Returns
+        -------
+        apertureStop : (float,float)
+            Returns an array including the position (index [0] of the output)
+            and diameter (index [1] of the output) of the aperture stop.
+            If there are no elements of finite diameter (i.e. all optical elements
+            are infinite in diameters), then there is no aperture stop in the system
+            and the size of the aperture stop is infinite (+Inf).
 
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> path.objectHeight=6
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=5,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print('The position of aperture stop is:', path.apertureStop()[0])
+        >>> print('The diameter of aperture stop is',path.apertureStop()[1])
+        The position of aperture stop is: 20.0
+        The diameter of aperture stop is 5
+
+        Also, as the following, you can use display() to follow the rays in the imaging path and view the
+        aperture stop and field stop. Since the diameter of the first lens (f=20) is limited,
+        this is the aperture stop in the imaging path.
+
+        >>> path.display()
+
+        .. image:: apertureStop.png
+            :width: 70%
+            :align: center
+
+
+        See Also
+        --------
+        rayreacing.ImagingPath.apertureStopPosition
+        raytracing.ImagingPath.apertureStopDiameter
+
+        Notes
+        -----
         Strategy: we take a ray height and divide by real aperture
         diameter at that position.  Some elements may have a finite length
         (e.g., Space() or ThickLens()), so we always calculate the ratio
-        before propagating inside the element and after having propoagated
+        before propagating inside the element and after having propagated
         through the element. The position where the absolute value of the
         ratio is maximum is the aperture stop.
-
-        If there are no elements of finite diameter (i.e. all
-        optical elements are infinite in diameters), then
-        there is no aperture stop in the system and the size
-        of the aperture stop is infinite.
         """
         if not self.hasFiniteApertureDiameter():
             return (None, float('+Inf'))
@@ -232,7 +347,7 @@ class ImagingPath(MatrixGroup):
     def entrancePupil(self):
         """ The entrance pupil is the image of the aperture stop
         as seen from the object. To obtain this image, we simply
-        need to know the tranfer matrix to the aperture stop,
+        need to know the transfer matrix to the aperture stop,
         then find the "backward" conjugate, which means finding
         the position of the "image" (the entrance pupil) that would 
         lead to the "object" (aperture stop) at the end of the transfer
