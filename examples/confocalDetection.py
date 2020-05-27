@@ -1,3 +1,8 @@
+import envexamples
+
+from raytracing import *
+import matplotlib.pyplot as plt
+
 """
 To obtain and plot the intensity of a point source at the pinhole of a confocal microscope (with variable pinhole size)
  as a function of position of focal spot by sending a large number of rays in the system (changing the position of the
@@ -6,11 +11,6 @@ To obtain and plot the intensity of a point source at the pinhole of a confocal 
 #import os
 #import sys
 #sys.path.insert(0, os.path.abspath('../'))
-
-import envexamples
-
-from raytracing import *
-import matplotlib.pyplot as plt
 
 # Dictionary of pinhole factors with an empty list which will subsequently contain the transmission efficiency
 # for each focal spot position
