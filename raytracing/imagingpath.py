@@ -486,14 +486,36 @@ class ImagingPath(MatrixGroup):
         return (fieldStopPosition, fieldStopDiameter)
 
     def fieldOfView(self):
-        """ The field of view is the maximum object height
-        visible until its chief ray is blocked by the field stop
+        """The field of view is the maximum object height
+        visible until its chief ray is blocked by the field stop.
 
+        Returns
+        -------
+        fieldOfView : float
+            maximum object height that can be visible at the image plane
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> ath.objectHeight=6
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=5,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print('field of view :', path.fieldOfView())
+        field of view : 6.668181337416174
+
+        Notes
+        -----
         Strategy: take ray at various heights from object and
         aim at center of pupil (chief ray from that point)
         until ray is blocked. It is possible to have finite
         diameter elements but still an infinite field of view
         and therefore no Field stop.
+
         """
 
         (stopPosition, stopDiameter) = self.fieldStop()
@@ -524,8 +546,26 @@ class ImagingPath(MatrixGroup):
         return chiefRay.y * 2.0
 
     def imageSize(self):
-        """ The image size is the object field of view
-        multiplied by magnification
+        """The image size is the object field of view multiplied by magnification.
+        This value is independent from the height of the object.
+
+        Returns
+        -------
+        imageSize : float
+            the size of the image
+
+        examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=10))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=20,diameter=15,label="f=20"))
+        >>> path.append(Space(d=20))
+        >>> print('size of the image :', path.imageSize())
+        size of the image : 10.001885411934927
 
         """
         fieldOfView = self.fieldOfView()
@@ -535,12 +575,52 @@ class ImagingPath(MatrixGroup):
         return abs(fieldOfView * magnification)
 
     def lagrangeInvariant(self, ray1=None, ray2=None, z=0):
-        """ The Lagrange invariant is a quantity that is conserved
-        for any two rays in the system.
-        In an imaging system, it is likely that we want to use the
-        chief ray and marginal ray, but any two rays will do.
+        """
+        The Lagrange invariant is a quantity that is conserved
+        for any two rays in the system. It is often seen with the
+        chief ray and marginal ray in an imaging system, but it is
+        actually very general and any two rays can be used.
+        In ImagingPath(), if no rays are provided, the chief and
+        marginal rays are used.
 
-        This quantity is L = n (y1 theta2 - y2 theta1) 
+        Parameters
+        ----------
+        ray1 : object of Ray class
+            A ray at height y1 and angle theta1 (default=None)
+        ray2 : object of Ray class
+            A ray at height y2 and angle theta2 (default=None)
+        z : float
+            A distance that shows propagation length (default=0)
+
+        Returns
+        -------
+        lagrangeInvariant : float
+            The value of the lagrange invariant constant for ray1 and ray2
+
+        Examples
+        --------
+        Since there is no input for the function, the lagrange invariant value is
+        calculated for chief and marginal rays.
+
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=10))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=20,diameter=15,label="f=20"))
+        >>> path.append(Space(d=20))
+        >>> print('lagrange invariant :', path.lagrangeInvariant())
+        lagrange invariant : 2.5004713529837317
+
+        See Also
+        --------
+        raytracing.Matrix.lagrangeInvariant
+
+        Notes
+        -----
+        This quantity is L = n (y1 theta2 - y2 theta1)
+
         """
 
         if ray1 is None:
