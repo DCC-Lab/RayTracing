@@ -1,6 +1,7 @@
 from .matrixgroup import *
 from .imagingpath import *
 
+
 class LaserPath(MatrixGroup):
     """LaserPath: the main class of the module for coherent
     laser beams: it is the combination of Matrix() or MatrixGroup()
@@ -17,6 +18,7 @@ class LaserPath(MatrixGroup):
     is set to indicate it, but it will propagate nevertheless
     and without diffraction due to that aperture.
     """
+
     def __init__(self, elements=None, label=""):
         self.inputBeam = None
         self.isResonator = False
@@ -33,11 +35,14 @@ class LaserPath(MatrixGroup):
         round trip: you will need to duplicate elements in reverse
         and append them manually. 
         """
+        if not self.hasPower:
+            return None, None
+
         b = self.D - self.A
-        sqrtDelta = cmath.sqrt(b*b + 4.0 *self.B *self.C)
-        
-        q1 = (- b + sqrtDelta)/(2.0*self.C)
-        q2 = (- b - sqrtDelta)/(2.0*self.C)
+        sqrtDelta = cmath.sqrt(b * b + 4.0 * self.B * self.C)
+
+        q1 = (- b + sqrtDelta) / (2.0 * self.C)
+        q2 = (- b - sqrtDelta) / (2.0 * self.C)
 
         return (GaussianBeam(q=q1), GaussianBeam(q=q2))
 
@@ -133,11 +138,10 @@ class LaserPath(MatrixGroup):
         for element in self.elements:
             if isinstance(element, Space):
                 for i in range(N):
-                    highResolution.append(Space(d=element.L/N, 
+                    highResolution.append(Space(d=element.L / N,
                                                 n=element.frontIndex))
             else:
                 highResolution.append(element)
-
 
         beamTrace = highResolution.trace(beam)
         (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
@@ -166,11 +170,11 @@ class LaserPath(MatrixGroup):
             position = beam.z + relativePosition
             size = beam.waist
 
-            axes.arrow(position, size+arrowSize, 0, -arrowSize,
-                width=0.1, fc='g', ec='g',
-                head_length=arrowHeight, head_width=arrowWidth,
-                length_includes_head=True)
-            axes.arrow(position, -size-arrowSize, 0, arrowSize,
-                width=0.1, fc='g', ec='g',
-                head_length=arrowHeight, head_width=arrowWidth,
-                length_includes_head=True)
+            axes.arrow(position, size + arrowSize, 0, -arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
+            axes.arrow(position, -size - arrowSize, 0, arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
