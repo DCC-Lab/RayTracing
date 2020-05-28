@@ -139,6 +139,8 @@ class ImagingPath(MatrixGroup):
         See Also
         --------
         raytracing.ImagingPath.marginalRays
+        raytracing.ImagingPath.axialRay
+        raytracing.ImagingPath.principalRay
 
         Notes
         -----
@@ -170,15 +172,15 @@ class ImagingPath(MatrixGroup):
 
         Returns
         -------
-        axialRay : object of Ray class
+        principalRay : object of Ray class
             The properties (i.e. height and the angle of the marginal ray).
-            Another axial can be obtained with the opposite of the angle.
 
         See Also
         --------
         raytracing.ImagingPath.marginalRays
-        raytracing.ImagingPath.chiefRay
         raytracing.ImagingPath.axialRay
+        raytracing.ImagingPath.chiefRay
+
         """
         return self.chiefRay(y=None)
 
@@ -201,7 +203,7 @@ class ImagingPath(MatrixGroup):
 
         Returns
         -------
-        marginalRays : object of Ray class
+        marginalRays : list of object of Ray class
             The properties (i.e. heights and the angles of the marginal rays.).
             If the default value is used at the input (y=0), both rays will be
             symmetrically oriented on either side of the optical axis.
@@ -236,9 +238,9 @@ class ImagingPath(MatrixGroup):
 
         See Also
         --------
+        raytracing.ImagingPath.axialRay
         raytracing.ImagingPath.chiefRay
         raytracing.ImagingPath.principalRay
-        raytracing.ImagingPath.axialRay
 
         Notes
         -----
@@ -692,7 +694,7 @@ class ImagingPath(MatrixGroup):
             limitObjectToFieldOfView=False,
             onlyChiefAndMarginalRays=False,
             removeBlockedRaysCompletely=False):  # pragma: no cover
-        """ This function create a matplotlib plot to draw the rays and the elements.
+        """ This function creates a matplotlib plot to draw the rays and the elements.
 
             Parameters
             ----------
