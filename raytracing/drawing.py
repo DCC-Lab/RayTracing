@@ -19,8 +19,8 @@ class Drawing:
     Examples:
         Create a Drawing from multiple patches
 
-        >>> arrowUp = ArrowPatch(dy=5, headLengthRatio=0.2)
-        >>> arrowDown = ArrowPatch(dy=-5, headLengthRatio=0.2)
+        >>> arrowUp = ArrowPatch(dy=5)
+        >>> arrowDown = ArrowPatch(dy=-5)
         >>> lensDrawing = Drawing(arrowUp, arrowDown)
 
         Apply the Drawing on a figure at x=10
@@ -162,8 +162,8 @@ class ArrowPatch(patches.FancyArrow):
         >>> drawing = Drawing(arrow, x=10, label='Image')
     """
 
-    def __init__(self, dy: float, color='k', width=0.002, headLengthRatio=0.1):
-        super(ArrowPatch, self).__init__(x=0, y=0, dx=0, dy=dy,
+    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
+        super(ArrowPatch, self).__init__(x=0, y=y, dx=0, dy=dy,
                                          fc=color, ec=color,
                                          width=width, length_includes_head=True,
                                          head_width=width * 5, head_length=abs(dy) * headLengthRatio)

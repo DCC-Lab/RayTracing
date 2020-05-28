@@ -30,8 +30,8 @@ class TestDrawing(unittest.TestCase):
 
         halfHeight = apertureDiameter / 2.0
 
-        components = [ArrowPatch(dy=halfHeight, headLengthRatio=0.2),
-                      ArrowPatch(dy=-halfHeight, headLengthRatio=0.2),
+        components = [ArrowPatch(dy=halfHeight),
+                      ArrowPatch(dy=-halfHeight),
                       StopPatch(y=halfHeight),
                       StopPatch(y=-halfHeight)]
 
