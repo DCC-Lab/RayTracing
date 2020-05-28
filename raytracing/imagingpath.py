@@ -278,7 +278,7 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
         raytracing.ImagingPath.principalRay
         """
-        return self.marginalRays(y)
+        return self.marginalRays()
 
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
