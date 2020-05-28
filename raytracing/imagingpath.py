@@ -304,10 +304,10 @@ class ImagingPath(MatrixGroup):
     def displayRange(self, axes=None):
         """ We return the largest object in the ImagingPath for display purposes.
         The object is considered only "half" because it starts on axis and goes up."""
-        
+
         displayRange = self.largestDiameter
-        if displayRange == float('+Inf') or displayRange <= 2*self.objectHeight:
-            displayRange = 2*self.objectHeight
+        if displayRange == float('+Inf') or displayRange <= 2 * self.objectHeight:
+            displayRange = 2 * self.objectHeight
 
         conjugates = self.intermediateConjugates()
         if len(conjugates) != 0:
@@ -377,7 +377,7 @@ class ImagingPath(MatrixGroup):
 
         return axes
 
-    def updateDisplay(self, axes):
+    def updateDisplay(self, axes):  # pragma: no cover
         """ Callback function used to redraw the objects when zooming. """
         for artist in axes.artists:
             artist.remove()
@@ -495,7 +495,7 @@ class ImagingPath(MatrixGroup):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
-    def drawDisplayObjects(self, axes):
+    def drawDisplayObjects(self, axes):  # pragma: no cover
         """ Draw the object, images and all elements to the figure """
         if self.showObject:
             self.drawObject(axes)
@@ -518,7 +518,7 @@ class ImagingPath(MatrixGroup):
         arrowHeadHeight = self.objectHeight * 0.1
 
         heightFactor = self.objectHeight / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
 
         axes.arrow(
             self.objectPosition,
@@ -544,7 +544,7 @@ class ImagingPath(MatrixGroup):
             arrowHeadHeight = arrowHeight * 0.1
 
             heightFactor = arrowHeight / yScaling
-            arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+            arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
 
             axes.arrow(
                 imagePosition,
@@ -593,7 +593,7 @@ class ImagingPath(MatrixGroup):
             center = z + pupilPosition
             (xScaling, yScaling) = self.axesToDataScale(axes)
             heightFactor = halfHeight * 2 / yScaling
-            width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
+            width = xScaling * 0.01 / 2 * (heightFactor / 0.2) ** (3 / 4)
 
             axes.add_patch(patches.Polygon(
                 [[center - width, halfHeight],
