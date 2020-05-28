@@ -62,7 +62,7 @@ class LaserPath(MatrixGroup):
 
         return q
 
-    def display(self, inputBeam=None, inputBeams=None, comments=None):
+    def display(self, inputBeam=None, inputBeams=None, comments=None):  # pragma: no cover
         """ Display the optical system and trace the laser beam. 
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -71,7 +71,7 @@ class LaserPath(MatrixGroup):
 
         if self.isResonator:
             beams = self.laserModes()
-            if len(self.label) == "":
+            if self.label == "":
                 self.label = "Laser modes as calculated"
         elif inputBeam is not None:
             beams = [inputBeam]
@@ -80,7 +80,7 @@ class LaserPath(MatrixGroup):
         else:
             beams = [self.inputBeam]
 
-        if len(self.label) == "":
+        if self.label == "":
             self.label = "User-specified gaussian beams"
 
         if comments is not None:
@@ -95,7 +95,7 @@ class LaserPath(MatrixGroup):
 
         self._showPlot()
 
-    def createBeamTracePlot(self, axes, beams):
+    def createBeamTracePlot(self, axes, beams):  # pragma: no cover
         """ Create a matplotlib plot to draw the laser beam and the elements.
         """
 
@@ -122,7 +122,7 @@ class LaserPath(MatrixGroup):
             y.append(ray.w)
         return (x, y)
 
-    def drawBeamTrace(self, axes, beam):
+    def drawBeamTrace(self, axes, beam):  # pragma: no cover
         """ Draw beam trace corresponding to input beam 
         Because the laser beam diffracts through space, we cannot
         simply propagate the beam over large distances and trace it
@@ -148,7 +148,7 @@ class LaserPath(MatrixGroup):
         axes.plot(x, y, 'r', linewidth=1)
         axes.plot(x, [-v for v in y], 'r', linewidth=1)
 
-    def drawWaists(self, axes, beam):
+    def drawWaists(self, axes, beam):  # pragma: no cover
         """ Draws the expected waist (i.e. the focal spot or the spot where the
         size is minimum) for all positions of the beam. This will show "waists" that
         are virtual if there is an additional lens between the beam and the expceted
