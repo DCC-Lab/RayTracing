@@ -41,7 +41,7 @@ y \\
 \theta \\
 \end{matrix} \Biggr]
 $$
-with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. A matrix is represented in general by:
+with $y$ the distance to the optical axis and $\theta$ the angle that this beam makes with the optical axis of the system. The optical axis of an optical system is defined as the imaginary line passing through the center of the elements. Note that there are other definitions of the ray by some authors that include the index of refraction directly in the ray definition, but these are not used here **[Reference?]**. A set of $2 \times 2$ matrices is used to represent the transformations that optical elements impart on the ray. A matrix is represented in general by:
 
 $$
 \mathbf{M} = \Biggl[ 
@@ -204,7 +204,7 @@ f \theta(t) \\
 $$
 The modulation pattern on $\theta(t)$ is translated to a raster scan in $y(t) = f\theta(t)$, as desired in scanning microscopes. 
 
-<img src="article.assets/matrices.png" alt="image-20200512135616564" style="zoom:25%;" />
+<img src="article.assets/matrices.png" alt="image-20200512135616564" style="zoom:25%;" /> **[Reference for this figure?]**
 
 ## Apertures
 
@@ -264,25 +264,36 @@ Prepare many different examples, keep them in a directory and show figures.
 
 ## Practical examples solved with module
 
-Widefield microscope
+###Widefield microscope
 
-Simple scanning system
+###Simple scanning system
 
-Laser scanning microscope
+###Laser scanning microscope
 
-Confocal pinhole detection
+###Diffuse source from scattering medium
 
-Diffuse source from scattering medium
+### Confocal pinhole detection
 
-Two-photon descanned detector
+**[1]. Pawley, James, ed. Handbook of biological confocal microscopy. Vol. 236. Springer Science & Business Media, 2006.
+[2]. Veilleux, Israel, et al. "In vivo cell tracking with video rate multimodality laser scanning microscopy." IEEE Journal of selected topics in quantum electronics 14.1 (2008): 10-18.**
 
-​	Big detectors (R3896) versus small detectors (GaAsP)
+**Add microscope setup in figure from [2]**
 
-Illumination system
+In confocal laser scanning microscopy, the pinhole must match the size of the Airy disk formed at the sample to produce a good optical sectioning [1]. Since the pinhole size plays an important role for the optimization of a confocal system, here we present a way to use the RayTracing module to better understand the impact of tuning the pinhole size of a confocal microscope. The way this works is by sending a large number of rays in the system and computing how many make it through the pinhole. As it can be noticed in Fig x(b), as soon as the pinhole diameter is smaller than the size fitting the focal spot, the transmission efficiency linearly decreases.
 
-Axicon
+<img src="/Users/valeriepineaunoel/Desktop/Figure_1.png" alt="Figure_1" style="zoom:33%;" />
 
-Fiber-based collection system
+**Caption : Figure x(b) shows the transmission efficiency according to the different pinhole size of the confocal microscope Figx(a) [2].**
+
+###Two-photon descanned detector
+
+###Big detectors (R3896) versus small detectors (GaAsP)
+
+###Illumination system
+
+###Axicon
+
+###Fiber-based collection system
 
 
 

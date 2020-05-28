@@ -1,17 +1,17 @@
 """A simple module for ray tracing with ABCD matrices.
 https://github.com/DCC-Lab/RayTracing
 
-Create an ImagingPath(), append matrices (optical elements or other
-group of elements), and then display(). This helps determine of
+Create an `ImagingPath()`, append matrices (optical elements or other
+group of elements), and then `display()`. This helps determine of
 course simple things like focal length of compound systems,
 object-image, etc... but also the aperture stop, field stop, field
 of view and any clipping issues that may occur.
 
-When displaying the result with an ImagingPath(), the  objectHeight,
-fanAngle, and fanNumber are used if the field of view is not
-defined. You may adjust the values to suit your needs in ImagingPath().
+When displaying the result with an `ImagingPath()`, the  `objectHeight`,
+`fanAngle`, and `fanNumber` are used if the field of view is not
+defined. You may adjust the values to suit your needs in `ImagingPath()`.
 
-Create a LaserPath() to analyse gaussian beams using the complex radius
+Create a `LaserPath()` to analyse gaussian beams using the complex radius
 of curvature q and the same matrices.
 
 The class hierarchy can be seen on http://webgraphviz.com with the
@@ -42,14 +42,11 @@ digraph G {
         "MatrixGroup" -> ImagingPath
     }
 
-}
+    elements
 
-To use the package, either:
-1) pip install raytracing
-or
-2) copy to the raytracing package to the directory where you want to use it
-or
-3) python setup.py install from the source code directory
+    mathview
+    
+}
 """
 
 import math
@@ -82,9 +79,10 @@ from .components import *
 from .specialtylenses import *
 from .axicon import *
 
-import raytracing.thorlabs as thorlabs
-import raytracing.eo as eo
-import raytracing.olympus as olympus
+from . import thorlabs
+from . import eo
+from . import olympus
+
 
 """ Synonym of Matrix: Element 
 
@@ -94,6 +92,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.2.7"
+__version__ = "1.2.8"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 

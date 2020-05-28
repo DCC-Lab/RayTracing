@@ -115,29 +115,30 @@ and you will get the following ray histograms:
 <img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
 
 ## Documentation
+All the documentation is [available online](https://raytracing.readthedocs.io/). 
 
 The class hierarchy for optical elements (with parameters and defaults) is:
 
 ![class](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/hierarchy.png)
 
-Documentation is sparse at best.   You may obtain help by:
+You may obtain help by:
 
-1. Reading an automatically generated documentation from the code (not that good-looking, but at least it is *some* documentation):
+1. Reading the documentation for the code ([API reference](https://raytracing.readthedocs.io/en/latest/reference.html)).
    1. Core: 
-      1. [`Ray`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.ray.html): a ray for geometrical optics with a height and angle $y$ and $\theta$.
+      1. `Ray`: a ray for geometrical optics with a height and angle $y$ and $\theta$.
       2. `Rays`: ray distributions to ray trace an object through the optical system.
          1.  `UniformRays`, `RandomUniformRays`, `LambertianRays` and `RandomLambertianRays` are currently available.  See example above.
-      3. [`GaussianBeam`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.gaussianbeam.html): a gaussian laser beam with complex radius of curvature $q$.
-      4. [`Matrix`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrix.html): any 2x2 matrix.
-      5. [`MatrixGroup`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrixgroup.html): treats a group of matrix as a unit (draws it as a unit too)
-      6. [`ImagingPath`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.imagingpath.html): A `MatrixGroup` with an object at the front for geometrical optics 
-      7. [`LaserPath`](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.laserpath.html): A `MatrixGroup` with a laser beam input at the front or a Resonator.
-   2. [Optical elements:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.matrix.html) `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
-   3. [Specialty lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.specialtylenses.html) Defines a general achromat and objective lens
-   4. [Thorlabs lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.thorlabs.html) Achromat doublet lenses from Thorlabs.
-   5. [Edmund Optics lenses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.eo.html) Achromat doublet lenses from Edmund Optics
-   6. [Olympus objectives:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.olympus.html) A few objectives from Olympus.
-   7. [Glasses:](http://htmlpreview.github.io/?https://github.com/DCC-Lab/RayTracing/blob/master/docs/raytracing.materials.html) A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
+      3. `GaussianBeam`: a gaussian laser beam with complex radius of curvature $q$.
+      4. `Matrix`: any 2x2 matrix.
+      5. `MatrixGroup`: treats a group of matrix as a unit (draws it as a unit too)
+      6. `ImagingPath`: A `MatrixGroup` with an object at the front for geometrical optics 
+      7. `LaserPath`: A `MatrixGroup` with a laser beam input at the front or a Resonator.
+   2. Optical elements: `Aperture`, `Space`, `Lens`, `DielectricInterface`, `DielectricSlab`, `ThickLens`
+   3. Specialty lenses: Defines a general achromat and objective lens
+   4. Thorlabs lenses: Achromat doublet lenses from Thorlabs.
+   5. Edmund Optics lenses: Achromat doublet lenses from Edmund Optics
+   6. Olympus objectives: A few objectives from Olympus.
+   7. Glasses: A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
 2. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
 3. look at the examples with `python -m raytracing` 
 4. simply look at the code.
@@ -634,8 +635,8 @@ if 19 in examples:
 ```
 
 ![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simpleObjectImage.png)
-![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscope.png)
-![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/illumination.png)
+![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscopeSimple.png)
+![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/kholerIllumination.png)
 
 ## Known limitations
 
