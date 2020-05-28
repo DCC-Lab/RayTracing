@@ -151,6 +151,7 @@ class ImagingPath(MatrixGroup):
         If the element B in the transfer matrix for the imaging path
         is zero, there is no value for the height and angle that makes
         a proper chief ray. So the function will return None.
+        If there is no aperture stop, there is no chief ray either. None is also returned.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         if stopPosition is None:
