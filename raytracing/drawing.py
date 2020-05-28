@@ -50,10 +50,7 @@ class Drawing:
         self.useAutoScale = not fixedWidth
 
         if label is not None:
-            self.createLabel(label)
-
-    def createLabel(self, label: str):
-        self.label = Label(text=label, y=self.halfHeight() * 1.2)
+            self.label = Label(text=label, y=self.halfHeight() * 1.2)
 
     @property
     def hasLabel(self) -> bool:
@@ -138,16 +135,6 @@ class Drawing:
             if componentMaxY > halfHeight:
                 halfHeight = componentMaxY
         return halfHeight
-
-    def append(self, component: patches.Patch):
-        self.components.append(component)
-
-    def remove(self):
-        """ Remove the Drawing from the figure. """
-
-        for component in self.components:
-            component.remove()
-
 
 class ArrowPatch(patches.FancyArrow):
     """Define a FancyArrow patch with default RayTracing style created at (0,0).
