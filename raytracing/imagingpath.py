@@ -153,6 +153,9 @@ class ImagingPath(MatrixGroup):
         a proper chief ray. So the function will return None.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
+        if stopPosition is None:
+            return None
+
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
