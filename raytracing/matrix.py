@@ -1,6 +1,7 @@
 from .ray import *
 from .gaussianbeam import *
 from .rays import *
+from .interface import *
 
 from typing import List
 import multiprocessing
@@ -158,6 +159,11 @@ class Matrix(object):
         """
         return self.A * self.D - self.B * self.C
 
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes """
+        return []
+    
     def __mul__(self, rightSide):
         """Operator overloading allowing easy-to-read matrix multiplication
         with other `Matrix`, with a `Ray` or a `GaussianBeam`.
@@ -1676,6 +1682,16 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+
+        For a thin lens, obviously the user does not worry about the details
+        of the lens, because they only provide the focal length. We compute a
+        reasonable radius of curvature and provide 
+        """
+        return [SphericalInterface(R=100), SphericalInterface(R=-100)]
+
     def drawing(self, minHeight: float = None) -> Drawing:
         """ The drawing for the lens. Centered at (0, 0).
 
@@ -1797,6 +1813,12 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
                                            frontVertex=0,
                                            backVertex=0,
                                            label=label)
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(R=2/self.C)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1943,6 +1965,12 @@ class DielectricInterface(Matrix):
                                                   backIndex=n2,
                                                   label=label)
 
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(z=0, R=self.R, n=self.n2)]
+
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a curved surface starting at 'z'.
         We are not able yet to determine the color to fill with.
@@ -2063,6 +2091,13 @@ class ThickLens(Matrix):
                                         frontVertex=0,
                                         backVertex=thickness,
                                         label=label)
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(z=0, R=self.R1, n=self.n),
+                SphericalInterface(z=self.L, R=self.R2)]
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a faint blue box with slightly curved interfaces
@@ -2265,6 +2300,11 @@ class DielectricSlab(ThickLens):
                                              thickness=thickness,
                                              diameter=diameter,
                                              label=label)
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [FlatInterface(z=0),FlatInterface(z=self.thickness)]
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a faint blue box of length L starting at 'z'.
