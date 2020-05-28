@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from raytracing import *
 
 
-class TestSpecialtyLensesSubclasses(unittest.TestCase):
+class TestAchromatDoubletLens(unittest.TestCase):
     @property
     def attributes(self):
         return None
