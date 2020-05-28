@@ -40,8 +40,29 @@ class FigureManager:
         else:
             self.figure, self.axes = plt.subplots(figsize=(10, 7))
 
-    def add(self, drawing: Drawing):
-        self.drawings.append(drawing)
+
+    def add(self, *dataObjects):
+        """Add a supported object to the display.
+
+        Parameters
+        ----------
+            dataObjects:
+        """
+        dataType = type([*dataObjects][0])
+        if dataType is plt.Line2D:
+            self.addLine(*dataObjects)
+        elif dataType is Drawing:
+            self.addDrawing(*dataObjects)
+        else:
+            raise ValueError("Data type not supported.")
+
+    def addDrawing(self, *drawings: Drawing):
+        for drawing in [*drawings]:
+            self.drawings.append(drawing)
+
+    def addLine(self, *lines: plt.Line2D):
+        for line in [*lines]:
+            self.axes.add_line(line)
 
     def draw(self):
         for drawing in self.drawings:
