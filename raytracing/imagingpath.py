@@ -789,7 +789,7 @@ class ImagingPath(MatrixGroup):
             If True, only the principal rays will appear on the plot (default=False)
         removeBlockedRaysCompletely : bool (Optional)
             If True, the blocked rays are removed (default=False)
-        comments : strring
+        comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
@@ -816,6 +816,27 @@ class ImagingPath(MatrixGroup):
              onlyChiefAndMarginalRays=False,
              removeBlockedRaysCompletely=False,
              comments=None):
+        """
+        The figure of the imaging path can be saved using this function.
+
+        Parameters
+        ----------
+        filepath : str or PathLike or file-like object
+            A path, or a Python file-like object, or possibly some backend-dependent object.
+            If filepath is not a path or has no extension, remember to specify format to
+            ensure that the correct backend is used.
+        limitObjectToFieldOfView : bool (Optional)
+            If True, the object will be limited to the field of view and
+            the calculated field of view will be used instead of the objectHeight(default=False)
+        onlyChiefAndMarginalRays : bool (Optional)
+            If True, only the principal rays will appear on the plot (default=False)
+        removeBlockedRaysCompletely : bool (Optional)
+            If True, the blocked rays are removed (default=False)
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+
+
+        """
 
         if comments is not None:
             fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
