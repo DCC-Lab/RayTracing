@@ -1,6 +1,7 @@
 import unittest
 import envtest # modifies path
 import matplotlib.pyplot as plt
+
 from raytracing import *
 
 
@@ -28,19 +29,21 @@ class TestSpecialtyLensesSubclasses(unittest.TestCase):
             '''
 
     def testDrawAt(self):
+        axes = plt.axes()
         for subclass in self.subclasses:
-            axes = plt.Axes
             achromat = subclass()
-            achromat.drawAperture(0, axes)
+            achromat.drawAt(1, axes)
 
     def testDrawAperture(self):
+        axes = plt.axes()
         for subclass in self.subclasses:
             achromat = subclass()
+            achromat.drawAperture(1, axes)
 
     def testPointsOfInterest(self):
         for subclass in self.subclasses:
             achromat = subclass()
-            #print(achromat.pointsOfInterest(0))
+            poi = achromat.pointsOfInterest(1)
 
 
 if __name__ == '__main__':
