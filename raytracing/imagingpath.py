@@ -903,7 +903,14 @@ class ImagingPath(MatrixGroup):
         return (x, y)
 
     def drawDisplayObjects(self, axes):
-        """ Draw the object, images and all elements to the figure """
+        """ Draw the object, images and all elements to the figure
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
         if self.showObject:
             self.drawObject(axes)
 
@@ -919,7 +926,15 @@ class ImagingPath(MatrixGroup):
             self.drawStops(z=0, axes=axes)
 
     def drawObject(self, axes):  # pragma: no cover
-        """ Draw the object as defined by objectPosition, objectHeight """
+        """Draw the object as defined by objectPosition, objectHeight
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
+
         (xScaling, yScaling) = self.axesToDataScale(axes)
 
         arrowHeadHeight = self.objectHeight * 0.1
@@ -941,7 +956,14 @@ class ImagingPath(MatrixGroup):
 
     def drawImages(self, axes):  # pragma: no cover
         """ Draw all images (real and virtual) of the object defined by 
-        objectPosition, objectHeight """
+        objectPosition, objectHeight
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
         images = self.intermediateConjugates()
@@ -966,8 +988,13 @@ class ImagingPath(MatrixGroup):
                 length_includes_head=True)
 
     def drawStops(self, z, axes):  # pragma: no cover
-        """
-        AS and FS are drawn at 110% of the largest diameter
+        """ AS and FS are drawn at 110% of the largest diameter
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
         """
         halfHeight = self.largestDiameter / 2
 
@@ -994,6 +1021,23 @@ class ImagingPath(MatrixGroup):
                           va='bottom')
 
     def drawEntrancePupil(self, z, axes):  # pragma: no cover
+        """
+        Draw the entrance pupil on an optical system using the position and diameter of the
+        entrance pupil.
+
+        Parameters
+        ----------
+        z : float
+            The position of the centre of the entrance pupil will shift by this number.
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        See Also
+        --------
+        raytracing.ImagingPath.entrancePupil
+
+        """
+
         (pupilPosition, pupilDiameter) = self.entrancePupil()
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
@@ -1016,7 +1060,20 @@ class ImagingPath(MatrixGroup):
                 color='r'))
 
     def drawOpticalElements(self, z, axes):  # pragma: no cover
-        """ Deprecated. Use drawAt() """
+        """ Deprecated. Use drawAt()
+
+        Parameters
+        ----------
+        z : float
+            The position of the optical element.
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        See Also
+        --------
+        raytracing.ImagingPath.drawAt
+
+        """
         msg = "drawOpticalElements() was renamed drawAt()"
         warnings.warn(msg, DeprecationWarning)
         self.drawAt(z, axes, showLabels=self.showElementLabels)
