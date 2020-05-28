@@ -25,13 +25,13 @@ class FigureManager:
 
         self.drawings = []
 
-        # ok. A Drawing should contain its own Aperture and labels set at a specific position.
+        # A Drawing should contain its own Aperture and labels set at a specific position.
         # FigureManager can display them, request their position to check they do not overlap.
         # If they overlap he can ask to update their position
         # * Labels do not need size rescaling but position update (delta Y is -5% of displayRange ish)
         # But there's also some Labels that are not necessarily tied to a drawing. like A/F stops
 
-    def createFigure(self, style='presentation', comments=None):
+    def createFigure(self, style='presentation', comments=None, title=None):
         if style == 'teaching':
             self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             self.axesComments.axis('off')
@@ -40,6 +40,7 @@ class FigureManager:
         else:
             self.figure, self.axes = plt.subplots(figsize=(10, 7))
 
+        self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
     def add(self, *dataObjects):
         """Add a supported object to the display.
@@ -63,6 +64,12 @@ class FigureManager:
     def addLine(self, *lines: plt.Line2D):
         for line in [*lines]:
             self.axes.add_line(line)
+
+    def addFigureInfo(self, text):
+        """Text note in the bottom left of the figure. This note is fixed and cannot be moved."""
+        # fixme: might be better to put it out of the axes since it only shows object height and display conditions
+        self.axes.text(0.05, 0.15, text, transform=self.axes.transAxes,
+                       fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
 
     def draw(self):
         for drawing in self.drawings:
