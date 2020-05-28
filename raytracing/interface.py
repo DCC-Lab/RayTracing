@@ -1,18 +1,18 @@
 class Interface:
-    def __init__(self, n, z):
+    def __init__(self, z, n):
         self.n = n
         self.z = z
 
-class SphericalInterface:
-    def __init__(self, R, n, z):
+class SphericalInterface(Interface):
+    def __init__(self, z, n, R):
         self.R = R
-        super(SphericalInterface, self).__init__(n=n, z=z)
+        super(SphericalInterface, self).__init__(z=z, n=n)
 
-class FlatInterface:
-    def __init__(self, n, z):
-        super(FlatInterface, self).__init__(R=float("+inf", n=n, z=z))
+class FlatInterface(SphericalInterface):
+    def __init__(self, z, n):
+        super(FlatInterface, self).__init__(R=float("+inf",z=z, n=n))
 
-class ConicalInterface:
-    def __init__(self, alpha, n, z):
+class ConicalInterface(Interface):
+    def __init__(self, z, n, alpha):
         self.alpha = alpha
-        super(ConicalInterface, self).__init__(R=float(n=n, z=z))
+        super(ConicalInterface, self).__init__(R=float(z=z, n=n))
