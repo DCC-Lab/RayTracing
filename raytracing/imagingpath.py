@@ -21,7 +21,7 @@ class ImagingPath(MatrixGroup):
 
     Parameters
     ----------
-    elements : (type?))
+    elements : (Matrix)
         definitiion (default=None).
     label : string
         The label for the imaging path
@@ -148,7 +148,7 @@ class ImagingPath(MatrixGroup):
         aperture stop.
         If the element B in the transfer matrix for the imaging path
         is zero, there is no value for the height and angle that makes
-        a proper chief ray. So the function will return Null.
+        a proper chief ray. So the function will return None.
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
@@ -163,22 +163,45 @@ class ImagingPath(MatrixGroup):
 
         return Ray(y=y, theta=-A * y / B)
 
+    def principalRay(self):
+        """This function returns the chief ray for the height y at the edge 
+        of the field of view. The chief ray for height y is the ray that goes
+        through the center of the aperture stop.
+
+        Returns
+        -------
+        axialRay : object of Ray class
+            The properties (i.e. height and the angle of the marginal ray).
+            Another axial can be obtained with the opposite of the angle.
+
+        See Also
+        --------
+        raytracing.ImagingPath.marginalRays
+        raytracing.ImagingPath.chiefRay
+        raytracing.ImagingPath.axialRay
+        """
+        return self.chiefRay(y=None)
+
+
     def marginalRays(self, y=0):
         """This function calculates the marginal rays for a height y at object.
-        The marginal rays for height y, are the rays that hit the upper and lower
-        edges of the aperture stop.
+        The marginal rays for height y are the rays that hit the upper and lower
+        edges of the aperture stop. There are always two marginal rays for any
+        point on the object.  They are symmetric on either side of the optic axis
+        only when y=0, in which case they are called the axial rays (or just axial
+        ray).
 
         Parameters
         ----------
         y : float
             The starting height of the marginal rays at the object (default=0)
             In general, this could be any height, not just y=0. However, we usually
-            want y=0 which is implicitly called "the marginal ray (of the system)",
+            want y=0 which is implicitly called "the axial ray (of the system)",
 
 
         Returns
         -------
-        marginalRays : object of Rays class
+        marginalRays : object of Ray class
             The properties (i.e. heights and the angles of the marginal rays.).
             If the default value is used at the input (y=0), both rays will be
             symmetrically oriented on either side of the optical axis.
@@ -208,13 +231,14 @@ class ImagingPath(MatrixGroup):
          \       /
         z = 0.000
 
-        As it can be seen in the example, the marginal rays of the system
+        As it can be seen in the example, the marginal rays at y=0 
         are symmetrically oriented on either side of the optical axis.
 
         See Also
         --------
         raytracing.ImagingPath.chiefRay
-        raytracing.ImagingPath.axialRays
+        raytracing.ImagingPath.principalRay
+        raytracing.ImagingPath.axialRay
 
         Notes
         -----
@@ -238,36 +262,21 @@ class ImagingPath(MatrixGroup):
 
         return [Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown)]
 
-    def axialRays(self, y):
-        """This function is the synonym of marginalRays and calculates the
-         marginal rays for a height y at object.
-
-        Parameters
-        ----------
-        y : float
-            The starting height of the marginal rays at the object.
-            In general, this could be any height, not just y=0. However, we usually
-            want y=0 which is implicitly called "the marginal ray (of the system)",
-
+    def axialRay(self):
+        """This function returns the axial ray of the system, also known as
+        the marginal ray for a point on axis (y=0) at the object.
 
         Returns
         -------
-        axialRays : object of Rays class
-            The properties (i.e. heights and the angles of the marginal rays.).
-            If the value y=0 is used at the input, both output rays will be
-            symmetrically oriented on either side of the optical axis.
-
-        Raises
-        ------
-        BadException
-            the value y at the input does not have a default value. If a value
-            is not defined there will be a TypeError.
-
+        axialRay : object of Ray class
+            The properties (i.e. height and the angle of the marginal ray).
+            Another axial can be obtained with the opposite of the angle.
 
         See Also
         --------
         raytracing.ImagingPath.marginalRays
         raytracing.ImagingPath.chiefRay
+        raytracing.ImagingPath.principalRay
         """
         return self.marginalRays(y)
 
