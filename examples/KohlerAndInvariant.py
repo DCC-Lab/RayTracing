@@ -35,6 +35,6 @@ path.append(Lens(f=50, diameter=15, label="Second lens"))
 path.append(Space(d=50))
 path.append(Aperture(diameter=10, label='Camera'))
 path.append(Space(d=50))
-#path.createRayTracePlot()
+
 print("The Lagrange Invariant of this system is {}".format(path.lagrangeInvariant()))
 path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
