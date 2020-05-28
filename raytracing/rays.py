@@ -94,6 +94,7 @@ class Rays:
             maxValue = max(self.yValues)
 
         if self._countHistogramParameters != (binCount, minValue, maxValue):
+            self._countHistogramParameters = (binCount, minValue, maxValue)
 
             (self._yHistogram, binEdges) = histogram(self.yValues,
                                                      bins=binCount,
@@ -117,6 +118,7 @@ class Rays:
             maxValue = max(self.thetaValues)
 
         if self._anglesHistogramParameters != (binCount, minValue, maxValue):
+            self._anglesHistogramParameters = (binCount, minValue, maxValue)
 
             (self._thetaHistogram, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
             self._thetaHistogram = list(self._thetaHistogram)
@@ -127,7 +129,7 @@ class Rays:
 
         return (self._xValuesAnglesHistogram, self._thetaHistogram)
 
-    def display(self, title="Intensity profile", showTheta=True):
+    def display(self, title="Intensity profile", showTheta=True):  # pragma: no cover
         plt.ioff()
         fig, axes = plt.subplots(2)
         fig.suptitle(title)
@@ -205,6 +207,10 @@ class Rays:
     def load(self, filePath, append=False):
         with open(filePath, 'rb') as infile:
             loadedRays = pickle.Unpickler(infile).load()
+            if not isinstance(loadedRays, collections.Iterable):
+                raise IOError(f"{filePath} does not contain an iterable of Ray objects.")
+            if not all([isinstance(ray, Ray) for ray in loadedRays]):
+                raise IOError(f"{filePath} must contain only Ray objects.")
             if append and self._rays is not None:
                 self._rays.extend(loadedRays)
             else:
@@ -262,7 +268,7 @@ class UniformRays(Rays):
 
 
 class LambertianRays(Rays):
-    def __init__(self, yMax, yMin=None, M=100, N=100, I=100):
+    def __init__(self, yMax=1.0, yMin=None, M=100, N=100, I=100):
         self.yMax = yMax
         self.yMin = yMin
         if yMin is None:

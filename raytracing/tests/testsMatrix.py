@@ -7,13 +7,13 @@ inf = float("+inf")
 
 
 class TestMatrix(unittest.TestCase):
-    def testWarningsOnOneLine(self):
+    def testWarningsFormat(self):
         message = "This is a test."
         filename = "test.py"
         lineno = 10
         category = UserWarning
-        warningsMessage = warningOnOneLine(message, category, filename, lineno)
-        self.assertEqual(warningsMessage, " test.py:10\nUserWarning:This is a test.")
+        warningsMessage = warningLineFormat(message, category, filename, lineno)
+        self.assertEqual(warningsMessage, "\ntest.py:10\nUserWarning:This is a test.\n")
 
     def testMatrix(self):
         m = Matrix()
@@ -200,10 +200,10 @@ class TestMatrix(unittest.TestCase):
     def testApertureDiameter(self):
         m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=2)
         self.assertTrue(m1.hasFiniteApertureDiameter())
-        self.assertEqual(m1.largestDiameter(), 2.0)
+        self.assertEqual(m1.largestDiameter, 2.0)
         m2 = Matrix(A=1, B=2, C=3, D=4)
         self.assertFalse(m2.hasFiniteApertureDiameter())
-        self.assertEqual(m2.largestDiameter(), float("+inf"))
+        self.assertEqual(m2.largestDiameter, float("+inf"))
 
     def testTransferMatrix(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
@@ -333,16 +333,6 @@ class TestMatrix(unittest.TestCase):
             # Order is not kept, we have to check if the ray traced is in the original list
             self.assertTrue(trace[i] in rays)
             self.assertTrue(traceWithNumberProcesses[i] in rays)
-
-    def testTraceManyThroughInParallelNoChunks(self):
-        rays = [Ray(y, y) for y in range(5)]
-        rays = Rays(rays=rays)
-        m = Matrix(physicalLength=1)
-        trace = m.traceManyThroughInParallelNoChunks(rays)
-        traceWithNumberProcesses = m.traceManyThroughInParallelNoChunks(rays, processes=2)
-        for i in range(len(rays)):
-            self.assertEqual(trace[i], rays[i])
-            self.assertEqual(traceWithNumberProcesses[i], rays[i])
 
     def testPointsOfInterest(self):
         m = Matrix()

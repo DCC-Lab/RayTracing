@@ -78,7 +78,7 @@ class AchromatDoubletLens(MatrixGroup):
                   "expected {1:.4}".format(BFL, fb, self.label)
             warnings.warn(msg, UserWarning)
 
-        h = self.largestDiameter() / 2.0
+        h = self.largestDiameter / 2.0
         phi1 = math.asin(h / abs(self.R1))
         corner1 = self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
 
@@ -107,7 +107,7 @@ class AchromatDoubletLens(MatrixGroup):
         tc2 = self.elements[3].L
         R3 = self.elements[4].R
 
-        h = self.largestDiameter() / 2.0
+        h = self.largestDiameter / 2.0
         v1 = z
         phi1 = math.asin(h / abs(R1))
         delta1 = R1 * (1.0 - math.cos(phi1))
@@ -178,7 +178,7 @@ class AchromatDoubletLens(MatrixGroup):
             tc2 = self.elements[3].L
             R3 = self.elements[4].R
 
-            h = self.largestDiameter() / 2.0
+            h = self.largestDiameter / 2.0
             phi1 = math.asin(h / abs(R1))
             corner1 = z + R1 * (1.0 - math.cos(phi1))
 

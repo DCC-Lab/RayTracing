@@ -1,6 +1,7 @@
 from .matrixgroup import *
 from .imagingpath import *
 
+
 class LaserPath(MatrixGroup):
     """LaserPath: the main class of the module for coherent
     laser beams: it is the combination of Matrix() or MatrixGroup()
@@ -17,6 +18,7 @@ class LaserPath(MatrixGroup):
     is set to indicate it, but it will propagate nevertheless
     and without diffraction due to that aperture.
     """
+
     def __init__(self, elements=None, label=""):
         self.inputBeam = None
         self.isResonator = False
@@ -33,11 +35,14 @@ class LaserPath(MatrixGroup):
         round trip: you will need to duplicate elements in reverse
         and append them manually. 
         """
+        if not self.hasPower:
+            return None, None
+
         b = self.D - self.A
-        sqrtDelta = cmath.sqrt(b*b + 4.0 *self.B *self.C)
-        
-        q1 = (- b + sqrtDelta)/(2.0*self.C)
-        q2 = (- b - sqrtDelta)/(2.0*self.C)
+        sqrtDelta = cmath.sqrt(b * b + 4.0 * self.B * self.C)
+
+        q1 = (- b + sqrtDelta) / (2.0 * self.C)
+        q2 = (- b - sqrtDelta) / (2.0 * self.C)
 
         return (GaussianBeam(q=q1), GaussianBeam(q=q2))
 
@@ -49,15 +54,15 @@ class LaserPath(MatrixGroup):
 
         (q1, q2) = self.eigenModes()
         q = []
-        if q1.isFinite:
+        if q1 is not None and q1.isFinite:
             q.append(q1)
 
-        if q2.isFinite:
+        if q2 is not None and q2.isFinite:
             q.append(q2)
 
         return q
 
-    def display(self, inputBeam=None, inputBeams=None, comments=None):
+    def display(self, inputBeam=None, inputBeams=None, comments=None):  # pragma: no cover
         """ Display the optical system and trace the laser beam. 
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -66,7 +71,7 @@ class LaserPath(MatrixGroup):
 
         if self.isResonator:
             beams = self.laserModes()
-            if len(self.label) == "":
+            if self.label == "":
                 self.label = "Laser modes as calculated"
         elif inputBeam is not None:
             beams = [inputBeam]
@@ -75,7 +80,7 @@ class LaserPath(MatrixGroup):
         else:
             beams = [self.inputBeam]
 
-        if len(self.label) == "":
+        if self.label == "":
             self.label = "User-specified gaussian beams"
 
         if comments is not None:
@@ -90,7 +95,7 @@ class LaserPath(MatrixGroup):
 
         self._showPlot()
 
-    def createBeamTracePlot(self, axes, beams):
+    def createBeamTracePlot(self, axes, beams):  # pragma: no cover
         """ Create a matplotlib plot to draw the laser beam and the elements.
         """
 
@@ -117,7 +122,7 @@ class LaserPath(MatrixGroup):
             y.append(ray.w)
         return (x, y)
 
-    def drawBeamTrace(self, axes, beam):
+    def drawBeamTrace(self, axes, beam):  # pragma: no cover
         """ Draw beam trace corresponding to input beam 
         Because the laser beam diffracts through space, we cannot
         simply propagate the beam over large distances and trace it
@@ -133,18 +138,17 @@ class LaserPath(MatrixGroup):
         for element in self.elements:
             if isinstance(element, Space):
                 for i in range(N):
-                    highResolution.append(Space(d=element.L/N, 
+                    highResolution.append(Space(d=element.L / N,
                                                 n=element.frontIndex))
             else:
                 highResolution.append(element)
-
 
         beamTrace = highResolution.trace(beam)
         (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
         axes.plot(x, y, 'r', linewidth=1)
         axes.plot(x, [-v for v in y], 'r', linewidth=1)
 
-    def drawWaists(self, axes, beam):
+    def drawWaists(self, axes, beam):  # pragma: no cover
         """ Draws the expected waist (i.e. the focal spot or the spot where the
         size is minimum) for all positions of the beam. This will show "waists" that
         are virtual if there is an additional lens between the beam and the expceted
@@ -166,11 +170,11 @@ class LaserPath(MatrixGroup):
             position = beam.z + relativePosition
             size = beam.waist
 
-            axes.arrow(position, size+arrowSize, 0, -arrowSize,
-                width=0.1, fc='g', ec='g',
-                head_length=arrowHeight, head_width=arrowWidth,
-                length_includes_head=True)
-            axes.arrow(position, -size-arrowSize, 0, arrowSize,
-                width=0.1, fc='g', ec='g',
-                head_length=arrowHeight, head_width=arrowWidth,
-                length_includes_head=True)
+            axes.arrow(position, size + arrowSize, 0, -arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
+            axes.arrow(position, -size - arrowSize, 0, arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
