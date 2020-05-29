@@ -106,7 +106,6 @@ class TestImagingPath(unittest.TestCase):
         Mt = 1
         self.assertTupleEqual(path.entrancePupil(), (pupilPosition, stopDiameter / Mt))
 
-
     def testFieldStopInfiniteDiameter(self):
         fieldStop = (None, inf)
         space = Space(10)
@@ -158,7 +157,7 @@ class TestImagingPath(unittest.TestCase):
         path.append(Aperture(diameter=20))
         self.assertAlmostEqual(path.fieldOfView(), 20, 2)
 
-
+    @unittest.skip
     def testImageSizeDIs0(self):
         path = ImagingPath(System2f(f=10, diameter=10))
         path.append(Aperture(20))
@@ -208,15 +207,44 @@ class TestImagingPath(unittest.TestCase):
         z = [0, 0, 10]
         self.assertTupleEqual(xy, (z, x))
 
-    def testChiefRayYIsNone(self):
-        path = ImagingPath(System4f(10, 10))
-        chiefRay = path.chiefRay()
-        print(chiefRay)
-
     def testChiefRayNoApertureStop(self):
         path = ImagingPath(System2f(10))
         chiefRay = path.chiefRay()
         self.assertIsNone(chiefRay)
+
+    def testChiefRayBIs0(self):
+        path = ImagingPath(System4f(10, 10))
+        path.append(Aperture(10))
+        self.assertIsNone(path.chiefRay())
+
+    def testChiefRayYIsNone(self):
+        path = ImagingPath()
+        path.append(System2f(10, 10))
+        path.append(Aperture(diameter=20))
+        chiefRay = path.chiefRay()
+        self.assertAlmostEqual(chiefRay.y, 20, 2)
+        self.assertAlmostEqual(chiefRay.theta, -2, 3)
+
+    def testPrincipalRay(self):
+        path = ImagingPath(System4f(10, 10))
+        self.assertIsNone(path.principalRay())
+
+        path = ImagingPath(System4f(10, 10))
+        path.append(Aperture(10))
+        self.assertIsNone(path.principalRay())
+
+        path = ImagingPath()
+        path.append(System2f(10, 10))
+        path.append(Aperture(diameter=20))
+        principalRay = path.principalRay()
+        self.assertAlmostEqual(principalRay.y, 20, 2)
+        self.assertAlmostEqual(principalRay.theta, -2, 3)
+
+    @unittest.skip("Should be fixed soon")
+    def testMarginalRaysNoApertureStop(self):
+        path = ImagingPath(System4f(10, 10))
+        self.assertIsNone(path.marginalRays())
+
 
 if __name__ == '__main__':
     unittest.main()
