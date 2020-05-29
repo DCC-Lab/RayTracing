@@ -161,7 +161,7 @@ class ImagingPath(MatrixGroup):
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
-        if abs(B) <= Matrix.__epsilon__:
+        if B == 0:
             return None
 
         if y is None:
