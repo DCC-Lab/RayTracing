@@ -161,11 +161,13 @@ class ImagingPath(MatrixGroup):
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
-        if B == 0:
+        if transferMatrixToApertureStop.isImaging:
             return None
 
         if y is None:
             y = self.fieldOfView()
+            if abs(y) == float("+inf"):
+                raise ValueError("Must provide y when the filed of view is infinite")
 
         return Ray(y=y, theta=-A * y / B)
 
@@ -255,11 +257,18 @@ class ImagingPath(MatrixGroup):
 
         """
         (stopPosition, stopDiameter) = self.apertureStop()
+        if stopPosition is None:
+            return None  # No aperture stop -> no marginal rays
+
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
         thetaUp = (stopDiameter / 2.0 - A * y) / B
+        if transferMatrixToApertureStop.isImaging:
+            return None
+
+        thetaUp  = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
         if thetaDown > thetaUp:
@@ -584,6 +593,9 @@ class ImagingPath(MatrixGroup):
         """
         fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
+        if conjugateMatrix is None:
+            return float("+inf")
+
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
 
