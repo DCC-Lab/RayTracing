@@ -158,7 +158,7 @@ class TestImagingPath(unittest.TestCase):
         path.append(Aperture(diameter=20))
         self.assertAlmostEqual(path.fieldOfView(), 20, 2)
 
-    @unittest.skip("To be fixed")
+
     def testImageSizeDIs0(self):
         path = ImagingPath(System2f(f=10, diameter=10))
         path.append(Aperture(20))
