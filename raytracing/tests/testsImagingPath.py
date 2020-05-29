@@ -63,15 +63,14 @@ class TestImagingPath(unittest.TestCase):
 
         self.assertEqual(path.displayRange(), largestDiameter)
 
-    def testDisplayRangeWithObjectHigherThanLens(self):
+    def testDisplayRange(self):
         path = ImagingPath()
-        path.objectHeight = 21
-        path.append(Space(d=10))
-        path.append(Lens(f=5, diameter=20))
+        path.append(Space(2))
+        path.append(CurvedMirror(-5, 10))
+        self.assertAlmostEqual(path.displayRange(), 5 * 10)
 
-        largestDiameter = path.objectHeight * 2
-
-        self.assertEqual(path.displayRange(), largestDiameter)
+        path.objectHeight = 1
+        self.assertEqual(path.displayRange(), 10)
 
     def testDisplayRangeWithEmptyPath(self):
         path = ImagingPath()
@@ -244,6 +243,80 @@ class TestImagingPath(unittest.TestCase):
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
         self.assertIsNone(path.marginalRays())
+
+    @unittest.skip("Should be fixed soon")
+    def testMarginalRaysIsImaging(self):
+        path = ImagingPath(System4f(10, 10))
+        path.append(Aperture(10))
+        self.assertIsNotNone(path.marginalRays())
+
+    def testMarginalRays(self):
+        path = ImagingPath(System2f(10, 10))
+        rays = path.marginalRays(10)
+        self.assertEqual(len(rays), 2)
+        ray1, ray2 = rays[0], rays[1]
+        self.assertEqual(ray1.y, 10)
+        self.assertEqual(ray1.theta, -0.5)
+        self.assertEqual(ray2.y, 10)
+        self.assertEqual(ray2.theta, -1.5)
+
+        path = ImagingPath(System2f(5))
+        tl = ThickLens(1.1, 0.1, -0.1, 10)
+        path.append(tl)
+        path.append(Aperture(5))
+        rays = path.marginalRays(10)
+        self.assertEqual(len(rays), 2)
+        ray1, ray2 = rays[0], rays[1]
+        self.assertEqual(ray1.y, 10)
+        self.assertAlmostEqual(ray1.theta, -0.38764, 5)
+        self.assertEqual(ray2.y, 10)
+        self.assertAlmostEqual(ray2.theta, -0.5112, 4)
+
+    def testAxialRay(self):
+        path = ImagingPath(System2f(10, 100))
+        rays = path.axialRay()
+        self.assertEqual(len(rays), 2)
+        ray1, ray2 = rays[0], rays[1]
+        self.assertEqual(ray1.y, 0)
+        self.assertEqual(ray1.theta, 5)
+        self.assertEqual(ray2.y, 0)
+        self.assertEqual(ray2.theta, -5)
+
+    def testLagrangeImagingPathNoAperture(self):
+        path = ImagingPath()
+        path.append(Space(d=50))
+        path.append(Lens(f=50))
+        path.append(Space(d=50))
+        with self.assertRaises(ValueError):
+            path.lagrangeInvariant(z=0)
+
+    def testLagrangeImagingPathNoFieldStop(self):
+        path = ImagingPath()
+        path.append(Space(d=50))
+        path.append(Lens(f=50, diameter=50))
+        path.append(Space(d=50))
+        with self.assertRaises(ValueError):
+            path.lagrangeInvariant(z=0)
+
+    def testLagrangeImagingPath(self):
+        path = ImagingPath()
+        path.append(Space(d=50))
+        path.append(Lens(f=50, diameter=50))
+        path.append(Space(d=50, diameter=40))
+        before = path.lagrangeInvariant(z=0)
+        after = path.lagrangeInvariant(z=150)
+        self.assertAlmostEqual(before, after)
+
+    def testLagrangeInvariantBothNotNone(self):
+        ray1 = Ray()
+        ray2 = Ray(0, 0.1)
+        path = ImagingPath()
+        path.append(Space(d=50))
+        path.append(Lens(f=50, diameter=50))
+        path.append(Space(d=50, diameter=40))
+        before = path.lagrangeInvariant(ray1, ray2, 10)
+        after = path.lagrangeInvariant(ray1, ray2, 70)
+        self.assertAlmostEqual(before, after)
 
 
 if __name__ == '__main__':
