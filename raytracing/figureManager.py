@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import sys
 import itertools
 from raytracing.drawing import *
+from raytracing.interface import *
+from raytracing import *
 
 
 class FigureManager:
@@ -16,7 +18,8 @@ class FigureManager:
     #     # LayoutHelper.__instance.val = val
     #     return LayoutHelper.__instance
 
-    def __init__(self):
+    def __init__(self, opticPath):
+        self.path = opticPath
         self.figure = None
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
@@ -174,10 +177,129 @@ class FigureManager:
         """ Primitive to draw a plane with or without labels """
         raise (NotImplemented)
 
-    def display(self):
-        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+    def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
+                removeBlockedRaysCompletely=False):
 
+        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                               onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
+
+        self.add(*self.path.rayTraceLines(onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                          removeBlockedRaysCompletely=removeBlockedRaysCompletely))
+
+        self.createDrawings()
+
+        self.draw()
+
+        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
         self._showPlot()
+
+    def initializeDisplay(self, limitObjectToFieldOfView=False,
+                          onlyChiefAndMarginalRays=False):
+        """ *Renamed and refactored version of createRayTracePlot*
+        Configure the imaging path and the figure according to the display conditions.
+
+            Three optional parameters:
+            limitObjectToFieldOfView=False, to use the calculated field of view
+            instead of the objectHeight
+            onlyChiefAndMarginalRays=False, to only show principal rays
+            removeBlockedRaysCompletely=False to remove rays that are blocked.
+         """
+
+        note1 = ""
+        note2 = ""
+        if limitObjectToFieldOfView:
+            fieldOfView = self.path.fieldOfView()
+            if fieldOfView != float('+Inf'):
+                self.path.objectHeight = fieldOfView
+                note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
+            else:
+                raise ValueError(
+                    "Infinite field of view: cannot use\
+                    limitObjectToFieldOfView=True.")
+
+            imageSize = self.path.imageSize()
+            if imageSize != float('+Inf'):
+                note1 += " Image size: {0:.2f}".format(imageSize)
+            else:
+                raise ValueError(
+                    "Infinite image size: cannot use\
+                    limitObjectToFieldOfView=True.")
+
+        else:
+            note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
+
+        if onlyChiefAndMarginalRays:
+            (stopPosition, stopDiameter) = self.path.apertureStop()
+            if stopPosition is None:
+                raise ValueError(
+                    "No aperture stop in system: cannot use\
+                    onlyChiefAndMarginalRays=True since they\
+                    are not defined.")
+            note2 = "Only chief and marginal rays shown"
+
+        self.addFigureInfo(text=note1 + "\n" + note2)
+
+    def createDrawings(self):
+        if self.path.showObject:
+            self.add(self.drawingOfObject())
+
+        if self.path.showImages:
+            self.add(*self.drawingsOfImages())
+
+        z = 0
+        for element in self.path.elements:
+            drawing = self.drawingOfElement(element)
+            drawing.x = z
+            z += element.L
+
+            self.add(drawing)
+
+        # TODO: entrancePupil, POI, stops
+
+    def drawingOfObject(self) -> Drawing:
+        """ The drawing of the object.
+
+        Returns:
+            Drawing: The created Drawing object.
+        """
+        arrow = ArrowPatch(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
+        drawing = Drawing(arrow, x=self.path.objectPosition)
+
+        return drawing
+
+    def drawingsOfImages(self) -> List[Drawing]:
+        """ The drawing of all the images (real and virtual).
+
+        Returns:
+            List[Drawing]: A list of the created Drawing object for each image.
+        """
+
+        images = self.path.intermediateConjugates()
+
+        drawings = []
+        for (imagePosition, magnification) in images:
+            imageHeight = magnification * self.path.objectHeight
+
+            arrow = ArrowPatch(dy=imageHeight, y=-imageHeight/2, color='r')
+            drawing = Drawing(arrow, x=imagePosition)
+
+            drawings.append(drawing)
+
+        return drawings
+
+    def drawingOfElement(self, element) -> Drawing:
+        # todo: surfaces components
+        # todo: aperture components
+        # todo: label
+
+        if len(element.surfaces) == 0:
+            return Drawing()
+
+        else:
+            
+            pass
+
+        return Drawing()
 
     def _showPlot(self):  # internal, do not use
         try:

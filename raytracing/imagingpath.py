@@ -1,6 +1,7 @@
 from typing import Any, Union, List
 
 from .matrixgroup import *
+from .figureManager import FigureManager
 
 from .ray import *
 import matplotlib.pyplot as plt
@@ -304,7 +305,7 @@ class ImagingPath(MatrixGroup):
     def displayRange(self, axes=None):
         """ We return the largest object in the ImagingPath for display purposes.
         The object is considered only "half" because it starts on axis and goes up."""
-        
+
         displayRange = self.largestDiameter
         if displayRange == float('+Inf') or displayRange <= 2*self.objectHeight:
             displayRange = 2*self.objectHeight
@@ -638,6 +639,65 @@ class ImagingPath(MatrixGroup):
         axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
 
         self._showPlot()
+
+    def newDisplay(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
+                   removeBlockedRaysCompletely=False, comments=None):
+
+        figure = FigureManager(opticPath=self)
+        figure.createFigure(title=self.label, comments=comments)
+
+        figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                       onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                       removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+
+    def rayTraceLines(self, onlyChiefAndMarginalRays,
+                      removeBlockedRaysCompletely=True):
+        """ *renamed and refactored version of drawRayTraces*
+        A list of all ray trace line objects corresponding to either
+        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber)
+        2. the principal rays (chief and marginal)
+
+            removeBlockedRaysCompletely=False to remove rays that are blocked.
+        """
+
+        color = ['b', 'r', 'g']
+
+        if onlyChiefAndMarginalRays:
+            halfHeight = self.objectHeight / 2.0
+            chiefRay = self.chiefRay(y=halfHeight - 0.01)
+            (marginalUp, marginalDown) = self.marginalRays(y=0)
+            rayGroup = (chiefRay, marginalUp)
+            linewidth = 1.5
+        else:
+            halfAngle = self.fanAngle / 2.0
+            halfHeight = self.objectHeight / 2.0
+            rayGroup = Ray.fanGroup(
+                yMin=-halfHeight,
+                yMax=halfHeight,
+                M=self.rayNumber,
+                radianMin=-halfAngle,
+                radianMax=halfAngle,
+                N=self.fanNumber)
+            linewidth = 0.5
+
+        manyRayTraces = self.traceMany(rayGroup)
+
+        lines = []
+        for rayTrace in manyRayTraces:
+            (x, y) = self.rearrangeRayTraceForPlotting(
+                rayTrace, removeBlockedRaysCompletely)
+            if len(y) == 0:
+                continue  # nothing to plot, ray was fully blocked
+
+            rayInitialHeight = y[0]
+            binSize = 2.0 * halfHeight / (len(color) - 1)
+            colorIndex = int(
+                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
+
+            line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
+            lines.append(line)
+
+        return lines
 
     def save(self, filepath,
              limitObjectToFieldOfView=False,

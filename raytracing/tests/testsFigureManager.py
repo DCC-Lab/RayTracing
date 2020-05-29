@@ -1,6 +1,6 @@
 import unittest
 import envtest  # modifies path  # fixme: requires path to /tests
-# from raytracing import *
+from raytracing import *
 from raytracing.figureManager import FigureManager  # todo: append init
 from raytracing.drawing import *
 
@@ -25,3 +25,10 @@ class TestFigureManager(unittest.TestCase):
         figure.draw()
 
         figure.display()
+
+    def testFigureFromPath(self):
+        path = ImagingPath()
+        path.append(Space(d=40))
+        path.append(Lens(f=5))
+        path.append(Space(d=10))
+        path.newDisplay()
