@@ -262,7 +262,10 @@ class ImagingPath(MatrixGroup):
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
-        thetaUp = (stopDiameter / 2.0 - A * y) / B
+        if transferMatrixToApertureStop.isImaging:
+            return None
+
+        thetaUp  = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
         if thetaDown > thetaUp:
@@ -587,6 +590,9 @@ class ImagingPath(MatrixGroup):
         """
         fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
+        if conjugateMatrix is None:
+            return float("+inf")
+
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
 
