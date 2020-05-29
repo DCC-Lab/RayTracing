@@ -267,7 +267,8 @@ class ImagingPath(MatrixGroup):
         if transferMatrixToApertureStop.isImaging:
             return None
 
-        thetaUp = (stopDiameter / 2.0 - A * y) / B
+
+        thetaUp  = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
         if thetaDown > thetaUp:
