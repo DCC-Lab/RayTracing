@@ -156,11 +156,10 @@ class TestImagingPath(unittest.TestCase):
         path.append(Aperture(diameter=20))
         self.assertAlmostEqual(path.fieldOfView(), 20, 2)
 
-    @unittest.skip
     def testImageSizeDIs0(self):
         path = ImagingPath(System2f(f=10, diameter=10))
         path.append(Aperture(20))
-        path.imageSize()
+        self.assertEqual(path.imageSize(), inf)
 
     def testImageSizeInfinite(self):
         path = ImagingPath(System4f(f1=10, f2=2, diameter1=10))
@@ -239,16 +238,14 @@ class TestImagingPath(unittest.TestCase):
         self.assertAlmostEqual(principalRay.y, 20, 2)
         self.assertAlmostEqual(principalRay.theta, -2, 3)
 
-    @unittest.skip("Should be fixed soon")
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
         self.assertIsNone(path.marginalRays())
 
-    @unittest.skip("Should be fixed soon")
     def testMarginalRaysIsImaging(self):
         path = ImagingPath(System4f(10, 10))
         path.append(Aperture(10))
-        self.assertIsNotNone(path.marginalRays())
+        self.assertIsNone(path.marginalRays())
 
     def testMarginalRays(self):
         path = ImagingPath(System2f(10, 10))
@@ -317,6 +314,11 @@ class TestImagingPath(unittest.TestCase):
         before = path.lagrangeInvariant(ray1, ray2, 10)
         after = path.lagrangeInvariant(ray1, ray2, 70)
         self.assertAlmostEqual(before, after)
+
+    def testChiefRayInfiniteFOVNoY(self):
+        path = ImagingPath(System2f(10, 10))
+        with self.assertRaises(ValueError):
+            path.chiefRay()
 
 
 if __name__ == '__main__':
