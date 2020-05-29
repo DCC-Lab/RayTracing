@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 from matplotlib import patches, transforms
 from matplotlib import text as mplText
-from matplotlib.backend_bases import RendererBase
+import matplotlib.path as mpath
 from typing import List
 import numpy as np
+import math
 
 
 class Drawing:
@@ -136,6 +137,7 @@ class Drawing:
                 halfHeight = componentMaxY
         return halfHeight
 
+
 class ArrowPatch(patches.FancyArrow):
     """Define a FancyArrow patch with default RayTracing style created at (0,0).
     Use with Drawing class to set position and scaling.
@@ -156,6 +158,80 @@ class ArrowPatch(patches.FancyArrow):
                                          head_width=width * 5, head_length=abs(dy) * headLengthRatio)
 
 
+class SphericalInterfacePatch(patches.PathPatch):
+    def __init__(self, halfHeight, R, x=0.0, L=0.0):
+        self.halfHeight = halfHeight
+        self.R = R
+        self.L = L
+        self.x = x
+        self.xy = None
+
+        super(SphericalInterfacePatch, self).__init__(self.path(),
+                                                      color=[0.85, 0.95, 0.95],
+                                                      fill=True)  # transform=axes.transData
+
+    def path(self):
+        h = self.halfHeight
+        R1 = self.R
+        # R2 = R1
+        v1 = self.x
+
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
+        corner1 = v1 + delta1
+
+        if self.R < 0:
+            v1 -= delta1
+            corner1 -= delta1
+
+        if self.L == 0:
+            self.L = delta1
+
+        # v2 = v1 + self.L
+        # phi2 = math.asin(h / abs(R2))
+        # delta2 = R2 * (1.0 - math.cos(phi2))
+        # ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
+        # corner2 = v2 + delta2
+
+        Path = mpath.Path
+        path = Path([(corner1, -h), (v1, -ctl1), (v1, 0),
+                     (v1, 0), (v1, ctl1), (corner1, h),
+                     (corner1, -h)],
+                    [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                     Path.LINETO, Path.CURVE3, Path.CURVE3,
+                     Path.LINETO])
+        # (corner2, h), (v2, ctl2), (v2, 0),
+        # (v2, 0), (v2, -ctl2), (corner2, -h),
+        # (corner1, -h)],
+        # Path.LINETO, Path.CURVE3, Path.CURVE3,
+        # Path.LINETO, Path.CURVE3, Path.CURVE3,
+        # Path.LINETO])
+
+        self.xy = [(corner1, -h), (v1, 0), (corner1, h)]
+
+        # (corner2, h), (v2, 0),
+        # (v2, 0), (corner2, -h),
+        # (corner1, -h)]
+
+        return path
+
+    def get_xy(self):
+        return self.xy
+
+    def bezierArc(self, z, R, halfHeight):
+        h = halfHeight
+        R1 = R
+        v1 = z
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
+        corner1 = v1 + delta1
+
+        return [(corner1, -h), (v1, -ctl1), (v1, 0),
+                (v1, 0), (v1, ctl1), (corner1, h)]
+
+
 class StopPatch(patches.Polygon):
     """Define a Polygon patch with default RayTracing style used for aperture stops.
     Use with Drawing class to set position and scaling.
@@ -173,9 +249,10 @@ class StopPatch(patches.Polygon):
         Create thick lens Drawing with a fixed width (autoScale Off)
         >>> drawing = Drawing(thickLens, stopAbove, stopBelow, fixedWidth=True)
     """
+
     def __init__(self, y: float, width=0.01):
-        super(StopPatch, self).__init__([[- width/2, y],
-                                         [+ width/2, y]],
+        super(StopPatch, self).__init__([[- width / 2, y],
+                                         [+ width / 2, y]],
                                         linewidth=3,
                                         closed=False,
                                         color='0.7')

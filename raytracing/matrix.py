@@ -2096,8 +2096,8 @@ class ThickLens(Matrix):
     def surfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
-        return [SphericalInterface(z=0, R=self.R1, n=self.n),
-                SphericalInterface(z=self.L, R=self.R2)]
+        return [SphericalInterface(R=self.R1, n=self.n, L=self.L),
+                SphericalInterface(R=self.R2)]
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw a faint blue box with slightly curved interfaces
