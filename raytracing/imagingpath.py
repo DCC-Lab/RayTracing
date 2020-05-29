@@ -693,14 +693,16 @@ class ImagingPath(MatrixGroup):
         """
 
         displayRange = self.largestDiameter
-        if displayRange == float('+Inf') or displayRange <= 2 * self.objectHeight:
-            displayRange = 2 * self.objectHeight
+        objHeight = abs(self.objectHeight)
+        if displayRange == float('+Inf') or displayRange <= 2 * objHeight:
+            displayRange = 2 * objHeight
 
         conjugates = self.intermediateConjugates()
         if len(conjugates) != 0:
             for (planePosition, magnification) in conjugates:
-                if displayRange < self.objectHeight * magnification:
-                    displayRange = self.objectHeight * magnification
+                magnification = abs(magnification)
+                if displayRange < objHeight * magnification:
+                    displayRange = objHeight * magnification
         return displayRange
 
     def createRayTracePlot(
