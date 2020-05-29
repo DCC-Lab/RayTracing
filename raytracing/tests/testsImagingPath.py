@@ -61,6 +61,12 @@ class TestImagingPath(unittest.TestCase):
         chiefRay = path.chiefRay()
         self.assertIsNone(chiefRay)
 
+    def testChiefRayBIs0(self):
+        path = ImagingPath(System4f(pi*2, pi*1.25))
+        path.append(System4f(pi, pi/1.2))
+        path.append(Aperture(10))
+        self.assertIsNone(path.chiefRay())
+
     def testChiefRayInfiniteFieldOfViewNoY(self):
         path = ImagingPath()
         path.append(System2f(10, path.maxHeight + 1))
@@ -80,6 +86,7 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath(System2f(f=10, diameter=10))
         path.append(Aperture(20))
         self.assertEqual(path.imageSize(), inf)
+
 
 if __name__ == '__main__':
     unittest.main()
