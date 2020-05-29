@@ -190,7 +190,6 @@ class ImagingPath(MatrixGroup):
         """
         return self.chiefRay(y=None)
 
-
     def marginalRays(self, y=0):
         """This function calculates the marginal rays for a height y at object.
         The marginal rays for height y are the rays that hit the upper and lower
@@ -258,9 +257,15 @@ class ImagingPath(MatrixGroup):
 
         """
         (stopPosition, stopDiameter) = self.apertureStop()
+        if stopPosition is None:
+            return None  # No aperture stop -> no marginal rays
+
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
+
+        if transferMatrixToApertureStop.isImaging:
+            return None
 
         thetaUp  = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
@@ -587,6 +592,9 @@ class ImagingPath(MatrixGroup):
         """
         fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
+        if conjugateMatrix is None:
+            return float("+inf")
+
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
 
@@ -683,10 +691,10 @@ class ImagingPath(MatrixGroup):
         display range : 7
 
         """
-        
+
         displayRange = self.largestDiameter
-        if displayRange == float('+Inf') or displayRange <= 2*self.objectHeight:
-            displayRange = 2*self.objectHeight
+        if displayRange == float('+Inf') or displayRange <= 2 * self.objectHeight:
+            displayRange = 2 * self.objectHeight
 
         conjugates = self.intermediateConjugates()
         if len(conjugates) != 0:
@@ -978,7 +986,7 @@ class ImagingPath(MatrixGroup):
         arrowHeadHeight = self.objectHeight * 0.1
 
         heightFactor = self.objectHeight / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
 
         axes.arrow(
             self.objectPosition,
@@ -1011,7 +1019,7 @@ class ImagingPath(MatrixGroup):
             arrowHeadHeight = arrowHeight * 0.1
 
             heightFactor = arrowHeight / yScaling
-            arrowHeadWidth = xScaling * 0.01 * (heightFactor/0.2) ** (3/4)
+            arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
 
             axes.arrow(
                 imagePosition,
@@ -1082,7 +1090,7 @@ class ImagingPath(MatrixGroup):
             center = z + pupilPosition
             (xScaling, yScaling) = self.axesToDataScale(axes)
             heightFactor = halfHeight * 2 / yScaling
-            width = xScaling * 0.01 / 2 * (heightFactor/0.2) ** (3/4)
+            width = xScaling * 0.01 / 2 * (heightFactor / 0.2) ** (3 / 4)
 
             axes.add_patch(patches.Polygon(
                 [[center - width, halfHeight],
