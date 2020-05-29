@@ -62,7 +62,9 @@ class TestImagingPath(unittest.TestCase):
         self.assertIsNone(chiefRay)
 
     def testChiefRayBIs0(self):
-        path = ImagingPath(System4f(10, 10, 10, 10))
+        path = ImagingPath(System4f(pi*2, pi*1.25))
+        path.append(System4f(pi, pi/1.2))
+        path.append(Aperture(10))
         self.assertIsNone(path.chiefRay())
 
 if __name__ == '__main__':
