@@ -287,21 +287,25 @@ class FigureManager:
 
         return drawings
 
-    def drawingOfElement(self, element) -> Drawing:
+    def drawingOfElement(self, element: Lens) -> Drawing:
         # todo: surfaces components
         # todo: aperture components
         # todo: label
 
-        if len(element.surfaces) == 0:
-            return Drawing()
+        # todo: add check for infinite lens minSize with RayTraces
+        # todo: add thinlens exception
 
-        else:
-            
-            pass
+        z = 0
+        components = []
+        for surface in element.surfaces:
+            p = SphericalInterfacePatch(halfHeight=element.displayHalfHeight(), R=surface.R, L=surface.L, x=z)
+            print(surface.L, p.L, z)
+            z += p.L
+            components.append(p)
 
-        return Drawing()
+        return Drawing(*components, fixedWidth=True)
 
-    def _showPlot(self):  # internal, do not use
+    def _showPlot(self):
         try:
             plt.plot()
             if sys.platform.startswith('win'):
