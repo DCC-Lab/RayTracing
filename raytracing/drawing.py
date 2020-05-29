@@ -158,6 +158,80 @@ class ArrowPatch(patches.FancyArrow):
                                          head_width=width * 5, head_length=abs(dy) * headLengthRatio)
 
 
+class SurfacePairPatch(patches.PathPatch):
+    # TODO
+    def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
+        self.surfaceA = surfaceA
+        self.surfaceB = surfaceB
+        self.halfHeight = halfHeight
+        self.x = x
+        self.xy = None
+        self.centerWidth = None
+        self.xLink = None
+
+        super(SurfacePairPatch, self).__init__(self.path(),
+                                               color=[0.85, 0.95, 0.95],
+                                               fill=True)  # transform=axes.transData
+
+    def pathSurfaceA(self) -> tuple:
+        # todo: cleanup
+        # todo: R=+inf exception
+        h = self.halfHeight
+        R1 = self.surfaceA.R
+        v1 = self.x
+
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
+        corner1 = v1 + delta1
+        corner2 = corner1 + self.surfaceA.L
+
+        Path = mpath.Path
+        coords = [(corner2, -h),
+                  (corner1, -h), (v1, -ctl1), (v1, 0),
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h)]
+        actions = [Path.MOVETO,
+                   Path.LINETO, Path.CURVE3, Path.CURVE3,
+                   Path.LINETO, Path.CURVE3, Path.CURVE3,
+                   Path.LINETO]
+
+        self.xy = [(corner2, -h), (corner1, -h), (v1, 0), (corner1, h), (corner2, h)]
+        self.centerWidth = self.surfaceA.L + delta1
+        self.xLink = corner2
+
+        return coords, actions
+
+    def pathSurfaceB(self) -> tuple:
+        # use self.xLink as corner2
+
+        v2 = v1 + self.L
+        phi2 = math.asin(h / abs(R2))
+        delta2 = R2 * (1.0 - math.cos(phi2))
+        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
+        corner2 = v2 + delta2
+
+        # path commands for simple arc from (corner2, h) to (corner2, -h)
+        # + R=inf exception
+
+        self.xy.append((v2, 0))
+        self.centerWidth -= delta2
+        return coords, actions
+
+    def path(self):
+        coordsA, actionsA = self.pathSurfaceA()
+        coordsB, actionsB = self.pathSurfaceB()
+
+        path = mpath.Path(coordsA.extend(coordsB),
+                          actionsA.extend(actionsB))
+
+        return path
+
+    def get_xy(self):
+        return self.xy
+
+
+# deprecated
 class SphericalInterfacePatch(patches.PathPatch):
     def __init__(self, halfHeight, R, x=0.0, L=0.0):
         self.halfHeight = halfHeight
