@@ -61,6 +61,12 @@ class TestImagingPath(unittest.TestCase):
         chiefRay = path.chiefRay()
         self.assertIsNone(chiefRay)
 
+    def testChiefRayInfiniteFieldOfViewNoY(self):
+        path = ImagingPath()
+        path.append(System2f(10, path.maxHeight + 1))
+        with self.assertRaises(ValueError):
+            path.chiefRay()
+
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
         self.assertIsNone(path.marginalRays())
