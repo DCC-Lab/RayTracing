@@ -61,5 +61,9 @@ class TestImagingPath(unittest.TestCase):
         chiefRay = path.chiefRay()
         self.assertIsNone(chiefRay)
 
+    def testMarginalRaysNoApertureStop(self):
+        path = ImagingPath(System4f(10, 10))
+        self.assertIsNone(path.marginalRays())
+
 if __name__ == '__main__':
     unittest.main()
