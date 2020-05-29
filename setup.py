@@ -27,7 +27,7 @@ rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/*
 
 setuptools.setup(
     name="raytracing",
-    version="1.2.8",
+    version="1.2.9",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",
