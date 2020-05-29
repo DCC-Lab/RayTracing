@@ -64,7 +64,7 @@ class TestImagingPath(unittest.TestCase):
     def testMarginalRaysIsImaging(self):
         path = ImagingPath(System4f(10, 10))
         path.append(Aperture(10))
-        self.assertIsNotNone(path.marginalRays())
+        self.assertIsNone(path.marginalRays())
 
 if __name__ == '__main__':
     unittest.main()
