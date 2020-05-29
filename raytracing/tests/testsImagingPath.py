@@ -66,5 +66,10 @@ class TestImagingPath(unittest.TestCase):
         path.append(Aperture(10))
         self.assertIsNone(path.marginalRays())
 
+    def testImageSizeDIs0(self):
+        path = ImagingPath(System2f(f=10, diameter=10))
+        path.append(Aperture(20))
+        self.assertEqual(path.imageSize(), inf)
+
 if __name__ == '__main__':
     unittest.main()
