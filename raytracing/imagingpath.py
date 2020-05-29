@@ -166,6 +166,8 @@ class ImagingPath(MatrixGroup):
 
         if y is None:
             y = self.fieldOfView()
+            if abs(y) == float("+inf"):
+                raise ValueError("Must provide y when the filed of view is infinite")
 
         return Ray(y=y, theta=-A * y / B)
 
