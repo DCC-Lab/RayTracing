@@ -61,5 +61,12 @@ class TestImagingPath(unittest.TestCase):
         chiefRay = path.chiefRay()
         self.assertIsNone(chiefRay)
 
+    def testChiefRayInfiniteFieldOfViewNoY(self):
+        path = ImagingPath()
+        path.append(System2f(10, path.maxHeight + 1))
+        with self.assertRaises(ValueError):
+            path.chiefRay()
+
+
 if __name__ == '__main__':
     unittest.main()
