@@ -61,6 +61,11 @@ class TestImagingPath(unittest.TestCase):
         chiefRay = path.chiefRay()
         self.assertIsNone(chiefRay)
 
+    def testMarginalRaysIsImaging(self):
+        path = ImagingPath(System4f(10, 10))
+        path.append(Aperture(10))
+        self.assertIsNone(path.marginalRays())
+
     def testImageSizeDIs0(self):
         path = ImagingPath(System2f(f=10, diameter=10))
         path.append(Aperture(20))
