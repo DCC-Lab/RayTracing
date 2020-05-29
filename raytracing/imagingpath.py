@@ -260,8 +260,8 @@ class ImagingPath(MatrixGroup):
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
-        thetaUp: float = (stopDiameter / 2.0 - A * y) / B
-        thetaDown: float = (-stopDiameter / 2.0 - A * y) / B
+        thetaUp  = (stopDiameter / 2.0 - A * y) / B
+        thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
         if thetaDown > thetaUp:
             (thetaUp, thetaDown) = (thetaDown, thetaUp)
