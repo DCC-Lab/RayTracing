@@ -3,7 +3,7 @@ from raytracing import *
 
 path = ImagingPath()
 path.name = "Kohler illumination with 1 cm wide lamp and 0.5 NA"
-path.objectHeight = 1.0
+path.setObjectHeight(1.0)
 path.fanAngle = 0.5
 path.rayNumber = 3
 path.append(Space(d=4))
