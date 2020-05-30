@@ -28,7 +28,7 @@ class ImagingPath(MatrixGroup):
 
     Attributes
     ----------
-    objectHeight : float
+    _objectHeight : float
         The full height of object can be defined using this attribute (default=10.0)
     objectPosition : float
         This attribute defines the position of the object which must be defined zero for now. (default=0)
@@ -104,9 +104,37 @@ class ImagingPath(MatrixGroup):
 
     @property
     def objectHeight(self):
+        """This function returns the current object height. The returned value cannot be changed.
+
+        Returns
+        -------
+        _objectHeight : float
+            The height of the object.
+
+        See Also
+        --------
+        raytracing.ImagingPath.setObjectHeight
+
+        """
         return self._objectHeight
 
     def setObjectHeight(self, objectHeight: float):
+        """This function is used to set a different object height. The new height must be positive.
+
+        Parameters
+        ----------
+        objectHeight : float
+            The new height of the object. Must be positive, otherwise a ValueError is raised.
+
+        Returns
+        -------
+        chiefRay : object of Ray class
+            The properties (i.e. height and the angle of the chief ray.)
+
+        See Also
+        --------
+        raytracing.ImagingPath.objectHeight
+                """
         if objectHeight < 0:
             raise ValueError("The object height can't be negative.")
         self._objectHeight = objectHeight
