@@ -288,22 +288,34 @@ class FigureManager:
         return drawings
 
     def drawingOfElement(self, element: Lens) -> Drawing:
-        # todo: surfaces components
         # todo: aperture components
         # todo: label
 
-        # todo: add check for infinite lens minSize with RayTraces
         # todo: add thinlens exception
+        if len(element.surfaces) == 0:
+            return Drawing()
+
 
         z = 0
         components = []
-        for surface in element.surfaces:
-            p = SphericalInterfacePatch(halfHeight=element.displayHalfHeight(), R=surface.R, L=surface.L, x=z)
-            print(surface.L, p.L, z)
-            z += p.L
+        for i, surfaceA in enumerate(element.surfaces[:-1]):
+            surfaceB = element.surfaces[i+1]
+            p = SurfacePairPatch(surfaceA, surfaceB, x=z,
+                                 halfHeight=element.displayHalfHeight(minSize=self.maxRayHeight()))
+            z += surfaceA.L
             components.append(p)
 
         return Drawing(*components, fixedWidth=True)
+
+    def maxRayHeight(self):
+        # FIXME: need a more robust reference to rayTraces... Height(y) ?
+        maxRayHeight = 0
+        for line in self.axes.lines:
+            if line.get_label() == 'ray':
+                if max(line._y) > maxRayHeight:
+                    maxRayHeight = max(line._y)
+
+        return maxRayHeight
 
     def _showPlot(self):
         try:

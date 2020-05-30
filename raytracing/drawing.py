@@ -165,7 +165,7 @@ class SurfacePairPatch(patches.PathPatch):
         self.halfHeight = halfHeight
         self.x = x
         self.xy = None
-        self.centerWidth = None
+        self.xlink = None
 
         super(SurfacePairPatch, self).__init__(self.path(),
                                                color=[0.85, 0.95, 0.95],
@@ -177,32 +177,24 @@ class SurfacePairPatch(patches.PathPatch):
         h = self.halfHeight
         R1 = self.surfaceA.R
         v1 = self.x
-        self.centerWidth = self.surfaceA.L
 
         if self.surfaceA.R == float("+inf"):
-            corner1 = v1
-            corner2 = corner1 + self.surfaceA.L
-            coords = [(corner2, -h), (corner1, -h), (corner1, h), (corner2, h)]
-            actions = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO]
-            return coords, actions
+            self.xy = [(v1, -h), (v1, h)]
+            return [(v1, -h), (v1, h)], [Path.MOVETO, Path.LINETO]
 
         phi1 = math.asin(h / abs(R1))
         delta1 = R1 * (1.0 - math.cos(phi1))
         ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
         corner1 = v1 + delta1
-        corner2 = corner1 + self.surfaceA.L
 
-        coords = [(corner2, -h),
-                  (corner1, -h), (v1, -ctl1), (v1, 0),
-                  (v1, 0), (v1, ctl1), (corner1, h),
-                  (corner2, h)]
-        actions = [Path.MOVETO,
-                   Path.LINETO, Path.CURVE3, Path.CURVE3,
-                   Path.LINETO, Path.CURVE3, Path.CURVE3,
-                   Path.LINETO]
+        coords = [(corner1, -h), (v1, -ctl1), (v1, 0),
+                  (v1, 0), (v1, ctl1), (corner1, h)]
+        actions = [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                   Path.LINETO, Path.CURVE3, Path.CURVE3]
 
-        self.xy = [(corner2, -h), (corner1, -h), (v1, 0), (corner1, h), (corner2, h)]
-        self.centerWidth += delta1
+        self.xy = [(corner1, -h), (v1, 0), (corner1, h)]
+        self.xlink = corner1
+
 
         return coords, actions
 
@@ -210,26 +202,24 @@ class SurfacePairPatch(patches.PathPatch):
         Path = mpath.Path
         R2 = self.surfaceB.R
         h = self.halfHeight
-        v2 = self.x + self.centerWidth
+        v2 = self.x + self.surfaceA.L
 
         if self.surfaceB.R == float("+inf"):
-            return [(v2, -h)], [Path.LINETO]
+            self.xy.extend([(v2, h), (v2, -h)])
+            return [(v2, h), (v2, -h), (self.xlink, -h)], [Path.LINETO, Path.LINETO, Path.LINETO]
 
         phi2 = math.asin(h / abs(R2))
         delta2 = R2 * (1.0 - math.cos(phi2))
         ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
-        corner2 = v2
+        corner2 = v2 + delta2
 
-        self.centerWidth -= delta2
+        # append from (corner1, h), stop at (corner1, -h)
+        coords = [(corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h), (self.xlink, -h)]
+        actions = [Path.LINETO, Path.CURVE3, Path.CURVE3,
+                   Path.LINETO, Path.CURVE3, Path.CURVE3, Path.LINETO]
 
-        # append from (corner2, h), stop at (corner2, -h)
-        coords = [(v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h)]
-        actions = [Path.CURVE3, Path.CURVE3,
-                   Path.LINETO, Path.CURVE3, Path.CURVE3]
-
-        self.xy.append((v2, 0))
-        self.centerWidth -= delta2
+        self.xy.extend([(corner2, h), (v2, 0), (corner2, -h)])
 
         return coords, actions
 
@@ -237,8 +227,8 @@ class SurfacePairPatch(patches.PathPatch):
         coordsA, actionsA = self.pathSurfaceA()
         coordsB, actionsB = self.pathSurfaceB()
 
-        path = mpath.Path(coordsA.extend(coordsB),
-                          actionsA.extend(actionsB))
+        path = mpath.Path(coordsA + coordsB,
+                          actionsA + actionsB)
 
         return path
 
