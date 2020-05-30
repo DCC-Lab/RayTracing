@@ -126,11 +126,6 @@ class ImagingPath(MatrixGroup):
         objectHeight : float
             The new height of the object. Must be positive, otherwise a ValueError is raised.
 
-        Returns
-        -------
-        chiefRay : object of Ray class
-            The properties (i.e. height and the angle of the chief ray.)
-
         See Also
         --------
         raytracing.ImagingPath.objectHeight
@@ -304,7 +299,7 @@ class ImagingPath(MatrixGroup):
         if transferMatrixToApertureStop.isImaging:
             return None
 
-        thetaUp  = (stopDiameter / 2.0 - A * y) / B
+        thetaUp = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
         if thetaDown > thetaUp:
