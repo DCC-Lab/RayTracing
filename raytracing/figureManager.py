@@ -248,13 +248,13 @@ class FigureManager:
 
         z = 0
         for element in self.path.elements:
-            drawing = self.drawingOfElement(element)
-            drawing.x = z
+            if element.surfaces:
+                drawing = self.drawingOfElement(element)
+                drawing.x = z
+                self.add(drawing)
             z += element.L
 
-            self.add(drawing)
-
-        # TODO: entrancePupil, POI, stops
+        # TODO: entrancePupil, POI, stop labels
 
     def drawingOfObject(self) -> Drawing:
         """ The drawing of the object.
@@ -287,32 +287,36 @@ class FigureManager:
 
         return drawings
 
-    def drawingOfElement(self, element: Lens) -> Drawing:
-        # todo: aperture components
-        # todo: label
-
-        if len(element.surfaces) == 0:
+    def drawingOfElement(self, element: Lens, showLabel=True) -> Drawing:
+        if not element.surfaces:
             return Drawing()
 
+        components = []
+        halfHeight = element.displayHalfHeight()
+
         if type(element) is Lens:
-            halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())  # fixme: this should be set once
-            arrowUp = ArrowPatch(dy=halfHeight)
-            arrowDown = ArrowPatch(dy=-halfHeight)
-            return Drawing(arrowUp, arrowDown)
+            halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())
+            components.append(ArrowPatch(dy=halfHeight))
+            components.append(ArrowPatch(dy=-halfHeight))
+
+        if element.hasFiniteApertureDiameter():
+            components.append(StopPatch(y=halfHeight, width=element.L))
+            components.append(StopPatch(y=-halfHeight, width=element.L))
 
         z = 0
-        components = []
         for i, surfaceA in enumerate(element.surfaces[:-1]):
             surfaceB = element.surfaces[i+1]
             p = SurfacePairPatch(surfaceA, surfaceB, x=z,
-                                 halfHeight=element.displayHalfHeight(minSize=self.maxRayHeight()))
+                                 halfHeight=halfHeight)
             z += surfaceA.L
             components.append(p)
 
-        return Drawing(*components, fixedWidth=True)
+        label = element.label if showLabel else None
+        fixedWidth = False if type(element) is Lens else True
+        return Drawing(*components, label=label, fixedWidth=fixedWidth)
 
     def maxRayHeight(self):
-        # FIXME: need a more robust reference to rayTraces... Height(y) ?
+        # FIXME: need a more robust reference to rayTraces... and maybe maxRayHeightAt(y) instead?
         maxRayHeight = 0
         for line in self.axes.lines:
             if line.get_label() == 'ray':

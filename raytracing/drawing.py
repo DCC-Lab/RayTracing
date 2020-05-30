@@ -138,26 +138,6 @@ class Drawing:
         return halfHeight
 
 
-class ArrowPatch(patches.FancyArrow):
-    """Define a FancyArrow patch with default RayTracing style created at (0,0).
-    Use with Drawing class to set position and scaling.
-
-    Examples
-    --------
-        Create a black arrow of height +5
-        >>> arrow = ArrowPatch(dy=5)
-
-        Set position and label by creating a Drawing object
-        >>> drawing = Drawing(arrow, x=10, label='Image')
-    """
-
-    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
-        super(ArrowPatch, self).__init__(x=0, y=y, dx=0, dy=dy,
-                                         fc=color, ec=color,
-                                         width=width, length_includes_head=True,
-                                         head_width=width * 5, head_length=abs(dy) * headLengthRatio)
-
-
 class SurfacePairPatch(patches.PathPatch):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
         self.surfaceA = surfaceA
@@ -238,6 +218,26 @@ class SurfacePairPatch(patches.PathPatch):
         return self.xy
 
 
+class ArrowPatch(patches.FancyArrow):
+    """Define a FancyArrow patch with default RayTracing style created at (0,0).
+    Use with Drawing class to set position and scaling.
+
+    Examples
+    --------
+        Create a black arrow of height +5
+        >>> arrow = ArrowPatch(dy=5)
+
+        Set position and label by creating a Drawing object
+        >>> drawing = Drawing(arrow, x=10, label='Image')
+    """
+
+    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
+        super(ArrowPatch, self).__init__(x=0, y=y, dx=0, dy=dy,
+                                         fc=color, ec=color,
+                                         width=width, length_includes_head=True,
+                                         head_width=width * 5, head_length=abs(dy) * headLengthRatio)
+
+
 class StopPatch(patches.Polygon):
     """Define a Polygon patch with default RayTracing style used for aperture stops.
     Use with Drawing class to set position and scaling.
@@ -257,8 +257,11 @@ class StopPatch(patches.Polygon):
     """
 
     def __init__(self, y: float, width=0.01):
-        super(StopPatch, self).__init__([[- width / 2, y],
-                                         [+ width / 2, y]],
+        if width <= 0.01:
+            coords = [[- 0.01 / 2, y], [+ 0.01 / 2, y]]
+        else:
+            coords = [[0, y], [width, y]]
+        super(StopPatch, self).__init__(coords,
                                         linewidth=3,
                                         closed=False,
                                         color='0.7')

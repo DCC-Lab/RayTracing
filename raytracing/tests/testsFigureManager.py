@@ -27,8 +27,16 @@ class TestFigureManager(unittest.TestCase):
         figure.display()
 
     def testFigureFromPath(self):
+        # path = ImagingPath()
+        # path.append(Space(d=40))
+        # path.append(Lens(f=5))
+        # path.append(Space(d=10))
+        # path.newDisplay()
+
         path = ImagingPath()
-        path.append(Space(d=40))
-        path.append(Lens(f=5))
-        path.append(Space(d=10))
-        path.newDisplay()
+        path.label = "Thick diverging lens"
+        path.objectHeight = 20
+        path.append(Space(d=50))
+        path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
+        path.append(Space(d=50))
+        path.newDisplay(onlyChiefAndMarginalRays=True)
