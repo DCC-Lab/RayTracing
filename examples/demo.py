@@ -48,7 +48,7 @@ path.display()
 
 path = ImagingPath()
 path.label = "Thick diverging lens"
-path.objectHeight = 20
+path.setObjectHeight(20)
 path.append(Space(d=50))
 path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
 path.append(Space(d=50))
@@ -56,7 +56,7 @@ path.display(onlyChiefAndMarginalRays=True)
 
 path = ImagingPath()
 path.label = "Thick diverging lens, made with individual elements"
-path.objectHeight = 20
+path.setObjectHeight(20)
 path.append(Space(d=50))
 path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
 path.append(Space(d=10, diameter=25, label='Lens'))
@@ -66,7 +66,7 @@ path.display(onlyChiefAndMarginalRays=True)
 
 path = ImagingPath()
 path.label = "Microscope system"
-path.objectHeight = 0.1
+path.setObjectHeight(0.1)
 path.append(Space(d=1))
 path.append(Lens(f=1, diameter=0.8, label='Obj'))
 path.append(Space(d=19))
