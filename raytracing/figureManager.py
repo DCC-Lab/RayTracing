@@ -291,10 +291,14 @@ class FigureManager:
         # todo: aperture components
         # todo: label
 
-        # todo: add thinlens exception
         if len(element.surfaces) == 0:
             return Drawing()
 
+        if type(element) is Lens:
+            halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())  # fixme: this should be set once
+            arrowUp = ArrowPatch(dy=halfHeight)
+            arrowDown = ArrowPatch(dy=-halfHeight)
+            return Drawing(arrowUp, arrowDown)
 
         z = 0
         components = []

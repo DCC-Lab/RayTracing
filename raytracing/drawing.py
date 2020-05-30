@@ -195,6 +195,8 @@ class SurfacePairPatch(patches.PathPatch):
         self.xy = [(corner1, -h), (v1, 0), (corner1, h)]
         self.xlink = corner1
 
+        if self.surfaceA.L == 0:  # thin lens exception
+            self.surfaceA.L = delta1 * 2
 
         return coords, actions
 
