@@ -7,7 +7,45 @@ from raytracing import *
 
 class TestAchromatDoubletLens(unittest.TestCase):
     def testInit(self):
-        pass
+        achromat = AchromatDoubletLens(fa=-100.0, fb=-103.6, R1=-52.0, R2=49.9, R3=600.0, tc1=2.0, tc2=4.0, te=7.7,
+                                       n1=N_BAK4.n(0.5876), n2=SF5.n(0.5876), diameter=25.4, url='https://www.test.com',
+                                       label="testInit AchromatDoubletLens")
+        self.assertIsNotNone(achromat)
+
+    def testWarnThickness(self):
+        with self.assertWarns(UserWarning):
+            achromat = AchromatDoubletLens(fa=125.0, fb=122.0, R1=77.6, R2=-55.9, R3=-160.8, tc1=4.0, tc2=2.8, te=5.0,
+                                           n1=N_BK7.n(0.5876), n2=N_SF5.n(0.5876), diameter=25.4,
+                                           url='https://www.test.com', label="testThickness AchromatDoubletLens")
+
+    def testWarnBackFocalLength(self):
+        with self.assertWarns(UserWarning):
+            achromat = AchromatDoubletLens(fa=30.0, fb=22.9, R1=20.89, R2=-16.73, R3=-79.8, tc1=12, tc2=2.0, te=8.8,
+                                           n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
+                                           url='https://www.test.com', label="TestBackFocalLength AchromatDoubletLens")
+
+    def testWarnEffectiveFocalLength(self):
+        with self.assertWarns(UserWarning):
+            achromat = AchromatDoubletLens(fa=150.00,fb=126.46, R1=92.05,R2=-72.85, R3=-305.87, tc1=23.2, tc2=23.1,
+                                           te=36.01, n1=1.6700, n2=1.8467, diameter=75, url="https://www.test.com",
+                                           label="TestEffectiveFocalLength AchromatDoubletLens")
+
+    def testPointsOfInterest(self):
+        z = 10
+        achromat = AchromatDoubletLens(fa=-100.0, fb=-103.6, R1=-52.0, R2=49.9, R3=600.0, tc1=2.0, tc2=4.0, te=7.7,
+                                       n1=N_BAK4.n(0.5876), n2=SF5.n(0.5876), diameter=25.4, url='https://www.test.com',
+                                       label="testPoI AchromatDoubletLens")
+        points = achromat.pointsOfInterest(z)
+        f = -1.0 / achromat.C
+        p1 = z - (1 - achromat.D) / achromat.C
+        ff = p1 - f
+
+        p2 = z + achromat.L + (1 - achromat.A) / achromat.C
+        fb = p2 + f
+
+        self.assertIsNotNone(achromat)
+        self.assertAlmostEqual(points[0]['z'], ff)
+        self.assertAlmostEqual(points[1]['z'], fb)
 
 
 class TestAchromatDoubletLensSubclasses(unittest.TestCase):
@@ -49,8 +87,56 @@ class TestAchromatDoubletLensSubclasses(unittest.TestCase):
 
 class TestObjectives(unittest.TestCase):
     def testInit(self):
-        pass
+        objective = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
+                              label='TestPoI Objective', url="https://www.test.com")
+        self.assertIsNotNone(objective)
 
+    def testWarnNotFullyTested(self):
+        Objective.warningDisplayed = False
+
+        with self.assertWarns(FutureWarning):
+            objective = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
+                                  label='TestPoI Objective', url="https://www.test.com")
+
+        self.assertTrue(Objective.warningDisplayed)
+
+    def testFlipOrientation(self):
+        original = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
+                              label='TestPoI Objective', url="https://www.test.com")
+        flipped = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
+                              label='TestPoI Objective', url="https://www.test.com")
+        flipped.flipOrientation()
+
+        self.assertFalse(original.isFlipped)
+        self.assertTrue(flipped.isFlipped)
+        self.assertNotEqual(original.frontVertex, flipped.frontVertex)
+        self.assertNotEqual(original.backVertex, flipped.backVertex)
+
+    def testPointsOfInterest(self):
+        z = 10
+        objective = Objective(f=180/40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
+                              label='TestPoI Objective', url="https://www.test.com")
+        points = objective.pointsOfInterest(z)
+        ff = z + objective.focusToFocusLength
+        fb = z
+
+        self.assertAlmostEqual(points[0]['z'], fb)
+        self.assertAlmostEqual(points[1]['z'], ff)
+
+    def testPointsOfInterestFlipped(self):
+        z = 10
+        objective = Objective(f=180/40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
+                              label='TestPoI Objective', url="https://www.test.com")
+        points = objective.pointsOfInterest(z)
+        ff = z + objective.focusToFocusLength
+        fb = z
+        self.assertAlmostEqual(points[0]['z'], fb)
+        self.assertAlmostEqual(points[1]['z'], ff)
+
+        objective.flipOrientation()
+        points = objective.pointsOfInterest(z)
+        self.assertAlmostEqual(points[0]['z'], ff)
+        self.assertAlmostEqual(points[1]['z'], fb)
 
 class TestObjectivesSubclasses(unittest.TestCase):
     def setUp(self) -> None:
@@ -110,6 +196,11 @@ class TestObjectivesSubclasses(unittest.TestCase):
             try:
                 self.assertAlmostEqual(points[0]['z'], fb)
                 self.assertAlmostEqual(points[1]['z'], ff)
+
+                objective.flipOrientation()
+                points = objective.pointsOfInterest(z)
+                self.assertAlmostEqual(points[0]['z'], ff)
+                self.assertAlmostEqual(points[1]['z'], fb)
             except AssertionError:
                 fails.append('{} has the wrong point of interest.'.format(subclass.__name__))
         self.assertEqual([], fails)
