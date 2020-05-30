@@ -267,6 +267,7 @@ class ImagingPath(MatrixGroup):
         if transferMatrixToApertureStop.isImaging:
             return None
 
+
         thetaUp  = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
@@ -948,7 +949,7 @@ class ImagingPath(MatrixGroup):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
-    def drawDisplayObjects(self, axes):
+    def drawDisplayObjects(self, axes):  # pragma: no cover
         """ Draw the object, images and all elements to the figure
 
         Parameters
