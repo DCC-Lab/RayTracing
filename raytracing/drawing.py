@@ -179,6 +179,13 @@ class SurfacePairPatch(patches.PathPatch):
         v1 = self.x
         self.centerWidth = self.surfaceA.L
 
+        if self.surfaceA.R == float("+inf"):
+            corner1 = v1
+            corner2 = corner1 + self.surfaceA.L
+            coords = [(corner2, -h), (corner1, -h), (corner1, h), (corner2, h)]
+            actions = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO]
+            return coords, actions
+
         phi1 = math.asin(h / abs(R1))
         delta1 = R1 * (1.0 - math.cos(phi1))
         ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
@@ -205,6 +212,8 @@ class SurfacePairPatch(patches.PathPatch):
         h = self.halfHeight
         v2 = self.x + self.centerWidth
 
+        if self.surfaceB.R == float("+inf"):
+            return [(v2, -h)], [Path.LINETO]
 
         phi2 = math.asin(h / abs(R2))
         delta2 = R2 * (1.0 - math.cos(phi2))
