@@ -159,7 +159,6 @@ class ArrowPatch(patches.FancyArrow):
 
 
 class SurfacePairPatch(patches.PathPatch):
-    # TODO
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
@@ -167,7 +166,6 @@ class SurfacePairPatch(patches.PathPatch):
         self.x = x
         self.xy = None
         self.centerWidth = None
-        self.xLink = None
 
         super(SurfacePairPatch, self).__init__(self.path(),
                                                color=[0.85, 0.95, 0.95],
@@ -175,10 +173,11 @@ class SurfacePairPatch(patches.PathPatch):
 
     def pathSurfaceA(self) -> tuple:
         # todo: cleanup
-        # todo: R=+inf exception
+        Path = mpath.Path
         h = self.halfHeight
         R1 = self.surfaceA.R
         v1 = self.x
+        self.centerWidth = self.surfaceA.L
 
         phi1 = math.asin(h / abs(R1))
         delta1 = R1 * (1.0 - math.cos(phi1))
@@ -186,7 +185,6 @@ class SurfacePairPatch(patches.PathPatch):
         corner1 = v1 + delta1
         corner2 = corner1 + self.surfaceA.L
 
-        Path = mpath.Path
         coords = [(corner2, -h),
                   (corner1, -h), (v1, -ctl1), (v1, 0),
                   (v1, 0), (v1, ctl1), (corner1, h),
@@ -197,25 +195,33 @@ class SurfacePairPatch(patches.PathPatch):
                    Path.LINETO]
 
         self.xy = [(corner2, -h), (corner1, -h), (v1, 0), (corner1, h), (corner2, h)]
-        self.centerWidth = self.surfaceA.L + delta1
-        self.xLink = corner2
+        self.centerWidth += delta1
 
         return coords, actions
 
     def pathSurfaceB(self) -> tuple:
-        # use self.xLink as corner2
+        Path = mpath.Path
+        R2 = self.surfaceB.R
+        h = self.halfHeight
+        v2 = self.x + self.centerWidth
 
-        v2 = v1 + self.L
+
         phi2 = math.asin(h / abs(R2))
         delta2 = R2 * (1.0 - math.cos(phi2))
         ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
-        corner2 = v2 + delta2
+        corner2 = v2
 
-        # path commands for simple arc from (corner2, h) to (corner2, -h)
-        # + R=inf exception
+        self.centerWidth -= delta2
+
+        # append from (corner2, h), stop at (corner2, -h)
+        coords = [(v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h)]
+        actions = [Path.CURVE3, Path.CURVE3,
+                   Path.LINETO, Path.CURVE3, Path.CURVE3]
 
         self.xy.append((v2, 0))
         self.centerWidth -= delta2
+
         return coords, actions
 
     def path(self):
