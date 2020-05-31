@@ -230,36 +230,36 @@ class AC508_1000_B(AchromatDoubletLens):
 
 class LA1608_A(SingletLens):
     def __init__(self):
-        super(LA1608_A,self).__init__(f=75.0, fb=72.0, R1=38.6, R2=100000, tc=4.1, te=2.0, n=N_BK7.n(0.5876),
+        super(LA1608_A,self).__init__(f=75.0, fb=72.0, R1=38.6, R2=float("+inf"), tc=4.1, te=2.0, n=N_BK7.n(0.5876),
                                       diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1608-A',
                                       label="LA1608_A")
 
 class LA1134_A(SingletLens):
     def __init__(self):
-        super(LA1134_A,self).__init__(f=60.0, fb=56.7, R1=30.9, R2=100000, tc=4.7, te=2.0, n=N_BK7.n(0.5876),
+        super(LA1134_A,self).__init__(f=60.0, fb=56.7, R1=30.9, R2=float("+inf"), tc=4.7, te=2.0, n=N_BK7.n(0.5876),
                                       diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1134-A',
                                       label="LA1134_A")
 
 class LA1131_A(SingletLens):
     def __init__(self):
-        super(LA1131_A,self).__init__(f=50.0, fb=46.3, R1=25.8, R2=100000, tc=5.3, te=2.0, n=N_BK7.n(0.5876),
+        super(LA1131_A,self).__init__(f=50.0, fb=46.3, R1=25.8, R2=float("+inf"), tc=5.3, te=2.0, n=N_BK7.n(0.5876),
                                       diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1131-A',
                                       label="LA1131_A")
 
 class LA1422_A(SingletLens):
     def __init__(self):
-        super(LA1422_A,self).__init__(f=40.0, fb=35.7, R1=20.6, R2=100000, tc=6.4, te=2.0, n=N_BK7.n(0.5876),
+        super(LA1422_A,self).__init__(f=40.0, fb=35.7, R1=20.6, R2=float("+inf"), tc=6.4, te=2.0, n=N_BK7.n(0.5876),
                                       diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1422-A',
                                       label="LA1422_A")
         
 class LA1805_A(SingletLens):
     def __init__(self):
-        super(LA1805_A,self).__init__(f=30.0, fb=24.2, R1=15.5, R2=100000, tc=8.6, te=2.0, n=N_BK7.n(0.5876),
+        super(LA1805_A,self).__init__(f=30.0, fb=24.2, R1=15.5, R2=float("+inf"), tc=8.6, te=2.0, n=N_BK7.n(0.5876),
                                       diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1805-A',
                                       label="LA1805_A")
 
 class LA1274_A(SingletLens):
     def __init__(self):
-        super(LA1274_A,self).__init__(f=40.0, fb=34.0, R1=20.6, R2=100000, tc=9.0, te=2.5, n=N_BK7.n(0.5876),
+        super(LA1274_A,self).__init__(f=40.0, fb=34.0, R1=20.6, R2=float("+inf"), tc=9.0, te=2.5, n=N_BK7.n(0.5876),
                                       diameter=30.0, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1274-A',
                                       label="LA1274_A")
