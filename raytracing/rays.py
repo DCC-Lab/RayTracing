@@ -7,24 +7,56 @@ import os
 import collections.abc as collections
 import warnings
 
-""" A source or a detector of rays
-
-We can obtain intensity distributions at from given plane by propagating
-many rays and collecting them at another plane. `Rays` is the base class
-that provides the essential mechanisms to obtain histograms on a list 
-of rays (created or collected). This list of rays is a property of the base
-class.  Subclasses are specific to a given ray distribution (Lambertian for 
-instance) and will create each ray on demand, then store them as they go
-in the rays list. 
-
-It is an iterable object, which means it can be used in an expression 
-like `for ray in rays:` which is convenient both when propagating rays 
-or when analysing the resulting rays that reached a plane in ImagingPath, 
-MatrixGroup or any tracing function. 
-"""
-
 
 class Rays:
+
+    """A source or a detector of rays
+
+    We can obtain intensity distributions at from given plane by propagating
+    many rays and collecting them at another plane. `Rays` is the base class
+    that provides the essential mechanisms to obtain histograms on a list
+    of rays (created or collected). This list of rays is a property of the base
+    class.  Subclasses are specific to a given ray distribution (Lambertian for
+    instance) and will create each ray on demand, then store them as they go
+    in the rays list.
+
+    It is an iterable object, which means it can be used in an expression
+    like `for ray in rays:` which is convenient both when propagating rays
+    or when analysing the resulting rays that reached a plane in ImagingPath,
+    MatrixGroup or any tracing function.
+
+    Parameters
+    ----------
+    rays : list of ray
+        the input rays to be defined as the list of rays
+
+    Attributes
+    ----------
+    iteration : int
+        The number of iteration? (default=0)
+    progressLog : int(?)
+        number of??? (default=1000)
+    -yValues : array
+        An array of shape N*1 (N is the number of rays) which shows the height of each ray
+    -thetaValues : array
+        An array of shape N*1 (N is the number of rays) which shows the angle of each ray
+    -yHistogram : array
+        An array that shows the values in the histogram of the rays according to the height of rays
+    -thetaHistogram : array
+        An array that shows the in the histogram of the rays' angle
+    _directionBinEdges : ???
+        ???
+    _countHistogramParameters : ???
+        ???
+    _xValuesCountHistogram : array
+        The x values for the histogram of rays' height
+    _anglesHistogramParameters : array
+        The y values the histogram of rays' angle
+    -xValuesAnglesHistogram : array
+        The x values for the histogram of rays' angle
+
+    """
+
     def __init__(self, rays=None):
         if rays is None:
             self._rays = []
@@ -66,10 +98,16 @@ class Rays:
 
     @property
     def count(self):
+        """
+        Returns the number of rays in the list.
+        """
         return len(self)
 
     @property
     def yValues(self):
+        """
+        Returns the heights of rays in the list.
+        """
         if self._yValues is None:
             self._yValues = list(map(lambda x: x.y, self))
 
@@ -77,12 +115,66 @@ class Rays:
 
     @property
     def thetaValues(self):
+        """
+        Returns the angles of rays in the list.
+        """
         if self._thetaValues is None:
             self._thetaValues = list(map(lambda x: x.theta, self))
 
         return self._thetaValues
 
     def rayCountHistogram(self, binCount=None, minValue=None, maxValue=None):
+
+        """ This functions calculates the histogram for the height of the rays.
+
+        Parameters
+        ----------
+        binCount : int
+            number of defined bins in the histogram. If it is not defined, the histogram will have 40 bins.
+        minValue : float
+            The minimum value to be considered in the histogram. If it is not defined in the
+            inputs, the minimum height of rays will be assigned to this parameter.
+        maxValue : float
+            The maximum value to be considered in the histogram. If it is not defined in the
+            inputs, the maximum height of rays will be assigned to this parameter.
+
+        Returns
+        -------
+        _xValuesCountHistogram : array
+            An array (Bins*1) that includes the x values for bins.
+        _yHistogram : array
+            An array (Bins*1) that includes the y values for bins.
+
+        Examples
+        --------
+        The function can be used to calculate the x values and y values for the histogram of an input ray.
+
+        >>> from raytracing import *
+        >>> nRays = 10000 # Increase for better resolution
+        >>> minHeight=0
+        >>> maxHeight=50
+        >>> nBin=20
+        >>> inputRays = RandomUniformRays(yMin=minHeight,yMax=maxHeight, maxCount=nRays)
+        >>> [xVal,yVal]=inputRays.rayCountHistogram(binCount=nBin)
+
+        And to plot the hitogram we can use xVal and yVal as the following:
+
+        >>> import matplotlib.pyplot as plt
+        >>> plt.figure()
+        >>> plt.bar(xVal,yVal,width=maxHeight/nBin)
+        >>> plt.title('Histogram of the inputRay')
+        >>> plt.ylabel('Counts')
+        >>> plt.xlabel('Height of Rays')
+        >>> plt.show()
+
+        .. image:: Histogram.png
+                    :width: 70%
+                    :align: center
+
+        See Also
+        --------
+        raytracing.rays.rayAnglesHistogram
+        """
 
         if binCount is None:
             binCount = 40
@@ -94,6 +186,7 @@ class Rays:
             maxValue = max(self.yValues)
 
         if self._countHistogramParameters != (binCount, minValue, maxValue):
+            self._countHistogramParameters = (binCount, minValue, maxValue)
 
             (self._yHistogram, binEdges) = histogram(self.yValues,
                                                      bins=binCount,
@@ -107,6 +200,63 @@ class Rays:
         return (self._xValuesCountHistogram, self._yHistogram)
 
     def rayAnglesHistogram(self, binCount=None, minValue=None, maxValue=None):
+
+        """ This functions calculates the histogram for the angle of the rays.
+
+        Parameters
+        ----------
+        binCount : int
+            number of defined bins in the histogram. If it is not defined, the histogram will have 40 bins.
+        minValue : float
+            The minimum value to be considered in the histogram. If it is not defined in the
+            inputs, the minimum angle of rays will be assigned to this parameter.
+        maxValue : float
+            The maximum value to be considered in the histogram. If it is not defined in the
+            inputs, the maximum angle of rays will be assigned to this parameter.
+
+        Returns
+        -------
+        _xValuesAnglesHistogram : array
+            An array (Bins*1) that includes the x values for bins.
+        _thetaHistogram : array
+            An array (Bins*1) that includes the y values for bins.
+
+        Examples
+        --------
+        The function can be used to calculate the x values and y values for the histogram of an input ray.
+
+        >>> from raytracing import *
+        >>> nRays = 10000 # Increase for better resolution
+        >>> minHeight=0
+        >>> maxHeight=50
+        >>> minTheta=0
+        >>> maxTheta=0.5
+        >>> nBin=20
+        >>> # define a list of random rays with uniform distribution
+        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
+        >>>                               thetaMax=maxTheta, maxCount=nRays)
+        >>> [xVal,yVal]=inputRays.rayAnglesHistogram(binCount=nBin)
+
+        And to plot the hitogram we can use xVal and yVal of the theta as the following:
+
+        >>> import matplotlib.pyplot as plt
+        >>> plt.figure()
+        >>> plt.bar(xVal,yVal,width=maxTheta/nBin)
+        >>> plt.title('Histogram of the inputRay')
+        >>> plt.ylabel('Counts')
+        >>> plt.xlabel('Angle of Rays')
+        >>> plt.show()
+
+        .. image:: AngleHist.png
+                    :width: 70%
+                    :align: center
+
+        See Also
+        --------
+        raytracing.rays.rayCountHistogram
+
+        """
+
         if binCount is None:
             binCount = 40
 
@@ -117,6 +267,7 @@ class Rays:
             maxValue = max(self.thetaValues)
 
         if self._anglesHistogramParameters != (binCount, minValue, maxValue):
+            self._anglesHistogramParameters = (binCount, minValue, maxValue)
 
             (self._thetaHistogram, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
             self._thetaHistogram = list(self._thetaHistogram)
@@ -127,7 +278,35 @@ class Rays:
 
         return (self._xValuesAnglesHistogram, self._thetaHistogram)
 
-    def display(self, title="Intensity profile", showTheta=True):
+    def display(self, title="Intensity profile", showTheta=True):  # pragma: no cover
+        """This function plots the intensity profiles of a list of rays.
+
+        Parameters
+        ----------
+        title : string
+            the title for the plot (default="Intensity profile")
+        showTheta : bool
+            If True, the values for the angle of rays will be shown. (default=True)
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> nRays = 10000 # Increase for better resolution
+        >>> minHeight=0
+        >>> maxHeight=50
+        >>> minTheta=0
+        >>> maxTheta=0.5
+        >>> nBin=20
+        >>> # define a list of random rays with uniform distribution
+        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
+        >>>                               thetaMax=maxTheta, maxCount=nRays)
+        >>> inputRays.display()
+
+        .. image:: displayRays.png
+                    :width: 70%
+                    :align: center
+
+        """
         plt.ioff()
         fig, axes = plt.subplots(2)
         fig.suptitle(title)
@@ -156,6 +335,8 @@ class Rays:
         plt.show()
 
     def displayProgress(self):
+        """This function prints the progress of the iterations"""
+
         nRays = len(self)
         if self.iteration % self.progressLog == 0:
             self.progressLog *= 3
@@ -184,6 +365,14 @@ class Rays:
         return self._rays[item]
 
     def append(self, ray):
+        """A ray can be appended to the List of the rays using this function.
+
+         Parameters
+         ----------
+         ray : object of ray class
+            a ray with height y and angle theta
+
+         """
         if not isinstance(ray, Ray):
             raise TypeError("'ray' must be a 'Ray' object.")
         if self._rays is not None:
@@ -203,14 +392,40 @@ class Rays:
         self._xValuesAnglesHistogram = None
 
     def load(self, filePath, append=False):
+
+        """ A list of rays can be loaded using this function.
+
+        Parameters
+        ----------
+        filePath : str or PathLike or file-like object
+            A path, or a Python file-like object, or possibly some backend-dependent object.
+            (Is the format important? what is the default format?)
+        append : bool
+            If True, the loaded rays will be appended to the current list of rays.
+        """
+
         with open(filePath, 'rb') as infile:
             loadedRays = pickle.Unpickler(infile).load()
+            if not isinstance(loadedRays, collections.Iterable):
+                raise IOError(f"{filePath} does not contain an iterable of Ray objects.")
+            if not all([isinstance(ray, Ray) for ray in loadedRays]):
+                raise IOError(f"{filePath} must contain only Ray objects.")
             if append and self._rays is not None:
                 self._rays.extend(loadedRays)
             else:
                 self._rays = loadedRays
 
     def save(self, filePath):
+
+        """ A list of rays can be saved using this function.
+
+        Parameters
+        ----------
+        filePath : str or PathLike or file-like object
+            A path, or a Python file-like object, or possibly some backend-dependent object.
+            (Is the form at important? what is the default format?)
+        """
+
         with open(filePath, 'wb') as outfile:
             pickle.Pickler(outfile).dump(self._rays)
 
@@ -242,6 +457,50 @@ class Rays:
 
 
 class UniformRays(Rays):
+    """A list of rays with uniform distribution.
+
+    Parameters
+    ----------
+    yMax : float
+        Maximum height for the rays (default=1.0)
+    yMin : float
+        Minimum height for the rays (default=None).
+        If no value is assigned to this parameter it will be -yMax.
+    thetaMax : float
+        Maximum angle for the rays (default=pi/2)
+    thetaMin : float
+        Minimum angle for the rays (default=None)
+        If no value is assigned to this parameter it will be -thetaMax
+    M : int
+        Number of points that are defined for the height of rays
+    N : int
+        Number of rays for each point
+
+    Examples
+    --------
+
+    >>> from raytracing import *
+    >>> nRays = 1000 # Increase for better resolution
+    >>> minHeight=0
+    >>> maxHeight=50
+    >>> minTheta=0
+    >>> maxTheta=0.5
+    >>> # define a list of rays with uniform distribution
+    >>> inputRays = UniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
+    >>>                               thetaMax=maxTheta, N=nRays, M=10)
+    >>> inputRays.display()
+
+    .. image:: UniformRays.png
+                    :width: 70%
+                    :align: center
+
+    See Also
+    --------
+    raytracing.LambertianRays
+    raytracing.RandomUniformRays
+
+    """
+
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, M=100, N=100):
         self.yMax = yMax
         self.yMin = yMin
@@ -262,7 +521,45 @@ class UniformRays(Rays):
 
 
 class LambertianRays(Rays):
-    def __init__(self, yMax, yMin=None, M=100, N=100, I=100):
+    """A list of rays with Lambertian distribution.
+
+    Parameters
+    ----------
+    yMax : float
+        Maximum height for the rays (default=1.0)
+    yMin : float
+        Minimum height for the rays (default=None).
+        If no value is assigned to this parameter it will be -yMax.
+    M : int
+        Number of points that are defined for the height of rays
+    N : int
+        Number of rays for each point
+    I : int
+        Number of points that are defined for the angle of rays
+
+    Examples
+    --------
+
+    >>> from raytracing import *
+    >>> nRays = 1000 # Increase for better resolution
+    >>> minHeight=0
+    >>> maxHeight=50
+    >>> # define a list of rays with Lambertian distribution
+    >>> inputRays = LambertianRays(yMin=minHeight, yMax=maxHeight)
+    >>> inputRays.display()
+
+    .. image:: LambertianRays.png
+                    :width: 70%
+                    :align: center
+
+    See Also
+    --------
+    raytracing.RandomLambertianRays
+    raytracing.UniformRays
+    """
+
+
+    def __init__(self, yMax=1.0, yMin=None, M=100, N=100, I=100):
         self.yMax = yMax
         self.yMin = yMin
         if yMin is None:
@@ -283,6 +580,30 @@ class LambertianRays(Rays):
 
 
 class RandomRays(Rays):
+    """A list of rays with Random distribution.
+
+    Parameters
+    ----------
+    yMax : float
+        Maximum height for the rays (default=1.0)
+    yMin : float
+        Minimum height for the rays (default=None).
+        If no value is assigned to this parameter it will be -yMax.
+    thetaMax : float
+        Maximum angle for the rays (default=pi/2)
+    thetaMin : float
+        Minimum angle for the rays (default=None)
+        If no value is assigned to this parameter it will be -thetaMax
+    maxCount : int
+        Number of rays in the list
+
+
+    See Also
+    --------
+    raytracing.RandomLambertianRays
+    raytracing.RandomUniformRays
+
+    """
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
         self.maxCount = maxCount
         self.yMax = yMax
@@ -325,6 +646,46 @@ class RandomRays(Rays):
 
 
 class RandomUniformRays(RandomRays):
+    """A list of random rays with Uniform distribution.
+
+        Parameters
+        ----------
+        yMax : float
+            Maximum height for the rays (default=1.0)
+        yMin : float
+            Minimum height for the rays (default=None).
+            If no value is assigned to this parameter it will be -yMax.
+        thetaMax : float
+            Maximum angle for the rays (default=pi/2)
+        thetaMin : float
+            Minimum angle for the rays (default=None)
+            If no value is assigned to this parameter it will be -thetaMax
+        maxCount : int
+            Number of rays in the list
+
+        Examples
+        --------
+
+        >>> from raytracing import *
+        >>> nRays = 1000 # Increase for better resolution
+        >>> minHeight=0
+        >>> maxHeight=50
+        >>> # define a list of random rays with Uniform distribution
+        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight)
+        >>> inputRays.display()
+
+
+        .. image:: RandomUniformRays.png
+                    :width: 70%
+                    :align: center
+
+        See Also
+        --------
+        raytracing.RandomLambertianRays
+        raytracing.UniformRays
+
+        """
+
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
         super(RandomUniformRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=thetaMax, thetaMin=thetaMin,
                                                 maxCount=maxCount)
@@ -341,6 +702,41 @@ class RandomUniformRays(RandomRays):
 
 
 class RandomLambertianRays(RandomRays):
+    """A list of random rays with Lambertian distribution.
+
+    Parameters
+    ----------
+    yMax : float
+        Maximum height for the rays (default=1.0)
+    yMin : float
+        Minimum height for the rays (default=None).
+        If no value is assigned to this parameter it will be -yMax.
+    maxCount : int
+        Number of rays in the list
+
+    Examples
+    --------
+
+    >>> from raytracing import *
+    >>> nRays = 1000 # Increase for better resolution
+    >>> minHeight=0
+    >>> maxHeight=50
+    >>> # define a list of random rays with Lambertian distribution
+    >>> inputRays = RandomLambertianRays(yMin=minHeight, yMax=maxHeight)
+    >>> inputRays.display()
+
+
+    .. image:: RandomLambertianRays.png
+                :width: 70%
+                :align: center
+
+    See Also
+    --------
+    raytracing.LambertianRays
+    raytracing.RandomUniformRays
+
+    """
+
     def __init__(self, yMax=1.0, yMin=None, maxCount=10000):
         super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=pi / 2, thetaMin=-pi / 2,
                                                    maxCount=maxCount)

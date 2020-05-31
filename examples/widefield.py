@@ -1,6 +1,3 @@
-import envexamples
-from raytracing import *
-
 '''
 In any imaging system, lens diameters are of great importance as
 they dictate the position of the Aperture Stop(AS) and Field Stop(FS). 
@@ -20,6 +17,9 @@ paths containing different lens diameter.
 (c). The last one shows that both lenses are big enough to make the first 
      lens the AS and the detector's camera the FS.
 '''
+
+import envexamples
+from raytracing import *
 
 path = ImagingPath()
 path.label="(a) Vignetting with FS poorly placed because of second lens diameter"

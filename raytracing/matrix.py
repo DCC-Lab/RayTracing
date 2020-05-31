@@ -12,11 +12,11 @@ import math
 import warnings
 
 
-def warningOnOneLine(message, category, filename, lineno, line=None):
-    return ' %s:%s\n%s:%s' % (filename, lineno, category.__name__, message)
+def warningLineFormat(message, category, filename, lineno, line=None):
+    return '\n%s:%s\n%s:%s\n' % (filename, lineno, category.__name__, message)
 
 
-warnings.formatwarning = warningOnOneLine
+warnings.formatwarning = warningLineFormat
 
 
 class Matrix(object):
@@ -137,6 +137,7 @@ class Matrix(object):
         self.isFlipped = False
         super(Matrix, self).__init__()
 
+    @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
         which is often 1.0
@@ -380,7 +381,7 @@ class Matrix(object):
         """
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
-            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}\n".format(
+            msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
                 rightSideBeam.n, self.frontIndex)
             warnings.warn(msg, UserWarning)
 
@@ -397,6 +398,7 @@ class Matrix(object):
 
         return outputBeam
 
+    @property
     def largestDiameter(self):
         """ Largest diameter for a group of elements
 
@@ -813,6 +815,7 @@ class Matrix(object):
 
         return Rays(rays=outputRaysList)
 
+    @property
     def isImaging(self):
         """If B=0, then the matrix represents that transfer from a conjugate
         plane to another (i.e. object at the front edge and image at the
@@ -841,6 +844,7 @@ class Matrix(object):
 
         return abs(self.B) < Matrix.__epsilon__
 
+    @property
     def hasPower(self):
         """ If True, then there is a non-null focal length because C!=0
 
@@ -1333,7 +1337,7 @@ class Matrix(object):
         """
 
         fig, axes = plt.subplots(figsize=(10, 7))
-        displayRange = 2 * self.largestDiameter()
+        displayRange = 2 * self.largestDiameter
         if displayRange == float('+Inf'):
             displayRange = self.displayHalfHeight() * 4
 
@@ -1383,7 +1387,7 @@ class Matrix(object):
         -----
         Default is a black box of appropriate length.
         """
-        halfHeight = self.largestDiameter() / 2
+        halfHeight = self.largestDiameter / 2
         if halfHeight == float("+Inf"):
             halfHeight = self.displayHalfHeight()
 
@@ -1492,7 +1496,7 @@ class Matrix(object):
         Labels are drawn 50% above the display height
         """
         if self.hasFiniteApertureDiameter():
-            halfHeight = self.largestDiameter() / 2.0
+            halfHeight = self.largestDiameter / 2.0
         else:
             halfHeight = self.displayHalfHeight()
 
@@ -1762,7 +1766,7 @@ class CurvedMirror(Matrix):
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
         warnings.warn("The sign of the radius of curvature in CurvedMirror was changed \
-in version 1.2.8 to maintain the sign convention\n", UserWarning)
+in version 1.2.8 to maintain the sign convention", UserWarning)
         super(CurvedMirror, self).__init__(A=1, B=0, C=2 / float(R), D=1,
                                            physicalLength=0,
                                            apertureDiameter=diameter,
@@ -2112,7 +2116,7 @@ class ThickLens(Matrix):
         """
 
         if self.apertureDiameter != float('+Inf'):
-            h = self.largestDiameter() / 2.0
+            h = self.largestDiameter / 2.0
             phi1 = math.asin(h / abs(self.R1))
             corner1 = z + self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
 
