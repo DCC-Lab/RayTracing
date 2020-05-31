@@ -205,51 +205,48 @@ class AchromatDoubletLens(MatrixGroup):
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
 
-class AchromatSingletLens(MatrixGroup):
+class SingletLens(MatrixGroup):
     """
-        General Achromat singlet lens with an effective focal length of fa, back focal
+        General singlet lens with an effective focal length of fa, back focal
         length of fb.  The values fa and fb are used to validate the final focal lengths
         and back focal lengths that are obtained from the combination of elements.
         Most manufacturer's specifiy 1% tolerance, so if fa is more than 1% different
         from the final focal length, a warning is raised.
 
         Nomenclature from Thorlabs:
-        https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
-
-        With Edmund optics, the sign of the various radii can change depending on
-        some of the components (i.e. PN_85_877 for instance)
+        https://www.thorlabs.com/images/TabImages/Plano-Convex_Lens_Schematic.gif
 
         """
 
-    def __init__(self, fa, fb, R1, R2, tc1, te, n1, diameter, mat1=None, wavelengthRef=None,
+    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat1=None, wavelengthRef=None,
                  url=None, label=''):
-        self.fa = fa
+        self.f = f
         self.fb = fb
         self.R1 = R1
         self.R2 = R2
-        self.tc1 = tc1
+        self.tc = tc
         self.te = te
-        self.n1 = n1
-        self.mat1 = mat1
+        self.n = n
+        self.mat = mat
         self.url = url
 
         elements = []
-        elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
-        elements.append(Space(d=tc1, n=n1))
-        elements.append(DielectricInterface(n1=n1, n2=1, R=R2, diameter=diameter))
-        super(AchromatSingletLens, self).__init__(elements=elements, label=label)
+        elements.append(DielectricInterface(n1=1, n2=n, R=R1, diameter=diameter))
+        elements.append(Space(d=tc, n=n))
+        elements.append(DielectricInterface(n1=n, n2=1, R=R2, diameter=diameter))
+        super(SingletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
-        if abs(self.tc1 - self.L) / self.L > 0.02:
+        if abs(self.tc - self.L) / self.L > 0.02:
             msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1, self.L)
             warnings.warn(msg, UserWarning)
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
-        (f, f) = self.focalDistances()
-        if abs((f - fa) / fa) > 0.01:
+        (f_f, f_b) = self.focalDistances()
+        if abs((f_f - f) / f) > 0.01:
             msg = "Singlet {2}: Obtained effective focal length {0:.4} is not within 1% of " \
-                  "expected {1:.4}".format(f, fa, self.label)
+                  "expected {1:.4}".format(f_f, fb, self.label)
             warnings.warn(msg, UserWarning)
         BFL = self.backFocalLength()
         if abs((BFL - fb) / fb) > 0.01:
@@ -281,7 +278,7 @@ class AchromatSingletLens(MatrixGroup):
         we collect information from the list of elements.
         """
         R1 = self.elements[0].R
-        tc1 = self.elements[1].L
+        tc = self.elements[1].L
         R2 = self.elements[2].R
 
         h = self.largestDiameter / 2.0
@@ -291,7 +288,7 @@ class AchromatSingletLens(MatrixGroup):
         ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
         corner1 = v1 + delta1
 
-        v2 = v1 + tc1
+        v2 = v1 + tc
         phi2 = math.asin(h / abs(R2))
         delta2 = R2 * (1.0 - math.cos(phi2))
         ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
@@ -328,7 +325,7 @@ class AchromatSingletLens(MatrixGroup):
 
         if self.apertureDiameter != float('+Inf'):
             R1 = self.elements[0].R
-            tc1 = self.elements[1].L
+            tc = self.elements[1].L
             R2 = self.elements[2].R
 
             h = self.largestDiameter / 2.0
@@ -336,7 +333,7 @@ class AchromatSingletLens(MatrixGroup):
             corner1 = z + R1 * (1.0 - math.cos(phi1))
 
             phi2 = math.asin(h / abs(R2))
-            corner2 = z + tc1 + R2 * (1.0 - math.cos(phi2))
+            corner2 = z + tc + R2 * (1.0 - math.cos(phi2))
 
             axes.add_patch(patches.Polygon(
                 [[corner1, h], [corner2, h]],

@@ -85,33 +85,33 @@ class TestAchromatDoubletLensSubclasses(unittest.TestCase):
         self.assertEqual([], fails)
 
 
-class TestAchromatSingletLens(unittest.TestCase):
+class TestSingletLens(unittest.TestCase):
     def testInit(self):
-        achromat = AchromatSingletLens(fa=75.0, fb=72.0, R1=38.6, R2=100000, tc1=4.1, te=2.0, n1=N_BK7.n(0.5876),
+        achromat = SingletLens(f=75.0, fb=72.0, R1=38.6, R2=100000, tc=4.1, te=2.0, n=N_BK7.n(0.5876),
                                        diameter=25.4, url='https://www.test.com', label="TestInit Singlet")
         self.assertIsNotNone(achromat)
 
     def testWarnThickness(self):
         with self.assertWarns(UserWarning):
-            achromat = AchromatSingletLens(fa=63.52, fb=62.41, R1=77.6, R2=-55.9, tc1=4.0, te=5.0, n1=N_BK7.n(0.5876),
+            achromat = SingletLens(f=63.52, fb=62.41, R1=77.6, R2=-55.9, tc=4.0, te=5.0, n=N_BK7.n(0.5876),
                                            diameter=25.4, url='https://www.test.com', label="testThickness Singlet")
 
     def testWarnBackFocalLength(self):
         with self.assertWarns(UserWarning):
-            achromat = AchromatSingletLens(fa=15.9, fb=22.9, R1=20.89, R2=-16.73, tc1=12, te=1.9, n1=N_BAF10.n(0.5876),
+            achromat = SingletLens(f=15.9, fb=22.9, R1=20.89, R2=-16.73, tc=12, te=1.9, n=N_BAF10.n(0.5876),
                                            diameter=25.4, url='https://www.test.com',
                                            label="TestBackFocalLength Singlet")
 
     def testWarnEffectiveFocalLength(self):
         with self.assertWarns(UserWarning):
-            achromat = AchromatSingletLens(fa=150.00, fb=57.82, R1=92.05, R2=-72.85, tc1=23.2, te=4.8, n1=1.6700,
+            achromat = SingletLens(f=150.00, fb=57.82, R1=92.05, R2=-72.85, tc=23.2, te=4.8, n=1.6700,
                                            diameter=75, url="https://www.test.com",
                                            label="TestEffectiveFocalLength Singlet")
 
 
-class TestAchromatSingletLensSubclasses(unittest.TestCase):
+class TestSingletLensSubclasses(unittest.TestCase):
     def setUp(self) -> None:
-        self.subclasses = AchromatSingletLens.__subclasses__()
+        self.subclasses = SingletLens.__subclasses__()
 
     def testSubclassesInit(self):
         fails = []
