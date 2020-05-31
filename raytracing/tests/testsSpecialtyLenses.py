@@ -109,6 +109,43 @@ class TestAchromatSingletLens(unittest.TestCase):
                                            label="TestEffectiveFocalLength Singlet")
 
 
+class TestAchromatSingletLensSubclasses(unittest.TestCase):
+    def setUp(self) -> None:
+        self.subclasses = AchromatSingletLens.__subclasses__()
+
+    def testSubclassesInit(self):
+        fails = []
+        for subclass in self.subclasses:
+            achromat = subclass()
+
+            try:
+                self.assertIsNotNone(achromat)
+            except AssertionError:
+                fails.append('{} not properly initiated.'.format(subclass.__name__))
+        self.assertEqual([], fails)
+
+    def testPointsOfInterest(self):
+        fails = []
+        z = 0
+        for subclass in self.subclasses:
+            achromat = subclass()
+            points = achromat.pointsOfInterest(z)
+
+            f = -1.0 / achromat.C
+            p1 = z - (1 - achromat.D) / achromat.C
+            ff = p1 - f
+
+            p2 = z + achromat.L + (1 - achromat.A) / achromat.C
+            fb = p2 + f
+
+            try:
+                self.assertAlmostEqual(points[0]['z'], ff)
+                self.assertAlmostEqual(points[1]['z'], fb)
+            except AssertionError:
+                fails.append('{} has the wrong points of interest.'.format(subclass.__name__))
+        self.assertEqual([], fails)
+
+
 class TestObjectives(unittest.TestCase):
     def testInit(self):
         objective = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
