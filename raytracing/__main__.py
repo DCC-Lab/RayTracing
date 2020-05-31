@@ -250,7 +250,7 @@ if 11 in examples:
     # Demo #11: Thick diverging lens
     path = ImagingPath()
     path.label = "Demo #11: Thick diverging lens"
-    path.setObjectHeight(20)
+    path.objectHeight = 20
     path.append(Space(d=50))
     path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
     path.append(Space(d=50))
@@ -266,7 +266,7 @@ if 12 in examples:
     # Demo #12: Thick diverging lens built from individual elements
     path = ImagingPath()
     path.label = "Demo #12: Thick diverging lens built from individual elements"
-    path.setObjectHeight(20)
+    path.objectHeight = 20
     path.append(Space(d=50))
     path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
     path.append(Space(d=10, diameter=25, label='Lens'))
@@ -306,7 +306,7 @@ if 14 in examples:
     path.fanAngle = 0.0
     path.fanNumber = 1
     path.rayNumber = 15
-    path.setObjectHeight(10)
+    path.objectHeight = 20
     path.label = "Demo #14 Path with generic objective"
     path.append(Space(180))
     path.append(obj)
@@ -328,7 +328,7 @@ if 15 in examples:
     path.fanAngle = 0.0
     path.fanNumber = 1
     path.rayNumber = 15
-    path.setObjectHeight(10)
+    path.objectHeight = 20
     path.label = "Demo #15 Path with LUMPlanFL40X"
     path.append(Space(180))
     path.append(olympus.LUMPlanFL40X())

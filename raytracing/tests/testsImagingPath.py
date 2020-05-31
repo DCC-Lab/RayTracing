@@ -35,17 +35,8 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath()
         self.assertTrue(path.objectHeight, 10)
 
-        with self.assertRaises(AttributeError):
-            path.objectHeight = -0.1
-
-    def testSetObjectHeight(self):
-        path = ImagingPath()
-
-        path.setObjectHeight(20)
-        self.assertEqual(path.objectHeight, 20)
-
         with self.assertRaises(ValueError):
-            path.setObjectHeight(-10)
+            path.objectHeight = -0.1
 
     def testApertureStopInfiniteAperture(self):
         space = Space(10)
@@ -85,7 +76,7 @@ class TestImagingPath(unittest.TestCase):
         path.append(CurvedMirror(-5, 10))
         self.assertAlmostEqual(path.displayRange(), 5 * 10)
 
-        path.setObjectHeight(1)
+        path.objectHeight = 1
         self.assertEqual(path.displayRange(), 10)
 
     def testDisplayRangeWithEmptyPath(self):

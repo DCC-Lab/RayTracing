@@ -104,32 +104,14 @@ class ImagingPath(MatrixGroup):
 
     @property
     def objectHeight(self):
-        """This function returns the current object height. The returned value cannot be changed.
-
-        Returns
-        -------
-        _objectHeight : float
-            The height of the object.
-
-        See Also
-        --------
-        raytracing.ImagingPath.setObjectHeight
-
+        """Get or set the object height, at the starting edge of the ImagingPath.
         """
         return self._objectHeight
 
-    def setObjectHeight(self, objectHeight: float):
-        """This function is used to set a different object height. The new height must be positive.
-
-        Parameters
-        ----------
-        objectHeight : float
-            The new height of the object. Must be positive, otherwise a ValueError is raised.
-
-        See Also
-        --------
-        raytracing.ImagingPath.objectHeight
-                """
+    @objectHeight.setter
+    def objectHeight(self, objectHeight: float):
+        """Set the object height, raises an error if negative.
+        """
         if objectHeight < 0:
             raise ValueError("The object height can't be negative.")
         self._objectHeight = objectHeight
