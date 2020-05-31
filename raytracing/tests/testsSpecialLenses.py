@@ -1,5 +1,5 @@
-import unittest
 import envtest  # modifies path
+import unittest
 
 from raytracing import *
 
