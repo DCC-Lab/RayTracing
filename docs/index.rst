@@ -23,18 +23,17 @@ This package is developed by `DCClab <http://dcclab.ca>`_ members.  The many con
 * Daniel Côté: Official Designer & Merger, and "Gunnery Sergeant Hartman" Impersonator
 
 
-
 Contents
 ^^^^^^^^
 
 .. toctree::
    :maxdepth: 1
 
-   RayTracing
-   Getting Started
-   Reference
-   Examples
-   Contribute
+   raytracing
+   gettingStarted
+   reference
+   examples
+   contribute
    FAQ
 
 Indices and tables
