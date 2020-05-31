@@ -442,8 +442,8 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Space(d=10))
         >>> print('The position of field stop is:', path.apertureStop()[0])
         >>> print('The diameter of field stop is:',path.apertureStop()[1])
-        The position of field stop is: 50.0
-        The diameter of field stop is: 10
+        The position of field stop is: 20.0
+        The diameter of field stop is: 5
 
         Also, as the following, you can use display() to follow the rays in the imaging path and view the
         aperture stop and field stop. The second lens in the imaging path (f=10) is the field stop.
@@ -521,7 +521,7 @@ class ImagingPath(MatrixGroup):
         --------
         >>> from raytracing import *
         >>> path = ImagingPath() # define an imaging path
-        >>> ath.objectHeight=6
+        >>> path.objectHeight=6
         >>> # use append() to add elements to the imaging path
         >>> path.append(Space(d=20))
         >>> path.append(Lens(f=20,diameter=5,label="f=20"))
