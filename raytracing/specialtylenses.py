@@ -78,7 +78,7 @@ class AchromatDoubletLens(MatrixGroup):
                   "expected {1:.4}".format(BFL, fb, self.label)
             warnings.warn(msg, UserWarning)
 
-        h = self.largestDiameter() / 2.0
+        h = self.largestDiameter / 2.0
         phi1 = math.asin(h / abs(self.R1))
         corner1 = self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
 
@@ -107,7 +107,7 @@ class AchromatDoubletLens(MatrixGroup):
         tc2 = self.elements[3].L
         R3 = self.elements[4].R
 
-        h = self.largestDiameter() / 2.0
+        h = self.largestDiameter / 2.0
         v1 = z
         phi1 = math.asin(h / abs(R1))
         delta1 = R1 * (1.0 - math.cos(phi1))
@@ -178,7 +178,7 @@ class AchromatDoubletLens(MatrixGroup):
             tc2 = self.elements[3].L
             R3 = self.elements[4].R
 
-            h = self.largestDiameter() / 2.0
+            h = self.largestDiameter / 2.0
             phi1 = math.asin(h / abs(R1))
             corner1 = z + R1 * (1.0 - math.cos(phi1))
 
@@ -192,6 +192,156 @@ class AchromatDoubletLens(MatrixGroup):
                 color='0.7'))
             axes.add_patch(patches.Polygon(
                 [[corner1, -h], [corner3, -h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
+
+
+class SingletLens(MatrixGroup):
+    """
+        General singlet lens with an effective focal length of f, back focal
+        length of fb.  The values f and fb are used to validate the final focal lengths
+        and back focal lengths that are obtained from the combination of elements.
+        Most manufacturer's specifiy 1% tolerance, so if f is more than 1% different
+        from the final focal length, a warning is raised.
+
+        Nomenclature from Thorlabs:
+        https://www.thorlabs.com/images/TabImages/Plano-Convex_Lens_Schematic.gif
+
+        """
+
+    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat1=None, wavelengthRef=None,
+                 url=None, label=''):
+        self.f = f
+        self.fb = fb
+        self.R1 = R1
+        self.R2 = R2
+        self.tc = tc
+        self.te = te
+        self.n = n
+        self.mat = mat
+        self.url = url
+
+        elements = []
+        elements.append(DielectricInterface(n1=1, n2=n, R=R1, diameter=diameter))
+        elements.append(Space(d=tc, n=n))
+        elements.append(DielectricInterface(n1=n, n2=1, R=R2, diameter=diameter))
+        super(SingletLens, self).__init__(elements=elements, label=label)
+        self.apertureDiameter = diameter
+
+        if abs(self.tc - self.L) / self.L > 0.02:
+            msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1, self.L)
+            warnings.warn(msg, UserWarning)
+
+        # After having built the lens, we confirm that the expected effective
+        # focal length (fa) is actually within 1% of the calculated focal length
+        (f_f, f_b) = self.focalDistances()
+        if abs((f_f - f) / f) > 0.01:
+            msg = "Singlet {2}: Obtained effective focal length {0:.4} is not within 1% of " \
+                  "expected {1:.4}".format(f_f, fb, self.label)
+            warnings.warn(msg, UserWarning)
+        BFL = self.backFocalLength()
+        if abs((BFL - fb) / fb) > 0.01:
+            msg = "Singlet {2}: Obtained back focal length {0:.4} is not within 1% of " \
+                  "expected {1:.4}".format(BFL, fb, self.label)
+            warnings.warn(msg, UserWarning)
+
+        h = self.largestDiameter / 2.0
+        phi1 = math.asin(h / abs(self.R1))
+        corner1 = self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
+
+        phi2 = math.asin(h / abs(self.R2))
+        corner2 = self.backVertex + self.R2 * (1.0 - math.cos(phi2))
+        if abs(((corner2 - corner1) / self.te) - 1.0) > 0.05:
+            msg = "Singlet {2}: obtained thickness {0:.1f} does not match expected " \
+                  "{1:0.1f}".format(corner2 - corner1, self.te, self.label)
+            warnings.warn(msg, UserWarning)
+
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw the doublet as two dielectric of different colours.
+
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
+        Because the element can be flipped with flipOrientation()
+        we collect information from the list of elements.
+        """
+        R1 = self.elements[0].R
+        tc = self.elements[1].L
+        R2 = self.elements[2].R
+
+        h = self.largestDiameter / 2.0
+        v1 = z
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
+        corner1 = v1 + delta1
+
+        v2 = v1 + tc
+        phi2 = math.asin(h / abs(R2))
+        delta2 = R2 * (1.0 - math.cos(phi2))
+        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
+        corner2 = v2 + delta2
+
+        Path = mpath.Path
+        p1 = patches.PathPatch(
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h),
+                  (corner1, -h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.85, 0.95, 0.95],
+            fill=True,
+            transform=axes.transData)
+
+        axes.add_patch(p1)
+        if showLabels:
+            self.drawLabels(z, axes)
+
+        self.drawAperture(z, axes)
+
+    def drawAperture(self, z, axes):
+        """ Draw the aperture size for this element.
+        The lens requires special care because the corners are not
+        separated by self.L: the curvature makes the edges shorter.
+        We are picky and draw it right.
+        """
+
+        if self.apertureDiameter != float('+Inf'):
+            R1 = self.elements[0].R
+            tc = self.elements[1].L
+            R2 = self.elements[2].R
+
+            h = self.largestDiameter / 2.0
+            phi1 = math.asin(h / abs(R1))
+            corner1 = z + R1 * (1.0 - math.cos(phi1))
+
+            phi2 = math.asin(h / abs(R2))
+            corner2 = z + tc + R2 * (1.0 - math.cos(phi2))
+
+            axes.add_patch(patches.Polygon(
+                [[corner1, h], [corner2, h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+            axes.add_patch(patches.Polygon(
+                [[corner1, -h], [corner2, -h]],
                 linewidth=3,
                 closed=False,
                 color='0.7'))
