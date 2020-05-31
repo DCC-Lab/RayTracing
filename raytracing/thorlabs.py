@@ -32,7 +32,15 @@ class ACN254_040_A(AchromatDoubletLens):
 
 class AC254_030_A(AchromatDoubletLens):
     def __init__(self):
-        super(AC254_030_A,self).__init__(fa=30.0,fb=22.9, R1=20.89, R2=-16.7, R3=-79.8,
+        """ As of May 31 2020, there is an error on the product web page at: 
+        https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
+        The expected back focal length is different from the reference PDF on
+        the same line which clearly states it should be 22.2.
+
+        We take the PDF ato be the true value
+        """
+
+        super(AC254_030_A,self).__init__(fa=30.0,fb=22.2, R1=20.89, R2=-16.7, R3=-79.8,
                                     tc1=12, tc2=2.0, te=8.8, n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-030-A")
@@ -96,6 +104,11 @@ class AC254_100_A(AchromatDoubletLens):
 
 class AC254_125_A(AchromatDoubletLens):
     def __init__(self):
+        """ As of May 31 2020, the calculated edge thickness does not match
+        the product page. There does not seem to be another place where 
+        the information can be validated (the PDF doesn't show the edge thickness).
+        https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
+        """
         super(AC254_125_A,self).__init__(fa=125.0,fb=122.0, R1=77.6,R2=-55.9, R3=-160.8, 
                                     tc1=4.0, tc2=2.8, te=5.0, n1=N_BK7.n(0.5876), n2=N_SF5.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
