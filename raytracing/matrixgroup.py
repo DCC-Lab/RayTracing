@@ -1,28 +1,28 @@
 from .matrix import *
-from .ray import *
 
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.path as mpath
-import matplotlib.transforms as transforms
+import collections.abc as collections
 
 
 class MatrixGroup(Matrix):
     """MatrixGroup: A group of Matrix(), allowing
-    the combination of several elements to be treated as a 
+    the combination of several elements to be treated as a
     whole, or treated explicitly as a sequence when needed.
     """
 
     def __init__(self, elements=None, label=""):
+        self.iteration = 0
         super(MatrixGroup, self).__init__(1, 0, 0, 1, label=label)
 
         self.elements = []
 
         if elements is not None:
+            if not isinstance(elements, collections.Iterable):
+                raise TypeError("'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
+
             for element in elements:
                 self.append(element)
 
-        # Solely for performance reason: it is common to raytrace 
+        # Solely for performance reason: it is common to raytrace
         # groups of rays that are similar (to mimick intensities)
         # We keep the last ray and the last ray trace for optimization
         self._lastRayToBeTraced = None
@@ -31,11 +31,20 @@ class MatrixGroup(Matrix):
     def append(self, matrix):
         """ Add an element at the end of the path """
         lastElement = None
+        if not isinstance(matrix, Matrix):
+            raise TypeError("'matrix' must be a Matrix instance.")
+
         if len(self.elements) != 0:
             lastElement = self.elements[-1]
             if lastElement.backIndex != matrix.frontIndex:
-                msg = "Mismatch of indices between element {0} and appended {1}".format(lastElement, matrix)
-                warnings.warn(msg, UserWarning)
+                if isinstance(matrix, Space):  # For Space(), we fix it
+                    msg = "Fixing mismatched indices between last element and appended Space(). Use Space(d=someDistance, n=someIndex)."
+                    warnings.warn(msg, UserWarning)
+                    matrix.frontIndex = lastElement.backIndex
+                    matrix.backIndex = matrix.frontIndex
+                else:
+                    msg = "Mismatch of indices between last element and appended element"
+                    raise ValueError(msg)
 
         self.elements.append(matrix)
         transferMatrix = self.transferMatrix()
@@ -46,12 +55,6 @@ class MatrixGroup(Matrix):
         self.L = transferMatrix.L
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
-
-    def ImagingPath(self):
-        return ImagingPath(elements=self.elements, label=self.label)
-
-    def LaserPath(self):
-        return LaserPath(elements=self.elements, label=self.label)
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
@@ -117,7 +120,8 @@ class MatrixGroup(Matrix):
         ray, it will be indicated.
 
         """
-
+        if not isinstance(inputRay, (Ray, GaussianBeam)):
+            raise TypeError("'inputRay' must be a Ray or a GaussianBeam.")
         ray = inputRay
         if ray != self._lastRayToBeTraced:
             rayTrace = [ray]
@@ -139,13 +143,14 @@ class MatrixGroup(Matrix):
                 return True
         return False
 
+    @property
     def largestDiameter(self):
         """ Largest finite diameter in all elements """
 
         maxDiameter = 0
         if self.hasFiniteApertureDiameter():
             for element in self.elements:
-                diameter = element.largestDiameter()
+                diameter = element.largestDiameter
                 if diameter != float('+Inf') and diameter > maxDiameter:
                     maxDiameter = diameter
         elif len(self.elements) != 0:
@@ -211,9 +216,22 @@ class MatrixGroup(Matrix):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = self.largestDiameter() / 2
+        halfHeight = self.largestDiameter / 2
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
                           xycoords='data', fontsize=12,
                           ha='center', va='bottom')
+
+    def __iter__(self):
+        self.iteration = 0
+        return self
+
+    def __next__(self):
+        if self.elements is None:
+            raise StopIteration
+        if self.iteration < len(self.elements):
+            element = self.elements[self.iteration]
+            self.iteration += 1
+            return element
+        raise StopIteration

@@ -19,6 +19,28 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, 1)
         self.assertListEqual(mg.elements, [])
 
+    def testMatrixGroupAcceptsAnything(self):
+        class Toto:
+            def __init__(self):
+                self.L = "Hello"
+
+        with self.assertRaises(TypeError) as exception:
+            MatrixGroup(["Matrix", Matrix()])
+        self.assertEqual(str(exception.exception), "'matrix' must be a Matrix instance.")
+
+        with self.assertRaises(TypeError) as exception2:
+            MatrixGroup([Toto(), Matrix()])
+        self.assertEqual(str(exception2.exception), str(exception.exception))
+
+        with self.assertRaises(TypeError) as exception:
+            MatrixGroup(123)
+        self.assertEqual(str(exception.exception),
+                         "'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
+
+        with self.assertRaises(TypeError) as exception2:
+            MatrixGroup(TypeError)
+        self.assertEqual(str(exception2.exception), str(exception.exception))
+
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
         transferMat = mg.transferMatrix()
@@ -118,6 +140,23 @@ class TestMatrixGroup(unittest.TestCase):
             with self.assertRaises(UserWarning):
                 mg.append(otherElement)
 
+    def testAppendSpaceMustAdoptIndexOfRefraction(self):
+        mEquivalent = MatrixGroup()
+        d1 = DielectricInterface(n1=1, n2=1.55, R=100)
+        s  = Space(d=3)
+        d2 = DielectricInterface(n1=1.55, n2=1.0, R=-100)
+        mEquivalent.append(d1)
+        mEquivalent.append(s)
+        mEquivalent.append(d2)
+        self.assertEqual(d1.backIndex, s.frontIndex)
+        self.assertEqual(d2.frontIndex, s.backIndex)
+
+    def testAppendNotCorrectType(self):
+        mg = MatrixGroup()
+
+        with self.assertRaises(TypeError):
+            mg.append(10)
+
     def testMatrixGroupWithElements(self):
         elements = []
         f1 = 10
@@ -189,6 +228,13 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg._lastRayToBeTraced, trace[0])
         self.assertTrue(mgTrace[-1].isBlocked)
 
+    def testTraceIncorrectType(self):
+        s = Space(2, diameter=5)
+        l = Lens(6, diameter=5)
+        mg = MatrixGroup([s, l])
+        with self.assertRaises(TypeError):
+            mg.trace("Ray")
+
     @unittest.skip("Importation problem...")
     def testImagingPath(self):
         mg = MatrixGroup()
@@ -235,15 +281,15 @@ class TestMatrixGroup(unittest.TestCase):
         smallDiam = 10
         bigDiam = 25
         mg = MatrixGroup([Space(14, diameter=smallDiam), Lens(5), Space(5, diameter=bigDiam)])
-        self.assertEqual(mg.largestDiameter(), bigDiam)
+        self.assertEqual(mg.largestDiameter, bigDiam)
 
     def testLargestDiameterNoFiniteAperture(self):
         mg = MatrixGroup([Space(10), Lens(5)])
-        self.assertEqual(mg.largestDiameter(), 8)
+        self.assertEqual(mg.largestDiameter, 8)
 
     def testLargestDiameterWithEmptyGroup(self):
         m = MatrixGroup()
-        self.assertEqual(m.largestDiameter(), float("+inf"))
+        self.assertEqual(m.largestDiameter, float("+inf"))
 
     def testFlipOrientationEmptyGroup(self):
         mg = MatrixGroup()
@@ -272,6 +318,11 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.C, supposedMatrix.C)
         self.assertEqual(mg.D, supposedMatrix.D)
         self.assertEqual(mg.L, supposedMatrix.L)
+
+    def testInitWithAnotherMatrixGroup(self):
+        mg = MatrixGroup([Lens(5)])
+        mg2 = MatrixGroup(mg)
+        self.assertListEqual(mg.elements, mg2.elements)
 
 
 if __name__ == '__main__':

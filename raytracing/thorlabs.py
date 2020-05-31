@@ -24,7 +24,7 @@ class ACN254_050_A(AchromatDoubletLens):
 
 class ACN254_040_A(AchromatDoubletLens):
     def __init__(self):
-        super(ACN254_040_A,self).__init__(fa=-40.1,fb=-43.6, R1=-27.1, R2=27.1, R3=189.2, 
+        super(ACN254_040_A,self).__init__(fa=-40.1,fb=-43.6, R1=-27.1, R2=27.1, R3=189.2,
                                     tc1=2.0, tc2=5.0, te=10.6, n1=N_BAF10.n(0.5876), n2=N_SF11.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="ACN254-040-A")
@@ -32,7 +32,15 @@ class ACN254_040_A(AchromatDoubletLens):
 
 class AC254_030_A(AchromatDoubletLens):
     def __init__(self):
-        super(AC254_030_A,self).__init__(fa=30.0,fb=22.9, R1=20.89, R2=-16.73, R3=-79.8, 
+        """ As of May 31 2020, there is an error on the product web page at: 
+        https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
+        The expected back focal length is different from the reference PDF on
+        the same line which clearly states it should be 22.2.
+
+        We take the PDF ato be the true value
+        """
+
+        super(AC254_030_A,self).__init__(fa=30.0,fb=22.2, R1=20.89, R2=-16.7, R3=-79.8,
                                     tc1=12, tc2=2.0, te=8.8, n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-030-A")
@@ -47,7 +55,7 @@ class AC254_035_A(AchromatDoubletLens):
 class AC254_040_A(AchromatDoubletLens):
     def __init__(self):
         super(AC254_040_A,self).__init__(fa=40.1,fb=33.4, R1=23.7, R2=-20.1, R3=-57.7, 
-                                    tc1=12, tc2=2.0, te=7.4, n1=N_BK7.n(0.5876), n2=SF5.n(0.5876), diameter=25.4,
+                                    tc1=10, tc2=2.5, te=7.4, n1=N_BK7.n(0.5876), n2=SF5.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-040-A")
 
@@ -96,6 +104,11 @@ class AC254_100_A(AchromatDoubletLens):
 
 class AC254_125_A(AchromatDoubletLens):
     def __init__(self):
+        """ As of May 31 2020, the calculated edge thickness does not match
+        the product page. There does not seem to be another place where 
+        the information can be validated (the PDF doesn't show the edge thickness).
+        https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
+        """
         super(AC254_125_A,self).__init__(fa=125.0,fb=122.0, R1=77.6,R2=-55.9, R3=-160.8, 
                                     tc1=4.0, tc2=2.8, te=5.0, n1=N_BK7.n(0.5876), n2=N_SF5.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
@@ -103,7 +116,7 @@ class AC254_125_A(AchromatDoubletLens):
 
 class AC254_150_A(AchromatDoubletLens):
     def __init__(self):
-        super(AC254_150_A,self).__init__(fa=150,fb=-146.1, R1=91.6,R2=-66.7, R3=-197.7, 
+        super(AC254_150_A,self).__init__(fa=150,fb=146.1, R1=91.6,R2=-66.7, R3=-197.7,
                                     tc1=5.7, tc2=2.2, te=6.6, n1=N_BK7.n(0.5876), n2=SF5.n(0.5876), diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-150-A")
@@ -228,44 +241,38 @@ class AC508_1000_B(AchromatDoubletLens):
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-1000-B")
 
-class LA1608_A(AchromatDoubletLens):
+class LA1608_A(SingletLens):
     def __init__(self):
-        super(LA1608_A,self).__init__(fa=75.0,fb=72.0, R1=100000,R2=-100000, R3=-38.6, 
-                                    tc1=.05, tc2=4.1, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
-                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1608-A',
-                                    label="LA1608_A")
+        super(LA1608_A,self).__init__(f=75.0, fb=72.0, R1=38.6, R2=float("+inf"), tc=4.1, te=2.0, n=N_BK7.n(0.5876),
+                                      diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1608-A',
+                                      label="LA1608_A")
 
-class LA1134_A(AchromatDoubletLens):
+class LA1134_A(SingletLens):
     def __init__(self):
-        super(LA1134_A,self).__init__(fa=60.0,fb=56.7, R1=100000,R2=-100000, R3=-30.9, 
-                                    tc1=.05, tc2=4.7, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
-                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1134-A',
-                                    label="LA1134_A")
+        super(LA1134_A,self).__init__(f=60.0, fb=56.7, R1=30.9, R2=float("+inf"), tc=4.7, te=2.0, n=N_BK7.n(0.5876),
+                                      diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1134-A',
+                                      label="LA1134_A")
 
-class LA1131_A(AchromatDoubletLens):
+class LA1131_A(SingletLens):
     def __init__(self):
-        super(LA1131_A,self).__init__(fa=50.0,fb=46.3, R1=100000,R2=-100000, R3=-25.8, 
-                                    tc1=.05, tc2=5.3, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
-                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1131-A',
-                                    label="LA1131_A")
+        super(LA1131_A,self).__init__(f=50.0, fb=46.3, R1=25.8, R2=float("+inf"), tc=5.3, te=2.0, n=N_BK7.n(0.5876),
+                                      diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1131-A',
+                                      label="LA1131_A")
 
-class LA1422_A(AchromatDoubletLens):
+class LA1422_A(SingletLens):
     def __init__(self):
-        super(LA1422_A,self).__init__(fa=40.0,fb=35.7, R1=100000,R2=-100000, R3=-20.6, 
-                                    tc1=.05, tc2=6.4, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
-                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1422-A',
-                                    label="LA1422_A")
+        super(LA1422_A,self).__init__(f=40.0, fb=35.7, R1=20.6, R2=float("+inf"), tc=6.4, te=2.0, n=N_BK7.n(0.5876),
+                                      diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1422-A',
+                                      label="LA1422_A")
         
-class LA1805_A(AchromatDoubletLens):
+class LA1805_A(SingletLens):
     def __init__(self):
-        super(LA1805_A,self).__init__(fa=30.0,fb=24.2, R1=100000,R2=-100000, R3=-15.5, 
-                                    tc1=.05, tc2=8.6, te=2.0, n1 = 1, n2=N_BK7.n(0.5876), diameter=25.4,
-                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1805-A',
-                                    label="LA1805_A")
+        super(LA1805_A,self).__init__(f=30.0, fb=24.2, R1=15.5, R2=float("+inf"), tc=8.6, te=2.0, n=N_BK7.n(0.5876),
+                                      diameter=25.4, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1805-A',
+                                      label="LA1805_A")
 
-class LA1274_A(AchromatDoubletLens):
+class LA1274_A(SingletLens):
     def __init__(self):
-        super(LA1274_A,self).__init__(fa=40.0,fb=34.0, R1=100000,R2=-100000, R3=-20.6, 
-                                    tc1=.05, tc2=9.0, te=2.5, n1 = 1, n2=N_BK7.n(0.5876), diameter=30.0,
-                                    url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1274-A',
-                                    label="LA1274_A")
+        super(LA1274_A,self).__init__(f=40.0, fb=34.0, R1=20.6, R2=float("+inf"), tc=9.0, te=2.5, n=N_BK7.n(0.5876),
+                                      diameter=30.0, url='https://www.thorlabs.com/thorproduct.cfm?partnumber=LA1274-A',
+                                      label="LA1274_A")
