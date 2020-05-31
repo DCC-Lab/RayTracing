@@ -10,7 +10,7 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath()
         self.assertIsNotNone(path)
         self.assertListEqual(path.elements, [])
-        self.assertEqual(path.objectHeight, 10)
+        self.assertEqual(path._objectHeight, 10)
         self.assertEqual(path.objectPosition, 0)
         self.assertEqual(path.fanAngle, 0.1)
         self.assertEqual(path.fanNumber, 9)
@@ -30,6 +30,13 @@ class TestImagingPath(unittest.TestCase):
         elements = [space, tLens]
         path = ImagingPath(elements)
         self.assertListEqual(path.elements, elements)
+
+    def testObjectHeight(self):
+        path = ImagingPath()
+        self.assertTrue(path.objectHeight, 10)
+
+        with self.assertRaises(ValueError):
+            path.objectHeight = -0.1
 
     def testApertureStopInfiniteAperture(self):
         space = Space(10)
