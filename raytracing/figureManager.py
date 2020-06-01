@@ -320,8 +320,8 @@ class FigureManager:
         maxRayHeight = 0
         for line in self.axes.lines:
             if line.get_label() == 'ray':
-                if max(line._y) > maxRayHeight:
-                    maxRayHeight = max(line._y)
+                if max(abs(line._y)) > maxRayHeight:
+                    maxRayHeight = max(abs(line._y))
 
         return maxRayHeight
 
