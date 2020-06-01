@@ -1211,8 +1211,7 @@ class ImagingPath(MatrixGroup):
     def newDisplay(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
                    removeBlockedRaysCompletely=False, comments=None):
 
-        figure = FigureManager(opticPath=self)
-        figure.createFigure(title=self.label, comments=comments)
+        figure = FigureManager(opticPath=self, title=self.label, comments=comments)
 
         figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
                        onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,

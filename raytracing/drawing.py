@@ -253,16 +253,16 @@ class AperturePatch(patches.Polygon):
 
     Examples
     --------
-        Create aperture stops for a lens
-        >>> stopAbove = AperturePatch(y=halfHeight)
-        >>> stopBelow = AperturePatch(y=-halfHeight)
+        Create aperture patches for a lens
+        >>> apertureAbove = AperturePatch(y=halfHeight)
+        >>> apertureBelow = AperturePatch(y=-halfHeight)
 
-        Create aperture stops for a thick lens
-        >>> stopAbove = AperturePatch(y=halfHeight, width=0.1)
-        >>> stopBelow = AperturePatch(y=-halfHeight, width=0.1)
+        Create aperture patches for a thick lens
+        >>> apertureAbove = AperturePatch(y=halfHeight, width=0.1)
+        >>> apertureBelow = AperturePatch(y=-halfHeight, width=0.1)
 
         Create thick lens Drawing with a fixed width (autoScale Off)
-        >>> drawing = Drawing(thickLens, stopAbove, stopBelow, fixedWidth=True)
+        >>> drawing = Drawing(thickLens, apertureAbove, apertureBelow, fixedWidth=True)
     """
 
     def __init__(self, y: float, x=0.0, width=0.01):

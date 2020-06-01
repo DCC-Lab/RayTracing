@@ -7,35 +7,19 @@ from raytracing import *
 
 
 class FigureManager:
-    # # Singleton setup
-    # # Not sure we want a singleton since that probably means we can't work on two imagingPaths at the same time
-    #
-    # __instance = None
-    # def __new__(cls):
-    #     """ Singleton """
-    #     if LayoutHelper.__instance is None:
-    #         LayoutHelper.__instance = object.__new__(cls)
-    #     # LayoutHelper.__instance.val = val
-    #     return LayoutHelper.__instance
-
-    def __init__(self, opticPath):
+    def __init__(self, opticPath: ImagingPath, style='presentation', comments=None, title=None):
         self.path = opticPath
         self.figure = None
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
-        self.styles = ['publication', 'presentation', 'teaching']
+        self.style = style  # ['publication', 'presentation', 'teaching']
         self.outputFormats = ['pdf', 'png', 'screen']
 
         self.drawings = []
+        self.createFigure(comments=comments, title=title)
 
-        # A Drawing should contain its own Aperture and labels set at a specific position.
-        # FigureManager can display them, request their position to check they do not overlap.
-        # If they overlap he can ask to update their position
-        # * Labels do not need size rescaling but position update (delta Y is -5% of displayRange ish)
-        # But there's also some Labels that are not necessarily tied to a drawing. like A/F stops
-
-    def createFigure(self, style='presentation', comments=None, title=None):
-        if style == 'teaching':
+    def createFigure(self, comments=None, title=None):
+        if self.style == 'teaching':
             self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             self.axesComments.axis('off')
             self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
