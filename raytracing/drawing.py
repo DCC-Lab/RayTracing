@@ -51,7 +51,7 @@ class Drawing:
         self.useAutoScale = not fixedWidth
 
         if label is not None:
-            self.label = Label(text=label, y=self.halfHeight() * 1.2)
+            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight() * 1.2)
 
     @property
     def hasLabel(self) -> bool:
@@ -136,6 +136,14 @@ class Drawing:
             if componentMaxY > halfHeight:
                 halfHeight = componentMaxY
         return halfHeight
+
+    @property
+    def centroid(self):
+        xy = []
+        for component in self.components:
+            xy.extend(component.get_xy())
+
+        return np.mean(xy, axis=0)
 
 
 class SurfacePairPatch(patches.PathPatch):
