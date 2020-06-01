@@ -33,6 +33,16 @@ class N_SF2(Material):
         n=(1+1.47343127/(1-0.0109019098/x**2)+0.163681849/(1-0.0585683687/x**2)+1.36920899/(1-127.404933/x**2))**.5
         return n
 
+class N_SF8(Material):
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF8.html """
+    @classmethod
+    def n(self, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(1+1.55075812/(1-0.0114338344/x**2)+0.209816918/(1-0.0582725652/x**2)+1.46205491/(1-133.24165/x**2))**.5
+        return n
+
 
 class SF2(Material):
     """  All data from https://refractiveindex.info/tmp/data/glass/schott/SF2.html """
@@ -99,6 +109,15 @@ class N_SF11(Material):
         n=(1+1.73759695/(1-0.013188707/x**2)+0.313747346/(1-0.0623068142/x**2)+1.89878101/(1-155.23629/x**2))**.5
         return n
 
+class N_SF57(Material):
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF57.html """
+    @classmethod
+    def n(self, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(1+1.87543831/(1-0.0141749518/x**2)+0.37375749/(1-0.0640509927/x**2)+2.30001797/(1-177.389795/x**2))**.5
+        return n
 
 class N_BAF10(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BAF10.html """

@@ -14,7 +14,6 @@ class Ray:
     ----------
     y : float
         Initial height of the ray. Defaults to 0.
-
     theta : float
         Initial angle of the ray. Defaults to 0.
 
@@ -22,40 +21,14 @@ class Ray:
     ----------
     z : float
         Position of the ray along the optical axis. Initialized at 0.
-
     apertureDiameter : float
         The diameter of any blocking aperture at the present position z. Initialized at +Inf.
-
     isBlocked : bool
         Whether or not the ray was blocked by an aperture. Initialized to False.
 
-    # fixme: the following is a temporary template
-
-    Returns
-    -------
-    output : data
-        if there is an output for the function
-
-    Raises
-    ------
-    BadException
-        Because you shouldn't have done that.
-
     See Also
     --------
-    some similar functions
-
-    Notes
-    -----
-    Notes about the implementation algorithm (if needed).
-
-    Examples
-    --------
-    These are written in doctest format, and should illustrate how to
-    use the function.
-
-    >>> a+b
-    0
+    raytracing.rays
 
     """
 
@@ -69,15 +42,28 @@ class Ray:
 
     @property
     def isNotBlocked(self) -> bool:
-        """Opposite of isBlocked. Convenience function for readability."""
+        """Opposite of isBlocked. Convenience function for readability.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # define an input ray
+        >>> ray1=Ray(y=1,theta=0.1)
+        >>> # define a lens to propagate the ray through
+        >>> mat=Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,apertureDiameter=2,label='Lens')
+        >>> ray1Output=mat.mul_ray(ray1)
+        >>> print('the ray is not blocked? :', ray1Output.isNotBlocked)
+        the ray is not blocked? : True
+
+        """
 
         return not self.isBlocked
 
     @staticmethod
     def fan(y: float, radianMin: float, radianMax: float, N: int):
-        """A list of rays spanning from radianMin to radianMax.
-
-        Used with Matrix.trace() or Matrix.traceMany().
+        """This function generates a list of rays spanning from radianMin to radianMax.
+        This is usually used with Matrix.trace() or Matrix.traceMany() to trace the rays
+        through an element or group of elements.
 
         Parameters
         ----------
@@ -94,6 +80,11 @@ class Ray:
         -------
         rays : list of ray
             The created list of rays that define this fan.
+
+        See Also
+        --------
+        raytracing.Matrix.trace()
+        raytracing.Matrix.traceMany().
 
         """
 
@@ -113,9 +104,9 @@ class Ray:
 
     @staticmethod
     def fanGroup(yMin: float, yMax: float, M: int, radianMin: float, radianMax: float, N: int):
-        """A list of rays spanning from yMin to yMax and radianMin to radianMax.
-
-        Used with Matrix.trace() or Matrix.traceMany().
+        """This function creates a list of rays spanning from yMin to yMax and radianMin to radianMax.
+        This is usually used with Matrix.trace() or Matrix.traceMany() to trace the rays
+        through an element or group of elements.
 
 
         Parameters
@@ -137,6 +128,11 @@ class Ray:
         -------
         rays : list of ray
             The created list of rays that define these fan groups.
+
+        See Also
+        --------
+        raytracing.Matrix.trace()
+        raytracing.Matrix.traceMany().
 
         """
         
