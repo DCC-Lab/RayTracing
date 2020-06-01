@@ -247,19 +247,19 @@ class ArrowPatch(patches.FancyArrow):
                                          head_width=width * 5, head_length=abs(dy) * headLengthRatio)
 
 
-class StopPatch(patches.Polygon):
-    """Define a Polygon patch with default RayTracing style used for aperture stops.
+class AperturePatch(patches.Polygon):
+    """Define a Polygon patch with default RayTracing style used to draw the aperture.
     Use with Drawing class to set position and scaling.
 
     Examples
     --------
         Create aperture stops for a lens
-        >>> stopAbove = StopPatch(y=halfHeight)
-        >>> stopBelow = StopPatch(y=-halfHeight)
+        >>> stopAbove = AperturePatch(y=halfHeight)
+        >>> stopBelow = AperturePatch(y=-halfHeight)
 
         Create aperture stops for a thick lens
-        >>> stopAbove = StopPatch(y=halfHeight, width=0.1)
-        >>> stopBelow = StopPatch(y=-halfHeight, width=0.1)
+        >>> stopAbove = AperturePatch(y=halfHeight, width=0.1)
+        >>> stopBelow = AperturePatch(y=-halfHeight, width=0.1)
 
         Create thick lens Drawing with a fixed width (autoScale Off)
         >>> drawing = Drawing(thickLens, stopAbove, stopBelow, fixedWidth=True)
@@ -270,10 +270,10 @@ class StopPatch(patches.Polygon):
             coords = [[x - 0.01 / 2, y], [x + 0.01 / 2, y]]
         else:
             coords = [[x, y], [x + width, y]]
-        super(StopPatch, self).__init__(coords,
-                                        linewidth=3,
-                                        closed=False,
-                                        color='0.7')
+        super(AperturePatch, self).__init__(coords,
+                                            linewidth=3,
+                                            closed=False,
+                                            color='0.7')
 
 
 class Label(mplText.Text):

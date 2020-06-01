@@ -305,8 +305,8 @@ class FigureManager:
         components.append(ArrowPatch(dy=-halfHeight, headLengthRatio=0.2))
 
         if element.hasFiniteApertureDiameter():
-            components.append(StopPatch(y=halfHeight, width=element.L))
-            components.append(StopPatch(y=-halfHeight, width=element.L))
+            components.append(AperturePatch(y=halfHeight, width=element.L))
+            components.append(AperturePatch(y=-halfHeight, width=element.L))
 
         label = element.label if showLabel else None
         return Drawing(*components, label=label)
@@ -324,8 +324,8 @@ class FigureManager:
             components.append(p)
 
             outerWidth = p.corners[1] - p.corners[0]
-            components.append(StopPatch(y=halfHeight, x=p.corners[0], width=outerWidth))
-            components.append(StopPatch(y=-halfHeight, x=p.corners[0], width=outerWidth))
+            components.append(AperturePatch(y=halfHeight, x=p.corners[0], width=outerWidth))
+            components.append(AperturePatch(y=-halfHeight, x=p.corners[0], width=outerWidth))
 
         label = element.label if showLabel else None
         return Drawing(*components, label=label, fixedWidth=True)
