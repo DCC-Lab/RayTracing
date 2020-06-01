@@ -22,7 +22,7 @@ class Drawing:
 
         >>> arrowUp = ArrowPatch(dy=5)
         >>> arrowDown = ArrowPatch(dy=-5)
-        >>> lensDrawing = Drawing(arrowUp, arrowDown)
+        >>> lensDrawing = Drawing([arrowUp, arrowDown])
 
         Apply the Drawing on a figure at x=10
 
@@ -40,9 +40,9 @@ class Drawing:
 
     """
 
-    def __init__(self, *components: patches.Patch, label: str = None,
+    def __init__(self, components: List[patches.Patch], label: str = None,
                  x=0, y=0, fixedWidth=False):
-        self.components: List[patches.Patch] = [*components]  # could be renamed to drawings, parts, patches, artists...
+        self.components = components
         self.label = None
 
         self.axes = None
@@ -237,7 +237,7 @@ class ArrowPatch(patches.FancyArrow):
         >>> arrow = ArrowPatch(dy=5)
 
         Set position and label by creating a Drawing object
-        >>> drawing = Drawing(arrow, x=10, label='Image')
+        >>> drawing = Drawing([arrow], x=10, label='Image')
     """
 
     def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
@@ -262,7 +262,7 @@ class AperturePatch(patches.Polygon):
         >>> apertureBelow = AperturePatch(y=-halfHeight, width=0.1)
 
         Create thick lens Drawing with a fixed width (autoScale Off)
-        >>> drawing = Drawing(thickLens, apertureAbove, apertureBelow, fixedWidth=True)
+        >>> drawing = Drawing([thickLens, apertureAbove, apertureBelow], fixedWidth=True)
     """
 
     def __init__(self, y: float, x=0.0, width=0.01):

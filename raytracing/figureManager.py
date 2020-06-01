@@ -247,7 +247,7 @@ class FigureManager:
             Drawing: The created Drawing object.
         """
         arrow = ArrowPatch(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
-        drawing = Drawing(arrow, x=self.path.objectPosition)
+        drawing = Drawing([arrow], x=self.path.objectPosition)
 
         return drawing
 
@@ -265,7 +265,7 @@ class FigureManager:
             imageHeight = magnification * self.path.objectHeight
 
             arrow = ArrowPatch(dy=imageHeight, y=-imageHeight/2, color='r')
-            drawing = Drawing(arrow, x=imagePosition)
+            drawing = Drawing([arrow], x=imagePosition)
 
             drawings.append(drawing)
 
@@ -273,7 +273,7 @@ class FigureManager:
 
     def drawingOfElement(self, element: Lens, showLabel=True) -> Drawing:
         if not element.surfaces:
-            return Drawing()
+            return Drawing([])
 
         if type(element) is Lens:
             return self.drawingOfThinLens(element, showLabel=showLabel)
@@ -293,7 +293,7 @@ class FigureManager:
             components.append(AperturePatch(y=-halfHeight, width=element.L))
 
         label = element.label if showLabel else None
-        return Drawing(*components, label=label)
+        return Drawing(components, label=label)
 
     def drawingOfSurfaces(self, element, showLabel=True):
         components = []
@@ -312,7 +312,7 @@ class FigureManager:
             components.append(AperturePatch(y=-halfHeight, x=p.corners[0], width=outerWidth))
 
         label = element.label if showLabel else None
-        return Drawing(*components, label=label, fixedWidth=True)
+        return Drawing(components, label=label, fixedWidth=True)
 
     def maxRayHeight(self):
         # FIXME: need a more robust reference to rayTraces... and maybe maxRayHeightAt(y) instead?
