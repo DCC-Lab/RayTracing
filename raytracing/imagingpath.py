@@ -939,7 +939,7 @@ class ImagingPath(MatrixGroup):
             binSize = 2.0 * halfHeight / (len(color) - 1)
             colorIndex = int(
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-            axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
+            axes.plot(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
 
     def rearrangeRayTraceForPlotting(self, rayList,
                                      removeBlockedRaysCompletely=True):
