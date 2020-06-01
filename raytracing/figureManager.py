@@ -288,28 +288,32 @@ class FigureManager:
         return drawings
 
     def drawingOfElement(self, element: Lens, showLabel=True) -> Drawing:
+        components = []
         if not element.surfaces:
             return Drawing()
 
-        components = []
-        halfHeight = element.displayHalfHeight()
-
         if type(element) is Lens:
             halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())
-            components.append(ArrowPatch(dy=halfHeight))
-            components.append(ArrowPatch(dy=-halfHeight))
+            components.append(ArrowPatch(dy=halfHeight, headLengthRatio=0.2))
+            components.append(ArrowPatch(dy=-halfHeight, headLengthRatio=0.2))
 
-        if element.hasFiniteApertureDiameter():
-            components.append(StopPatch(y=halfHeight, width=element.L))
-            components.append(StopPatch(y=-halfHeight, width=element.L))
+            if element.hasFiniteApertureDiameter():
+                components.append(StopPatch(y=halfHeight, width=element.L))
+                components.append(StopPatch(y=-halfHeight, width=element.L))
 
-        z = 0
-        for i, surfaceA in enumerate(element.surfaces[:-1]):
-            surfaceB = element.surfaces[i+1]
-            p = SurfacePairPatch(surfaceA, surfaceB, x=z,
-                                 halfHeight=halfHeight)
-            z += surfaceA.L
-            components.append(p)
+        else:
+            halfHeight = element.displayHalfHeight()
+            z = 0
+            for i, surfaceA in enumerate(element.surfaces[:-1]):
+                surfaceB = element.surfaces[i+1]
+                p = SurfacePairPatch(surfaceA, surfaceB, x=z,
+                                     halfHeight=halfHeight)
+                z += surfaceA.L
+                components.append(p)
+
+                outerWidth = p.corners[1] - p.corners[0]
+                components.append(StopPatch(y=halfHeight, x=p.corners[0], width=outerWidth))
+                components.append(StopPatch(y=-halfHeight, x=p.corners[0], width=outerWidth))
 
         label = element.label if showLabel else None
         fixedWidth = False if type(element) is Lens else True
