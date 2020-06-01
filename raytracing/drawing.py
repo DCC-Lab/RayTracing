@@ -145,7 +145,7 @@ class SurfacePairPatch(patches.PathPatch):
         self.halfHeight = halfHeight
         self.x = x
         self.xy = None
-        self.xlink = None
+        self.corners = None
 
         super(SurfacePairPatch, self).__init__(self.path(),
                                                color=[0.85, 0.95, 0.95],
@@ -173,7 +173,7 @@ class SurfacePairPatch(patches.PathPatch):
                    Path.LINETO, Path.CURVE3, Path.CURVE3]
 
         self.xy = [(corner1, -h), (v1, 0), (corner1, h)]
-        self.xlink = corner1
+        self.corners = [corner1]
 
         if self.surfaceA.L == 0:  # thin lens exception
             self.surfaceA.L = delta1 * 2
@@ -188,7 +188,7 @@ class SurfacePairPatch(patches.PathPatch):
 
         if self.surfaceB.R == float("+inf"):
             self.xy.extend([(v2, h), (v2, -h)])
-            return [(v2, h), (v2, -h), (self.xlink, -h)], [Path.LINETO, Path.LINETO, Path.LINETO]
+            return [(v2, h), (v2, -h), (self.corners[0], -h)], [Path.LINETO, Path.LINETO, Path.LINETO]
 
         phi2 = math.asin(h / abs(R2))
         delta2 = R2 * (1.0 - math.cos(phi2))
@@ -197,11 +197,12 @@ class SurfacePairPatch(patches.PathPatch):
 
         # append from (corner1, h), stop at (corner1, -h)
         coords = [(corner2, h), (v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h), (self.xlink, -h)]
+                  (v2, 0), (v2, -ctl2), (corner2, -h), (self.corners[0], -h)]
         actions = [Path.LINETO, Path.CURVE3, Path.CURVE3,
                    Path.LINETO, Path.CURVE3, Path.CURVE3, Path.LINETO]
 
         self.xy.extend([(corner2, h), (v2, 0), (corner2, -h)])
+        self.corners.append(corner2)
 
         return coords, actions
 
