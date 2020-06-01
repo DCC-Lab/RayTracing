@@ -1,5 +1,6 @@
 import unittest
 import envtest  # modifies path
+import platform
 
 from raytracing import *
 
@@ -324,6 +325,7 @@ class TestMatrix(unittest.TestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
+    @unittest.skipIf(platform.system() == 'Darwin', "On Darwin, endless loop")
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
@@ -350,7 +352,7 @@ class TestMatrix(unittest.TestCase):
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 
     def testEffectiveFocalLengthsNoPower(self):
-        m = Matrix()
+        m = Matrix(1,0,0,1)
         focalLengths = (inf, inf)
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 

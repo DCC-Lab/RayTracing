@@ -577,8 +577,8 @@ class Matrix(object):
         other elements there may be more.  For groups of elements, there can be any 
         number of rays in the list.
 
-		If you only care about the final ray that has propagated through, use 
-		`traceThrough()`
+        If you only care about the final ray that has propagated through, use 
+        `traceThrough()`
         """
 
         rayTrace = []
@@ -908,10 +908,18 @@ class Matrix(object):
         """ The effective focal lengths calculated from the power (C)
         of the matrix.
 
+        There are in general two effective focal lengths: front effective
+        and back effective focal lengths (not to be confused with back focal
+        and front focal lengths which are measured from the physical interface).
+        The easiest way to calculate this is to use
+        f = -1/C for current matrix, then flipOrientation and f = -1/C
+
+
         Returns
         -------
         effectiveFocalLengths : array
-            Returns the FFL and BFL
+            Returns the effective focal lengths in the forward and backward
+            directions. When in air, both are equal.
 
         See Also
         --------
@@ -931,10 +939,6 @@ class Matrix(object):
         >>> print('focal distances:' , f1)
         focal distances: (5.0, 5.0)
 
-        Notes
-        -----
-        Currently, it is assumed the index is n=1 on either side and
-        both focal lengths are the same.
         """
         if self.hasPower:
             focalLength2 = -1.0 / self.C # left (n1) to right (n2)
@@ -1059,7 +1063,7 @@ class Matrix(object):
         Parameters
         ----------
         z : float
-            The position in which the object is placed
+            Position from where the positions are calculated
 
         Returns
         -------
@@ -1100,7 +1104,7 @@ class Matrix(object):
         Parameters
         ----------
         z : float
-            what does this parameter shows?
+            Position from where the positions are calculated
 
         Returns
         -------
@@ -1122,8 +1126,7 @@ class Matrix(object):
         raytracing.Matrix.focusPositions
         """
         if self.hasPower:
-            p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
-            # FIXME: Assumes n=1 on either side
+            p1 = z - (self.frontIndex/self.backIndex - self.D) / self.C
             p2 = z + self.L + (1 - self.A) / self.C
         else:
             p1 = None
