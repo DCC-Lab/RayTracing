@@ -7,7 +7,7 @@ from raytracing import *
 
 
 class FigureManager:
-    def __init__(self, opticPath: ImagingPath, style='presentation', comments=None, title=None):
+    def __init__(self, opticPath, style='presentation', comments=None, title=None):
         self.path = opticPath
         self.figure = None
         self.axes = None  # Where the optical system is
