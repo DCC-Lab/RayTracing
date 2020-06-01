@@ -40,7 +40,6 @@ digraph G {
 
     subgraph mathview {
         "Matrix" -> "MatrixGroup"
-        "MatrixGroup" -> OpticalPath
         "MatrixGroup" -> ImagingPath
         "MatrixGroup" -> LaserPath
     }
