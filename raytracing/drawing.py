@@ -257,11 +257,11 @@ class StopPatch(patches.Polygon):
         >>> drawing = Drawing(thickLens, stopAbove, stopBelow, fixedWidth=True)
     """
 
-    def __init__(self, y: float, width=0.01):
+    def __init__(self, y: float, x=0.0, width=0.01):
         if width <= 0.01:
-            coords = [[- 0.01 / 2, y], [+ 0.01 / 2, y]]
+            coords = [[x - 0.01 / 2, y], [x + 0.01 / 2, y]]
         else:
-            coords = [[0, y], [width, y]]
+            coords = [[x, y], [x + width, y]]
         super(StopPatch, self).__init__(coords,
                                         linewidth=3,
                                         closed=False,
