@@ -41,6 +41,8 @@ class FigureManager:
             self.addLine(*dataObjects)
         elif dataType is MatplotlibGraphic:
             self.addGraphic(*dataObjects)
+        elif dataObjects[0] is None:
+            pass
         else:
             raise ValueError("Data type not supported.")
 
@@ -231,14 +233,13 @@ class FigureManager:
             self.add(*self.graphicsOfImages())
 
         if self.path.showEntrancePupil:
-            # self.drawEntrancePupil(z=0, axes=axes)
-            raise NotImplementedError("Entrance Pupil Graphics Not implemented")
+            self.add(self.graphicOfEntrancePupil())
 
-        if self.path.showPointsOfInterest:
-            # self.drawPointsOfInterest(z=0, axes=axes)
-            # self.drawStops(z=0, axes=axes)
-            raise NotImplementedError("Points of interest Graphics Not Implemented")
-            
+        # if self.path.showPointsOfInterest:
+        #     # self.drawPointsOfInterest(z=0, axes=axes)
+        #     # self.drawStops(z=0, axes=axes)
+        #     raise NotImplementedError("Points of interest Graphics Not Implemented")
+
         z = 0
         for element in self.path.elements:
             if element.surfaces:
@@ -279,6 +280,26 @@ class FigureManager:
             graphics.append(graphic)
 
         return graphics
+
+    def graphicOfEntrancePupil(self) -> MatplotlibGraphic:
+        """
+        Graphic of the entrance pupil on an optical system using the position and diameter of the
+        entrance pupil.
+
+        See Also
+        --------
+        raytracing.ImagingPath.entrancePupil
+
+        """
+        (pupilPosition, pupilDiameter) = self.path.entrancePupil()
+        pupilPosition = None
+        if pupilPosition is not None:
+            halfHeight = pupilDiameter / 2.0
+
+            p1 = AperturePatch(y=halfHeight, color='r')
+            p2 = AperturePatch(y=-halfHeight, color='r')
+
+            return MatplotlibGraphic([p1, p2], x=pupilPosition)
 
     def graphicOfElement(self, element: Lens, showLabel=True) -> MatplotlibGraphic:
         if not element.surfaces:

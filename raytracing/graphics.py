@@ -350,7 +350,7 @@ class AperturePatch(patches.Polygon):
         >>> graphic = Graphic([thickLens, apertureAbove, apertureBelow], fixedWidth=True)
     """
 
-    def __init__(self, y: float, x=0.0, width=0.01):
+    def __init__(self, y: float, x=0.0, width=0.01, color='0.7'):
         if width <= 0.01:
             coords = [[x - 0.01 / 2, y], [x + 0.01 / 2, y]]
         else:
@@ -358,7 +358,7 @@ class AperturePatch(patches.Polygon):
         super(AperturePatch, self).__init__(coords,
                                             linewidth=3,
                                             closed=False,
-                                            color='0.7')
+                                            color=color)
 
 
 class Label(mplText.Text):
