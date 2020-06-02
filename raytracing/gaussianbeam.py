@@ -22,7 +22,9 @@ class GaussianBeam(object):
     Attributes
     ----------
     isClipped : bool
-        #fixme: If True, what have happened? (default=False)
+        The formalism of gaussian beams does not consider any apertures: the beam
+        remains gaussian no matter what.  This variable will indicate if the beam
+        diameter was too close to the apertures in the system.
 
     Notes
     -----
@@ -59,7 +61,11 @@ class GaussianBeam(object):
     @property
     def isFinite(self):
         """
-        #fixme : If True, what would be finite?
+        Using the complex radius, the imaginary part of -1/q is the beam size.
+        If this value is negative, the calculation will yield a exp(x**2/w**2)
+        which grows exponentially instead of being a gaussian.  Hence, this
+        is not a finite and reasonable complex radius.  This is used for
+        resonator and cavity calculations to discard unphysical solutions.
         """
         return (-1/self.q).imag > 0
     
