@@ -5,6 +5,8 @@ from raytracing import *
 
 inf = float("+inf")
 
+testSaveHugeFile = True
+
 
 class TestMatrixGroup(unittest.TestCase):
 
@@ -143,7 +145,7 @@ class TestMatrixGroup(unittest.TestCase):
     def testAppendSpaceMustAdoptIndexOfRefraction(self):
         mEquivalent = MatrixGroup()
         d1 = DielectricInterface(n1=1, n2=1.55, R=100)
-        s  = Space(d=3)
+        s = Space(d=3)
         d2 = DielectricInterface(n1=1.55, n2=1.0, R=-100)
         mEquivalent.append(d1)
         mEquivalent.append(s)
@@ -323,6 +325,126 @@ class TestMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([Lens(5)])
         mg2 = MatrixGroup(mg)
         self.assertListEqual(mg.elements, mg2.elements)
+
+
+class TestSaveAndLoadMatrixGroup(unittest.TestCase):
+    def setUp(self) -> None:
+        self.testMG = MatrixGroup([Space(10), Lens(10), Space(10)])
+        self.fileName = "testMG.pkl"
+        with open(self.fileName, 'wb') as file:
+            pickle.Pickler(file).dump(self.testMG.elements)
+        time.sleep(0.5)  # Make sure everything is ok
+
+    def tearDown(self) -> None:
+        if os.path.exists(self.fileName):
+            os.remove(self.fileName)  # We remove the test file
+
+    def assertSaveNotFailed(self, matrixGroup: MatrixGroup, name: str, deleteNow: bool = True):
+        try:
+            matrixGroup.saveElements(name)
+        except Exception as exception:
+            self.fail(f"An exception was raised:\n{exception}")
+        finally:
+            if os.path.exists(name) and deleteNow:
+                os.remove(name)  # We delete the temp file
+
+    def assertLoadNotFailed(self, matrixGroup: MatrixGroup, name: str = None, append: bool = False):
+        if name is None:
+            name = self.fileName
+        try:
+            matrixGroup.loadElements(name, append)
+        except Exception as exception:
+            self.fail(f"An exception was raised:\n{exception}")
+
+    def assertLoadEqualsMatrixGroup(self, loadMatrixGroup: MatrixGroup, supposedMatrixGroup: MatrixGroup):
+        tempList = supposedMatrixGroup.elements
+        self.assertEqual(len(loadMatrixGroup.elements), len(tempList))
+        for i in range(len(tempList)):
+            self.assertIsInstance(loadMatrixGroup.elements[i], type(tempList[i]))
+            self.assertEqual(loadMatrixGroup.elements[i].A, tempList[i].A)
+            self.assertEqual(loadMatrixGroup.elements[i].B, tempList[i].B)
+            self.assertEqual(loadMatrixGroup.elements[i].C, tempList[i].C)
+            self.assertEqual(loadMatrixGroup.elements[i].D, tempList[i].D)
+            self.assertEqual(loadMatrixGroup.elements[i].L, tempList[i].L)
+            self.assertEqual(loadMatrixGroup.elements[i].apertureDiameter, tempList[i].apertureDiameter)
+            self.assertEqual(loadMatrixGroup.elements[i].backIndex, tempList[i].backIndex)
+            self.assertEqual(loadMatrixGroup.elements[i].frontIndex, tempList[i].frontIndex)
+            self.assertEqual(loadMatrixGroup.elements[i].frontVertex, tempList[i].frontVertex)
+            self.assertEqual(loadMatrixGroup.elements[i].backVertex, tempList[i].backVertex)
+
+    def testSaveEmpty(self):
+        mg = MatrixGroup()
+        self.assertSaveNotFailed(mg, "emptyMG.pkl")
+
+    def testSaveNotEmpty(self):
+        mg = MatrixGroup([Space(10), Lens(10, 20), Space(20), Lens(10, 21), Space(10)])
+        self.assertSaveNotFailed(mg, "notEmptyMG.pkl")
+
+    def testSaveInFileNotEmpty(self):
+        mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
+        self.assertSaveNotFailed(mg, self.fileName)
+
+    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
+    def testSaveHugeFile(self):
+        start = time.perf_counter_ns()
+        spaces = [Space(10) for _ in range(500)]
+        lenses = [Lens(10) for _ in range(500)]
+        elements = spaces + lenses
+        mg = MatrixGroup(elements)
+        end = time.perf_counter_ns()
+        self.assertSaveNotFailed(mg, "hugeFile.pkl")
+
+    def testLoadFileDoesNotExist(self):
+        fname = r"this\file\does\not\exist.pkl"
+        mg = MatrixGroup()
+        with self.assertRaises(FileNotFoundError):
+            mg.loadElements(fname)
+
+    def testLoadInEmptyMatrixGroup(self):
+        mg = MatrixGroup()
+
+        self.assertLoadNotFailed(mg)
+        self.assertLoadEqualsMatrixGroup(mg, self.testMG)
+
+    def testLoadOverrideMatrixGroup(self):
+        mg = MatrixGroup([Lens(10), Space(10)])
+        self.assertLoadNotFailed(mg)
+        self.assertLoadEqualsMatrixGroup(mg, self.testMG)
+
+    def testLoadAppend(self):
+        mg = MatrixGroup([Lens(10), Space(10)])
+        supposedMatrixGroup = MatrixGroup(mg.elements + self.testMG.elements)
+        self.assertLoadNotFailed(mg, append=True)
+        self.assertLoadEqualsMatrixGroup(mg, supposedMatrixGroup)
+
+    def testLoadWrongObjectType(self):
+        wrongObj = 7734
+        fileName = 'wrongObj.pkl'
+        with open(fileName, 'wb') as file:
+            pickle.Pickler(file).dump(wrongObj)
+        time.sleep(0.5)  # Make sure everything is ok
+
+        try:
+            with self.assertRaises(IOError):
+                MatrixGroup().loadElements(fileName)
+        except AssertionError as exception:
+            self.fail(str(exception))
+        finally:
+            os.remove(fileName)
+
+    def testLoadWrongIterType(self):
+        fileName = 'wrongObj.pkl'
+        wrongIterType = [Lens(5), Lens(10), Ray()]
+        with open(fileName, 'wb') as file:
+            pickle.Pickler(file).dump(wrongIterType)
+        time.sleep(0.5)
+        try:
+            with self.assertRaises(IOError):
+                MatrixGroup().loadElements(fileName)
+        except AssertionError as exception:
+            self.fail(str(exception))
+        finally:
+            os.remove(fileName)
 
 
 if __name__ == '__main__':
