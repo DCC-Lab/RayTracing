@@ -362,8 +362,8 @@ class AperturePatch(patches.Polygon):
 
 
 class Label(mplText.Text):
-    def __init__(self, text: str, x=0.0, y=0.0):
-        super(Label, self).__init__(x=x, y=y, text=text, fontsize=8, horizontalalignment='center')
+    def __init__(self, text: str, x=0.0, y=0.0, fontsize=8):
+        super(Label, self).__init__(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
 
         self.offset = 0.0
 

@@ -15,6 +15,7 @@ class FigureManager:
         self.style = style  # ['publication', 'presentation', 'teaching']
         self.outputFormats = ['pdf', 'png', 'screen']
 
+        self.labels = []
         self.graphics = []
         self.createFigure(comments=comments, title=title)
 
@@ -41,6 +42,8 @@ class FigureManager:
             self.addLine(*dataObjects)
         elif dataType is MatplotlibGraphic:
             self.addGraphic(*dataObjects)
+        elif dataType is Label:
+            self.addLabel(*dataObjects)
         elif dataObjects[0] is None:
             pass
         else:
@@ -54,6 +57,10 @@ class FigureManager:
         for line in [*lines]:
             self.axes.add_line(line)
 
+    def addLabel(self, *labels: Label):
+        for label in [*labels]:
+            self.labels.append(label)
+
     def addFigureInfo(self, text):
         """Text note in the bottom left of the figure. This note is fixed and cannot be moved."""
         # fixme: might be better to put it out of the axes since it only shows object height and display conditions
@@ -63,6 +70,9 @@ class FigureManager:
     def draw(self):
         for graphic in self.graphics:
             graphic.applyTo(self.axes)
+
+        for label in self.labels:
+            self.axes.add_artist(label)
 
         self.updateDisplayRange()
         self.update()
@@ -235,10 +245,9 @@ class FigureManager:
         if self.path.showEntrancePupil:
             self.add(self.graphicOfEntrancePupil())
 
-        # if self.path.showPointsOfInterest:
-        #     # self.drawPointsOfInterest(z=0, axes=axes)
-        #     # self.drawStops(z=0, axes=axes)
-        #     raise NotImplementedError("Points of interest Graphics Not Implemented")
+        if self.path.showPointsOfInterest:
+            self.add(*self.labelsOfStops())
+            # self.add(*self.labelsOfPointsOfInterest())
 
         z = 0
         for element in self.path.elements:
@@ -342,6 +351,26 @@ class FigureManager:
 
         label = element.label if showLabel else None
         return MatplotlibGraphic(components, label=label, fixedWidth=True)
+
+    def labelsOfStops(self) -> List[Label]:
+        """ AS and FS labels are drawn at 110% of the largest diameter. """
+
+        labels = []
+        halfHeight = self.path.largestDiameter / 2
+        (apertureStopPosition, apertureStopDiameter) = self.path.apertureStop()
+
+        if apertureStopPosition is not None:
+            labels.append(Label('AS', x=apertureStopPosition, y=halfHeight*1.1, fontsize=18))
+
+        (fieldStopPosition, fieldStopDiameter) = self.path.fieldStop()
+        if fieldStopPosition is not None:
+            labels.append(Label('FS', x=fieldStopPosition, y=halfHeight * 1.1, fontsize=18))
+
+        return labels
+
+    def labelsOfPointsOfInterest(self) -> List[Label]:
+        labels = []
+        return labels
 
     def maxRayHeight(self):
         # FIXME: need a more robust reference to rayTraces... and maybe maxRayHeightAt(y) instead?
