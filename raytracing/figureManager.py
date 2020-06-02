@@ -120,7 +120,10 @@ class FigureManager:
                 if graphic.label.isRenderedOn(self.figure):
                     labels.append(graphic.label)
 
-        labels.extend(self.labels)
+        for label in self.labels:
+            if label.isRenderedOn(self.figure):
+                labels.append(label)
+
         return labels
 
     def fixLabelOverlaps(self, maxIteration: int = 5):
@@ -252,7 +255,8 @@ class FigureManager:
 
         if self.path.showPointsOfInterest:
             self.add(*self.labelsOfStops())
-            # self.add(*self.labelsOfPointsOfInterest())
+            self.add(*self.labelsOfPointsOfInterest())
+            # todo: change POI labels into a dot Graphic ? or add optional dot patch in label class
 
         z = 0
         for element in self.path.elements:
@@ -374,7 +378,39 @@ class FigureManager:
         return labels
 
     def labelsOfPointsOfInterest(self) -> List[Label]:
+        """ Labels of general points of interest are drawn below the axis, at 25% of the largest diameter. """
+
+        labelStrings = {}  # Gather labels at same z
+
+        zElement = 0
+        # For the group as a whole, then each element
+        for pointOfInterest in self.path.pointsOfInterest(z=zElement):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            labelString = pointOfInterest['label']
+            if zStr in labelStrings:
+                labelStrings[zStr] = labelStrings[zStr] + ", " + labelString
+            else:
+                labelStrings[zStr] = labelString
+
+        # Points of interest for each element
+        for element in self.path.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                labelString = pointOfInterest['label']
+                if zStr in labelStrings:
+                    labelStrings[zStr] = labelStrings[zStr] + ", " + labelString
+                else:
+                    labelStrings[zStr] = labelString
+            zElement += element.L
+
         labels = []
+        halfHeight = self.path.largestDiameter / 2
+        for zStr, labelString in labelStrings.items():
+            z = float(zStr)
+            labels.append(Label(labelString, x=z, y=-halfHeight*0.5, fontsize=12))
+
         return labels
 
     def maxRayHeight(self):
