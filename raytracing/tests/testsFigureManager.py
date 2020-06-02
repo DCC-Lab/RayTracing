@@ -24,4 +24,5 @@ class TestFigureManager(unittest.TestCase):
         path.append(Space(d=25))
         path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='ThickLens'))
         path.append(Space(d=5))
+        # path.display(onlyChiefAndMarginalRays=True)
         path.newDisplay(onlyChiefAndMarginalRays=True)

@@ -202,7 +202,7 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
 
         """
-        return self.chiefRay(y=None)
+        return self.chiefRay()
 
     def marginalRays(self, y=0):
         """This function calculates the marginal rays for a height y at object.

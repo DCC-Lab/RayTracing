@@ -40,11 +40,11 @@ class FigureManager:
         if dataType is plt.Line2D:
             self.addLine(*dataObjects)
         elif dataType is MatplotlibGraphic:
-            self.addDrawing(*dataObjects)
+            self.addGraphic(*dataObjects)
         else:
             raise ValueError("Data type not supported.")
 
-    def addDrawing(self, *graphics: Graphic):
+    def addGraphic(self, *graphics: Graphic):
         for graphic in [*graphics]:
             self.graphics.append(graphic)
 
@@ -170,7 +170,7 @@ class FigureManager:
         self.add(*self.path.rayTraceLines(onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
                                           removeBlockedRaysCompletely=removeBlockedRaysCompletely))
 
-        self.createDrawings()
+        self.createGraphics()
 
         self.draw()
 
@@ -223,13 +223,22 @@ class FigureManager:
 
         self.addFigureInfo(text=note1 + "\n" + note2)
 
-    def createDrawings(self):
+    def createGraphics(self):
         if self.path.showObject:
             self.add(self.graphicOfObject())
 
         if self.path.showImages:
             self.add(*self.graphicsOfImages())
 
+        if self.path.showEntrancePupil:
+            # self.drawEntrancePupil(z=0, axes=axes)
+            raise NotImplementedError("Entrance Pupil Graphics Not implemented")
+
+        if self.path.showPointsOfInterest:
+            # self.drawPointsOfInterest(z=0, axes=axes)
+            # self.drawStops(z=0, axes=axes)
+            raise NotImplementedError("Points of interest Graphics Not Implemented")
+            
         z = 0
         for element in self.path.elements:
             if element.surfaces:
@@ -238,24 +247,24 @@ class FigureManager:
                 self.add(graphic)
             z += element.L
 
-        # TODO: entrancePupil, POI, stop labels
+        # TODO: entrancePupil, POI, stops labels
 
-    def graphicOfObject(self) -> Graphic:
+    def graphicOfObject(self) -> MatplotlibGraphic:
         """ The graphic of the object.
 
         Returns:
-            Graphic: The created Drawing object.
+            Graphic: The created Graphic object.
         """
         arrow = ArrowPatch(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
         graphic = MatplotlibGraphic([arrow], x=self.path.objectPosition)
 
         return graphic
 
-    def graphicsOfImages(self) -> List[Graphic]:
+    def graphicsOfImages(self) -> List[MatplotlibGraphic]:
         """ The graphic of all the images (real and virtual).
 
         Returns:
-            List[Graphic]: A list of the created Drawing object for each image.
+            List[Graphic]: A list of the created Graphic object for each image.
         """
 
         images = self.path.intermediateConjugates()
@@ -271,7 +280,7 @@ class FigureManager:
 
         return graphics
 
-    def graphicOfElement(self, element: Lens, showLabel=True) -> Graphic:
+    def graphicOfElement(self, element: Lens, showLabel=True) -> MatplotlibGraphic:
         if not element.surfaces:
             return MatplotlibGraphic([])
 
@@ -281,7 +290,7 @@ class FigureManager:
         else:
             return self.graphicOfSurfaces(element, showLabel=showLabel)
 
-    def graphicOfThinLens(self, element, showLabel=True):
+    def graphicOfThinLens(self, element, showLabel=True) -> MatplotlibGraphic:
         components = []
         halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())
 
@@ -294,7 +303,7 @@ class FigureManager:
         label = element.label if showLabel else None
         return MatplotlibGraphic(components, label=label)
 
-    def graphicOfSurfaces(self, element, showLabel=True):
+    def graphicOfSurfaces(self, element, showLabel=True) -> MatplotlibGraphic:
         components = []
         halfHeight = element.displayHalfHeight()
 

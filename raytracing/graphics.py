@@ -198,7 +198,6 @@ class MatplotlibGraphic(Graphic):
         return xScale, yScale
 
 
-
 class SurfacePairPatch(patches.PathPatch):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
         self.surfaceA = surfaceA
