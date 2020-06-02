@@ -109,6 +109,9 @@ class FigureManager:
             if graphic.hasLabel:
                 graphic.label.resetPosition()
 
+        for label in self.labels:
+            label.resetPosition()
+
     def getRenderedLabels(self) -> List[Label]:
         """List of labels rendered inside the current display."""
         labels = []
@@ -116,6 +119,8 @@ class FigureManager:
             if graphic.hasLabel:
                 if graphic.label.isRenderedOn(self.figure):
                     labels.append(graphic.label)
+
+        labels.extend(self.labels)
         return labels
 
     def fixLabelOverlaps(self, maxIteration: int = 5):
