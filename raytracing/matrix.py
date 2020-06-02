@@ -862,7 +862,7 @@ class Matrix(object):
         >>> print('hasPower:' , M2.hasPower)
         hasPower: False
         """
-        return abs(self.C) < Matrix.__epsilon__
+        return abs(self.C) > Matrix.__epsilon__
 
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
