@@ -12,12 +12,14 @@ class GaussianBeam(object):
 
     def __init__(self, q:complex=None, w:float=None, R:float=float("+Inf"), n:float=1.0, wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
+        if q is not None and w is not None:
+            raise ValueError("Please only specify one of the two: 'q' or 'w'. Choosing q or w is ambiguous.")
         if q is not None:
             self.q = q
         elif w is not None:
             self.q = 1/( 1.0/R - complex(0,1)*wavelength/n/(math.pi*w*w))
         else:
-            self.q = None 
+            raise ValueError("Please specify 'q' or 'w'.") 
 
         self.wavelength = wavelength
         
