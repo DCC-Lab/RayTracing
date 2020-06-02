@@ -1,6 +1,6 @@
 import unittest
 import envtest  # modifies path  # fixme: requires path to /tests
-from raytracing.drawing import Drawing, ArrowPatch, StopPatch
+from raytracing.drawing import Graphic, ArrowPatch, StopPatch
 import matplotlib.pyplot as plt
 
 # FIXME: Temporary display tests
@@ -10,7 +10,7 @@ class TestDrawing(unittest.TestCase):
     def testLensDrawing(self):
         arrowUp = ArrowPatch(dy=5)
         arrowDown = ArrowPatch(dy=-5)
-        drawings = [Drawing(arrowUp, arrowDown, x=8), Drawing(ArrowPatch(dy=5), x=0)]
+        drawings = [Graphic(arrowUp, arrowDown, x=8), Graphic(ArrowPatch(dy=5), x=0)]
 
         fig, axes = plt.subplots(figsize=(10, 7))
 
@@ -35,7 +35,7 @@ class TestDrawing(unittest.TestCase):
                       StopPatch(y=halfHeight),
                       StopPatch(y=-halfHeight)]
 
-        drawing = Drawing(*components, x=8, label="Nada")
+        drawing = Graphic(*components, x=8, label="Nada")
 
         fig, axes = plt.subplots(figsize=(10, 7))
         plt.ylim(-10, 10)
@@ -52,7 +52,7 @@ class TestDrawing(unittest.TestCase):
         components = [StopPatch(y=halfHeight, width=1),
                       StopPatch(y=-halfHeight, width=1)]
 
-        drawing = Drawing(*components, x=8, label="Nada", fixedWidth=True)
+        drawing = Graphic(*components, x=8, label="Nada", fixedWidth=True)
 
         fig, axes = plt.subplots(figsize=(10, 7))
         plt.ylim(-10, 10)

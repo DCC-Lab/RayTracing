@@ -14,7 +14,7 @@ import numpy as np
 import math
 import warnings
 
-from raytracing.drawing import Drawing
+from raytracing.graphics import Graphic
 
 
 def warningLineFormat(message, category, filename, lineno, line=None):
@@ -1692,14 +1692,14 @@ class Lens(Matrix):
         """
         return [SphericalInterface(R=100), SphericalInterface(R=-100)]
 
-    def drawing(self, minHeight: float = None) -> Drawing:
+    def drawing(self, minHeight: float = None) -> Graphic:
         """ The drawing for the lens. Centered at (0, 0).
 
         Other Parameters:
             minHeight (:obj:`float`, optional): A minimum height used for infinite lens.
 
         Returns:
-            Drawing: The created Drawing object for the lens.
+            Graphic: The created Drawing object for the lens.
 
         """
         halfHeight = self.displayHalfHeight(minSize=minHeight)
@@ -1718,7 +1718,7 @@ class Lens(Matrix):
             head_length=arrowHeadHeight, head_width=arrowHeadWidth,
             length_includes_head=True)
 
-        return Drawing(arrowUp, arrowDown)
+        return Graphic(arrowUp, arrowDown)
 
     def drawAt(self, z, axes, showLabels=False):
         """ Draw a thin lens at z

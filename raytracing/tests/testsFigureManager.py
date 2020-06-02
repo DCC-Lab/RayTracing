@@ -2,7 +2,7 @@ import unittest
 import envtest  # modifies path  # fixme: requires path to /tests
 from raytracing import *
 from raytracing.figureManager import FigureManager  # todo: append init
-from raytracing.drawing import *
+from raytracing.graphics import *
 
 # FIXME: Temporary display tests
 

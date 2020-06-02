@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import sys
 import itertools
-from raytracing.drawing import *
+from raytracing.graphics import *
 from raytracing.interface import *
 from raytracing import *
 
@@ -15,7 +15,7 @@ class FigureManager:
         self.style = style  # ['publication', 'presentation', 'teaching']
         self.outputFormats = ['pdf', 'png', 'screen']
 
-        self.drawings = []
+        self.graphics = []
         self.createFigure(comments=comments, title=title)
 
     def createFigure(self, comments=None, title=None):
@@ -34,19 +34,19 @@ class FigureManager:
 
         Parameters
         ----------
-            dataObjects: Variable number of Drawing or plt.Line2D objects
+            dataObjects: Variable number of Graphic or plt.Line2D objects
         """
         dataType = type([*dataObjects][0])
         if dataType is plt.Line2D:
             self.addLine(*dataObjects)
-        elif dataType is Drawing:
+        elif dataType is Graphic:
             self.addDrawing(*dataObjects)
         else:
             raise ValueError("Data type not supported.")
 
-    def addDrawing(self, *drawings: Drawing):
-        for drawing in [*drawings]:
-            self.drawings.append(drawing)
+    def addDrawing(self, *graphics: Graphic):
+        for graphic in [*graphics]:
+            self.graphics.append(graphic)
 
     def addLine(self, *lines: plt.Line2D):
         for line in [*lines]:
@@ -59,8 +59,8 @@ class FigureManager:
                        fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
 
     def draw(self):
-        for drawing in self.drawings:
-            drawing.applyTo(self.axes)
+        for graphic in self.graphics:
+            graphic.applyTo(self.axes)
 
         self.updateDisplayRange()
         self.update()
@@ -69,21 +69,21 @@ class FigureManager:
         self.update()
 
     def updateDisplayRange(self):
-        """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all drawings."""
+        """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all graphics."""
         halfHeight = 0
 
-        for drawing in self.drawings:
-            if drawing.halfHeight() > halfHeight:
-                halfHeight = drawing.halfHeight()
+        for graphic in self.graphics:
+            if graphic.halfHeight() > halfHeight:
+                halfHeight = graphic.halfHeight()
 
         self.axes.autoscale()
         self.axes.set_ylim(-halfHeight * 1.5, halfHeight * 1.5)
 
     def update(self):
-        """Update all figure drawings to properly rescale their dimensions with the display range.
+        """Update all figure graphics to properly rescale their dimensions with the display range.
         Fix overlapping labels if any. """
-        for drawing in self.drawings:
-            drawing.update()
+        for graphic in self.graphics:
+            graphic.update()
 
         self.resetLabelOffsets()
         self.fixLabelOverlaps()
@@ -93,17 +93,17 @@ class FigureManager:
 
         Used with a zoom callback to properly replace the labels.
         """
-        for drawing in self.drawings:
-            if drawing.hasLabel:
-                drawing.label.resetPosition()
+        for graphic in self.graphics:
+            if graphic.hasLabel:
+                graphic.label.resetPosition()
 
     def getRenderedLabels(self) -> List[Label]:
         """List of labels rendered inside the current display."""
         labels = []
-        for drawing in self.drawings:
-            if drawing.hasLabel:
-                if drawing.label.isRenderedOn(self.figure):
-                    labels.append(drawing.label)
+        for graphic in self.graphics:
+            if graphic.hasLabel:
+                if graphic.label.isRenderedOn(self.figure):
+                    labels.append(graphic.label)
         return labels
 
     def fixLabelOverlaps(self, maxIteration: int = 5):
@@ -225,63 +225,63 @@ class FigureManager:
 
     def createDrawings(self):
         if self.path.showObject:
-            self.add(self.drawingOfObject())
+            self.add(self.graphicOfObject())
 
         if self.path.showImages:
-            self.add(*self.drawingsOfImages())
+            self.add(*self.graphicsOfImages())
 
         z = 0
         for element in self.path.elements:
             if element.surfaces:
-                drawing = self.drawingOfElement(element)
-                drawing.x = z
-                self.add(drawing)
+                graphic = self.graphicOfElement(element)
+                graphic.x = z
+                self.add(graphic)
             z += element.L
 
         # TODO: entrancePupil, POI, stop labels
 
-    def drawingOfObject(self) -> Drawing:
-        """ The drawing of the object.
+    def graphicOfObject(self) -> Graphic:
+        """ The graphic of the object.
 
         Returns:
-            Drawing: The created Drawing object.
+            Graphic: The created Drawing object.
         """
         arrow = ArrowPatch(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
-        drawing = Drawing([arrow], x=self.path.objectPosition)
+        graphic = Graphic([arrow], x=self.path.objectPosition)
 
-        return drawing
+        return graphic
 
-    def drawingsOfImages(self) -> List[Drawing]:
-        """ The drawing of all the images (real and virtual).
+    def graphicsOfImages(self) -> List[Graphic]:
+        """ The graphic of all the images (real and virtual).
 
         Returns:
-            List[Drawing]: A list of the created Drawing object for each image.
+            List[Graphic]: A list of the created Drawing object for each image.
         """
 
         images = self.path.intermediateConjugates()
 
-        drawings = []
+        graphics = []
         for (imagePosition, magnification) in images:
             imageHeight = magnification * self.path.objectHeight
 
             arrow = ArrowPatch(dy=imageHeight, y=-imageHeight/2, color='r')
-            drawing = Drawing([arrow], x=imagePosition)
+            graphic = Graphic([arrow], x=imagePosition)
 
-            drawings.append(drawing)
+            graphics.append(graphic)
 
-        return drawings
+        return graphics
 
-    def drawingOfElement(self, element: Lens, showLabel=True) -> Drawing:
+    def graphicOfElement(self, element: Lens, showLabel=True) -> Graphic:
         if not element.surfaces:
-            return Drawing([])
+            return Graphic([])
 
         if type(element) is Lens:
-            return self.drawingOfThinLens(element, showLabel=showLabel)
+            return self.graphicOfThinLens(element, showLabel=showLabel)
 
         else:
-            return self.drawingOfSurfaces(element, showLabel=showLabel)
+            return self.graphicOfSurfaces(element, showLabel=showLabel)
 
-    def drawingOfThinLens(self, element, showLabel=True):
+    def graphicOfThinLens(self, element, showLabel=True):
         components = []
         halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())
 
@@ -292,9 +292,9 @@ class FigureManager:
             components.append(AperturePatch(y=-halfHeight, width=element.L))
 
         label = element.label if showLabel else None
-        return Drawing(components, label=label)
+        return Graphic(components, label=label)
 
-    def drawingOfSurfaces(self, element, showLabel=True):
+    def graphicOfSurfaces(self, element, showLabel=True):
         components = []
         halfHeight = element.displayHalfHeight()
 
@@ -311,7 +311,7 @@ class FigureManager:
             components.append(AperturePatch(y=-halfHeight, x=p.corners[0], width=outerWidth))
 
         label = element.label if showLabel else None
-        return Drawing(components, label=label, fixedWidth=True)
+        return Graphic(components, label=label, fixedWidth=True)
 
     def maxRayHeight(self):
         # FIXME: need a more robust reference to rayTraces... and maybe maxRayHeightAt(y) instead?

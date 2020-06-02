@@ -67,7 +67,7 @@ class TestTransforms(unittest.TestCase):
         if self.SHOWPLOT:
             axes.set_ylim(-10, 10)
             axes.set_xlim(0, 20)
-            plt.title("Drawing at x=5 + Translate x=+10")
+            plt.title("Graphic at x=5 + Translate x=+10")
             plt.show()
 
     def testTranslateOverwrite(self):
@@ -90,7 +90,7 @@ class TestTransforms(unittest.TestCase):
         if self.SHOWPLOT:
             axes.set_ylim(-10, 10)
             axes.set_xlim(0, 20)
-            plt.title("Drawing at x=5 + Translate x=+15 (Overwrites previous +10)")
+            plt.title("Graphic at x=5 + Translate x=+15 (Overwrites previous +10)")
             plt.show()
 
     def testCenterOfDrawingNotUpdatedAfterTranslate(self):
@@ -130,7 +130,7 @@ class TestTransforms(unittest.TestCase):
         if self.SHOWPLOT:
             axes.set_ylim(-10, 10)
             axes.set_xlim(-10, 10)
-            plt.title("Scale Transform\nDrawing is (0.1 x 10) + Scale (2 x 2)")
+            plt.title("Scale Transform\nGraphic is (0.1 x 10) + Scale (2 x 2)")
             plt.show()
 
     def testScaleTransformAlsoScalesPosition(self):
@@ -150,7 +150,7 @@ class TestTransforms(unittest.TestCase):
         if self.SHOWPLOT:
             axes.set_ylim(-10, 10)
             axes.set_xlim(0, 20)
-            plt.title("Scale Transform\nDrawing is (0.1 x 10) + Scale (2 x 2)")
+            plt.title("Scale Transform\nGraphic is (0.1 x 10) + Scale (2 x 2)")
             plt.show()
 
     def testScaleTransformAlsoScalesPositionAfterTranslate(self):
@@ -171,7 +171,7 @@ class TestTransforms(unittest.TestCase):
         if self.SHOWPLOT:
             axes.set_ylim(-10, 10)
             axes.set_xlim(0, 20)
-            plt.title("Scale Transform\nDrawing is (0.1 x 10) at x=0 + Translate x=10 + Scale (2 x 2)")
+            plt.title("Scale Transform\nGraphic is (0.1 x 10) at x=0 + Translate x=10 + Scale (2 x 2)")
             plt.show()
 
     def testScaleTransformDoesNotScalePositionBeforeTranslate(self):
@@ -192,7 +192,7 @@ class TestTransforms(unittest.TestCase):
         if self.SHOWPLOT:
             axes.set_ylim(-10, 10)
             axes.set_xlim(0, 20)
-            plt.title("Scale Transform\nDrawing is (0.1 x 10) at x=0 + Scale (2 x 2) + Translate x=10")
+            plt.title("Scale Transform\nGraphic is (0.1 x 10) at x=0 + Scale (2 x 2) + Translate x=10")
             plt.show()
 
     def testScaleTransformOnTranslatedDrawing(self):
@@ -220,6 +220,6 @@ class TestTransforms(unittest.TestCase):
         if self.SHOWPLOT:
             axes.set_ylim(-10, 10)
             axes.set_xlim(0, 20)
-            plt.title("Scale Transform after translation requires a reset\nDrawing is (0.1 x 10) at x=0 + Scale (2 x "
+            plt.title("Scale Transform after translation requires a reset\nGraphic is (0.1 x 10) at x=0 + Scale (2 x "
                       "2) + Translate x=10")
             plt.show()

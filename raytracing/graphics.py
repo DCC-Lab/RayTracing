@@ -7,36 +7,36 @@ import numpy as np
 import math
 
 
-class Drawing:
-    """ The drawing of any element.
+class Graphic:
+    """ The graphic of any element.
 
-    A Drawing can be a composition of different drawing components (ex.: A lens drawing is two arrows).
+    A Graphic can be a composition of different graphic components (ex.: A lens graphic is two arrows).
 
     Args:
-        *components: The required drawing components (of type `matplotlib.patches.Patch`) that define the Drawing.
+        *components: The required graphic components (of type `matplotlib.patches.Patch`) that define the Graphic.
 
-            These drawing patches should be instantiated at x = 0 to allow for proper positioning and scaling.
+            These graphic patches should be instantiated at x = 0 to allow for proper positioning and scaling.
 
     Examples:
-        Create a Drawing from multiple patches
+        Create a Graphic from multiple patches
 
         >>> arrowUp = ArrowPatch(dy=5)
         >>> arrowDown = ArrowPatch(dy=-5)
-        >>> lensDrawing = Drawing([arrowUp, arrowDown])
+        >>> lensGraphic = Graphic([arrowUp, arrowDown])
 
-        Apply the Drawing on a figure at x=10
+        Apply the Graphic on a figure at x=10
 
         >>> fig, axes = plt.subplots()
-        >>> lensDrawing.applyTo(axes, x=10)
+        >>> lensGraphic.applyTo(axes, x=10)
 
-        Take advantage of the auto-scaling feature by updating the Drawing after the figure's limits have changed
+        Take advantage of the auto-scaling feature by updating the Graphic after the figure's limits have changed
         (on a zoom callback)
 
-        >>> lensDrawing.update()
+        >>> lensGraphic.update()
 
-        Update the Drawing's position
+        Update the Graphic's position
 
-        >>> lensDrawing.update(x=5)
+        >>> lensGraphic.update(x=5)
 
     """
 
@@ -60,11 +60,11 @@ class Drawing:
         return True
 
     def applyTo(self, axes: plt.Axes, x: float = None, y: float = None):
-        """ Apply the Drawing on a figure at a given position (x, y) with auto-scale.
+        """ Apply the Graphic on a figure at a given position (x, y) with auto-scale.
 
         Args:
-            axes (matplotlib.pyplot.Axes): The figure's Axes on which to apply the drawing.
-            x, y (:obj:`float`, optional): The x and y position in data units where to apply the drawing.
+            axes (matplotlib.pyplot.Axes): The figure's Axes on which to apply the graphic.
+            x, y (:obj:`float`, optional): The x and y position in data units where to apply the graphic.
                 Defaults to (0, 0).
 
         """
@@ -84,10 +84,10 @@ class Drawing:
             self.axes.add_artist(self.label)
 
     def update(self, x: float = None, y: float = None):
-        """ Update the drawing's position and scaling.
+        """ Update the graphic's position and scaling.
 
         Args:
-            x, y (:obj:`float`, optional): The x and y position where to apply the drawing.
+            x, y (:obj:`float`, optional): The x and y position where to apply the graphic.
                 Defaults to the originally applied position.
 
         """
@@ -128,7 +128,7 @@ class Drawing:
         return xScale, yScale
 
     def halfHeight(self) -> float:
-        """ Maximum absolute Y-value of the drawing (not affected by the transforms).
+        """ Maximum absolute Y-value of the graphic (not affected by the transforms).
         Used internally to auto-scale. """
         halfHeight = 0
         for component in self.components:
@@ -224,15 +224,15 @@ class SurfacePairPatch(patches.PathPatch):
 
 class ArrowPatch(patches.FancyArrow):
     """Define a FancyArrow patch with default RayTracing style created at (0,0).
-    Use with Drawing class to set position and scaling.
+    Use with Graphic class to set position and scaling.
 
     Examples
     --------
         Create a black arrow of height +5
         >>> arrow = ArrowPatch(dy=5)
 
-        Set position and label by creating a Drawing object
-        >>> drawing = Drawing([arrow], x=10, label='Image')
+        Set position and label by creating a Graphic object
+        >>> graphic = Graphic([arrow], x=10, label='Image')
     """
 
     def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
@@ -244,15 +244,15 @@ class ArrowPatch(patches.FancyArrow):
 
 class DoubleArrowPatch(patches.PathPatch):
     """Define a thin double arrow patch with default RayTracing style created at (0,0).
-    Use with Drawing class to set position and scaling.
+    Use with Graphic class to set position and scaling.
 
     Examples
     --------
         Create a black double arrow with a total height of 10
         >>> arrow = DoubleArrowPatch(height=10)
 
-        Set position and label by creating a Drawing object
-        >>> drawing = Drawing([arrow], x=5, label='Lens')
+        Set position and label by creating a Graphic object
+        >>> graphic = Graphic([arrow], x=5, label='Lens')
 
     """
 
@@ -282,7 +282,7 @@ class DoubleArrowPatch(patches.PathPatch):
 
 class AperturePatch(patches.Polygon):
     """Define a Polygon patch with default RayTracing style used to draw the aperture.
-    Use with Drawing class to set position and scaling.
+    Use with Graphic class to set position and scaling.
 
     Examples
     --------
@@ -294,8 +294,8 @@ class AperturePatch(patches.Polygon):
         >>> apertureAbove = AperturePatch(y=halfHeight, width=0.1)
         >>> apertureBelow = AperturePatch(y=-halfHeight, width=0.1)
 
-        Create thick lens Drawing with a fixed width (autoScale Off)
-        >>> drawing = Drawing([thickLens, apertureAbove, apertureBelow], fixedWidth=True)
+        Create thick lens Graphic with a fixed width (autoScale Off)
+        >>> graphic = Graphic([thickLens, apertureAbove, apertureBelow], fixedWidth=True)
     """
 
     def __init__(self, y: float, x=0.0, width=0.01):
