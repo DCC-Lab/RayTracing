@@ -152,7 +152,6 @@ class SurfacePairPatch(patches.PathPatch):
         self.surfaceB = surfaceB
         self.halfHeight = halfHeight
         self.x = x
-        self.xy = None
         self.corners = None
 
         super(SurfacePairPatch, self).__init__(self.path(),
@@ -167,7 +166,6 @@ class SurfacePairPatch(patches.PathPatch):
         v1 = self.x
 
         if self.surfaceA.R == float("+inf"):
-            self.xy = [(v1, -h), (v1, h)]
             return [(v1, -h), (v1, h)], [Path.MOVETO, Path.LINETO]
 
         phi1 = math.asin(h / abs(R1))
@@ -180,7 +178,6 @@ class SurfacePairPatch(patches.PathPatch):
         actions = [Path.MOVETO, Path.CURVE3, Path.CURVE3,
                    Path.LINETO, Path.CURVE3, Path.CURVE3]
 
-        self.xy = [(corner1, -h), (v1, 0), (corner1, h)]
         self.corners = [corner1]
 
         if self.surfaceA.L == 0:  # thin lens exception
@@ -195,7 +192,6 @@ class SurfacePairPatch(patches.PathPatch):
         v2 = self.x + self.surfaceA.L
 
         if self.surfaceB.R == float("+inf"):
-            self.xy.extend([(v2, h), (v2, -h)])
             return [(v2, h), (v2, -h), (self.corners[0], -h)], [Path.LINETO, Path.LINETO, Path.LINETO]
 
         phi2 = math.asin(h / abs(R2))
@@ -209,7 +205,6 @@ class SurfacePairPatch(patches.PathPatch):
         actions = [Path.LINETO, Path.CURVE3, Path.CURVE3,
                    Path.LINETO, Path.CURVE3, Path.CURVE3, Path.LINETO]
 
-        self.xy.extend([(corner2, h), (v2, 0), (corner2, -h)])
         self.corners.append(corner2)
 
         return coords, actions
@@ -224,7 +219,7 @@ class SurfacePairPatch(patches.PathPatch):
         return path
 
     def get_xy(self):
-        return self.xy
+        return self.get_path().vertices
 
 
 class ArrowPatch(patches.FancyArrow):
