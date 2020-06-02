@@ -263,7 +263,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
             os.remove(self.fileName)  # We remove the test file
 
     def testLoadFileDoesntExists(self):
-        file = r"this file\doesn't\exists"
+        file = r"this file\doesn't\exist"
         rays = Rays()
         with self.assertRaises(FileNotFoundError):
             rays.load(file)
