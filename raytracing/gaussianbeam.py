@@ -4,10 +4,31 @@ import cmath
 class GaussianBeam(object):
     """A gaussian laser beam using the ABCD formalism for propagation of complex radius of curvature q.
 
-    w is the 1/e beam size in electric field extracted from q
-    R is the radius of curvature (positive means diverging) extracted from q
-    n is index in which the beam is. Necessary to compute beam size.
-    wavelength must be in the same units as z.
+    Parameters
+    ----------
+    q : complex
+        The complex beam parameter (default=None)
+    w : float
+        The 1/e beam size in electric field extracted from q. (default=None)
+    R : float
+        The radius of curvature (positive means diverging) extracted from q. (default=+Inf)
+    n : float
+        The index of refraction in which the beam is. (default=1.0)
+    wavelength : float
+        The wave length of the laser beam. This parameter is necessary to compute the beam size (default=632.8e-6)
+    z : float
+        The axial distance from the waist (default=0)
+
+    Attributes
+    ----------
+    isClipped : bool
+        The formalism of gaussian beams does not consider any apertures: the beam
+        remains gaussian no matter what.  This variable will indicate if the beam
+        diameter was too close to the apertures in the system.
+
+    Notes
+    -----
+    wavelength and z must be in the same units.
     """
 
     def __init__(self, q:complex=None, w:float=None, R:float=float("+Inf"), n:float=1.0, wavelength=632.8e-6, z=0):
@@ -28,6 +49,9 @@ class GaussianBeam(object):
 
     @property
     def R(self):
+        """
+        The radius of curvature (positive means diverging) extracted from q.
+        """
         invQReal = (1/self.q).real
         if invQReal == 0:
             return float("+Inf")
@@ -36,10 +60,20 @@ class GaussianBeam(object):
 
     @property
     def isFinite(self):
+        """
+        Using the complex radius, the imaginary part of -1/q is the beam size.
+        If this value is negative, the calculation will yield a exp(x**2/w**2)
+        which grows exponentially instead of being a gaussian.  Hence, this
+        is not a finite and reasonable complex radius.  This is used for
+        resonator and cavity calculations to discard unphysical solutions.
+        """
         return (-1/self.q).imag > 0
     
     @property
     def w(self):
+        """
+        The 1/e beam size in electric field extracted from q.
+        """
         qInv = (-1/self.q).imag
         if qInv > 0:
             return math.sqrt( self.wavelength/self.n/(math.pi * qInv))
@@ -48,6 +82,9 @@ class GaussianBeam(object):
 
     @property
     def wo(self):
+        """
+        The 1/e beam size in electric field extracted from q at the waist of the beam.
+        """
         if self.zo > 0:
             return math.sqrt( self.zo * self.wavelength/math.pi )
         else:
@@ -55,22 +92,35 @@ class GaussianBeam(object):
 
     @property
     def waist(self):
+        """
+        The same as the wo.
+        """
         return self.wo
 
     @property
     def waistPosition(self):
+        """The position of the waist of the beam."""
         return -self.q.real
 
     @property
     def zo(self):
+        """
+        The same as rayleighRange.
+        """
         return float(self.q.imag)
 
     @property
     def confocalParameter(self):
+        """
+        The same as rayleighRange.
+        """
         return self.zo
 
     @property
     def rayleighRange(self):
+        """
+        Returns the rayleigh range of the beam.
+        """
         return self.zo
 
     def __str__(self):
