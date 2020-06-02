@@ -8,7 +8,91 @@ import math
 
 
 class Graphic:
-    """ The graphic of any element.
+    """ The base class that defines the graphic of any element.
+
+    A Graphic can be a composition of different graphic components (ex.: A lens graphic is two arrows).
+    Do not use directly. Use a child class with the desired backend.
+
+    Args:
+        *components: The required graphic components that define the Graphic.
+
+            These graphic patches should be instantiated at x = 0 to allow for proper positioning and scaling.
+
+    """
+
+    def __init__(self, components, label: str = None,
+                 x=0, y=0, fixedWidth=False):
+        self.components = components
+        self.label = None
+
+        self.axes = None
+        self.x = x
+        self.y = y
+        self.useAutoScale = not fixedWidth
+
+        if label is not None:
+            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight() * 1.2)
+        # fixme: label is still a matplotlib patch
+
+    @property
+    def hasLabel(self) -> bool:
+        if self.label is None:
+            return False
+        return True
+
+    def applyTo(self, renderer, x: float = None, y: float = None):
+        """ Apply the Graphic on a figure at a given position (x, y) with auto-scale.
+
+        Overwritten for specific backend.
+
+        Args:
+            x, y (:obj:`float`, optional): The x and y position in data units where to apply the graphic.
+                Defaults to (0, 0).
+
+        """
+
+        if x is not None:
+            self.x = x
+        if y is not None:
+            self.y = y
+
+    def update(self, x: float = None, y: float = None):
+        """ Update the graphic's position and scaling.
+
+        Overwritten for specific backend.
+
+        Args:
+            x, y (:obj:`float`, optional): The x and y position where to apply the graphic.
+                Defaults to the originally applied position.
+
+        """
+
+        if x is not None:
+            self.x = x
+        if y is not None:
+            self.y = y
+
+    def halfHeight(self) -> float:
+        """ Maximum absolute Y-value of the graphic (not affected by the transforms).
+        Used internally to auto-scale. """
+        halfHeight = 0
+        for component in self.components:
+            componentMaxY = np.max(np.abs(component.get_xy()), axis=0)[1]
+            if componentMaxY > halfHeight:
+                halfHeight = componentMaxY
+        return halfHeight
+
+    @property
+    def centroid(self):
+        xy = []
+        for component in self.components:
+            xy.extend(component.get_xy())
+
+        return np.mean(xy, axis=0)
+
+
+class MatplotlibGraphic(Graphic):
+    """ The graphic of any element using a Matplotlib backend.
 
     A Graphic can be a composition of different graphic components (ex.: A lens graphic is two arrows).
 
@@ -42,22 +126,8 @@ class Graphic:
 
     def __init__(self, components: List[patches.Patch], label: str = None,
                  x=0, y=0, fixedWidth=False):
-        self.components = components
-        self.label = None
 
-        self.axes = None
-        self.x = x
-        self.y = y
-        self.useAutoScale = not fixedWidth
-
-        if label is not None:
-            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight() * 1.2)
-
-    @property
-    def hasLabel(self) -> bool:
-        if self.label is None:
-            return False
-        return True
+        super(MatplotlibGraphic, self).__init__(components, label, x, y, fixedWidth)
 
     def applyTo(self, axes: plt.Axes, x: float = None, y: float = None):
         """ Apply the Graphic on a figure at a given position (x, y) with auto-scale.
@@ -127,23 +197,6 @@ class Graphic:
 
         return xScale, yScale
 
-    def halfHeight(self) -> float:
-        """ Maximum absolute Y-value of the graphic (not affected by the transforms).
-        Used internally to auto-scale. """
-        halfHeight = 0
-        for component in self.components:
-            componentMaxY = np.max(np.abs(component.get_xy()), axis=0)[1]
-            if componentMaxY > halfHeight:
-                halfHeight = componentMaxY
-        return halfHeight
-
-    @property
-    def centroid(self):
-        xy = []
-        for component in self.components:
-            xy.extend(component.get_xy())
-
-        return np.mean(xy, axis=0)
 
 
 class SurfacePairPatch(patches.PathPatch):

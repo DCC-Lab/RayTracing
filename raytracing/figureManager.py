@@ -39,7 +39,7 @@ class FigureManager:
         dataType = type([*dataObjects][0])
         if dataType is plt.Line2D:
             self.addLine(*dataObjects)
-        elif dataType is Graphic:
+        elif dataType is MatplotlibGraphic:
             self.addDrawing(*dataObjects)
         else:
             raise ValueError("Data type not supported.")
@@ -247,7 +247,7 @@ class FigureManager:
             Graphic: The created Drawing object.
         """
         arrow = ArrowPatch(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
-        graphic = Graphic([arrow], x=self.path.objectPosition)
+        graphic = MatplotlibGraphic([arrow], x=self.path.objectPosition)
 
         return graphic
 
@@ -265,7 +265,7 @@ class FigureManager:
             imageHeight = magnification * self.path.objectHeight
 
             arrow = ArrowPatch(dy=imageHeight, y=-imageHeight/2, color='r')
-            graphic = Graphic([arrow], x=imagePosition)
+            graphic = MatplotlibGraphic([arrow], x=imagePosition)
 
             graphics.append(graphic)
 
@@ -273,7 +273,7 @@ class FigureManager:
 
     def graphicOfElement(self, element: Lens, showLabel=True) -> Graphic:
         if not element.surfaces:
-            return Graphic([])
+            return MatplotlibGraphic([])
 
         if type(element) is Lens:
             return self.graphicOfThinLens(element, showLabel=showLabel)
@@ -292,7 +292,7 @@ class FigureManager:
             components.append(AperturePatch(y=-halfHeight, width=element.L))
 
         label = element.label if showLabel else None
-        return Graphic(components, label=label)
+        return MatplotlibGraphic(components, label=label)
 
     def graphicOfSurfaces(self, element, showLabel=True):
         components = []
@@ -311,7 +311,7 @@ class FigureManager:
             components.append(AperturePatch(y=-halfHeight, x=p.corners[0], width=outerWidth))
 
         label = element.label if showLabel else None
-        return Graphic(components, label=label, fixedWidth=True)
+        return MatplotlibGraphic(components, label=label, fixedWidth=True)
 
     def maxRayHeight(self):
         # FIXME: need a more robust reference to rayTraces... and maybe maxRayHeightAt(y) instead?
