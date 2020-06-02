@@ -242,6 +242,44 @@ class ArrowPatch(patches.FancyArrow):
                                          head_width=width * 5, head_length=abs(dy) * headLengthRatio)
 
 
+class DoubleArrowPatch(patches.PathPatch):
+    """Define a thin double arrow patch with default RayTracing style created at (0,0).
+    Use with Drawing class to set position and scaling.
+
+    Examples
+    --------
+        Create a black double arrow with a total height of 10
+        >>> arrow = DoubleArrowPatch(height=10)
+
+        Set position and label by creating a Drawing object
+        >>> drawing = Drawing([arrow], x=5, label='Lens')
+
+    """
+
+    def __init__(self, height: float, color='k'):
+        self.y = height / 2
+
+        super(DoubleArrowPatch, self).__init__(self.path(), color=color, fill=False, linewidth=1.5)
+
+    def path(self):
+        h = self.y
+        dy = h * 0.2
+        dx = 0.008
+        Path = mpath.Path
+
+        coords = [(0, -h), (0, h),
+                  (-dx, h-dy), (0, h), (dx, h-dy),
+                  (-dx, -h+dy), (0, -h), (dx, -h+dy)]
+        actions = [Path.MOVETO, Path.LINETO,
+                   Path.MOVETO, Path.LINETO, Path.LINETO,
+                   Path.MOVETO, Path.LINETO, Path.LINETO]
+
+        return Path(coords, actions)
+
+    def get_xy(self):
+        return self.get_path().vertices
+
+
 class AperturePatch(patches.Polygon):
     """Define a Polygon patch with default RayTracing style used to draw the aperture.
     Use with Drawing class to set position and scaling.

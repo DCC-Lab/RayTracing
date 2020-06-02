@@ -34,7 +34,7 @@ class FigureManager:
 
         Parameters
         ----------
-            dataObjects:
+            dataObjects: Variable number of Drawing or plt.Line2D objects
         """
         dataType = type([*dataObjects][0])
         if dataType is plt.Line2D:
@@ -285,8 +285,7 @@ class FigureManager:
         components = []
         halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())
 
-        components.append(ArrowPatch(dy=halfHeight, headLengthRatio=0.2))
-        components.append(ArrowPatch(dy=-halfHeight, headLengthRatio=0.2))
+        components.append(DoubleArrowPatch(height=halfHeight*2))
 
         if element.hasFiniteApertureDiameter():
             components.append(AperturePatch(y=halfHeight, width=element.L))

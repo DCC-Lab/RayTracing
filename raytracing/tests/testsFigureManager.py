@@ -13,6 +13,7 @@ class TestFigureManager(unittest.TestCase):
         # path.append(Space(d=40))
         # path.append(Lens(f=5))
         # path.append(Space(d=10))
+        # path.display(onlyChiefAndMarginalRays=True)
         # path.newDisplay()
 
         path = ImagingPath()
