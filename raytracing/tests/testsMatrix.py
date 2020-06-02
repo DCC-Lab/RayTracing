@@ -405,22 +405,23 @@ class TestMatrix(unittest.TestCase):
         m = Matrix()
         self.assertTupleEqual(m.focusPositions(0), (None, None))
 
-    def testFiniteForwardConjugate(self):
-        m1 = Lens(f=5) * Space(d=10)
+    def testFiniteForwardConjugate_1(self):
+        m1 = Matrix(1, 0, -1 / 5, 1) * Matrix(1, 10, 0, 1)
         (d, m2) = m1.forwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 10)
         self.assertEqual(m1.determinant, 1)
         self.assertEqual(m2.determinant, 1)
 
-        m1 = Space(d=5) * Lens(f=5) * Space(d=10)
+    def testFiniteForwardConjugates_2(self):
+        m1 = Matrix(1, 5, 0, 1) * Matrix(1, 0, -1 / 5, 1) * Matrix(1, 10, 0, 1)
         (d, m2) = m1.forwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 5)
         self.assertEqual(m2.determinant, 1)
 
     def testInfiniteForwardConjugate(self):
-        m1 = Lens(f=5) * Space(d=5)
+        m1 = Matrix(1, 0, -1 / 5, 1) * Matrix(1, 5, 0, 1)
         (d, m2) = m1.forwardConjugate()
         self.assertIsNone(m2)
         self.assertEqual(d, float("+inf"))
@@ -430,15 +431,16 @@ class TestMatrix(unittest.TestCase):
         m = Matrix(A=0)
         self.assertTupleEqual(m.backwardConjugate(), (float("+inf"), None))
 
-    def testFiniteBackConjugate(self):
-        m1 = Space(d=10) * Lens(f=5)
+    def testFiniteBackConjugate_1(self):
+        m1 = Matrix(1, 10, 0, 1) * Matrix(1, 0, -1 / 5, 1)
         (d, m2) = m1.backwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 10)
         self.assertEqual(m1.determinant, 1)
         self.assertEqual(m2.determinant, 1)
 
-        m1 = Space(d=10) * Lens(f=5) * Space(d=5)
+    def testFiniteBackConjugate_2(self):
+        m1 = Matrix(1, 10, 0, 1) * Matrix(1, 0, -1 / 5, 1) * Matrix(1, 5, 0, 1)
         (d, m2) = m1.backwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 5)
@@ -494,9 +496,9 @@ class TestMatrix(unittest.TestCase):
         minSize = 2
         self.assertEqual(m.displayHalfHeight(minSize), m.apertureDiameter / 2)
 
-        m.apertureDiameter = inf
+    def testDisplayHalfHeightInfiniteDiameter(self):
+        m = Matrix(apertureDiameter=inf)
         self.assertEqual(m.displayHalfHeight(), 4)
-
         self.assertEqual(m.displayHalfHeight(6), 6)
 
     def testAxesToDataScale(self):
