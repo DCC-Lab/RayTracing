@@ -235,3 +235,41 @@ class MatrixGroup(Matrix):
             self.iteration += 1
             return element
         raise StopIteration
+
+    def saveElements(self, filePath: str):
+        with open(filePath, "wb") as outfile:
+            pickle.Pickler(outfile).dump(self.elements)
+
+            # We save the data to disk using a module called Pickler
+            # Some asynchronous magic is happening here with Pickle
+            # and sometimes, access to files is wonky, especially
+            # when the files are very large.
+            # Make sure file exists
+            while not os.path.exists(filePath):
+                time.sleep(0.1)
+
+            oldSize = None
+            # Make sure file is not still being written to
+            while True:
+                try:
+                    currentSize = os.path.getsize(filePath)
+                    if currentSize == oldSize:
+                        break
+
+                    time.sleep(1)
+                    oldSize = currentSize
+                except:
+                    # Not possible, yet: sometimes we get here
+                    time.sleep(0.1)
+
+    def loadElements(self, filePath: str, append: bool = False):
+        with open(filePath, 'rb') as infile:
+            loadedMatrices = pickle.Unpickler(infile).load()
+            if not isinstance(loadedMatrices, collections.Iterable):
+                raise IOError(f"{filePath} does not contain an iterable of Matrix objects.")
+            if not all([isinstance(matrix, Matrix) for matrix in loadedMatrices]):
+                raise IOError(f"{filePath} must contain only Matrix objects.")
+            if append and self.elements is not None:
+                self.elements.extend(loadedMatrices)
+            else:
+                self.elements = loadedMatrices
