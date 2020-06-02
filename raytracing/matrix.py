@@ -846,7 +846,8 @@ class Matrix(object):
 
     @property
     def hasPower(self):
-        """ If True, then there is a non-null focal length because C!=0
+        """ If True, then there is a non-null focal length because C!=0. We compare to an epsilon value, because
+        computational errors can occur and lead to C being very small, but not 0.
 
         Examples
         --------
@@ -861,7 +862,7 @@ class Matrix(object):
         >>> print('hasPower:' , M2.hasPower)
         hasPower: False
         """
-        return self.C != 0
+        return abs(self.C) < Matrix.__epsilon__
 
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
