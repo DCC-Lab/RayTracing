@@ -339,10 +339,19 @@ class TestMatrix(unittest.TestCase):
         self.assertListEqual(m.pointsOfInterest(1), [])
 
     def testIsImaging(self):
-        m1 = Matrix(A=1, B=0, C=3, D=4)
-        self.assertTrue(m1.isImaging)
-        m2 = Matrix(A=1, B=1, C=3, D=4)
-        self.assertFalse(m2.isImaging)
+        m = Matrix(A=1, B=0, C=3, D=4)
+        self.assertTrue(m.isImaging)
+
+    def testIsNotImaging(self):
+        m = Matrix(A=1, B=1, C=3, D=4)
+        self.assertFalse(m.isImaging)
+
+    def testLagrangeInvariantSpace(self):
+        m = Space(d=10)
+        self.assertIsNotNone(m)
+        before = m.lagrangeInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        after = m.lagrangeInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        self.assertAlmostEqual(before, after)
 
     def testEffectiveFocalLengthsHasPower(self):
         m = Matrix(1, 2, 3, 4)
