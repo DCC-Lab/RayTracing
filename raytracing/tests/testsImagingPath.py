@@ -6,7 +6,7 @@ inf = float("+inf")
 
 
 class TestImagingPath(unittest.TestCase):
-    def testImagingPath(self):
+    def testImagingPathEmptyElements(self):
         path = ImagingPath()
         self.assertIsNotNone(path)
         self.assertListEqual(path.elements, [])
@@ -25,6 +25,7 @@ class TestImagingPath(unittest.TestCase):
         self.assertTrue(path.showPlanesAcrossPointsOfInterest)
         self.assertFalse(path.showEntrancePupil)
 
+    def testImagingPathWithElements(self):
         space = Space(10)
         tLens = ThickLens(1, 10, 20, 2)
         elements = [space, tLens]
@@ -35,6 +36,13 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath()
         self.assertTrue(path.objectHeight, 10)
 
+    def testSetObjectHeight(self):
+        path = ImagingPath()
+        path.objectHeight = 100
+        self.assertTrue(path.objectHeight, 100)
+
+    def testSetObjectHeightError(self):
+        path = ImagingPath()
         with self.assertRaises(ValueError):
             path.objectHeight = -0.1
 
@@ -86,11 +94,6 @@ class TestImagingPath(unittest.TestCase):
 
         self.assertEqual(path.displayRange(), largestDiameter)
 
-    @unittest.skip("Maybe will change")
-    def testDisplayRangeLargestDiameterBiggerThanObj(self):
-        path = ImagingPath(System4f(10, 10, 10, 20))
-        path.objectHeight = 1
-        print(path.displayRange())
 
     def testEntrancePupilAIs0(self):
         space = Space(2)
@@ -245,7 +248,6 @@ class TestImagingPath(unittest.TestCase):
         self.assertAlmostEqual(principalRay.y, 20, 2)
         self.assertAlmostEqual(principalRay.theta, -2, 3)
 
-
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
         self.assertIsNone(path.marginalRays())
@@ -327,7 +329,6 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath(System2f(10, 10))
         with self.assertRaises(ValueError):
             path.chiefRay()
-
 
 
 if __name__ == '__main__':
