@@ -56,9 +56,8 @@ class ImagingPath(MatrixGroup):
     showPlanesAcrossPointsOfInterest : bool
         If True, the planes across the points of interests will be shown (default=True)
 
-
-        Examples
-        --------
+    Examples
+    --------
         >>> from raytracing import *
         >>> path = ImagingPath() # define an imaging path
         >>> #set the desire properties
@@ -437,7 +436,7 @@ class ImagingPath(MatrixGroup):
         Returns
         -------
         fieldStop : (float,float)
-            the outpu is the (position, diameter) of the field stop.
+            the output is the (position, diameter) of the field stop.
             If there are no elements of finite diameter (i.e. all
             optical elements are infinite in diameters), then there
             is no field stop and no aperture stop in the system
@@ -520,7 +519,7 @@ class ImagingPath(MatrixGroup):
                     fieldStopDiameter = ray.apertureDiameter
                     break
 
-        return (fieldStopPosition, fieldStopDiameter)
+        return fieldStopPosition, fieldStopDiameter
 
     def fieldOfView(self):
         """The field of view is the maximum object height
@@ -678,7 +677,7 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def displayRange(self, axes=None):
+    def displayRange(self):
         """ We return the largest object in the ImagingPath for display purposes.
 
         The object is considered only "half" because it starts on axis and goes up.
@@ -744,7 +743,7 @@ class ImagingPath(MatrixGroup):
          """
 
         axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
+        axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
 
         note1 = ""
         note2 = ""
@@ -842,7 +841,7 @@ class ImagingPath(MatrixGroup):
                                 removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
+        axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
 
         self._showPlot()
 
@@ -887,7 +886,7 @@ class ImagingPath(MatrixGroup):
                                 removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
         axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
+        axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
 
         fig.savefig(filepath, dpi=600)
 
@@ -959,7 +958,7 @@ class ImagingPath(MatrixGroup):
         """
         pass
 
-    def rearrangeRayTraceForPlotting(self, rayList,
+    def rearrangeRayTraceForPlotting(self, rayList: List[Ray],
                                      removeBlockedRaysCompletely=True):
         """
         This function removes the rays that are blocked in the imaging path.
@@ -982,7 +981,7 @@ class ImagingPath(MatrixGroup):
                 x = []
                 y = []
             # else: # ray will simply stop drawing from here
-        return (x, y)
+        return x, y
 
     def drawObject(self, axes):  # pragma: no cover
         """Draw the object as defined by objectPosition, objectHeight
@@ -1170,44 +1169,6 @@ class ImagingPath(MatrixGroup):
             self.drawPointsOfInterest(z=0, axes=axes)
             self.drawStops(z=0, axes=axes)
 
-    def updateDisplay(self, axes):
-        """ Callback function used to redraw the objects when zooming. """
-        for artist in axes.artists:
-            artist.remove()
-        axes.artists = []
-        for patch in axes.patches:
-            patch.remove()
-        axes.patches = []
-        for text in axes.texts:
-            text.remove()
-        axes.texts = []
-
-        self.drawDisplayObjects(axes)
-
-    def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):
-        """ Display the optical system and trace the rays. If comments are included
-        they will be displayed on a graph in the bottom half of the plot.
-
-        """
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
-
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
-
-        self._showPlot()
-
     def newDisplay(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
                    removeBlockedRaysCompletely=False, comments=None):
 
@@ -1265,27 +1226,3 @@ class ImagingPath(MatrixGroup):
             lines.append(line)
 
         return lines
-
-    def save(self, filepath,
-             limitObjectToFieldOfView=False,
-             onlyChiefAndMarginalRays=False,
-             removeBlockedRaysCompletely=False,
-             comments=None):
-
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
-
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
-
-        fig.savefig(filepath, dpi=600)
