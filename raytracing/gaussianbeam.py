@@ -35,7 +35,7 @@ class GaussianBeam(object):
     def __init__(self, q: complex = None, w: float = None, R: float = float("+Inf"), n: float = 1.0,
                  wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
-        rel_tol = 0.5 / 100
+        relTol = 0.5 / 100
         if q is not None:
             self.q = q
         if w is not None:
@@ -44,8 +44,8 @@ class GaussianBeam(object):
             raise ValueError("Please specify 'q' or 'w'.")
 
         if q is not None and w is not None:
-            if not cmath.isclose(a=self.q, b=q, rel_tol=rel_tol):
-                msg = f"Mismatch between the given q '{q}' and the computed q '{self.q}' ({rel_tol * 100}% tolerance)."
+            if not cmath.isclose(a=self.q, b=q, rel_tol=relTol):
+                msg = f"Mismatch between the given q '{q}' and the computed q '{self.q}' ({relTol * 100}% tolerance)."
                 raise ValueError(msg)
 
         self.wavelength = wavelength
