@@ -198,6 +198,50 @@ class MatplotlibGraphic(Graphic):
         return xScale, yScale
 
 
+class Component:
+
+    @property
+    def bezierCurves(self):
+        """ A list of bezier curves that defines the graphic of this component.
+        To overwrite.
+        """
+        return []
+
+    @property
+    def xy(self):
+        # compile A and B of all bezier curves
+        return None
+
+    @property
+    def patch(self):
+        """ Create a Matplotlib Patch from a list of bezier curves """
+        return patches.PathPatch()
+
+
+class BezierCurve:
+    def __init__(self, A, B, cp):
+        pass
+
+
+class SurfacePair(Component):
+    def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
+        self.surfaceA = surfaceA
+        self.surfaceB = surfaceB
+        self.halfHeight = halfHeight
+        self.x = x
+        self.corners = None
+        
+    @property
+    def bezierCurves(self):
+        # coordsA, actionsA = self.pathSurfaceA()
+        # coordsB, actionsB = self.pathSurfaceB()
+        #
+        # self.coords = coordsA + coordsB
+        # self.codes = actionsA + actionsB
+        # todo
+        return []
+
+
 class SurfacePairPatch(patches.PathPatch):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
         self.surfaceA = surfaceA
