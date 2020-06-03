@@ -675,8 +675,8 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
+    def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
+                removeBlockedRaysCompletely=False, comments=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -692,23 +692,12 @@ class ImagingPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
 
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+        figure = Figure(opticPath=self, title=self.label, comments=comments)
 
-        axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
-
-        self._showPlot()
+        figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                       onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                       removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
     def save(self, filepath,
              limitObjectToFieldOfView=False,
@@ -736,24 +725,12 @@ class ImagingPath(MatrixGroup):
 
 
         """
+        figure = Figure(opticPath=self, title=self.label, comments=comments)
 
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
-
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
-
-        fig.savefig(filepath, dpi=600)
+        figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                       onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                       removeBlockedRaysCompletely=removeBlockedRaysCompletely,
+                       filepath=filepath)
 
     def rayTraceLines(self, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):
