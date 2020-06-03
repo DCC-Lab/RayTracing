@@ -44,8 +44,8 @@ class GaussianBeam(object):
             raise ValueError("Please specify 'q' or 'w'.")
 
         if q is not None and w is not None:
-            if not cmath.isclose(a=self.q, b=q, abs_tol=0.1):
-                raise ValueError(f"Mismatch between the given q ({q}) and the computed q ({self.q}) (10% tolerance).")
+            if not cmath.isclose(a=self.q, b=q, rel_tol=0.1):
+                raise ValueError(f"Mismatch between the given q '{q}' and the computed q '{self.q}' (10% tolerance).")
 
         self.wavelength = wavelength
 
