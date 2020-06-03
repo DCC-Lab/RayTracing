@@ -152,6 +152,206 @@ class Figure:
         for line in lines:
             self.axes.add_line(line)
 
+    def drawDisplayObjects(self):
+        """ Draw the object, images and all elements to the figure. """
+        if self.path.showObject:
+            self.drawObject()
+
+        if self.path.showImages:
+            self.drawImages()
+
+        if self.path.showEntrancePupil:
+            self.drawEntrancePupil(z=0)
+
+        self.drawElements()
+        if self.path.showPointsOfInterest:
+            self.drawPointsOfInterest(z=0)
+            self.drawStops(z=0)
+
+    def drawObject(self):
+        """Draw the object as defined by objectPosition, objectHeight
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
+
+        (xScaling, yScaling) = self.axesToDataScale()
+
+        arrowHeadHeight = self.path._objectHeight * 0.1
+
+        heightFactor = self.path._objectHeight / yScaling
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
+
+        self.axes.arrow(
+            self.path.objectPosition,
+            -self.path._objectHeight / 2,
+            0,
+            self.path._objectHeight,
+            width=arrowHeadWidth / 5,
+            fc='b',
+            ec='b',
+            head_length=arrowHeadHeight,
+            head_width=arrowHeadWidth,
+            length_includes_head=True)
+
+    def drawImages(self):
+        """ Draw all images (real and virtual) of the object defined by
+        objectPosition, objectHeight
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
+
+        (xScaling, yScaling) = self.axesToDataScale()
+        images = self.path.intermediateConjugates()
+
+        for (imagePosition, magnification) in images:
+            arrowHeight = abs(magnification * self.path._objectHeight)
+            arrowHeadHeight = arrowHeight * 0.1
+
+            heightFactor = arrowHeight / yScaling
+            arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
+
+            self.axes.arrow(
+                imagePosition,
+                -magnification * self.path._objectHeight / 2,
+                0,
+                magnification * self.path._objectHeight,
+                width=arrowHeadWidth / 5,
+                fc='r',
+                ec='r',
+                head_length=arrowHeadHeight,
+                head_width=arrowHeadWidth,
+                length_includes_head=True)
+
+    def drawPointsOfInterest(self, z):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
+        labels = {}  # Gather labels at same z
+
+        zElement = 0
+        # For the group as a whole, then each element
+        for pointOfInterest in self.path.pointsOfInterest(z=zElement):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        # Points of interest for each element
+        for element in self.path.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                label = pointOfInterest['label']
+                if zStr in labels:
+                    labels[zStr] = labels[zStr] + ", " + label
+                else:
+                    labels[zStr] = label
+            zElement += element.L
+
+        halfHeight = self.path.largestDiameter / 2
+        for zStr, label in labels.items():
+            z = float(zStr)
+            self.axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                               xycoords='data', fontsize=12,
+                               ha='center', va='bottom')
+
+    def drawStops(self, z):  # pragma: no cover
+        """ AS and FS are drawn at 110% of the largest diameter
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
+        halfHeight = self.path.largestDiameter / 2
+
+        (apertureStopPosition, apertureStopDiameter) = self.path.apertureStop()
+        if apertureStopPosition is not None:
+            self.axes.annotate('AS',
+                          xy=(apertureStopPosition, 0.0),
+                          xytext=(apertureStopPosition, halfHeight * 1.1),
+                          fontsize=18,
+                          xycoords='data',
+                          ha='center',
+                          va='bottom')
+
+        (fieldStopPosition, fieldStopDiameter) = self.path.fieldStop()
+        if fieldStopPosition is not None:
+            self.axes.annotate('FS',
+                          xy=(fieldStopPosition,
+                              0.0),
+                          xytext=(fieldStopPosition,
+                                  halfHeight * 1.1),
+                          fontsize=18,
+                          xycoords='data',
+                          ha='center',
+                          va='bottom')
+
+    def drawEntrancePupil(self, z):
+        """
+        Draw the entrance pupil on an optical system using the position and diameter of the
+        entrance pupil.
+
+        Parameters
+        ----------
+        z : float
+            The position of the centre of the entrance pupil will shift by this number.
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        See Also
+        --------
+        raytracing.ImagingPath.entrancePupil
+
+        """
+
+        (pupilPosition, pupilDiameter) = self.path.entrancePupil()
+        if pupilPosition is not None:
+            halfHeight = pupilDiameter / 2.0
+            center = z + pupilPosition
+            (xScaling, yScaling) = self.axesToDataScale()
+            heightFactor = halfHeight * 2 / yScaling
+            width = xScaling * 0.01 / 2 * (heightFactor / 0.2) ** (3 / 4)
+
+            self.axes.add_patch(patches.Polygon(
+                [[center - width, halfHeight],
+                 [center + width, halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='r'))
+            self.axes.add_patch(patches.Polygon(
+                [[center - width, -halfHeight],
+                 [center + width, -halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='r'))
+
+    def drawElements(self):
+        z = 0
+        for element in self.path.elements:
+            graphic = self.graphicOf(element)
+            graphic.drawAt(z, self.axes)
+            graphic.drawAperture(z, self.axes)
+
+            if self.path.showElementLabels:
+                graphic.drawLabels(z, self.axes)
+            z += element.L
+
     def axesToDataScale(self):
         """ Display dimensions in data units.
         Used to properly draw elements on the display
