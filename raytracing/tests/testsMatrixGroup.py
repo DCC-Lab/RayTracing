@@ -328,25 +328,31 @@ class TestMatrixGroup(unittest.TestCase):
 
 
 class TestSaveAndLoadMatrixGroup(unittest.TestCase):
+    dirName = ""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.dirName = "tempDir"
+        os.mkdir(cls.dirName)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        for file in os.listdir(cls.dirName):
+            os.remove(os.path.join(cls.dirName, file))
+        os.rmdir(cls.dirName)
+
     def setUp(self) -> None:
         self.testMG = MatrixGroup([Space(10), Lens(10), Space(10)])
-        self.fileName = "testMG.pkl"
+        self.fileName = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "testMG.pkl")
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testMG.elements)
         time.sleep(0.5)  # Make sure everything is ok
 
-    def tearDown(self) -> None:
-        if os.path.exists(self.fileName):
-            os.remove(self.fileName)  # We remove the test file
-
-    def assertSaveNotFailed(self, matrixGroup: MatrixGroup, name: str, deleteNow: bool = True):
+    def assertSaveNotFailed(self, matrixGroup: MatrixGroup, name: str):
         try:
             matrixGroup.saveElements(name)
         except Exception as exception:
             self.fail(f"An exception was raised:\n{exception}")
-        finally:
-            if os.path.exists(name) and deleteNow:
-                os.remove(name)  # We delete the temp file
 
     def assertLoadNotFailed(self, matrixGroup: MatrixGroup, name: str = None, append: bool = False):
         if name is None:
@@ -373,26 +379,27 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
             self.assertEqual(loadMatrixGroup.elements[i].backVertex, tempList[i].backVertex)
 
     def testSaveEmpty(self):
+        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "emptyMG.pkl")
         mg = MatrixGroup()
-        self.assertSaveNotFailed(mg, "emptyMG.pkl")
+        self.assertSaveNotFailed(mg, fname)
 
     def testSaveNotEmpty(self):
+        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "notEmptyMG.pkl")
         mg = MatrixGroup([Space(10), Lens(10, 20), Space(20), Lens(10, 21), Space(10)])
-        self.assertSaveNotFailed(mg, "notEmptyMG.pkl")
+        self.assertSaveNotFailed(mg, fname)
 
     def testSaveInFileNotEmpty(self):
         mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
         self.assertSaveNotFailed(mg, self.fileName)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
+    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of elements")
     def testSaveHugeFile(self):
-        start = time.perf_counter_ns()
+        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
         lenses = [Lens(10) for _ in range(500)]
         elements = spaces + lenses
         mg = MatrixGroup(elements)
-        end = time.perf_counter_ns()
-        self.assertSaveNotFailed(mg, "hugeFile.pkl")
+        self.assertSaveNotFailed(mg, fname)
 
     def testLoadFileDoesNotExist(self):
         fname = r"this\file\does\not\exist.pkl"
@@ -402,7 +409,6 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
     def testLoadInEmptyMatrixGroup(self):
         mg = MatrixGroup()
-
         self.assertLoadNotFailed(mg)
         self.assertLoadEqualsMatrixGroup(mg, self.testMG)
 
@@ -419,32 +425,48 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
     def testLoadWrongObjectType(self):
         wrongObj = 7734
-        fileName = 'wrongObj.pkl'
-        with open(fileName, 'wb') as file:
+        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, 'wrongObj.pkl')
+        with open(fname, 'wb') as file:
             pickle.Pickler(file).dump(wrongObj)
         time.sleep(0.5)  # Make sure everything is ok
 
         try:
             with self.assertRaises(IOError):
-                MatrixGroup().loadElements(fileName)
+                MatrixGroup().loadElements(fname)
         except AssertionError as exception:
             self.fail(str(exception))
-        finally:
-            os.remove(fileName)
 
     def testLoadWrongIterType(self):
-        fileName = 'wrongObj.pkl'
+        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, 'wrongObj.pkl')
         wrongIterType = [Lens(5), Lens(10), Ray()]
-        with open(fileName, 'wb') as file:
+        with open(fname, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
         time.sleep(0.5)
         try:
             with self.assertRaises(IOError):
-                MatrixGroup().loadElements(fileName)
+                MatrixGroup().loadElements(fname)
         except AssertionError as exception:
             self.fail(str(exception))
-        finally:
-            os.remove(fileName)
+
+    def testSaveThenLoad(self):
+        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "saveThenLoad.pkl")
+        mg1 = MatrixGroup([Space(10), Lens(10, 100), Space(10), Aperture(50)])
+        mg2 = MatrixGroup()
+        self.assertSaveNotFailed(mg1, fname)
+        self.assertLoadNotFailed(mg2, fname)
+        self.assertLoadEqualsMatrixGroup(mg2, mg1)
+
+    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
+    def testSaveThenLoadHugeFile(self):
+        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
+        spaces = [Space(10) for _ in range(500)]
+        lenses = [Lens(10) for _ in range(500)]
+        elements = spaces + lenses
+        mg1 = MatrixGroup(elements)
+        mg2 = MatrixGroup()
+        self.assertSaveNotFailed(mg1, fname)
+        self.assertLoadNotFailed(mg2, fname)
+        self.assertLoadEqualsMatrixGroup(mg2, mg1)
 
 
 if __name__ == '__main__':
