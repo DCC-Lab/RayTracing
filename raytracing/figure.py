@@ -374,6 +374,20 @@ class Figure:
                 graphic.drawLabels(z, self.axes)
             z += element.L
 
+    def graphicOf(self, element):
+        if type(element) is Lens:
+            return LensGraphic(element)
+        if type(element) is Space:
+            return SpaceGraphic(element)
+        if type(element) is DielectricInterface:
+            return DielectricInterfaceGraphic(element)
+        if type(element) is DielectricSlab:
+            return DielectricSlabGraphic(element)
+        if type(element) is Aperture:
+            return ApertureGraphic(element)
+        else:
+            return MatrixGraphic(element)
+
     def axesToDataScale(self):
         """ Display dimensions in data units.
         Used to properly draw elements on the display
