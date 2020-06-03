@@ -87,7 +87,7 @@ class ImagingPath(MatrixGroup):
         self.fanAngle = 0.1  # full fan angle for rays
         self.fanNumber = 9  # number of rays in fan
         self.rayNumber = 3  # number of points on object
-        self.design = {'rayColors': ['b', 'r', 'g']}  # design variables accessible to the user for customization
+        self._designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRays': False}
 
         # Constants when calculating field stop
         self.precision = 0.001
@@ -907,7 +907,7 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        color = self.design['rayColors']
+        color = self._designParams['rayColors']
 
         if onlyChiefAndMarginalRays:
             halfHeight = self._objectHeight / 2.0
@@ -915,6 +915,17 @@ class ImagingPath(MatrixGroup):
             (marginalUp, marginalDown) = self.marginalRays(y=0)
             rayGroup = (chiefRay, marginalUp)
             linewidth = 1.5
+        elif self._designParams['onlyAxialRays']:
+            halfAngle = self.fanAngle / 2.0
+            halfHeight = self._objectHeight / 2.0
+            rayGroup = Ray.fanGroup(
+                yMin=0,
+                yMax=0,
+                M=self.rayNumber,
+                radianMin=-halfAngle,
+                radianMax=halfAngle,
+                N=self.fanNumber)
+            linewidth = 0.5
         else:
             halfAngle = self.fanAngle / 2.0
             halfHeight = self._objectHeight / 2.0
