@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Union, List
 
 from .matrixgroup import *
 
@@ -889,6 +889,31 @@ class ImagingPath(MatrixGroup):
         axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
 
         fig.savefig(filepath, dpi=600)
+
+    def design(self, rayColors: List[str] = None,
+               onlyAxialRays: bool = None):
+        # todo: move to FigureManager
+        # todo: maybe move all display() arguments here instead
+        """ Update the design parameters of the figure.
+
+        All parameters are None by default to allow for the update of one parameter at a time.
+
+        Parameters
+        ----------
+        rayColors : List[str], optional
+            List of the colors to use for the three different ray type (. Default is ['b', 'r', 'g'].
+        onlyAxialRays : bool, optional
+            Only draw the ray fans coming from the center of the object (axial rays).
+            Works with fanAngle and fanNumber. Default to False.
+        """
+
+        params = locals()
+        for key, value in params.items():
+            if value is not None:
+                if key is 'rayColors':
+                    assert len(value) is 3, \
+                        "rayColors has to be a list with 3 elements."
+                self._designParams[key] = value
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):  # pragma: no cover
