@@ -721,3 +721,214 @@ class MatrixGraphic:
         except KeyboardInterrupt:
             plt.close()
 
+
+class LensGraphic(MatrixGraphic):
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw a thin lens at z
+
+        Parameters
+        ----------
+        z : float
+            The position of the lens
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        showLabels : bool
+            If True, the label for the lens is shown (default=False)
+        """
+        maxRayHeight = 0
+        for line in axes.lines:
+            if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
+                if max(line._y) > maxRayHeight:
+                    maxRayHeight = max(line._y)
+
+        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
+
+        (xScaling, yScaling) = self.axesToDataScale(axes)
+        arrowHeadHeight = 2 * halfHeight * 0.1
+
+        heightFactor = halfHeight * 2 / yScaling
+        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
+
+        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
+        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
+        self.drawCardinalPoints(z, axes)
+
+
+class SpaceGraphic(MatrixGraphic):
+    def drawAt(self, z, axes, showLabels=False):
+        """This function draws nothing because free space is not visible. """
+        return
+
+
+class DielectricInterfaceGraphic(MatrixGraphic):
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
+        """ Draw a curved surface starting at 'z'.
+        We are not able yet to determine the color to fill with.
+
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        showLabels : bool (Optional)
+            If True, the label of the curved surface is shown. (default=False)
+
+        Notes
+        -----
+        It is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
+        """
+        h = self.displayHalfHeight()
+
+        # For simplicity, 1 is front, 2 is back.
+        # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
+        v1 = z + self.matrix.frontVertex
+        phi1 = math.asin(h / abs(self.matrix.R))
+        delta1 = self.matrix.R * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * self.matrix.R)
+        corner1 = v1 + delta1
+
+        Path = mpath.Path
+        p = patches.PathPatch(
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
+                  (v1, 0), (v1, ctl1), (corner1, h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3]),
+            fill=False,
+            transform=axes.transData)
+
+        axes.add_patch(p)
+        if showLabels:
+            self.drawLabels(z, axes)
+
+
+class ThickLensGraphic(MatrixGraphic):
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
+        """ Draw a faint blue box with slightly curved interfaces
+        of length 'thickness' starting at 'z'.
+
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        showLabels : bool (Optional)
+            If True, the label of the curved surface is shown. (default=False)
+
+        Notes
+        -----
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
+        """
+        h = self.displayHalfHeight()
+
+        # For simplicity, 1 is front, 2 is back.
+        # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
+        v1 = z + self.matrix.frontVertex
+        phi1 = math.asin(h / abs(self.matrix.R1))
+        delta1 = self.matrix.R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * self.matrix.R1)
+        corner1 = v1 + delta1
+
+        v2 = z + self.matrix.backVertex
+        phi2 = math.asin(h / abs(self.matrix.R2))
+        delta2 = self.matrix.R2 * (1.0 - math.cos(phi2))
+        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * self.matrix.R2)
+        corner2 = v2 + delta2
+
+        Path = mpath.Path
+        p = patches.PathPatch(
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h),
+                  (corner1, -h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.85, 0.95, 0.95],
+            fill=True,
+            transform=axes.transData)
+
+        axes.add_patch(p)
+        if showLabels:
+            self.drawLabels(z, axes)
+
+        self.drawCardinalPoints(z=z, axes=axes)
+
+    def drawAperture(self, z, axes):  # pragma: no cover
+        """ Draw the aperture size for this element.
+        The thick lens requires special care because the corners are not
+        separated by self.L: the curvature makes the edges shorter.
+        We are picky and draw it right.
+
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
+
+        if self.matrix.apertureDiameter != float('+Inf'):
+            h = self.matrix.largestDiameter / 2.0
+            phi1 = math.asin(h / abs(self.matrix.R1))
+            corner1 = z + self.matrix.frontVertex + self.matrix.R1 * (1.0 - math.cos(phi1))
+
+            phi2 = math.asin(h / abs(self.matrix.R2))
+            corner2 = z + self.matrix.backVertex + self.matrix.R2 * (1.0 - math.cos(phi2))
+
+            axes.add_patch(patches.Polygon(
+                [[corner1, h], [corner2, h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+            axes.add_patch(patches.Polygon(
+                [[corner1, -h], [corner2, -h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+
+
+class DielectricSlabGraphic(MatrixGraphic):
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
+        """ Draw a faint blue box of length L starting at 'z'.
+
+        Parameters
+        ----------
+        z : float
+            The starting position of the curved surface
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        showLabels : bool (Optional)
+            If True, the label of the curved surface is shown. (default=False)
+
+
+        """
+        halfHeight = self.displayHalfHeight()
+        p = patches.Rectangle((z, -halfHeight), self.matrix.L,
+                              2 * halfHeight, color=[0.85, 0.95, 0.95],
+                              fill=True, transform=axes.transData,
+                              clip_on=True)
+        axes.add_patch(p)
+
+
+class ApertureGraphic(MatrixGraphic):
+    def drawAt(self, z, axes, showLabels=False):
+        """ Currently nothing specific to draw because any
+        aperture for any object is drawn with drawAperture()
+        """
+        return
