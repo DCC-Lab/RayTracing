@@ -168,6 +168,27 @@ class Figure:
             self.drawPointsOfInterest(z=0)
             self.drawStops(z=0)
 
+    def onZoomCallback(self, axes):
+        """ Callback function used to redraw the objects when zooming.
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Automatically passed on a callback.
+
+        """
+        for artist in axes.artists:
+            artist.remove()
+        axes.artists = []
+        for patch in axes.patches:
+            patch.remove()
+        axes.patches = []
+        for text in axes.texts:
+            text.remove()
+        axes.texts = []
+
+        self.drawDisplayObjects()
+
     def drawObject(self):
         """Draw the object as defined by objectPosition, objectHeight
 
