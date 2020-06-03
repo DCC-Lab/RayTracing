@@ -270,6 +270,9 @@ class MatrixGroup(Matrix):
             if not all([isinstance(matrix, Matrix) for matrix in loadedMatrices]):
                 raise IOError(f"{filePath} must contain only Matrix objects.")
             if append and self.elements is not None:
-                self.elements.extend(loadedMatrices)
+                for element in loadedMatrices:
+                    self.append(element)
             else:
-                self.elements = loadedMatrices
+                self.elements = []
+                for element in loadedMatrices:
+                    self.append(element)
