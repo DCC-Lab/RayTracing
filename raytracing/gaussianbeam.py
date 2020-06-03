@@ -35,7 +35,7 @@ class GaussianBeam(object):
     def __init__(self, q: complex = None, w: float = None, R: float = float("+Inf"), n: float = 1.0,
                  wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
-        rel_tol = 0.1 / 100
+        rel_tol = 0.5 / 100
         if q is not None:
             self.q = q
         if w is not None:
