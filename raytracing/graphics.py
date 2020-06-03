@@ -199,6 +199,9 @@ class MatplotlibGraphic(Graphic):
 
 
 class Component:
+    def __init__(self):
+        self.color = [0.85, 0.95, 0.95]
+        self.fill = True
 
     @property
     def bezierCurves(self):
@@ -208,29 +211,39 @@ class Component:
         return []
 
     @property
-    def xy(self):
-        # compile A and B of all bezier curves
-        return None
+    def xy(self) -> List:
+        xy = []
+        for bezier in self.bezierCurves:
+            xy.extend([bezier.A, bezier.B])
+        return xy
 
     @property
     def patch(self):
         """ Create a Matplotlib Patch from a list of bezier curves """
-        return patches.PathPatch()
+        coords = []
+        codes = []
+        for bezier in self.bezierCurves:
+            coords.extend([bezier.A, bezier.cp, bezier.B])
+            codes.extend([mpath.Path.MOVETO, mpath.Path.CURVE3, mpath.Path.CURVE3])
+        return patches.PathPatch(mpath.Path(coords, codes), color=self.color, fill=self.fill)
 
 
 class BezierCurve:
-    def __init__(self, A, B, cp):
-        pass
+    def __init__(self, A: tuple, B: tuple, cp=None):
+        if cp is None:
+            # def a cp for straight line
+            pass
 
 
 class SurfacePair(Component):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
+        super(SurfacePair, self).__init__()
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
         self.halfHeight = halfHeight
         self.x = x
         self.corners = None
-        
+
     @property
     def bezierCurves(self):
         # coordsA, actionsA = self.pathSurfaceA()
