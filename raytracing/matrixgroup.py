@@ -235,3 +235,28 @@ class MatrixGroup(Matrix):
             self.iteration += 1
             return element
         raise StopIteration
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):  # If we get a slice, return a matrix group
+            return MatrixGroup(self.elements[item])
+        return self.elements[item]
+
+    def removeElement(self, index: int, pad=False):
+        maxIndex = len(self)
+        if index < 0:
+            index += maxIndex
+        if index >= maxIndex or index < 0:
+            raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex}.")
+        tempElements = self.elements[:]
+        self.elements = []
+        for i in range(maxIndex):
+            element = tempElements[i]
+            if i == index:
+                element = Space(element.L)
+                if pad:
+                    self.append(element)
+            else:
+                self.append(element)
