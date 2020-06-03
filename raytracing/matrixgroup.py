@@ -7,6 +7,13 @@ class MatrixGroup(Matrix):
     """MatrixGroup: A group of Matrix(), allowing
     the combination of several elements to be treated as a
     whole, or treated explicitly as a sequence when needed.
+
+    Parameters
+    ----------
+    elements : list of elements
+        A list of ABCD matrices in the imaging path
+    label : string
+        the label for the imaging path (Optional)
     """
 
     def __init__(self, elements=None, label=""):
