@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from .matrix import *
 
 
 class Figure:
@@ -391,6 +392,320 @@ class Figure:
         return xScale, yScale
 
     def _showPlot(self):
+        try:
+            plt.plot()
+            if sys.platform.startswith('win'):
+                plt.show()
+            else:
+                plt.draw()
+                while True:
+                    if plt.get_fignums():
+                        plt.pause(0.001)
+                    else:
+                        break
+
+        except KeyboardInterrupt:
+            plt.close()
+
+
+class MatrixGraphic:
+    def __init__(self, matrix: Matrix):
+        self.matrix = matrix
+
+    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
+        """ Draw element on plot with starting edge at 'z'.
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        showLabels : bool
+            If True, the label of the element will be shown (default=False)
+
+        Notes
+        -----
+        Default is a black box of appropriate length.
+        """
+        halfHeight = self.matrix.largestDiameter / 2
+        if halfHeight == float("+Inf"):
+            halfHeight = self.displayHalfHeight()
+
+        p = patches.Rectangle((z, -halfHeight), self.matrix.L,
+                              2 * halfHeight, color='k', fill=False,
+                              transform=axes.transData, clip_on=True)
+        axes.add_patch(p)
+
+    def drawVertices(self, z, axes):  # pragma: no cover
+        """ Draw vertices of the system
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        """
+
+        axes.plot([z + self.matrix.frontVertex, z + self.matrix.backVertex], [0, 0], 'ko',
+                  markersize=4, color="0.5", linewidth=0.2)
+        halfHeight = self.displayHalfHeight()
+        axes.text(z + self.matrix.frontVertex, 0, '$V_f$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+        axes.text(z + self.matrix.backVertex, 0, '$V_b$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+
+    def drawCardinalPoints(self, z, axes):  # pragma: no cover
+        """Draw the focal points of a thin lens as black dots
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        """
+        (f1, f2) = self.matrix.focusPositions(z)
+        axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
+
+    def drawPrincipalPlanes(self, z, axes):  # pragma: no cover
+        """Draw the principal planes
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the element on display
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+        """
+        halfHeight = self.displayHalfHeight()
+        (p1, p2) = self.matrix.principalPlanePositions(z=z)
+
+        if p1 is None or p2 is None:
+            return
+
+        axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
+        axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
+        axes.text(p1, halfHeight * 1.2, '$P_f$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+        axes.text(p2, halfHeight * 1.2, '$P_b$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+
+        (f1, f2) = self.matrix.effectiveFocalLengths()
+        FFL = self.matrix.frontFocalLength()
+        BFL = self.matrix.backFocalLength()
+        (F1, F2) = self.matrix.focusPositions(z=z)
+
+        h = halfHeight * 0.4
+        # Front principal plane to front focal spot (effective focal length)
+        axes.annotate("", xy=(p1, h), xytext=(F1, h),
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text(p1 - f1 / 2, h, 'EFL = {0:0.1f}'.format(f1),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+        # Back principal plane to back focal spot (effective focal length)
+        axes.annotate("", xy=(p2, -h), xytext=(F2, -h),
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text(p2 + f2 / 2, -h, 'EFL = {0:0.1f}'.format(f1),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+
+        # Front vertex to front focal spot (front focal length or FFL)
+        h = 0.5
+
+        axes.annotate("", xy=(self.matrix.frontVertex, h), xytext=(F1, h),
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text((self.matrix.frontVertex + F1) / 2, h, 'FFL = {0:0.1f}'.format(FFL),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+
+        # Back vertex to back focal spot (back focal length or BFL)
+        axes.annotate("", xy=(self.matrix.backVertex, -h), xytext=(F2, -h),
+                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
+                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
+        axes.text((self.matrix.backVertex + F2) / 2, -h, 'BFL = {0:0.1f}'.format(BFL),
+                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
+
+    def drawLabels(self, z, axes):  # pragma: no cover
+        """ Draw element labels on plot with starting edge at 'z'.
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the labels on display
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        Notes
+        -----
+        Labels are drawn 50% above the display height
+        """
+        if self.matrix.hasFiniteApertureDiameter():
+            halfHeight = self.matrix.largestDiameter / 2.0
+        else:
+            halfHeight = self.displayHalfHeight()
+
+        center = z + self.matrix.L / 2.0
+        axes.annotate(self.matrix.label, xy=(center, 0.0),
+                      xytext=(center, halfHeight * 1.4),
+                      fontsize=8, xycoords='data', ha='center',
+                      va='bottom', clip_box=axes.bbox, clip_on=True)
+
+    def drawPointsOfInterest(self, z, axes):  # pragma: no cover
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the label on display
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
+        labels = {}  # Gather labels at same z
+        for pointOfInterest in self.matrix.pointsOfInterest(z=z):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        halfHeight = self.displayHalfHeight()
+        for zStr, label in labels.items():
+            z = float(zStr)
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                          xycoords='data', fontsize=12,
+                          ha='center', va='bottom')
+
+    def drawAperture(self, z, axes):  # pragma: no cover
+        """ Draw the aperture size for this element.  Any element may
+        have a finite aperture size, so this function is general for all elements.
+
+        Parameters
+        ----------
+        z : float
+            the starting position of the apreture
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        """
+
+        if self.matrix.apertureDiameter != float('+Inf'):
+            halfHeight = self.matrix.apertureDiameter / 2.0
+
+            center = z + self.matrix.L / 2
+            if self.matrix.L == 0:
+                (xScaling, yScaling) = self.axesToDataScale(axes)
+                heightFactor = halfHeight * 2 / yScaling
+                width = xScaling * 0.01 / 2 * (heightFactor / 0.2) ** (3 / 4)
+            else:
+                width = self.matrix.L / 2
+
+            axes.add_patch(patches.Polygon(
+                [[center - width, halfHeight],
+                 [center + width, halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+            axes.add_patch(patches.Polygon(
+                [[center - width, -halfHeight],
+                 [center + width, -halfHeight]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+
+    def axesToDataScale(self, axes):
+        """ Display dimensions in data units.
+        Used to properly draw elements on the display
+        with appropriate data coordinates.
+
+        Parameters
+        ----------
+        axes : object from matplotlib.pyplot.axes class
+            Add an axes to the current figure and make it the current axes.
+
+        Returns
+        -------
+        xScale: float
+            The scale of x axes
+        yScale : float
+            The scale of y axes
+        """
+
+        xScale, yScale = axes.viewLim.bounds[2:]
+
+        return xScale, yScale
+
+    def displayHalfHeight(self, minSize=0):
+        """ A reasonable height for display purposes for
+        an element, whether it is infinite or not.
+
+        If the element is infinite, the half-height is currently
+        set to '4' or to the specified minimum half height.
+        If not, it is the apertureDiameter/2.
+
+        Parameters
+        ----------
+        minSize : float
+            The minimum size to be considered as the aperture half height
+
+        Returns
+        -------
+        halfHeight : float
+            The half height of the optical element
+
+        """
+        halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
+        if minSize > halfHeight:
+            halfHeight = minSize
+        if self.matrix.apertureDiameter != float('+Inf'):
+            halfHeight = self.matrix.apertureDiameter / 2.0  # real half height
+        return halfHeight
+
+    def display(self):  # pragma: no cover
+        """ Display this component, without any ray tracing but with
+        all of its cardinal points and planes.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # Mat is an ABCD matrix of an object
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,
+        >>>            frontIndex=1.5,backIndex=1,label='Lens')
+        >>> Mat.display()
+
+        And the result is shown in the following figure:
+
+        .. image:: display.png
+            :width: 70%
+            :align: center
+
+
+        Notes
+        -----
+        If the component has no power (i.e. C == 0) this will fail.
+        """
+
+        fig, axes = plt.subplots(figsize=(10, 7))
+        displayRange = 2 * self.matrix.largestDiameter
+        if displayRange == float('+Inf'):
+            displayRange = self.displayHalfHeight() * 4
+
+        axes.set(xlabel='Distance', ylabel='Height', title="Properties of {0}".format(self.matrix.label))
+        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
+
+        self.drawAt(z=0, axes=axes)
+        self.drawLabels(z=0, axes=axes)
+        self.drawCardinalPoints(z=0, axes=axes)
+        if self.matrix.L != 0:
+            self.drawVertices(z=0, axes=axes)
+        self.drawPointsOfInterest(z=0, axes=axes)
+        self.drawPrincipalPlanes(z=0, axes=axes)
+
+        self._showPlot()
+
+    def _showPlot(self):  # pragma: no cover
+        # internal, do not use
         try:
             plt.plot()
             if sys.platform.startswith('win'):
