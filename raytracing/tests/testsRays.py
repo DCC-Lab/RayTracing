@@ -293,6 +293,8 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         self.assertListEqual(rays.rays, self.testRays.rays)
 
     def testLoadWrongFileContent(self):
+        exception = None
+        fail = False
         wrongObj = 7734
         fileName = 'wrongObj.pkl'
         with open(fileName, 'wb') as file:
@@ -303,10 +305,12 @@ class TestRaysSaveAndLoad(unittest.TestCase):
             with self.assertRaises(IOError):
                 Rays().load(fileName)
         except AssertionError as exception:
-            self.fail(str(exception))
+            fail = True
         finally:
             os.remove(fileName)
+            self.failIf(fail, str(exception))
 
+        fail = False
         wrongIterType = [Ray(), Ray(1), [1, 1]]
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
@@ -315,18 +319,22 @@ class TestRaysSaveAndLoad(unittest.TestCase):
             with self.assertRaises(IOError):
                 Rays().load(fileName)
         except AssertionError as exception:
-            self.fail(str(exception))
+            fail = True
         finally:
             os.remove(fileName)
+            self.failIf(fail, str(exception))
 
     def assertSaveNotFailed(self, rays: Rays, name: str, deleteNow: bool = True):
+        fail = False
+        exception = None
         try:
             rays.save(name)
         except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+            fail = True
         finally:
             if os.path.exists(name) and deleteNow:
                 os.remove(name)  # We delete the temp file
+            self.failIf(fail, f"An exception was raised:\n{exception}")
 
     def testSaveInEmptyFile(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
