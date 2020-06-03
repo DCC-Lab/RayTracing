@@ -143,7 +143,7 @@ class TestMatrixGroup(unittest.TestCase):
     def testAppendSpaceMustAdoptIndexOfRefraction(self):
         mEquivalent = MatrixGroup()
         d1 = DielectricInterface(n1=1, n2=1.55, R=100)
-        s  = Space(d=3)
+        s = Space(d=3)
         d2 = DielectricInterface(n1=1.55, n2=1.0, R=-100)
         mEquivalent.append(d1)
         mEquivalent.append(s)
@@ -323,6 +323,44 @@ class TestMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([Lens(5)])
         mg2 = MatrixGroup(mg)
         self.assertListEqual(mg.elements, mg2.elements)
+
+    def testLenEmptyGroup(self):
+        mg = MatrixGroup()
+        self.assertEqual(len(mg), 0)
+
+    def testLenNotEmpty(self):
+        nbElements = 10
+        mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
+        self.assertEqual(len(mg), nbElements)
+
+    def testGetItemOutOfBoundsSingleIndex(self):
+        mg = MatrixGroup([Lens(10) for _ in range(10)])
+        index = len(mg)
+        with self.assertRaises(IndexError):
+            mg[index]
+
+    def testGetItemOutOfBoundsEmpty(self):
+        mg = MatrixGroup()
+        with self.assertRaises(IndexError):
+            mg[0]
+
+    def testGetItem(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        for i in range(len(mg)):
+            self.assertIsInstance(mg[i], Matrix)
+            self.assertEqual(mg[i], listOfElements[i])
+
+    def testGetItemSlice(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        sliceMG = mg[:]
+        self.assertIsInstance(sliceMG, MatrixGroup)
+        self.assertListEqual(sliceMG.elements, mg.elements)
 
 
 if __name__ == '__main__':
