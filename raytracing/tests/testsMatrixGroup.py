@@ -392,7 +392,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
         self.assertSaveNotFailed(mg, self.fileName)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of elements")
+    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveHugeFile(self):
         fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
@@ -456,7 +456,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         self.assertLoadNotFailed(mg2, fname)
         self.assertLoadEqualsMatrixGroup(mg2, mg1)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
+    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveThenLoadHugeFile(self):
         fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
