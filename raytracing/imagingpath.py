@@ -87,7 +87,7 @@ class ImagingPath(MatrixGroup):
         self.fanAngle = 0.1  # full fan angle for rays
         self.fanNumber = 9  # number of rays in fan
         self.rayNumber = 3  # number of points on object
-        self._designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRays': False}
+        self.designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRays': False}
 
         # Constants when calculating field stop
         self.precision = 0.001
@@ -913,7 +913,7 @@ class ImagingPath(MatrixGroup):
                 if key is 'rayColors':
                     assert len(value) is 3, \
                         "rayColors has to be a list with 3 elements."
-                self._designParams[key] = value
+                self.designParams[key] = value
 
     def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):  # pragma: no cover
@@ -932,7 +932,7 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        color = self._designParams['rayColors']
+        color = self.designParams['rayColors']
 
         if onlyChiefAndMarginalRays:
             halfHeight = self._objectHeight / 2.0
@@ -940,7 +940,7 @@ class ImagingPath(MatrixGroup):
             (marginalUp, marginalDown) = self.marginalRays(y=0)
             rayGroup = (chiefRay, marginalUp)
             linewidth = 1.5
-        elif self._designParams['onlyAxialRays']:
+        elif self.designParams['onlyAxialRays']:
             halfAngle = self.fanAngle / 2.0
             halfHeight = self._objectHeight / 2.0
             rayGroup = Ray.fanGroup(
