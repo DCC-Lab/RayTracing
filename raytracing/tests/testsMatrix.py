@@ -345,6 +345,15 @@ class TestMatrix(unittest.TestCase):
         m2 = Matrix(A=1, B=1, C=3, D=4)
         self.assertFalse(m2.isImaging)
 
+    def testHasNoPower(self):
+        f1 = 1.0000000000000017
+        f2 = 2.05 * f1
+
+        # This simulates a 4f system (since we test Matrix, we should only use basic matrices)
+        m = Matrix(1, f1, 0, 1) * Matrix(1, 0, -1 / f1, 1) * Matrix(1, f1, 0, 1) * Matrix(1, f2, 0, 1)
+        m = m * Matrix(1, 0, -1 / f2, 1) * Matrix(1, f1, 0, 1)
+        self.assertFalse(m.hasPower)
+
     def testEffectiveFocalLengthsHasPower(self):
         m = Matrix(1, 2, 3, 4)
         focalLengths = (-1 / 3, -1 / 3)

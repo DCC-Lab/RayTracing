@@ -87,6 +87,7 @@ class ImagingPath(MatrixGroup):
         self.fanAngle = 0.1  # full fan angle for rays
         self.fanNumber = 9  # number of rays in fan
         self.rayNumber = 3  # number of points on object
+        self.design = {'rayColors': ['b', 'r', 'g']}  # design variables accessible to the user for customization
 
         # Constants when calculating field stop
         self.precision = 0.001
@@ -907,7 +908,7 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        color = ['b', 'r', 'g']
+        color = self.design['rayColors']
 
         if onlyChiefAndMarginalRays:
             halfHeight = self._objectHeight / 2.0
@@ -939,7 +940,7 @@ class ImagingPath(MatrixGroup):
             binSize = 2.0 * halfHeight / (len(color) - 1)
             colorIndex = int(
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-            axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
+            axes.plot(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
 
     def drawingOfObject(self, xScale: float, yScale: float) -> patches.FancyArrow:
         """ The drawing of the object.
