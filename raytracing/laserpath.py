@@ -95,6 +95,15 @@ class LaserPath(MatrixGroup):
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
 
+        Parameters
+        ----------
+        inputBeam : object of GaussianBeam class
+            A Gaussian beam with defined parameters
+        #fixme : inputBeams : type?
+            #fixme : what is the difference between inputBeam and inputBeams?
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+
         """
 
         if self.isResonator:
@@ -127,7 +136,7 @@ class LaserPath(MatrixGroup):
         """ Create a matplotlib plot to draw the laser beam and the elements.
         """
 
-        displayRange = 2 * self.largestDiameter()
+        displayRange = 2 * self.largestDiameter
         if displayRange == float('+Inf'):
             displayRange = self.inputBeam.w * 6
 
