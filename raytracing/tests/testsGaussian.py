@@ -50,7 +50,10 @@ class TestBeam(unittest.TestCase):
 
     def testInvalidParameters(self):
         with self.assertRaises(Exception) as context:
-            beam = GaussianBeam(w=1, R=0)
+            beam = GaussianBeam()
+
+        with self.assertRaises(Exception) as context:
+            beam = GaussianBeam(w=1,R=0)
 
     def testMultiplicationBeam(self):
         # No default parameters
