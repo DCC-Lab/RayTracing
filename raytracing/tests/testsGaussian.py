@@ -12,6 +12,21 @@ class TestBeam(unittest.TestCase):
         self.assertEqual(beam.R, float("+Inf"))
         self.assertEqual(beam.wavelength, 0.0006328)
 
+    def testBeamWAndQGiven(self):
+        w = 1
+        q = 4.96459e3 * 1j
+        try:
+            GaussianBeam(q, w)
+        except Exception as exception:
+            self.fail(f"An exception was raised:\n{exception}")
+
+    def testBeamWAndQGivenMismatch(self):
+        w = 1
+        q = 4.96459e3 * 1j
+        q += q * 0.007
+        with self.assertRaises(ValueError):
+            GaussianBeam(q, w)
+
     def testIsInFinite(self):
         beam = GaussianBeam(w=inf, R=2)
         self.assertFalse(beam.isFinite)
@@ -49,11 +64,12 @@ class TestBeam(unittest.TestCase):
         self.assertIsNone(beam.wo)
 
     def testInvalidParameters(self):
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(ValueError) as context:
             beam = GaussianBeam()
+        self.assertEqual(str(context.exception), "Please specify 'q' or 'w'.")
 
         with self.assertRaises(Exception) as context:
-            beam = GaussianBeam(w=1,R=0)
+            beam = GaussianBeam(w=1, R=0)
 
     def testMultiplicationBeam(self):
         # No default parameters
