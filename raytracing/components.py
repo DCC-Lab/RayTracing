@@ -43,7 +43,7 @@ class System2f(MatrixGroup):
         The diameter of the lens. This value must be positive. (default=+Inf)
     label : string
         The label for the 2f system
-        
+
     """
     def __init__(self,f, diameter=float('+Inf'), label=''):
         elements = []
