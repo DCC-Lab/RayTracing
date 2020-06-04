@@ -284,23 +284,31 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         except Exception as exception:
             self.fail(f"An exception was raised:\n{exception}")
 
-    def testLoad(self):
+    def testLoadNoInitialArgs(self):
         rays = Rays()
         self.assertLoadNotFailed(rays)
         self.assertListEqual(rays.rays, self.testRays.rays)
-        rays._rays = []
+
+    def testLoadEmptyList(self):
+        rays = Rays()
         self.assertLoadNotFailed(rays)
         self.assertListEqual(rays.rays, self.testRays.rays)
 
-        finalRays = self.testRays.rays[:]  # We copy with [:]
+    def testLoadAppend(self):
+        initialRays = [Ray(), Ray(1, 1), Ray(1), Ray(0, 1)]
+        rays = Rays(initialRays)
+        finalRays = initialRays[:]  # We copy with [:]
         finalRays.extend(self.testRays.rays[:])
         self.assertLoadNotFailed(rays, append=True)  # We append
         self.assertListEqual(rays.rays, finalRays)
 
+    def testLoadOverride(self):
+        initialRays = [Ray(), Ray(1, 1), Ray(1), Ray(0, 1)]
+        rays = Rays(initialRays)
         self.assertLoadNotFailed(rays)  # We don't append, we override
         self.assertListEqual(rays.rays, self.testRays.rays)
 
-    def testLoadWrongFileContent(self):
+    def testLoadWrongIterable(self):
         wrongObj = 7734
         fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
         with open(fileName, 'wb') as file:
@@ -309,6 +317,8 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         with self.assertRaises(IOError):
             Rays().load(fileName)
 
+    def testLoadWrongTypeInIterable(self):
+        fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
         wrongIterType = [Ray(), Ray(1), [1, 1]]
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
@@ -343,8 +353,8 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         raysList = [Ray(), Ray(-1), Ray(2), Ray(3)]
         rays = Rays(raysList)
         name = os.path.join(TestRaysSaveAndLoad.dirName, "testSaveAndLoad.pkl")
-        self.assertSaveNotFailed(rays, name)
         raysLoad = Rays()
+        self.assertSaveNotFailed(rays, name)
         self.assertLoadNotFailed(raysLoad, name)
         self.assertListEqual(raysLoad.rays, rays.rays)
 
@@ -353,9 +363,9 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         nbRays = 100_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
+        raysLoad = Rays()
         name = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
         self.assertSaveNotFailed(rays, name)
-        raysLoad = Rays()
         self.assertLoadNotFailed(raysLoad, name)
         self.assertListEqual(raysLoad.rays, rays.rays)
 
