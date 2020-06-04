@@ -6,7 +6,6 @@ inf = float("+inf")
 
 class TestBeam(unittest.TestCase):
     def testBeam(self):
-        beam = GaussianBeam()
         beam = GaussianBeam(w=1)
         self.assertEqual(beam.w, 1)
         self.assertEqual(beam.R, float("+Inf"))
@@ -19,10 +18,13 @@ class TestBeam(unittest.TestCase):
 
     def testInvalidParameters(self):
         with self.assertRaises(Exception) as context:
-	        beam = GaussianBeam(w=1,R=0)
+            beam = GaussianBeam()
+
+        with self.assertRaises(Exception) as context:
+            beam = GaussianBeam(w=1,R=0)
 
     def testMultiplicationBeam(self):
-    	# No default parameters
+        # No default parameters
         beamIn = GaussianBeam(w=0.01, R=1, n=1.5, wavelength=0.400e-3)
         beamOut = Space(d=0,n=1.5)*beamIn
         self.assertEqual(beamOut.q, beamIn.q)

@@ -353,6 +353,15 @@ class TestMatrix(unittest.TestCase):
         after = m.lagrangeInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
         self.assertAlmostEqual(before, after)
 
+    def testHasNoPower(self):
+        f1 = 1.0000000000000017
+        f2 = 2.05 * f1
+
+        # This simulates a 4f system (since we test Matrix, we should only use basic matrices)
+        m = Matrix(1, f1, 0, 1) * Matrix(1, 0, -1 / f1, 1) * Matrix(1, f1, 0, 1) * Matrix(1, f2, 0, 1)
+        m = m * Matrix(1, 0, -1 / f2, 1) * Matrix(1, f1, 0, 1)
+        self.assertFalse(m.hasPower)
+
     def testEffectiveFocalLengthsHasPower(self):
         m = Matrix(1, 2, 3, 4)
         focalLengths = (-1 / 3, -1 / 3)
