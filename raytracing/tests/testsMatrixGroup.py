@@ -362,6 +362,95 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertIsInstance(sliceMG, MatrixGroup)
         self.assertListEqual(sliceMG.elements, mg.elements)
 
+    def testRemoveElementPositiveIndexOutOfBounds(self):
+        nbElements = 10
+        mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
+        with self.assertRaises(IndexError):
+            mg.removeElement(len(mg))
+
+    def testRemoveElementNegativeIndexOutOfBounds(self):
+        nbElements = 10
+        mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
+        with self.assertRaises(IndexError):
+            mg.removeElement(-(len(mg) + 1))
+
+    def testRemoveElementLastNoPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg1 = MatrixGroup(listOfElements)
+        mg2 = MatrixGroup(listOfElements)
+        mg1.removeElement(-1)
+        mg2.removeElement((len(mg2) - 1))
+        self.assertListEqual(mg1.elements, [space, lens])
+        self.assertListEqual(mg1.elements, mg2.elements)
+
+    def testRemoveElementFirstNoPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg1 = MatrixGroup(listOfElements)
+        mg2 = MatrixGroup(listOfElements)
+        mg1.removeElement(0)
+        mg2.removeElement(-len(mg2))
+        self.assertListEqual(mg1.elements, [lens, space])
+        self.assertListEqual(mg1.elements, mg2.elements)
+
+    def testRemoveAllNoPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        mg.removeElement(1)
+        mg.removeElement(0)
+        mg.removeElement(0)
+        self.assertListEqual(mg.elements, [])
+
+    def testRemoveElementPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg1 = MatrixGroup(listOfElements)
+        mg2 = MatrixGroup(listOfElements)
+        mg3 = MatrixGroup(listOfElements)
+        mg1.removeElement(0, True)
+        mg2.removeElement(1, True)
+        mg3.removeElement(2, True)
+        self.assertIsInstance(mg1[0], Space)
+        self.assertEqual(mg1[0].L, 10)
+        self.assertEqual(len(mg2), 2)
+        self.assertIsInstance(mg1[2], Space)
+        self.assertEqual(mg1[2].L, 10)
+
+    def testInsertElementNotMatrix(self):
+        mg = MatrixGroup()
+        with self.assertRaises(TypeError):
+            mg.insertElement(0, Ray())
+
+    def testInsertElementNegativeIndexOutOfBounds(self):
+        mg = MatrixGroup([Lens(10)])
+        with self.assertRaises(IndexError):
+            mg.insertElement(-2, Space(10))
+
+    def testInsertElementPositiveIndexOutOfBounds(self):
+        mg = MatrixGroup([Lens(10)])
+        with self.assertRaises(IndexError):
+            mg.insertElement(2, Space(10))
+
+    def testInsertElementAtTheEnd(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([space, lens])
+        mg.insertElement(2, space)
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testInsertElementAtFirst(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([lens, space])
+        mg.insertElement(0, space)
+        self.assertListEqual(mg.elements, [space, lens, space])
+
 
 if __name__ == '__main__':
     unittest.main()
