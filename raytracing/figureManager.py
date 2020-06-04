@@ -5,6 +5,113 @@ from raytracing.graphics import *
 from raytracing.interface import *
 from raytracing import *
 
+"""
+ImagingPath.display(mode='2D'):
+    for element in self.elements:
+        self.figure.add(Graphic(element))
+    
+    if mode is '2D':
+        self.figure.display2D()
+
+"""
+
+
+class FigureContainer:
+    """Base class to contain the required objects of a figure.
+    Use a backend-derived Figure class to enable display features. """
+    def __init__(self):
+        self.graphics = []
+        self.lines = []
+        self.labels = []
+
+        self.style = "presentation"  # ['publication', 'blueprint']
+        self.grayscale = False
+        self.params = {}
+
+    def addGraphic(self):
+        pass
+
+    def addLine(self):
+        pass
+
+    def addLabel(self):
+        pass
+
+    def design(self):
+        pass
+
+
+class MplFigure(FigureContainer):
+    """Matplotlib Figure."""
+    def __init__(self):
+        super().__init__()
+
+        self.figure = None
+        self.axes = None
+        self.axesComments = None
+
+    def create(self, comments=None, title=None):
+        if self.style == 'teaching':
+            self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            self.axesComments.axis('off')
+            self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
+                                   fontsize=10, verticalalignment='top')
+        else:
+            self.figure, self.axes = plt.subplots(figsize=(10, 7))
+
+        self.axes.set(xlabel='Distance', ylabel='Height', title=title)
+
+    def display2D(self):
+        self.drawGraphics()
+        self.updateGraphics()
+
+    def display3D(self):
+        raise NotImplementedError()
+
+    def drawGraphics(self):
+        z = 0
+        for graphic in self.graphics:
+            graphic.z = z
+            components = graphic.patches2D
+
+            for component in components:
+                self.axes.add_patch(component)
+
+            if graphic.hasLabel:
+                self.axes.add_artist(graphic.label.artist)
+
+            z += graphic.length
+
+    def updateGraphics(self):
+        for graphic in self.graphics:
+            xScaling, yScaling = self.scalingOfGraphic(graphic)
+
+            translation = transforms.Affine2D().translate(graphic.x, graphic.y)
+            scaling = transforms.Affine2D().scale(xScaling, yScaling)
+
+            for patch in graphic.patches2D:
+                patch.set_transform(scaling + translation + self.axes.transData)
+
+            if graphic.hasLabel:
+                graphic.label.artist.set_transform(translation + self.axes.transData)
+
+    def scalingOfGraphic(self, graphic):
+        if not graphic.useAutoScale:
+            return 1, 1
+
+        xScale, yScale = self.axesToDataScale()
+
+        heightFactor = graphic.halfHeight * 2 / yScale
+        xScaling = xScale * (heightFactor / 0.2) ** (3 / 4)
+
+        return xScaling, 1
+
+    def axesToDataScale(self):
+        """ Dimensions of the figure in data units. """
+        xScale, yScale = self.axes.viewLim.bounds[2:]
+
+        return xScale, yScale
+
 
 class FigureManager:
     def __init__(self, opticPath, style='presentation', comments=None, title=None):

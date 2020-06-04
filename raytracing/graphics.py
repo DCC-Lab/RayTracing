@@ -198,6 +198,20 @@ class MatplotlibGraphic(Graphic):
         return xScale, yScale
 
 
+class Graphic:
+    def __init__(self, element):
+        pass
+
+    @classmethod
+    def fromElement(cls, element):
+        if type(element) is 'Lens':
+            return LensGraphic(element)
+
+
+class LensGraphic(Graphic):
+    pass
+
+
 class Component:
     def __init__(self):
         self.color = [0.85, 0.95, 0.95]
