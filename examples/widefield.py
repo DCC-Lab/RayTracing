@@ -63,14 +63,14 @@ def imagingPath(a=10, b=10, title=""):
 
 
 # Three paths with different sets of lenses diameter. 
-path1 = imagingPath(a=15, b=15, title="(a) Vignetting with FS poorly placed because of second lens diameter")
+path1 = imagingPath(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
 path1.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
 rayCount(path=path1)
 
-path2 = imagingPath(a=40, b=15, title="(b) Suboptimal AS at second lens, but without vignetting")
+path2 = imagingPath(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
 path2.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
 rayCount(path=path2)
 
-path3 = imagingPath(a=25, b=25, title="(c) Optimal AS at first lens and FS at Camera")
+path3 = imagingPath(a=25, b=25, title="Optimal AS at first lens and FS at Camera")
 path3.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
 rayCount(path=path3)
