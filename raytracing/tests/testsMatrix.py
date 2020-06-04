@@ -1,6 +1,6 @@
 import unittest
 import envtest  # modifies path
-
+import sys
 from raytracing import *
 
 inf = float("+inf")
@@ -324,14 +324,21 @@ class TestMatrix(unittest.TestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
+    @unittest.skipIf(sys.platform == 'darwin',"Endless loop on macOS")
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
         trace = m.traceManyThroughInParallel(rays)
-        traceWithNumberProcesses = m.traceManyThroughInParallel(rays, processes=2)
         for i in range(len(rays)):
             # Order is not kept, we have to check if the ray traced is in the original list
             self.assertTrue(trace[i] in rays)
+
+    def testTraceManyThroughInParallel(self):
+        rays = [Ray(y, y) for y in range(5)]
+        m = Matrix(physicalLength=1)
+        traceWithNumberProcesses = m.traceManyThroughInParallel(rays, processes=2)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
             self.assertTrue(traceWithNumberProcesses[i] in rays)
 
     def testPointsOfInterest(self):
