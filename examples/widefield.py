@@ -21,14 +21,20 @@ paths containing different lens diameter.
 import envexamples
 from raytracing import *
 
+# Counts the number of rays starting at the object makes it through the system.
+# nRays if the total number of rays emitted from the object. 
 def rayCount(nRays=10000, objectHalfHeight=5, path=ImagingPath()):
 
+    # Production of rays from a focal spot with a radius of objectHalfHeight
     inputRays = RandomUniformRays(yMax=objectHalfHeight, yMin=objectHalfHeight, maxCount=nRays)
     outputRays = Rays()
 
+    # Counts how many rays make it through the system
     for ray in inputRays:
         lastRay = path.traceThrough(ray)
-        if lastRay.isNotBlocked:
+
+        # if the ray passes through, it's added in outputRays
+        if lastRay.isNotBlocked: 
             outputRays.append(lastRay)
     inputRays.displayProgress()
 
@@ -39,6 +45,8 @@ def rayCount(nRays=10000, objectHalfHeight=5, path=ImagingPath()):
 
     return outputRays.display("Output profile")
 
+
+# Defines the path. a and b are the diameter of the lenses.
 def imagingPath(a=10, b=10, title=""):
     
     path = ImagingPath()
@@ -54,7 +62,7 @@ def imagingPath(a=10, b=10, title=""):
     return path
 
 
-
+# Three paths with different sets of lenses diameter. 
 path1 = imagingPath(a=15, b=15, title="(a) Vignetting with FS poorly placed because of second lens diameter")
 path1.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
 rayCount(path=path1)
