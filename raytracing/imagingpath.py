@@ -87,7 +87,8 @@ class ImagingPath(MatrixGroup):
         self.fanAngle = 0.1  # full fan angle for rays
         self.fanNumber = 9  # number of rays in fan
         self.rayNumber = 3  # number of points on object
-        self.designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRays': False}
+        self.designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRays': False,
+                             'imageColor': 'r', 'objectColor': 'b'}
 
         # Constants when calculating field stop
         self.precision = 0.001
@@ -890,8 +891,8 @@ class ImagingPath(MatrixGroup):
 
         fig.savefig(filepath, dpi=600)
 
-    def design(self, rayColors: List[str] = None,
-               onlyAxialRays: bool = None):
+    def design(self, rayColors: List[Union[str, tuple]] = None, onlyAxialRays: bool = None,
+               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
         # todo: move to FigureManager
         # todo: maybe move all display() arguments here instead
         """ Update the design parameters of the figure.
@@ -900,11 +901,15 @@ class ImagingPath(MatrixGroup):
 
         Parameters
         ----------
-        rayColors : List[str], optional
+        rayColors : List[Union[str, tuple]], optional
             List of the colors to use for the three different ray type (. Default is ['b', 'r', 'g'].
         onlyAxialRays : bool, optional
             Only draw the ray fans coming from the center of the object (axial rays).
             Works with fanAngle and fanNumber. Default to False.
+        imageColor : Union[str, tuple], optional
+            Color of image arrows. Default to 'r'.
+        objectColor : Union[str, tuple], optional
+            Color of object arrow. Default to 'b'.
         """
 
         params = locals()
@@ -1048,8 +1053,8 @@ class ImagingPath(MatrixGroup):
             0,
             self._objectHeight,
             width=arrowHeadWidth / 5,
-            fc='b',
-            ec='b',
+            fc=self.designParams['objectColor'],
+            ec=self.designParams['objectColor'],
             head_length=arrowHeadHeight,
             head_width=arrowHeadWidth,
             length_includes_head=True)
@@ -1081,8 +1086,8 @@ class ImagingPath(MatrixGroup):
                 0,
                 magnification * self._objectHeight,
                 width=arrowHeadWidth / 5,
-                fc='r',
-                ec='r',
+                fc=self.designParams['imageColor'],
+                ec=self.designParams['imageColor'],
                 head_length=arrowHeadHeight,
                 head_width=arrowHeadWidth,
                 length_includes_head=True)
