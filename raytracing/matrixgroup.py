@@ -244,19 +244,41 @@ class MatrixGroup(Matrix):
             return MatrixGroup(self.elements[item])
         return self.elements[item]
 
-    def removeElement(self, index: int, pad=False):
+    def removeElement(self, index: int, pad: bool = False):
         maxIndex = len(self)
         if index < 0:
             index += maxIndex
         if index >= maxIndex or index < 0:
-            raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex}.")
+            raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex - 1}.")
         tempElements = self.elements[:]
         self.elements = []
         for i in range(maxIndex):
             element = tempElements[i]
             if i == index:
-                element = Space(element.L)
-                if pad:
+                length = element.L
+                if length > 0 and pad:  # No need to pad if length is null
+                    element = Space(length)
                     self.append(element)
             else:
                 self.append(element)
+
+    def insertElement(self, index: int, element: Matrix):
+        if not isinstance(element, Matrix):
+            raise TypeError("'element' should be a Matrix instance.")
+        maxIndex = len(self)
+        if index < 0:
+            index += maxIndex
+        if index > maxIndex or index < 0:
+            raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex}.")
+        if index == maxIndex:
+            self.append(element)
+        else:
+            tempElements = self.elements[:]
+            self.elements = []
+            for i in range(maxIndex):
+                previousElement = tempElements[i]
+                if i == index:
+                    self.append(element)
+                    self.append(previousElement)
+                else:
+                    self.append(previousElement)
