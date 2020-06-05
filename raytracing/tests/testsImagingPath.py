@@ -61,37 +61,6 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath(elements)
         self.assertTupleEqual(path.entrancePupil(), (None, None))
 
-    def testDisplayRangeWithFiniteLens(self):
-        path = ImagingPath()  # default objectHeight is 10
-        path.append(Space(d=10))
-        path.append(Lens(f=5, diameter=20))
-
-        largestDiameter = 20
-
-        self.assertEqual(path.displayRange(), largestDiameter)
-
-    def testDisplayRange(self):
-        path = ImagingPath()
-        path.append(Space(2))
-        path.append(CurvedMirror(-5, 10))
-        self.assertAlmostEqual(path.displayRange(), 5 * 10)
-
-        path.objectHeight = 1
-        self.assertEqual(path.displayRange(), 10)
-
-    def testDisplayRangeWithEmptyPath(self):
-        path = ImagingPath()
-
-        largestDiameter = path.objectHeight * 2
-
-        self.assertEqual(path.displayRange(), largestDiameter)
-
-    @unittest.skip("Maybe will change")
-    def testDisplayRangeLargestDiameterBiggerThanObj(self):
-        path = ImagingPath(System4f(10, 10, 10, 20))
-        path.objectHeight = 1
-        print(path.displayRange())
-
     def testEntrancePupilAIs0(self):
         space = Space(2)
         lens = Lens(10, 110)
@@ -327,7 +296,6 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath(System2f(10, 10))
         with self.assertRaises(ValueError):
             path.chiefRay()
-
 
 
 if __name__ == '__main__':
