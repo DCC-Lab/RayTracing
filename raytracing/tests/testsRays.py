@@ -271,17 +271,25 @@ class TestRays(unittest.TestCase):
 
 
 class TestRaysSaveAndLoad(unittest.TestCase):
+    dirName = ""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.dirName = "tempDir"
+        os.mkdir(cls.dirName)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        for file in os.listdir(cls.dirName):
+            os.remove(os.path.join(cls.dirName, file))
+        os.rmdir(cls.dirName)
 
     def setUp(self) -> None:
         self.testRays = Rays([Ray(), Ray(1, 1), Ray(-1, 1), Ray(-1, -1)])
-        self.fileName = 'testFile.pkl'
+        self.fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'testFile.pkl')
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testRays.rays)
         time.sleep(0.5)  # Make sure everything is ok
-
-    def tearDown(self) -> None:
-        if os.path.exists(self.fileName):
-            os.remove(self.fileName)  # We remove the test file
 
     def testLoadFileDoesntExists(self):
         file = r"this file\doesn't\exists"
@@ -297,69 +305,58 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         except Exception as exception:
             self.fail(f"An exception was raised:\n{exception}")
 
-    def testLoad(self):
+    def testLoadNoInitialArgs(self):
         rays = Rays()
         self.assertLoadNotFailed(rays)
         self.assertListEqual(rays.rays, self.testRays.rays)
-        rays._rays = []
+
+    def testLoadEmptyList(self):
+        rays = Rays()
         self.assertLoadNotFailed(rays)
         self.assertListEqual(rays.rays, self.testRays.rays)
 
-        finalRays = self.testRays.rays[:]  # We copy with [:]
+    def testLoadAppend(self):
+        initialRays = [Ray(), Ray(1, 1), Ray(1), Ray(0, 1)]
+        rays = Rays(initialRays)
+        finalRays = initialRays[:]  # We copy with [:]
         finalRays.extend(self.testRays.rays[:])
         self.assertLoadNotFailed(rays, append=True)  # We append
         self.assertListEqual(rays.rays, finalRays)
 
+    def testLoadOverride(self):
+        initialRays = [Ray(), Ray(1, 1), Ray(1), Ray(0, 1)]
+        rays = Rays(initialRays)
         self.assertLoadNotFailed(rays)  # We don't append, we override
         self.assertListEqual(rays.rays, self.testRays.rays)
 
-    def testLoadWrongFileContent(self):
-        exception = None
-        fail = False
+    def testLoadWrongIterable(self):
         wrongObj = 7734
-        fileName = 'wrongObj.pkl'
+        fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongObj)
         time.sleep(0.5)  # Make sure everything is ok
+        with self.assertRaises(IOError):
+            Rays().load(fileName)
 
-        try:
-            with self.assertRaises(IOError):
-                Rays().load(fileName)
-        except AssertionError as exception:
-            fail = True
-        finally:
-            os.remove(fileName)
-            self.failIf(fail, str(exception))
-
-        fail = False
+    def testLoadWrongTypeInIterable(self):
+        fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
         wrongIterType = [Ray(), Ray(1), [1, 1]]
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
         time.sleep(0.5)
-        try:
-            with self.assertRaises(IOError):
-                Rays().load(fileName)
-        except AssertionError as exception:
-            fail = True
-        finally:
-            os.remove(fileName)
-            self.failIf(fail, str(exception))
 
-    def assertSaveNotFailed(self, rays: Rays, name: str, deleteNow: bool = True):
-        fail = False
-        exception = None
+        with self.assertRaises(IOError):
+            Rays().load(fileName)
+
+    def assertSaveNotFailed(self, rays: Rays, name: str):
         try:
             rays.save(name)
         except Exception as exception:
-            fail = True
-        finally:
-            if os.path.exists(name) and deleteNow:
-                os.remove(name)  # We delete the temp file
-            self.failIf(fail, f"An exception was raised:\n{exception}")
+            self.fail(f"An exception was raised:\n{exception}")
 
     def testSaveInEmptyFile(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
-        name = "emptyFile.pkl"
+        name = os.path.join(TestRaysSaveAndLoad.dirName, "emptyFile.pkl")
         self.assertSaveNotFailed(rays, name)
 
     def testSaveInFileNotEmpty(self):
@@ -368,32 +365,31 @@ class TestRaysSaveAndLoad(unittest.TestCase):
 
     @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
     def testSaveHugeFile(self):
+        fname = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
         nbRays = 100_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
-        self.assertSaveNotFailed(rays, "hugeFile.pkl")
+        self.assertSaveNotFailed(rays, fname)
 
     def testSaveThenLoad(self):
         raysList = [Ray(), Ray(-1), Ray(2), Ray(3)]
         rays = Rays(raysList)
-        name = "testSaveAndLoad.pkl"
-        self.assertSaveNotFailed(rays, name, False)
+        name = os.path.join(TestRaysSaveAndLoad.dirName, "testSaveAndLoad.pkl")
         raysLoad = Rays()
+        self.assertSaveNotFailed(rays, name)
         self.assertLoadNotFailed(raysLoad, name)
         self.assertListEqual(raysLoad.rays, rays.rays)
-        os.remove(name)
 
     @unittest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
     def testSaveThenLoadHugeFile(self):
         nbRays = 100_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
-        name = "hugeFile.pkl"
-        self.assertSaveNotFailed(rays, name, False)
         raysLoad = Rays()
+        name = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
+        self.assertSaveNotFailed(rays, name)
         self.assertLoadNotFailed(raysLoad, name)
         self.assertListEqual(raysLoad.rays, rays.rays)
-        os.remove(name)
 
 
 if __name__ == '__main__':
