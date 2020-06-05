@@ -68,13 +68,32 @@ class GraphicOf:
         return Graphic(components)
 
 
+class BezierCurve:
+    """ A bezier curve defined by a set of control points from P0 to Pn
+    where n is the order (1=linear, 2=quadratic, etc.).
 
+    Arguments
+    ---------
+    controlPoints: List
+        A list of (x, y) coordinates for the control points.
 
     """
 
+    def __init__(self, controlPoints: List[Tuple[float, float]]):
+        self.controlPoints = controlPoints
 
+    @property
+    def xy(self):
+        """The (x, y) coordinates of the end points of the curve. """
+        return self.controlPoints[0], self.controlPoints[-1]
 
+    @property
+    def isLinear(self):
+        return len(self.controlPoints) == 2
 
+    @property
+    def isQuadratic(self):
+        return len(self.controlPoints) == 3
 
 
 class Component:
