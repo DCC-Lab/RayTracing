@@ -28,7 +28,7 @@ class ImagingPath(MatrixGroup):
 
     Attributes
     ----------
-    objectHeight : float
+    _objectHeight : float
         The full height of object can be defined using this attribute (default=10.0)
     objectPosition : float
         This attribute defines the position of the object which must be defined zero for now. (default=0)
@@ -82,11 +82,12 @@ class ImagingPath(MatrixGroup):
 
     def __init__(self, elements=None, label=""):
 
-        self.objectHeight = 10.0  # object height (full).
+        self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
         self.fanAngle = 0.1  # full fan angle for rays
         self.fanNumber = 9  # number of rays in fan
         self.rayNumber = 3  # number of points on object
+        self.design = {'rayColors': ['b', 'r', 'g']}  # design variables accessible to the user for customization
 
         # Constants when calculating field stop
         self.precision = 0.001
@@ -101,6 +102,20 @@ class ImagingPath(MatrixGroup):
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
         super(ImagingPath, self).__init__(elements=elements, label=label)
+
+    @property
+    def objectHeight(self):
+        """Get or set the object height, at the starting edge of the ImagingPath.
+        """
+        return self._objectHeight
+
+    @objectHeight.setter
+    def objectHeight(self, objectHeight: float):
+        """Set the object height, raises an error if negative.
+        """
+        if objectHeight < 0:
+            raise ValueError("The object height can't be negative.")
+        self._objectHeight = objectHeight
 
     def chiefRay(self, y=None):
         """This function returns the chief ray for a height y at object.
@@ -267,7 +282,7 @@ class ImagingPath(MatrixGroup):
         if transferMatrixToApertureStop.isImaging:
             return None
 
-        thetaUp  = (stopDiameter / 2.0 - A * y) / B
+        thetaUp = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
 
         if thetaDown > thetaUp:
@@ -441,8 +456,8 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Space(d=10))
         >>> print('The position of field stop is:', path.apertureStop()[0])
         >>> print('The diameter of field stop is:',path.apertureStop()[1])
-        The position of field stop is: 50.0
-        The diameter of field stop is: 10
+        The position of field stop is: 20.0
+        The diameter of field stop is: 5
 
         Also, as the following, you can use display() to follow the rays in the imaging path and view the
         aperture stop and field stop. The second lens in the imaging path (f=10) is the field stop.
@@ -520,7 +535,7 @@ class ImagingPath(MatrixGroup):
         --------
         >>> from raytracing import *
         >>> path = ImagingPath() # define an imaging path
-        >>> ath.objectHeight=6
+        >>> path.objectHeight=6
         >>> # use append() to add elements to the imaging path
         >>> path.append(Space(d=20))
         >>> path.append(Lens(f=20,diameter=5,label="f=20"))
@@ -693,14 +708,17 @@ class ImagingPath(MatrixGroup):
         """
 
         displayRange = self.largestDiameter
-        if displayRange == float('+Inf') or displayRange <= 2 * self.objectHeight:
-            displayRange = 2 * self.objectHeight
+
+        if displayRange == float('+Inf') or displayRange <= 2 * self._objectHeight:
+            displayRange = 2 * self._objectHeight
 
         conjugates = self.intermediateConjugates()
         if len(conjugates) != 0:
             for (planePosition, magnification) in conjugates:
-                if displayRange < self.objectHeight * magnification:
-                    displayRange = self.objectHeight * magnification
+                magnification = abs(magnification)
+                if displayRange < self._objectHeight * magnification:
+                    displayRange = self._objectHeight * magnification
+
         return displayRange
 
     def createRayTracePlot(
@@ -732,8 +750,8 @@ class ImagingPath(MatrixGroup):
         if limitObjectToFieldOfView:
             fieldOfView = self.fieldOfView()
             if fieldOfView != float('+Inf'):
-                self.objectHeight = fieldOfView
-                note1 = "FOV: {0:.2f}".format(self.objectHeight)
+                self._objectHeight = fieldOfView
+                note1 = "FOV: {0:.2f}".format(self._objectHeight)
             else:
                 raise ValueError(
                     "Infinite field of view: cannot use\
@@ -748,7 +766,7 @@ class ImagingPath(MatrixGroup):
                     limitObjectToFieldOfView=True.")
 
         else:
-            note1 = "Object height: {0:.2f}".format(self.objectHeight)
+            note1 = "Object height: {0:.2f}".format(self._objectHeight)
 
         if onlyChiefAndMarginalRays:
             (stopPosition, stopDiameter) = self.apertureStop()
@@ -889,17 +907,17 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        color = ['b', 'r', 'g']
+        color = self.design['rayColors']
 
         if onlyChiefAndMarginalRays:
-            halfHeight = self.objectHeight / 2.0
+            halfHeight = self._objectHeight / 2.0
             chiefRay = self.chiefRay(y=halfHeight - 0.01)
             (marginalUp, marginalDown) = self.marginalRays(y=0)
             rayGroup = (chiefRay, marginalUp)
             linewidth = 1.5
         else:
             halfAngle = self.fanAngle / 2.0
-            halfHeight = self.objectHeight / 2.0
+            halfHeight = self._objectHeight / 2.0
             rayGroup = Ray.fanGroup(
                 yMin=-halfHeight,
                 yMax=halfHeight,
@@ -921,7 +939,7 @@ class ImagingPath(MatrixGroup):
             binSize = 2.0 * halfHeight / (len(color) - 1)
             colorIndex = int(
                 (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-            axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
+            axes.plot(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
 
     def rearrangeRayTraceForPlotting(self, rayList,
                                      removeBlockedRaysCompletely=True):
@@ -948,7 +966,7 @@ class ImagingPath(MatrixGroup):
             # else: # ray will simply stop drawing from here
         return (x, y)
 
-    def drawDisplayObjects(self, axes):
+    def drawDisplayObjects(self, axes):  # pragma: no cover
         """ Draw the object, images and all elements to the figure
 
         Parameters
@@ -983,16 +1001,16 @@ class ImagingPath(MatrixGroup):
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
 
-        arrowHeadHeight = self.objectHeight * 0.1
+        arrowHeadHeight = self._objectHeight * 0.1
 
-        heightFactor = self.objectHeight / yScaling
+        heightFactor = self._objectHeight / yScaling
         arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
 
         axes.arrow(
             self.objectPosition,
-            -self.objectHeight / 2,
+            -self._objectHeight / 2,
             0,
-            self.objectHeight,
+            self._objectHeight,
             width=arrowHeadWidth / 5,
             fc='b',
             ec='b',
@@ -1015,7 +1033,7 @@ class ImagingPath(MatrixGroup):
         images = self.intermediateConjugates()
 
         for (imagePosition, magnification) in images:
-            arrowHeight = abs(magnification * self.objectHeight)
+            arrowHeight = abs(magnification * self._objectHeight)
             arrowHeadHeight = arrowHeight * 0.1
 
             heightFactor = arrowHeight / yScaling
@@ -1023,9 +1041,9 @@ class ImagingPath(MatrixGroup):
 
             axes.arrow(
                 imagePosition,
-                -magnification * self.objectHeight / 2,
+                -magnification * self._objectHeight / 2,
                 0,
-                magnification * self.objectHeight,
+                magnification * self._objectHeight,
                 width=arrowHeadWidth / 5,
                 fc='r',
                 ec='r',

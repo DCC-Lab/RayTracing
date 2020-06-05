@@ -8,16 +8,18 @@ from . import eo
 from . import olympus
 
 import argparse
+
 ap = argparse.ArgumentParser(prog='python -m raytracing')
-ap.add_argument("-e", "--examples", required=False, default='all', help="Specific example numbers, separated by a comma")
+ap.add_argument("-e", "--examples", required=False, default='all',
+                help="Specific example numbers, separated by a comma")
 
 args = vars(ap.parse_args())
 examples = args['examples']
 
 if examples == 'all':
-    examples = range(1,30)
+    examples = range(1, 30)
 else:
-    examples = [ int(y) for y in examples.split(',')]
+    examples = [int(y) for y in examples.split(',')]
 
 if 1 in examples:
     path = ImagingPath()
@@ -25,7 +27,7 @@ if 1 in examples:
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=10))
-    path.display(comments= """Demo #1: lens with f=5 cm, infinite diameter
+    path.display(comments="""Demo #1: lens with f=5 cm, infinite diameter
 
     An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\
     This will use the default objectHeight and fanAngle but they can be changed with:
@@ -65,7 +67,7 @@ if 2 in examples:
     path.display()
     """)
     # or
-    #path.save("Figure 2.pdf")
+    # path.save("Figure 2.pdf")
 
 if 3 in examples:
     path = ImagingPath()
@@ -119,9 +121,9 @@ if 4 in examples:
 if 5 in examples:
     path = ImagingPath()
     path.label = "Demo #5: Simple microscope system"
-    path.fanAngle = 0.1        # full fan angle for rays
-    path.fanNumber = 5         # number of rays in fan
-    path.rayNumber = 5         # number of points on object
+    path.fanAngle = 0.1  # full fan angle for rays
+    path.fanNumber = 5  # number of rays in fan
+    path.rayNumber = 5  # number of points on object
     path.append(Space(d=4))
     path.append(Lens(f=4, diameter=0.8, label='Obj'))
     path.append(Space(d=4 + 18))
@@ -153,7 +155,7 @@ if 6 in examples:
     path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
     path.append(Space(d=18))
     path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True,
-        comments="""# Demo #6: Simple microscope system, only principal rays
+                 comments="""# Demo #6: Simple microscope system, only principal rays
     The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
     the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
     when displaying, which will set the objectHeight to the field of view. We can also require that only the principal rays are drawn: chief ray
@@ -176,7 +178,7 @@ if 7 in examples:
     path.append(Space(d=3))
     path.append(DielectricSlab(n=1.5, thickness=4))
     path.append(Space(d=10))
-    path.display(comments=path.label+"""\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #7: Focussing through a dielectric slab"
     path.append(Space(d=10))
@@ -184,7 +186,7 @@ if 7 in examples:
     path.append(Space(d=3))
     path.append(DielectricSlab(n=1.5, thickness=4))
     path.append(Space(d=10))"""
-    )
+                 )
 if 8 in examples:
     # Demo #8: Virtual image
     path = ImagingPath()
@@ -192,7 +194,7 @@ if 8 in examples:
     path.append(Space(d=2.5))
     path.append(Lens(f=5))
     path.append(Space(d=10))
-    path.display(comments=path.label+"""\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #8: Virtual image at -2f with object at f/2"
     path.append(Space(d=2.5))
@@ -208,7 +210,7 @@ if 9 in examples:
     path.append(Space(d=10))
     path.append(Lens(f=5))
     path.append(Space(d=5))
-    path.display(comments=path.label+"""\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #9: Infinite telecentric 4f telescope"
     path.append(Space(d=5))
@@ -225,10 +227,10 @@ if 10 in examples:
     path.append(Space(d=7))
     path.append(Lens(f=10, label='Foc'))
     path.append(Space(d=40))
-    (focal,focal) = path.effectiveFocalLengths()
+    (focal, focal) = path.effectiveFocalLengths()
     bfl = path.backFocalLength()
     path.label = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}".format(focal, bfl)
-    path.display(comments=path.label+"""\n
+    path.display(comments=path.label + """\n
     A retrofocus has a back focal length longer than the effective focal length. It comes from a diverging lens followed by a converging
     lens. We can always obtain the effective focal lengths and the back focal length of a system.
 
@@ -252,7 +254,7 @@ if 11 in examples:
     path.append(Space(d=50))
     path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
     path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label+"""\n
+    path.display(onlyChiefAndMarginalRays=True, comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #11: Thick diverging lens"
     path.objectHeight = 20
@@ -270,7 +272,7 @@ if 12 in examples:
     path.append(Space(d=10, diameter=25, label='Lens'))
     path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
     path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label+"""\n
+    path.display(onlyChiefAndMarginalRays=True, comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #12: Thick diverging lens built from individual elements"
     path.objectHeight = 20
@@ -289,7 +291,7 @@ if 13 in examples:
     # at the front surface.
     M1 = Space(d=10)
     M2 = Lens(f=5)
-    M3 = M2*M1
+    M3 = M2 * M1
     print(M3.forwardConjugate())
     print(M3.backwardConjugate())
 if 14 in examples:
@@ -304,12 +306,12 @@ if 14 in examples:
     path.fanAngle = 0.0
     path.fanNumber = 1
     path.rayNumber = 15
-    path.objectHeight = 10.0
+    path.objectHeight = 20
     path.label = "Demo #14 Path with generic objective"
     path.append(Space(180))
     path.append(obj)
     path.append(Space(10))
-    path.display(comments=path.label+"""
+    path.display(comments=path.label + """
     path = ImagingPath()
     path.fanAngle = 0.0
     path.fanNumber = 1
@@ -326,11 +328,11 @@ if 15 in examples:
     path.fanAngle = 0.0
     path.fanNumber = 1
     path.rayNumber = 15
-    path.objectHeight = 10.0
+    path.objectHeight = 20
     path.label = "Demo #15 Path with LUMPlanFL40X"
     path.append(Space(180))
     path.append(olympus.LUMPlanFL40X())
-    path.display(comments=path.label+"""
+    path.display(comments=path.label + """
     path = ImagingPath()
     path.fanAngle = 0.0
     path.fanNumber = 1
@@ -360,7 +362,7 @@ if 17 in examples:
     path.append(Space(180))
     path.append(olympus.LUMPlanFL40X())
     path.append(Space(10))
-    path.display(comments=path.label+"""\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #17: Vendor Lenses"
     path.append(Space(d=50))
@@ -417,8 +419,8 @@ if 19 in examples:
     cavity.append(Space(d=160))
 
     # Calculate all self-replicating modes (i.e. eigenmodes)
-    (q1,q2) = cavity.eigenModes()
-    print(q1,q2)
+    (q1, q2) = cavity.eigenModes()
+    print(q1, q2)
 
     # Obtain all physical (i.e. finite) self-replicating modes
     qs = cavity.laserModes()
@@ -427,4 +429,3 @@ if 19 in examples:
 
     # Show
     cavity.display()
-

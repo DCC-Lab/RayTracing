@@ -12,7 +12,7 @@ class PN_33_922(AchromatDoubletLens):
     def __init__(self):
         # PN for Part number
         super(PN_33_922,self).__init__(fa=150.00,fb=126.46, R1=92.05,R2=-72.85, R3=-305.87, 
-                                    tc1=23.2, tc2=23.1, te=36.01, n1=1.6700, n2=1.8467, diameter=75,
+                                    tc1=23.2, tc2=23.1, te=36.01, n1=N_BAK1.n(0.5876), n2=N_SF8.n(0.5876), diameter=75,
                                     label="EO #33-922",
                                     url="https://www.edmundoptics.com/p/75mm-dia-x-150mm-fl-vis-0-coated-achromatic-lens/3376/")
 
