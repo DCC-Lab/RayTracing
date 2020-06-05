@@ -3,6 +3,23 @@ from .matrixgroup import *
 from math import  *
 
 class System4f(MatrixGroup):
+    """
+    The matrix group of a 4f system can be defined using this function.
+
+    Parameters
+    ----------
+    f1 : float
+        The focal length of the first lens
+    f2 : float
+        The focal length of the second lens
+    diameter1 : float
+        The diameter of the first lens. This value must be positive. (default=+Inf)
+    diameter2 : float
+        The diameter of the second lens. This value must be positive. (default=+Inf)
+    label : string
+        The label for the 4f system
+
+    """
     def __init__(self,f1, f2, diameter1=float('+Inf'), diameter2=float('+Inf'), label=''):
         elements = []
         elements.append(Space(d=f1))
@@ -15,6 +32,19 @@ class System4f(MatrixGroup):
 
 
 class System2f(MatrixGroup):
+    """
+    The matrix group of a 2f system can be defined using this function.
+
+    Parameters
+    ----------
+    f : float
+        The focal length of the lens
+    diameter : float
+        The diameter of the lens. This value must be positive. (default=+Inf)
+    label : string
+        The label for the 2f system
+
+    """
     def __init__(self,f, diameter=float('+Inf'), label=''):
         elements = []
         elements.append(Space(d=f))
