@@ -97,41 +97,59 @@ class BezierCurve:
 
 
 class Component:
+    """ The base class for all graphic components. Defined from bezier curves. """
     def __init__(self):
         self.color = [0.85, 0.95, 0.95]
         self.fill = True
+        self.lineWidth = None
 
     @property
-    def bezierCurves(self):
+    def bezierCurves(self) -> List[BezierCurve]:
         """ A list of bezier curves that defines the graphic of this component.
         To overwrite.
         """
         return []
 
     @property
-    def xy(self) -> List:
+    def xy(self) -> List[Tuple]:
+        """ The (x, y) coordinates of the component. """
         xy = []
-        for bezier in self.bezierCurves:
-            xy.extend([bezier.A, bezier.B])
+        for bezierCurve in self.bezierCurves:
+            xy.extend(bezierCurve.xy)
+        xy = list(set(xy))  # remove duplicates
         return xy
 
     @property
     def patch(self):
-        """ Create a Matplotlib Patch from a list of bezier curves """
+        """ A Matplotlib Patch of the component. Used to draw on a matplotlib figure. """
         coords = []
         codes = []
-        for bezier in self.bezierCurves:
-            coords.extend([bezier.A, bezier.cp, bezier.B])
-            codes.extend([mpath.Path.MOVETO, mpath.Path.CURVE3, mpath.Path.CURVE3])
+        for bezierCurve in self.bezierCurves:
+            if bezierCurve.isLinear:
+                codes.extend([mpath.Path.MOVETO, mpath.Path.LINETO])
+            elif bezierCurve.isQuadratic:
+                codes.extend([mpath.Path.MOVETO, mpath.Path.CURVE3, mpath.Path.CURVE3])
+            else:
+                raise NotImplemented("BezierCurves of order > 2 not supported. ")
+            coords.extend(bezierCurve.controlPoints)
+
         return patches.PathPatch(mpath.Path(coords, codes), color=self.color, fill=self.fill)
 
+    @staticmethod
+    def linearBezierCurvesFrom(controlPoints: List[Tuple]) -> List[BezierCurve]:
+        """ A list of linear bezier curves that go through all points.
 
-class BezierCurve:
-    def __init__(self, A: tuple, B: tuple, cp=None):
-        if cp is None:
-            # def a cp for straight line
-            pass
+        Arguments
+        ---------
+        controlPoints: List
+            The coordinates in (x, y) tuples that define all required linear bezier curves.
+        """
 
+        bezierCurves = []
+        for i, cpA in enumerate(controlPoints[:-1]):
+            cpB = controlPoints[i+1]
+            bezierCurves.append(BezierCurve([cpA, cpB]))
+        return bezierCurves
 
 class SurfacePair(Component):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
