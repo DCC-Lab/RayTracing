@@ -151,9 +151,57 @@ class Component:
             bezierCurves.append(BezierCurve([cpA, cpB]))
         return bezierCurves
 
+
+class Arrow(Component):
+    """ A standard arrow graphic component.
+
+    Arguments
+    ---------
+    dy: float
+        Total height of the arrow from 'y'.
+
+    Other parameters
+    ----------------
+    y: float
+        Starting point in y-axis where the base of the arrow sits. Defaults to 0.
+    """
+    # todo: allow thin style for lenses (thin?=True, fill=False, lineWidth ?)
+    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
+        super().__init__()
+        self.dy = dy
+        self.y = y
+        self.width = width
+        self.color = color
+
+        self.headWidth = width * 5
+        self.headLength = dy * headLengthRatio
+
+        # self.lengthIncludesHead = True
+        # self.dx = 0
+        # self.x = 0
+
+    @property
+    def bezierCurves(self):
+        """ The standard thick arrow is defined by a list of straight lines that surround the arrow. """
+        dx0 = self.width / 2
+        dx1 = self.headWidth / 2
+        dy = self.y + self.dy
+        dy1 = dy - self.headLength
+
+        p0 = (-dx0, self.y)
+        p1 = (-dx0, dy1)
+        p2 = (-dx1, dy1)
+        p3 = (0, dy)
+        p4 = (dx1, dy1)
+        p5 = (dx0, dy1)
+        p6 = (dx0, self.y)
+
+        return self.linearBezierCurvesFrom([p0, p1, p2, p3, p4, p5, p6, p0])
+
+
 class SurfacePair(Component):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
-        super(SurfacePair, self).__init__()
+        super().__init__()
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
         self.halfHeight = halfHeight
@@ -161,179 +209,107 @@ class SurfacePair(Component):
         self.corners = None
 
     @property
-    def bezierCurves(self):
-        # coordsA, actionsA = self.pathSurfaceA()
-        # coordsB, actionsB = self.pathSurfaceB()
-        #
-        # self.coords = coordsA + coordsB
-        # self.codes = actionsA + actionsB
-        # todo
-        return []
+    def bezierCurves(self) -> List[BezierCurve]:
+        bezierCurves = []
+        bezierCurves.extend(self._pathSurfaceA)
+        bezierCurves.extend(self._pathSurfaceB)
+        return bezierCurves
 
-
-class SurfacePairPatch(patches.PathPatch):
-    def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
-        self.surfaceA = surfaceA
-        self.surfaceB = surfaceB
-        self.halfHeight = halfHeight
-        self.x = x
-        self.corners = None
-
-        super(SurfacePairPatch, self).__init__(self.path(),
-                                               color=[0.85, 0.95, 0.95],
-                                               fill=True)  # transform=axes.transData
-
-    def pathSurfaceA(self) -> tuple:
-        # todo: cleanup
-        Path = mpath.Path
+    @property
+    def _pathSurfaceA(self) -> List[BezierCurve]:
         h = self.halfHeight
-        R1 = self.surfaceA.R
         v1 = self.x
 
         if self.surfaceA.R == float("+inf"):
-            return [(v1, -h), (v1, h)], [Path.MOVETO, Path.LINETO]
+            self.corners = [v1]
+            return [BezierCurve([(v1, -h), (v1, h)])]
 
+        R1 = self.surfaceA.R
         phi1 = math.asin(h / abs(R1))
         delta1 = R1 * (1.0 - math.cos(phi1))
         ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
         corner1 = v1 + delta1
 
-        coords = [(corner1, -h), (v1, -ctl1), (v1, 0),
-                  (v1, 0), (v1, ctl1), (corner1, h)]
-        actions = [Path.MOVETO, Path.CURVE3, Path.CURVE3,
-                   Path.LINETO, Path.CURVE3, Path.CURVE3]
-
         self.corners = [corner1]
-
-        if self.surfaceA.L == 0:  # thin lens exception
+        if self.surfaceA.L == 0:  # realistic thin lens exception
             self.surfaceA.L = delta1 * 2
 
-        return coords, actions
+        return [BezierCurve([(corner1, -h), (v1, -ctl1), (v1, 0)]),
+                BezierCurve([(v1, 0), (v1, ctl1), (corner1, h)])]
 
-    def pathSurfaceB(self) -> tuple:
-        Path = mpath.Path
-        R2 = self.surfaceB.R
+    @property
+    def _pathSurfaceB(self) -> List[BezierCurve]:
         h = self.halfHeight
         v2 = self.x + self.surfaceA.L
 
         if self.surfaceB.R == float("+inf"):
-            return [(v2, h), (v2, -h), (self.corners[0], -h)], [Path.LINETO, Path.LINETO, Path.LINETO]
+            self.corners.append(v2)
+            return [BezierCurve([(v2, h), (v2, -h)]),
+                    BezierCurve([(v2, -h), (self.corners[0], -h)])]
 
+        R2 = self.surfaceB.R
         phi2 = math.asin(h / abs(R2))
         delta2 = R2 * (1.0 - math.cos(phi2))
         ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
         corner2 = v2 + delta2
-
-        # append from (corner1, h), stop at (corner1, -h)
-        coords = [(corner2, h), (v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h), (self.corners[0], -h)]
-        actions = [Path.LINETO, Path.CURVE3, Path.CURVE3,
-                   Path.LINETO, Path.CURVE3, Path.CURVE3, Path.LINETO]
-
         self.corners.append(corner2)
 
-        return coords, actions
-
-    def path(self):
-        coordsA, actionsA = self.pathSurfaceA()
-        coordsB, actionsB = self.pathSurfaceB()
-
-        path = mpath.Path(coordsA + coordsB,
-                          actionsA + actionsB)
-
-        return path
-
-    def get_xy(self):
-        return self.get_path().vertices
+        return [BezierCurve([(corner2, h), (v2, ctl2), (v2, 0)]),
+                BezierCurve([(v2, 0), (v2, -ctl2), (corner2, -h)]),
+                BezierCurve([(corner2, -h), (self.corners[0], -h)])]
 
 
-class ArrowPatch(patches.FancyArrow):
-    """Define a FancyArrow patch with default RayTracing style created at (0,0).
-    Use with Graphic class to set position and scaling.
+class DoubleThinArrow(Component):
+    """ A thin arrow centered on y-axis with an arrow head on both ends. """
+    def __init__(self, height: float, color='k', headWidth=0.01, headLengthRatio=0.1):
+        super().__init__()
+        self.dy = height / 2
+        self.color = color
+        self.fill = False
+        self.lineWidth = 1.5
 
-    Examples
-    --------
-        Create a black arrow of height +5
-        >>> arrow = ArrowPatch(dy=5)
+        self.headWidth = headWidth
+        self.headLength = self.dy * headLengthRatio
 
-        Set position and label by creating a Graphic object
-        >>> graphic = Graphic([arrow], x=10, label='Image')
-    """
+    @property
+    def bezierCurves(self):
+        """ The thin arrow is defined by a list of straight lines without the notion of contours. """
+        dx1 = self.headWidth / 2
+        dy1 = self.dy - self.headLength
 
-    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
-        super(ArrowPatch, self).__init__(x=0, y=y, dx=0, dy=dy,
-                                         fc=color, ec=color,
-                                         width=width, length_includes_head=True,
-                                         head_width=width * 5, head_length=abs(dy) * headLengthRatio)
+        topHead = self.linearBezierCurvesFrom([(-dx1, dy1), (0, self.dy), (dx1, dy1)])
+        bottomHead = self.linearBezierCurvesFrom([(-dx1, -dy1), (0, -self.dy), (dx1, -dy1)])
 
+        bezierCurves = [BezierCurve([(0, -self.dy), (0, self.dy)])]
+        bezierCurves.extend(topHead)
+        bezierCurves.extend(bottomHead)
 
-class DoubleArrowPatch(patches.PathPatch):
-    """Define a thin double arrow patch with default RayTracing style created at (0,0).
-    Use with Graphic class to set position and scaling.
-
-    Examples
-    --------
-        Create a black double arrow with a total height of 10
-        >>> arrow = DoubleArrowPatch(height=10)
-
-        Set position and label by creating a Graphic object
-        >>> graphic = Graphic([arrow], x=5, label='Lens')
-
-    """
-
-    def __init__(self, height: float, color='k'):
-        self.y = height / 2
-
-        super(DoubleArrowPatch, self).__init__(self.path(), color=color, fill=False, linewidth=1.5)
-
-    def path(self):
-        h = self.y
-        dy = h * 0.2
-        dx = 0.008
-        Path = mpath.Path
-
-        coords = [(0, -h), (0, h),
-                  (-dx, h-dy), (0, h), (dx, h-dy),
-                  (-dx, -h+dy), (0, -h), (dx, -h+dy)]
-        actions = [Path.MOVETO, Path.LINETO,
-                   Path.MOVETO, Path.LINETO, Path.LINETO,
-                   Path.MOVETO, Path.LINETO, Path.LINETO]
-
-        return Path(coords, actions)
-
-    def get_xy(self):
-        return self.get_path().vertices
+        return bezierCurves
 
 
-class AperturePatch(patches.Polygon):
-    """Define a Polygon patch with default RayTracing style used to draw the aperture.
-    Use with Graphic class to set position and scaling.
-
-    Examples
-    --------
-        Create aperture patches for a lens
-        >>> apertureAbove = AperturePatch(y=halfHeight)
-        >>> apertureBelow = AperturePatch(y=-halfHeight)
-
-        Create aperture patches for a thick lens
-        >>> apertureAbove = AperturePatch(y=halfHeight, width=0.1)
-        >>> apertureBelow = AperturePatch(y=-halfHeight, width=0.1)
-
-        Create thick lens Graphic with a fixed width (autoScale Off)
-        >>> graphic = Graphic([thickLens, apertureAbove, apertureBelow], fixedWidth=True)
-    """
-
+class Aperture(Component):
+    """Define an aperture graphic component with default RayTracing style used to draw the apertures. """
     def __init__(self, y: float, x=0.0, width=0.01, color='0.7'):
-        if width <= 0.01:
-            coords = [[x - 0.01 / 2, y], [x + 0.01 / 2, y]]
+        super().__init__()
+        self.color = color
+        self.width = width
+        self.y = y
+        self.x = x
+
+        self.fill = False
+        self.lineWidth = 3
+
+    @property
+    def bezierCurves(self) -> List[BezierCurve]:
+        """ An aperture is defined as a straight line. """
+        if self.width <= 0.01:
+            coords = [(self.x - 0.005, self.y), (self.x + 0.005, self.y)]
         else:
-            coords = [[x, y], [x + width, y]]
-        super(AperturePatch, self).__init__(coords,
-                                            linewidth=3,
-                                            closed=False,
-                                            color=color)
+            coords = [(self.x, self.y), (self.x + self.width, self.y)]
+        return [BezierCurve(coords)]
 
 
+# TODO: encapsulate mpl for Label
 class Label(mplText.Text):
     def __init__(self, text: str, x=0.0, y=0.0, fontsize=8):
         super(Label, self).__init__(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
