@@ -1,6 +1,7 @@
 import math
 import cmath
 
+
 class GaussianBeam(object):
     """A gaussian laser beam using the ABCD formalism for propagation of complex radius of curvature q.
 
@@ -31,22 +32,24 @@ class GaussianBeam(object):
     wavelength and z must be in the same units.
     """
 
-    def __init__(self, q:complex=None, w:float=None, R:float=float("+Inf"), n:float=1.0, wavelength=632.8e-6, z=0):
+    def __init__(self, q: complex = None, w: float = None, R: float = float("+Inf"), n: float = 1.0,
+                 wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
-
+        relTol = 0.5 / 100
         if q is not None:
             self.q = q
         if w is not None:
-            self.q = 1/( 1.0/R - complex(0,1)*wavelength/n/(math.pi*w*w))
+            self.q = 1 / (1.0 / R - complex(0, 1) * wavelength / n / (math.pi * w * w))
         if q is None and w is None:
             raise ValueError("Please specify 'q' or 'w'.")
 
         if q is not None and w is not None:
-            if not cmath.isclose(a=self.q, b=q, abs_tol=0.1):
-                raise ValueError("Mismatch between the given q and the computed q (10% tolerance).")
+            if not cmath.isclose(a=self.q, b=q, rel_tol=relTol):
+                msg = f"Mismatch between the given q '{q}' and the computed q '{self.q}' ({relTol * 100}% tolerance)."
+                raise ValueError(msg)
 
         self.wavelength = wavelength
-        
+
         # We track the position for tracing purposes 
         self.z = z
         self.n = n
@@ -57,11 +60,11 @@ class GaussianBeam(object):
         """
         The radius of curvature (positive means diverging) extracted from q.
         """
-        invQReal = (1/self.q).real
+        invQReal = (1 / self.q).real
         if invQReal == 0:
             return float("+Inf")
 
-        return 1/invQReal
+        return 1 / invQReal
 
     @property
     def isFinite(self):
@@ -72,18 +75,18 @@ class GaussianBeam(object):
         is not a finite and reasonable complex radius.  This is used for
         resonator and cavity calculations to discard unphysical solutions.
         """
-        return (-1/self.q).imag > 0
-    
+        return (-1 / self.q).imag > 0
+
     @property
     def w(self):
         """
         The 1/e beam size in electric field extracted from q.
         """
-        qInv = (-1/self.q).imag
+        qInv = (-1 / self.q).imag
         if qInv > 0:
-            return math.sqrt( self.wavelength/self.n/(math.pi * qInv))
+            return math.sqrt(self.wavelength / self.n / (math.pi * qInv))
         else:
-            return float("+Inf")            
+            return float("+Inf")
 
     @property
     def wo(self):
@@ -91,7 +94,7 @@ class GaussianBeam(object):
         The 1/e beam size in electric field extracted from q at the waist of the beam.
         """
         if self.zo > 0:
-            return math.sqrt( self.zo * self.wavelength/math.pi )
+            return math.sqrt(self.zo * self.wavelength / math.pi)
         else:
             return None
 
@@ -135,7 +138,7 @@ class GaussianBeam(object):
             description += "w(z): {0:.3f}, ".format(self.w)
             description += "R(z): {0:.3f}, ".format(self.R)
             description += "z: {0:.3f}, ".format(self.z)
-            description += "λ: {0:.1f} nm\n".format(self.wavelength*1e6)
+            description += "λ: {0:.1f} nm\n".format(self.wavelength * 1e6)
             description += "zo: {0:.3f}, ".format(self.zo)
             description += "wo: {0:.3f}, ".format(self.wo)
             description += "wo position: {0:.3f} ".format(self.waistPosition)

@@ -399,7 +399,7 @@ class Rays:
         ----------
         filePath : str or PathLike or file-like object
             A path, or a Python file-like object, or possibly some backend-dependent object.
-            (Is the format important? what is the default format?)
+            Must be provided in OS-dependent format.
         append : bool
             If True, the loaded rays will be appended to the current list of rays.
         """
@@ -423,7 +423,7 @@ class Rays:
         ----------
         filePath : str or PathLike or file-like object
             A path, or a Python file-like object, or possibly some backend-dependent object.
-            (Is the form at important? what is the default format?)
+            Must be provided in OS-dependent format.
         """
 
         with open(filePath, 'wb') as outfile:
