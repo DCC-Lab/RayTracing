@@ -99,7 +99,7 @@ class LaserPath(MatrixGroup):
         """ Create a matplotlib plot to draw the laser beam and the elements.
         """
 
-        displayRange = 2 * self.largestDiameter()
+        displayRange = 2 * self.largestDiameter
         if displayRange == float('+Inf'):
             displayRange = self.inputBeam.w * 6
 
