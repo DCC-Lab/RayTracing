@@ -451,6 +451,133 @@ class TestMatrixGroup(unittest.TestCase):
         mg.insertElement(0, space)
         self.assertListEqual(mg.elements, [space, lens, space])
 
+    def testReplaceSingleWrongInputType(self):
+        mg = MatrixGroup([Lens(10)])
+        with self.assertRaises(TypeError):
+            mg.replaceSingle(0, Ray())
+
+    def testReplaceSingleNegativeIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(100)])
+        with self.assertRaises(IndexError):
+            mg.replaceSingle(-2, Space(101))
+
+    def testReplaceSinglePositiveIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(9)])
+        with self.assertRaises(IndexError):
+            mg.replaceSingle(1, Space(9.01))
+
+    def testReplaceSingleLengthMismatch(self):
+        space = Space(10)
+        wrongSpace = Space(15)
+        rightSpace = Space(20)
+        lens = Lens(10)
+        mg = MatrixGroup([space, lens, wrongSpace, lens, space])
+        with self.assertWarns(UserWarning):
+            mg.replaceSingle(2, rightSpace)
+        self.assertListEqual(mg.elements, [space, lens, rightSpace, lens, space])
+
+    def testReplaceSingleNoMismatchLength(self):
+        space = Space(10)
+        wrongLens = Lens(9)
+        rightLens = Lens(10)
+        mg = MatrixGroup([space, wrongLens, space])
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            try:
+                mg.replaceSingle(1, rightLens)
+            except UserWarning:
+                self.fail("Lengths should match!")
+        self.assertListEqual(mg.elements, [space, rightLens, space])
+
+    def testReplaceChunkWrongInputType(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(20), Lens(10), Space(10)])
+        with self.assertRaises(TypeError):
+            mg.replaceChunk(0, 2, [ThickLens(1.22, 10, 10, 2), TypeError])
+
+    def testReplaceChunkNegativeStartIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10)])
+        with self.assertRaises(IndexError):
+            mg.replaceChunk(-4, -1, Lens(10))
+
+    def testReplaceChunkNegativeStopIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10)])
+        with self.assertRaises(IndexError):
+            mg.replaceChunk(0, -4, Lens(10))
+
+    def testReplaceChunkPositiveStartIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10)])
+        with self.assertRaises(IndexError):
+            mg.replaceChunk(3, 2, Lens(10))
+
+    def testReplaceChunkPositiveStopIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10)])
+        with self.assertRaises(IndexError):
+            mg.replaceChunk(0, 3, Lens(10))
+
+    def testReplaceChunkSameIndices(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10)])
+        with self.assertRaises(IndexError):
+            mg.replaceChunk(0, 0, Space(10))
+
+    def testReplaceChunkSwapIndicesNoMismatch(self):
+        space10 = Space(10)
+        lens = Lens(10)
+        space20 = Space(20)
+        elements = [space10, lens, space10, space10, lens, space10]
+        mg = MatrixGroup(elements)
+        newMG = MatrixGroup([space20])
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            try:
+                mg.replaceChunk(3, 2, newMG)
+            except UserWarning:
+                self.fail("Lengths should match!")
+
+        self.assertListEqual(mg.elements, [space10, lens, space20, lens, space10])
+
+    def testReplaceChunkMismatch(self):
+        space10 = Space(10)
+        lens10 = Lens(10)
+        space8 = Space(8)
+        lens8 = Lens(8)
+        mg = MatrixGroup([space10, lens10, space10, space10, lens10, space10])
+        newMG = MatrixGroup([space8, lens8, space8])
+        with self.assertWarns(UserWarning):
+            mg.replaceChunk(3, -1, newMG)
+        self.assertListEqual(mg.elements, [space10, lens10, space10, space8, lens8, space8])
+
+    def testSetPositiveSingleIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(5), ThickLens(1.33, 10, -10, 2)])
+        with self.assertRaises(IndexError):
+            mg[12] = CurvedMirror(5, 20)
+
+    def testSetPositiveSliceOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(5), ThickLens(1.33, 10, -10, 2)])
+        with self.assertRaises(IndexError):
+            mg[10:12] = Aperture(50)  # First index out of bounds
+
+        with self.assertRaises(IndexError):
+            mg[0:10] = Aperture(80)  # Second index out of bounds
+
+    def testSetNegativeSliceOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(5), ThickLens(1.33, 10, -10, 2)])
+        with self.assertRaises(IndexError):
+            mg[-20, -1] = Aperture(50)
+
+        with self.assertRaises(IndexError):
+            mg[-1, -7] = Aperture(100)
+
+    def testSetStepWarning(self):
+        space10 = Space(10)
+        lens10 = Lens(10)
+        space5 = Space(5)
+        lens5 = Lens(5)
+        mg = MatrixGroup([space10, lens10, space5, space10, ThickLens(1.33, 10, -10, 2), space5])
+        with self.assertWarns(UserWarning) as w:
+            mg[2:4:2] = [space10, space5, lens5]
+        self.assertEqual(str(w.warning), "Not using the step of the slice.")
+        self.assertListEqual(mg.elements, [space10, lens10, space10, space5, lens5, space5])
+
 
 if __name__ == '__main__':
     unittest.main()
