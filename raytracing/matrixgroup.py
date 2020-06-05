@@ -273,7 +273,8 @@ class MatrixGroup(Matrix):
         if index > maxIndex or index < 0:
             raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex}.")
         if index == maxIndex:
-            self.append(element)
+            for newElement in element:
+                self.append(newElement)
         else:
             tempElements = self.elements[:]
             self.elements = []
