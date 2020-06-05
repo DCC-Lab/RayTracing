@@ -22,12 +22,21 @@ def skipUnless(condition: object, reason: str):
 
 class RaytracingTestCase(unittest.TestCase):
     dirName = os.path.join(tempfile.gettempdir(), "tempDir")
+    removeAlreadyExists = False
 
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
 
     @classmethod
     def createTempDirectory(cls):
+        if os.path.exists(cls.dirName):
+            if cls.removeAlreadyExists:
+                cls.deleteTempDirectory()
+            else:
+                fullDirName = os.path.join(os.getcwd(), cls.dirName)
+                msg = f"'{fullDirName}' directory already exists. " \
+                    f"Please set RaytracingTestCase.removeAlreadyExists to True if you want to delete this directory."
+                raise FileExistsError(msg)
         os.mkdir(cls.dirName)
 
     @classmethod
