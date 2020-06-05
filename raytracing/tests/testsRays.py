@@ -230,6 +230,8 @@ class TestRays(unittest.TestCase):
         self.assertNotEqual(init, final)
 
     def testRayAnglesHistAlreadyComputedSameParams(self):
+        r = Rays([Ray(2), Ray()])
+        init = r.rayAnglesHistogram()
         final = r.rayAnglesHistogram()
         self.assertIsNotNone(init)
         self.assertIsNotNone(final)
