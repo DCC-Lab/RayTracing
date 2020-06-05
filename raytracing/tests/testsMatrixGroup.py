@@ -350,7 +350,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
     def assertSaveNotFailed(self, matrixGroup: MatrixGroup, name: str):
         try:
-            matrixGroup.saveElements(name)
+            matrixGroup.save(name)
         except Exception as exception:
             self.fail(f"An exception was raised:\n{exception}")
 
@@ -358,7 +358,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         if name is None:
             name = self.fileName
         try:
-            matrixGroup.loadElements(name, append)
+            matrixGroup.load(name, append)
         except Exception as exception:
             self.fail(f"An exception was raised:\n{exception}")
 
@@ -405,7 +405,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         fname = r"this\file\does\not\exist.pkl"
         mg = MatrixGroup()
         with self.assertRaises(FileNotFoundError):
-            mg.loadElements(fname)
+            mg.load(fname)
 
     def testLoadInEmptyMatrixGroup(self):
         mg = MatrixGroup()
@@ -432,7 +432,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
         try:
             with self.assertRaises(IOError):
-                MatrixGroup().loadElements(fname)
+                MatrixGroup().load(fname)
         except AssertionError as exception:
             self.fail(str(exception))
 
@@ -444,7 +444,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         time.sleep(0.5)
         try:
             with self.assertRaises(IOError):
-                MatrixGroup().loadElements(fname)
+                MatrixGroup().load(fname)
         except AssertionError as exception:
             self.fail(str(exception))
 

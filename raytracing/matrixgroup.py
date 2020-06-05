@@ -236,7 +236,16 @@ class MatrixGroup(Matrix):
             return element
         raise StopIteration
 
-    def saveElements(self, filePath: str):
+    def save(self, filePath:str):
+
+        """ A MatrixGroup can be saved using this function and loaded with `load()`
+
+        Parameters
+        ----------
+        filePath : str or PathLike or file-like object
+            A path, or a Python file-like object, or possibly some backend-dependent object.
+            Must be provided in OS-dependent format.
+        """
         with open(filePath, "wb") as outfile:
             pickle.Pickler(outfile).dump(self.elements)
 
@@ -262,7 +271,18 @@ class MatrixGroup(Matrix):
                     # Not possible, yet: sometimes we get here
                     time.sleep(0.1)
 
-    def loadElements(self, filePath: str, append: bool = False):
+    def load(self, filePath, append=False):
+        """ A MatrixGroup saved with `save()` can be loaded using this function.
+
+        Parameters
+        ----------
+        filePath : str or PathLike or file-like object
+            A path, or a Python file-like object, or possibly some backend-dependent object.
+            Must be provided in OS-dependent format.
+        append : bool
+            If True, the loaded elements will be appended to the current list of elements.
+        """
+
         with open(filePath, 'rb') as infile:
             loadedMatrices = pickle.Unpickler(infile).load()
             if not isinstance(loadedMatrices, collections.Iterable):
