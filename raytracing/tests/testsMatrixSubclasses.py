@@ -1,4 +1,3 @@
-import unittest
 import envtest  # modifies path
 
 from raytracing import *
@@ -6,7 +5,7 @@ from raytracing import *
 inf = float("+inf")
 
 
-class TestLens(unittest.TestCase):
+class TestLens(envtest.RaytracingTestCase):
 
     def testLensMatrix(self):
         s = Lens(f=10)
@@ -32,7 +31,7 @@ class TestLens(unittest.TestCase):
         self.assertListEqual(l.pointsOfInterest(0), [])
 
 
-class TestCurvedMirror(unittest.TestCase):
+class TestCurvedMirror(envtest.RaytracingTestCase):
 
     def testCurvedMirror(self):
         cm = CurvedMirror(inf)
@@ -130,7 +129,7 @@ class TestCurvedMirror(unittest.TestCase):
         self.assertAlmostEqual(m1.D, m2.D, 4)
 
 
-class TestSpaceMatrix(unittest.TestCase):
+class TestSpaceMatrix(envtest.RaytracingTestCase):
 
     def testSpaceMatrix(self):
         s = Space(d=10)
@@ -225,7 +224,7 @@ class TestSpaceMatrix(unittest.TestCase):
         self.assertEqual(s.L, 2)
 
 
-class TestDielectricInterface(unittest.TestCase):
+class TestDielectricInterface(envtest.RaytracingTestCase):
 
     def testDielectricInterface(self):
         di = DielectricInterface(1, 1.33)
@@ -286,7 +285,7 @@ class TestDielectricInterface(unittest.TestCase):
         self.assertTrue(outRayUp.theta > 0)
 
 
-class TestThickLens(unittest.TestCase):
+class TestThickLens(envtest.RaytracingTestCase):
 
     def testThickLens(self):
         tl = ThickLens(1.33, 5, -5, 0)
@@ -426,7 +425,7 @@ class TestThickLens(unittest.TestCase):
         self.assertEqual(finalTl.D, transMat.D)
 
 
-class TestDielectricSlab(unittest.TestCase):
+class TestDielectricSlab(envtest.RaytracingTestCase):
 
     def testDielectricSlab(self):
         ds = DielectricSlab(1.33, 2)
@@ -467,7 +466,7 @@ class TestDielectricSlab(unittest.TestCase):
         self.assertEqual(finalDs.D, transMat.D)
 
 
-class TestAperture(unittest.TestCase):
+class TestAperture(envtest.RaytracingTestCase):
 
     def testApertureMatrix(self):
         s = Aperture(diameter=25)
@@ -482,4 +481,4 @@ class TestAperture(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

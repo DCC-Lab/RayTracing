@@ -1,11 +1,10 @@
-import unittest
 import envtest # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestLens(unittest.TestCase):
+class TestLens(envtest.RaytracingTestCase):
     def testObjectiveCreation(self):
         obj = Objective(f=5, NA=1.0, focusToFocusLength = 10, backAperture=10,workingDistance=1)
         self.assertIsNotNone(obj)
@@ -94,4 +93,4 @@ class TestLens(unittest.TestCase):
         # print(path.imageSize())
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

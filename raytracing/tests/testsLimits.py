@@ -1,10 +1,9 @@
-import unittest
 import envtest # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
-class TestLimits(unittest.TestCase):
+class TestLimits(envtest.RaytracingTestCase):
     def testLimitsThatExist(self):
         # Limits that exist
         self.assertEqual(inf, float('+inf'))
@@ -37,4 +36,4 @@ class TestLimits(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

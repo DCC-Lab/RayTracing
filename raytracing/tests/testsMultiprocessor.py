@@ -1,4 +1,3 @@
-import unittest
 import envtest # modifies path
 from raytracing import *
 
@@ -7,7 +6,7 @@ inf = float("+inf")
 def multiplyBy2(value) -> float:
     return 2*value
 
-class TestMultiProcessorSupport(unittest.TestCase):
+class TestMultiProcessorSupport(envtest.RaytracingTestCase):
     def testMultiPool(self):
         processes = 8
         inputValues = [1,2,3,4]
@@ -17,4 +16,4 @@ class TestMultiProcessorSupport(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

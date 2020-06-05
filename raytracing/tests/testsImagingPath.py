@@ -1,11 +1,10 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestImagingPath(unittest.TestCase):
+class TestImagingPath(envtest.RaytracingTestCase):
     def testImagingPath(self):
         path = ImagingPath()
         self.assertIsNotNone(path)
@@ -86,11 +85,6 @@ class TestImagingPath(unittest.TestCase):
 
         self.assertEqual(path.displayRange(), largestDiameter)
 
-    @unittest.skip("Maybe will change")
-    def testDisplayRangeLargestDiameterBiggerThanObj(self):
-        path = ImagingPath(System4f(10, 10, 10, 20))
-        path.objectHeight = 1
-        print(path.displayRange())
 
     def testEntrancePupilAIs0(self):
         space = Space(2)
@@ -331,4 +325,4 @@ class TestImagingPath(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

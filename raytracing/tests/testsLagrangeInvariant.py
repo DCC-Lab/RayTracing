@@ -1,11 +1,10 @@
-import unittest
 import envtest # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestLagrange(unittest.TestCase):
+class TestLagrange(envtest.RaytracingTestCase):
     def testLagrangeInvariantSpace(self):
         m = Space(d=10)
         self.assertIsNotNone(m)
@@ -25,4 +24,4 @@ class TestLagrange(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

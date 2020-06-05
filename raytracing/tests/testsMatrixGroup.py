@@ -1,4 +1,3 @@
-import unittest
 import envtest  # modifies path
 
 from raytracing import *
@@ -6,7 +5,7 @@ from raytracing import *
 inf = float("+inf")
 
 
-class TestMatrixGroup(unittest.TestCase):
+class TestMatrixGroup(envtest.RaytracingTestCase):
 
     def testMatrixGroup(self):
         mg = MatrixGroup()
@@ -235,18 +234,6 @@ class TestMatrixGroup(unittest.TestCase):
         with self.assertRaises(TypeError):
             mg.trace("Ray")
 
-    @unittest.skip("Importation problem...")
-    def testImagingPath(self):
-        mg = MatrixGroup()
-        path = mg.ImagingPath()
-        self.assertIsNotNone(path)
-
-    @unittest.skip("Importation problem...")
-    def testLaserPath(self):
-        mg = MatrixGroup()
-        path = mg.LaserPath()
-        self.assertIsNotNone(path)
-
     def testIntermediateConjugatesEmptyGroup(self):
         mg = MatrixGroup()
         self.assertListEqual(mg.intermediateConjugates(), [])
@@ -326,4 +313,4 @@ class TestMatrixGroup(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

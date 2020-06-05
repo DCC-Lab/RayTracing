@@ -1,11 +1,10 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestLaserPath(unittest.TestCase):
+class TestLaserPath(envtest.RaytracingTestCase):
 
     def testLaserPathNoElements(self):
         lasPath = LaserPath()
@@ -78,4 +77,4 @@ class TestLaserPath(unittest.TestCase):
         self.assertTupleEqual(lp.rearrangeBeamTraceForPlotting(rayList), (x, y))
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

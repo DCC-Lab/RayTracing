@@ -1,10 +1,9 @@
-import unittest
 import envtest # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
-class TestRay(unittest.TestCase):
+class TestRay(envtest.RaytracingTestCase):
     def testRay(self):
         ray = Ray()
         self.assertIsNotNone(ray)
@@ -96,4 +95,4 @@ class TestRay(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

@@ -1,4 +1,3 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
@@ -9,7 +8,7 @@ inf = float("+inf")
 testSaveHugeFile = True
 
 
-class TestRays(unittest.TestCase):
+class TestRays(envtest.RaytracingTestCase):
 
     def testRays(self):
         r = Rays()
@@ -249,19 +248,7 @@ class TestRays(unittest.TestCase):
             rays.append("This is a ray")
 
 
-class TestRaysSaveAndLoad(unittest.TestCase):
-    dirName = ""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.dirName = "tempDir"
-        os.mkdir(cls.dirName)
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        for file in os.listdir(cls.dirName):
-            os.remove(os.path.join(cls.dirName, file))
-        os.rmdir(cls.dirName)
+class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
     def setUp(self) -> None:
         self.testRays = Rays([Ray(), Ray(1, 1), Ray(-1, 1), Ray(-1, -1)])
@@ -341,7 +328,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
         self.assertSaveNotFailed(rays, self.fileName)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
     def testSaveHugeFile(self):
         fname = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
         nbRays = 100_000
@@ -358,7 +345,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         self.assertLoadNotFailed(raysLoad, name)
         self.assertListEqual(raysLoad.rays, rays.rays)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
     def testSaveThenLoadHugeFile(self):
         nbRays = 100_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
@@ -371,4 +358,4 @@ class TestRaysSaveAndLoad(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

@@ -1,8 +1,7 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
-class TestMatrixAxesToDataScale(unittest.TestCase):
+class TestMatrixAxesToDataScale(envtest.RaytracingTestCase):
     def testWithEmptyAxes(self):
         fig, axes = plt.subplots(figsize=(10, 7))
 
@@ -52,4 +51,4 @@ class TestMatrixAxesToDataScale(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()
