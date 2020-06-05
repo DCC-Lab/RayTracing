@@ -314,19 +314,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         self.assertListEqual(mg.elements, mg2.elements)
 
 
-class TestSaveAndLoadMatrixGroup(unittest.TestCase):
-    dirName = ""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.dirName = "tempDir"
-        os.mkdir(cls.dirName)
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        for file in os.listdir(cls.dirName):
-            os.remove(os.path.join(cls.dirName, file))
-        os.rmdir(cls.dirName)
+class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
 
     def setUp(self) -> None:
         self.testMG = MatrixGroup([Space(10), Lens(10), Space(10)])
@@ -379,7 +367,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
         self.assertSaveNotFailed(mg, self.fileName)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveHugeFile(self):
         fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
@@ -443,7 +431,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         self.assertLoadNotFailed(mg2, fname)
         self.assertLoadEqualsMatrixGroup(mg2, mg1)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveThenLoadHugeFile(self):
         fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
