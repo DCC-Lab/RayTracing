@@ -263,8 +263,10 @@ class MatrixGroup(Matrix):
                 self.append(element)
 
     def insertElement(self, index: int, element: Matrix):
-        if not isinstance(element, Matrix):
-            raise TypeError("'element' should be a Matrix instance.")
+        if not isinstance(element, collections.Iterable):
+            element = MatrixGroup([element])
+        else:
+            element = MatrixGroup(element)
         maxIndex = len(self)
         if index < 0:
             index += maxIndex
@@ -278,7 +280,73 @@ class MatrixGroup(Matrix):
             for i in range(maxIndex):
                 previousElement = tempElements[i]
                 if i == index:
-                    self.append(element)
+                    for newElement in element:
+                        self.append(newElement)
                     self.append(previousElement)
                 else:
                     self.append(previousElement)
+
+    def replaceSingle(self, index: int, newElement: Matrix):
+        if not isinstance(newElement, collections.Iterable):
+            newElement = MatrixGroup([newElement])
+        else:
+            newElement = MatrixGroup(newElement)
+        maxIndex = len(self)
+        if index < 0:
+            index += maxIndex
+        if index >= maxIndex or index < 0:
+            raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex - 1}.")
+        tempElements = self.elements[:]
+        self.elements = []
+        for i in range(maxIndex):
+            if i == index:
+                toReplace = tempElements[i]
+                if toReplace.L != newElement.L:
+                    warnings.warn("Physical length mismatch. Squeezing or extending the current group.", UserWarning)
+                for element in newElement:
+                    self.append(element)
+            else:
+                self.append(tempElements[i])
+
+    def replaceChunk(self, startIndex: int, stopIndex: int, newChunk: Matrix):
+        # startIndex and stopIndex are included.
+        if not isinstance(newChunk, collections.Iterable):
+            newChunk = MatrixGroup([newChunk])
+        else:
+            newChunk = MatrixGroup(newChunk)
+        maxIndex = len(self)
+        if startIndex < 0:
+            startIndex += maxIndex
+        if stopIndex < 0:
+            stopIndex += maxIndex
+        if startIndex >= maxIndex or startIndex < 0:
+            raise IndexError(f"Index {startIndex} out of bound, min = 0, max {maxIndex - 1}.")
+        if stopIndex >= maxIndex or stopIndex < 0:
+            raise IndexError(f"Index {stopIndex} out of bound, min = 0, max {maxIndex - 1}.")
+        if startIndex == stopIndex:
+            raise IndexError("The start and stop index must be different.")
+        if startIndex > stopIndex:
+            temp = startIndex
+            startIndex = stopIndex
+            stopIndex = temp
+
+        if self[startIndex:stopIndex + 1].L != newChunk.L:
+            warnings.warn("Physical length mismatch. Squeezing or extending the current group.", UserWarning)
+        tempElements = self.elements[:]
+        self.elements = []
+        for i in range(maxIndex):
+            if i < startIndex or i > stopIndex:
+                # Don't disturb the elements we want to keep
+                self.append(tempElements[i])
+            elif i == startIndex:
+                # When we reach the start index, we append every element in newChunk.
+                for newElement in newChunk:
+                    self.append(newElement)
+
+    def __setitem__(self, key, value: Matrix):
+        if isinstance(key, slice):
+            if key.step is not None:
+                warnings.warn("Not using the step of the slice.", UserWarning)
+            self.replaceChunk(key.start, key.stop, value)
+        else:
+            self.replaceSingle(key, value)
