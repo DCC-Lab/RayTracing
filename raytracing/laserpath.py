@@ -24,7 +24,7 @@ class LaserPath(MatrixGroup):
     inputBeam : object of GaussianBeam class
         the input beam of the imaging path is defined using this parameter.
     isResonator : bool
-        #fixme : If True, what happens? (default=False)
+        If True, the laser path is considered a resonator cavity 
     showElementLabels : bool
         If True, the labels of the elements will be shown on display. (default=True)
     showPointsOfInterest : bool
@@ -99,8 +99,8 @@ class LaserPath(MatrixGroup):
         ----------
         inputBeam : object of GaussianBeam class
             A Gaussian beam with defined parameters
-        #fixme : inputBeams : type?
-            #fixme : what is the difference between inputBeam and inputBeams?
+        inputBeams : list of object of GaussianBeam class
+            A list of Gaussian beams
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
