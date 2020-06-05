@@ -271,7 +271,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         time.sleep(0.5)  # Make sure everything is ok
 
     def testLoadFileDoesntExists(self):
-        file = r"this file\doesn't\exists"
+        file = r"this file\doesn't\exist"
         rays = Rays()
         with self.assertRaises(FileNotFoundError):
             rays.load(file)
