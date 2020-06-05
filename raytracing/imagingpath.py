@@ -734,6 +734,7 @@ class ImagingPath(MatrixGroup):
 
     def rayTraceLines(self, onlyChiefAndMarginalRays,
                       removeBlockedRaysCompletely=True):
+        # todo: remove plt dependence
         """ *renamed and refactored version of drawRayTraces*
         A list of all ray trace line objects corresponding to either
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber)
