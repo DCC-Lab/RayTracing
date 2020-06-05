@@ -451,6 +451,14 @@ class TestMatrixGroup(unittest.TestCase):
         mg.insertElement(0, space)
         self.assertListEqual(mg.elements, [space, lens, space])
 
+    def testInsertElementIterable(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([space, space, lens, space])
+        insertion = MatrixGroup([lens, space])
+        mg.insertElement(1, insertion)
+        self.assertListEqual(mg.elements, [space, lens, space, space, lens, space])
+
     def testReplaceSingleWrongInputType(self):
         mg = MatrixGroup([Lens(10)])
         with self.assertRaises(TypeError):
@@ -488,6 +496,13 @@ class TestMatrixGroup(unittest.TestCase):
             except UserWarning:
                 self.fail("Lengths should match!")
         self.assertListEqual(mg.elements, [space, rightLens, space])
+
+    def testReplaceSingleWithMultipleMatrices(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([space, lens, Space(20), lens, space])
+        mg.replaceSingle(2, [space, space])
+        self.assertListEqual(mg.elements, [space, lens, space, space, lens, space])
 
     def testReplaceChunkWrongInputType(self):
         mg = MatrixGroup([Space(10), Lens(10), Space(20), Lens(10), Space(10)])
@@ -562,10 +577,10 @@ class TestMatrixGroup(unittest.TestCase):
     def testSetNegativeSliceOutOfBounds(self):
         mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(5), ThickLens(1.33, 10, -10, 2)])
         with self.assertRaises(IndexError):
-            mg[-20, -1] = Aperture(50)
+            mg[-20:-1] = Aperture(50)
 
         with self.assertRaises(IndexError):
-            mg[-1, -7] = Aperture(100)
+            mg[-1:-7] = Aperture(100)
 
     def testSetStepWarning(self):
         space10 = Space(10)
