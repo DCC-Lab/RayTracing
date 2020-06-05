@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib import patches, transforms
 from matplotlib import text as mplText
 import matplotlib.path as mpath
-from typing import List
+from typing import List, Tuple
 import numpy as np
 import math
 
@@ -11,12 +11,11 @@ class Graphic:
     """ The base class that defines the graphic of any element.
 
     A Graphic can be a composition of different graphic components (ex.: A lens graphic is two arrows).
-    Do not use directly. Use a child class with the desired backend.
 
     Args:
         *components: The required graphic components that define the Graphic.
 
-            These graphic patches should be instantiated at x = 0 to allow for proper positioning and scaling.
+            These graphic components should be instantiated at x = 0 to allow for proper positioning and scaling.
 
     """
 
@@ -25,7 +24,6 @@ class Graphic:
         self.components = components
         self.label = None
 
-        self.axes = None
         self.x = x
         self.y = y
         self.useAutoScale = not fixedWidth
@@ -39,38 +37,6 @@ class Graphic:
         if self.label is None:
             return False
         return True
-
-    def applyTo(self, renderer, x: float = None, y: float = None):
-        """ Apply the Graphic on a figure at a given position (x, y) with auto-scale.
-
-        Overwritten for specific backend.
-
-        Args:
-            x, y (:obj:`float`, optional): The x and y position in data units where to apply the graphic.
-                Defaults to (0, 0).
-
-        """
-
-        if x is not None:
-            self.x = x
-        if y is not None:
-            self.y = y
-
-    def update(self, x: float = None, y: float = None):
-        """ Update the graphic's position and scaling.
-
-        Overwritten for specific backend.
-
-        Args:
-            x, y (:obj:`float`, optional): The x and y position where to apply the graphic.
-                Defaults to the originally applied position.
-
-        """
-
-        if x is not None:
-            self.x = x
-        if y is not None:
-            self.y = y
 
     def halfHeight(self) -> float:
         """ Maximum absolute Y-value of the graphic (not affected by the transforms).
@@ -91,125 +57,24 @@ class Graphic:
         return np.mean(xy, axis=0)
 
 
-class MatplotlibGraphic(Graphic):
-    """ The graphic of any element using a Matplotlib backend.
+class GraphicOf:
+    def __new__(cls, element) -> Graphic:
+        if type(element) is 'Lens':
+            return cls.graphicOfLens(element)
 
-    A Graphic can be a composition of different graphic components (ex.: A lens graphic is two arrows).
+    @classmethod
+    def graphicOfLens(cls, element):
+        components = [Arrow(dy=element.halfHeight)]
+        return Graphic(components)
 
-    Args:
-        *components: The required graphic components (of type `matplotlib.patches.Patch`) that define the Graphic.
 
-            These graphic patches should be instantiated at x = 0 to allow for proper positioning and scaling.
 
-    Examples:
-        Create a Graphic from multiple patches
-
-        >>> arrowUp = ArrowPatch(dy=5)
-        >>> arrowDown = ArrowPatch(dy=-5)
-        >>> lensGraphic = Graphic([arrowUp, arrowDown])
-
-        Apply the Graphic on a figure at x=10
-
-        >>> fig, axes = plt.subplots()
-        >>> lensGraphic.applyTo(axes, x=10)
-
-        Take advantage of the auto-scaling feature by updating the Graphic after the figure's limits have changed
-        (on a zoom callback)
-
-        >>> lensGraphic.update()
-
-        Update the Graphic's position
-
-        >>> lensGraphic.update(x=5)
 
     """
 
-    def __init__(self, components: List[patches.Patch], label: str = None,
-                 x=0, y=0, fixedWidth=False):
-
-        super(MatplotlibGraphic, self).__init__(components, label, x, y, fixedWidth)
-
-    def applyTo(self, axes: plt.Axes, x: float = None, y: float = None):
-        """ Apply the Graphic on a figure at a given position (x, y) with auto-scale.
-
-        Args:
-            axes (matplotlib.pyplot.Axes): The figure's Axes on which to apply the graphic.
-            x, y (:obj:`float`, optional): The x and y position in data units where to apply the graphic.
-                Defaults to (0, 0).
-
-        """
-
-        self.axes = axes
-        if x is not None:
-            self.x = x
-        if y is not None:
-            self.y = y
-
-        self.update()
-
-        for component in self.components:
-            self.axes.add_patch(component)
-
-        if self.label is not None:
-            self.axes.add_artist(self.label)
-
-    def update(self, x: float = None, y: float = None):
-        """ Update the graphic's position and scaling.
-
-        Args:
-            x, y (:obj:`float`, optional): The x and y position where to apply the graphic.
-                Defaults to the originally applied position.
-
-        """
-
-        if x is not None:
-            self.x = x
-        if y is not None:
-            self.y = y
-
-        xScaling, yScaling = self.scaling()
-
-        translation = transforms.Affine2D().translate(self.x, self.y)
-        scaling = transforms.Affine2D().scale(xScaling, yScaling)
-
-        for component in self.components:
-            component.set_transform(scaling + translation + self.axes.transData)
-
-        if self.label is not None:
-            self.label.set_transform(translation + self.axes.transData)
-
-    def scaling(self):
-        """ Used internally to compute the required scale transform so that the width of the objects stay the same
-        respective to the Axes. """
-        if not self.useAutoScale:
-            return 1, 1
-
-        xScale, yScale = self.axesToDataScale()
-
-        heightFactor = self.halfHeight() * 2 / yScale
-        xScaling = xScale * (heightFactor / 0.2) ** (3 / 4)
-
-        return xScaling, 1
-
-    def axesToDataScale(self):
-        """ Dimensions of the figure in data units. """
-        xScale, yScale = self.axes.viewLim.bounds[2:]
-
-        return xScale, yScale
 
 
-class Graphic:
-    def __init__(self, element):
-        pass
 
-    @classmethod
-    def fromElement(cls, element):
-        if type(element) is 'Lens':
-            return LensGraphic(element)
-
-
-class LensGraphic(Graphic):
-    pass
 
 
 class Component:
