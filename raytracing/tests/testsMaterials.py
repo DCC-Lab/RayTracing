@@ -43,7 +43,7 @@ class TestMaterialSubclasses(unittest.TestCase):
                              'N_SF6HT': 1.8033, 'N_SF10': 1.7267, 'N_SF11': 1.7829, 'N_BAF10': 1.6692,
                              'E_BAF11': 1.6659, 'N_BAK1': 1.5719, 'N_BAK4': 1.5682, 'FK51A': 1.4862, 'LAFN7': 1.7482,
                              'N_LASF9': 1.8486,'N_LAK22': 1.6504, 'N_SSK5': 1.6576, 'E_FD10': 1.7267,
-                             'FusedSilica': 1.4580}
+                             'FusedSilica': 1.4580,'N_SF8':1.6876,'N_SF57':1.8445}
 
         for material in self.materials:
             name = material.__name__
