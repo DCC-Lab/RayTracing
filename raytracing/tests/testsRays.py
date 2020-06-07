@@ -11,7 +11,7 @@ testSaveHugeFile = True
 
 class TestRays(unittest.TestCase):
 
-    def testRays(self):
+    def testRaysNoArgs(self):
         r = Rays()
         self.assertIsNotNone(r)
         self.assertListEqual(r.rays, [])
@@ -23,10 +23,11 @@ class TestRays(unittest.TestCase):
         self.assertIsNone(r._thetaHistogram)
         self.assertIsNone(r._directionBinEdges)
 
+    def testRaysEmptyListArg(self):
         r = Rays([])
         self.assertListEqual(r.rays, [])
 
-    def testRaysInitDifferentInputs(self):
+    def testRaysInitDifferentIterInputs(self):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         tupleOfRays = tuple(listOfRays)
         npArrayOfRays = array(listOfRays)
@@ -38,16 +39,16 @@ class TestRays(unittest.TestCase):
         self.assertListEqual(raysFromTuple.rays, list(tupleOfRays))
         self.assertListEqual(raysFromArray.rays, list(npArrayOfRays))
 
+    def testRaysInitNoRightIterInput(self):
         with self.assertRaises(TypeError):
-            # This should raise an TypeError exception
             Rays("Ray(), Ray(1), Ray(1,1)")
 
+    def testRaysInitNotAllRayInstances(self):
         with self.assertRaises(TypeError):
-            # This should raise an TypeError exception
             Rays([Ray(), [1, 2], Ray()])
 
+    def testRaysInitWrongObj(self):
         with self.assertRaises(TypeError):
-            # This should raise an TypeError exception
             Rays(Matrix())
 
     def testRaysIterations(self):
@@ -58,13 +59,15 @@ class TestRays(unittest.TestCase):
             self.assertEqual(ray, raysList[index])
             index += 1
 
-    def testRaysLen(self):
+    def testRaysLenDefaultArgs(self):
         r = Rays()
         self.assertEqual(len(r), 0)
 
+    def testRaysLenEmptyList(self):
         r = Rays([])
         self.assertEqual(len(r), 0)
 
+    def testRaysLen(self):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         r = Rays(listOfRays)
         self.assertEqual(len(r), len(listOfRays))
@@ -75,27 +78,32 @@ class TestRays(unittest.TestCase):
         for i in range(len(raysList)):
             self.assertEqual(rays[i], raysList[i])
 
-    def testCountRays(self):
+    def testCountRaysDefaultArgs(self):
         r = Rays()
         self.assertEqual(r.count, 0)
 
+    def testCountRaysEmptyList(self):
         r = Rays([])
         self.assertEqual(r.count, 0)
 
+    def testCountRays(self):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         r = Rays(listOfRays)
-        self.assertEqual(r.count, 4)
+        self.assertEqual(r.count, len(listOfRays))
+
+    def testYValuesDefaultArgs(self):
+        r = Rays()
+        self.assertListEqual(r.yValues, [])
+
+    def testYValuesEmptyList(self):
+        r = Rays([])
+        self.assertListEqual(r.yValues, [])
 
     def testYValues(self):
-        r = Rays()
-        self.assertListEqual(r.yValues, [])
-
-        r = Rays([])
-        self.assertListEqual(r.yValues, [])
-
-        listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
+        yvalues = list(range(10))
+        listOfRays = [Ray(y) for y in yvalues]
         r = Rays(listOfRays)
-        self.assertListEqual(r.yValues, [0, 1, 1, 0])
+        self.assertListEqual(r.yValues, yvalues)
 
     def testYValuesNotNone(self):
         r = Rays([Ray()])
@@ -104,16 +112,19 @@ class TestRays(unittest.TestCase):
         r._yValues = yvalues
         self.assertListEqual(r.yValues, yvalues)
 
-    def testThetaValues(self):
+    def testThetaValuesDefaultArgs(self):
         r = Rays()
         self.assertListEqual(r.thetaValues, [])
 
+    def testThetaValuesEmptyList(self):
         r = Rays([])
         self.assertListEqual(r.thetaValues, [])
 
-        listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
+    def testThetaValues(self):
+        thetaValues = list(linspace(-pi / 2, pi / 2, 10))
+        listOfRays = [Ray(theta=theta) for theta in thetaValues]
         r = Rays(listOfRays)
-        self.assertListEqual(r.thetaValues, [0, 1, -2, -1])
+        self.assertListEqual(r.thetaValues, thetaValues)
 
     def testRayCountHist(self):
         r = Rays([Ray()])
@@ -161,12 +172,13 @@ class TestRays(unittest.TestCase):
         out = f.getvalue()
         self.assertEqual(out.strip(), "")
 
-    def testRayCountHistogram(self):
+    def testRayCountHistogramBinCountSpecified(self):
         r = [Ray(a, a) for a in range(6)]
         r = Rays(r)
         tRes = ([x * 0.5 + 0.25 for x in range(10)], [1, 0, 1, 0, 1, 0, 1, 0, 1, 1])
         self.assertTupleEqual(r.rayCountHistogram(10), tRes)
 
+    def testRayCountHistogramMinValueSpecified(self):
         r = [Ray(a, a) for a in range(50)]
         r = Rays(r)
         rayCountHist = r.rayCountHistogram(minValue=2)
@@ -179,7 +191,7 @@ class TestRays(unittest.TestCase):
             self.assertAlmostEqual(rayCountHist[0][i], comparison[0][i])
         self.assertListEqual(rayCountHist[1], comparison[1])
 
-    def testRayAnglesHistogram(self):
+    def testRayAnglesHistogramBinCountSpecified(self):
         r = [Ray(a, a / 6) for a in range(6)]
         r = Rays(r)
         tRes = ([(x * 1 / 12 + 1 / 24) for x in range(10)], [1, 1, 0, 1, 0, 0, 1, 1, 0, 1])
@@ -190,6 +202,7 @@ class TestRays(unittest.TestCase):
             self.assertAlmostEqual(rayAngleHist[0][i], tRes[0][i])
         self.assertListEqual(rayAngleHist[1], tRes[1])
 
+    def testRayAnglesHistogramMinValueSpecified(self):
         r = [Ray(a, a / 50) for a in range(50)]
         r = Rays(r)
         rayAngleHist = r.rayAnglesHistogram(minValue=2 / 50)
@@ -202,34 +215,42 @@ class TestRays(unittest.TestCase):
             self.assertAlmostEqual(rayAngleHist[0][i], comparison[0][i])
         self.assertListEqual(rayAngleHist[1], comparison[1])
 
-    def testRayCountHistAlreadyComputed(self):
+    def testRayCountHistAlreadyComputedSameParams(self):
         r = Rays([Ray(2), Ray()])
         init = r.rayCountHistogram()
-        self.assertIsNotNone(init)  # First time compute
         final = r.rayCountHistogram()
-        self.assertIsNotNone(final)  # Second time compute, now works
-
+        self.assertIsNotNone(init)
+        self.assertIsNotNone(final)
         self.assertTupleEqual(init, final)
+
+    def testRayCountHistAlreadyComputedDifferentParams(self):
+        r = Rays([Ray(2), Ray()])
+        init = r.rayCountHistogram()
         final = r.rayCountHistogram(maxValue=1)
         self.assertNotEqual(init, final)
 
-    def testRayAnglesHistAlreadyComputed(self):
+    def testRayAnglesHistAlreadyComputedSameParams(self):
+        r = Rays([Ray(2), Ray()])
+        init = r.rayAnglesHistogram()
+        final = r.rayAnglesHistogram()
+        self.assertIsNotNone(init)
+        self.assertIsNotNone(final)
+        self.assertTupleEqual(init, final)
+
+    def testRayAnglesHistAlreadyComputedDifferentParams(self):
         r = Rays([Ray(0, 2), Ray()])
         init = r.rayAnglesHistogram()
-        self.assertIsNotNone(init)  # First time compute
-        final = r.rayAnglesHistogram()
-        self.assertIsNotNone(final)  # Second time compute, now works
-
-        self.assertTupleEqual(init, final)
         final = r.rayAnglesHistogram(maxValue=1)
         self.assertNotEqual(init, final)
 
     def testAppend(self):
         r = Rays([Ray(1, 1)])
-        self.assertListEqual(r.rays, [Ray(1, 1)])
         r.append(Ray())
         self.assertListEqual(r.rays, [Ray(1, 1), Ray()])
 
+    def testAppendInvalidateCachedValues(self):
+        r = Rays([Ray(1, 1)])
+        r.append(Ray())
         r.rayAnglesHistogram()
         r.rayCountHistogram()
         r.append(Ray(2, 0))
@@ -323,6 +344,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
         time.sleep(0.5)
+
         with self.assertRaises(IOError):
             Rays().load(fileName)
 
