@@ -526,15 +526,6 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(m.displayHalfHeight(), 4)
         self.assertEqual(m.displayHalfHeight(6), 6)
 
-    def testAxesToDataScale(self):
-        m = Matrix()
-        min, max = -10, 10
-        axes = plt.subplot()
-        axes.set_ylim(min, max)
-        axes.set_xlim(min, max)
-        val = len(range(min, max))
-        self.assertTupleEqual(m.axesToDataScale(axes), (val, val))
-
 
 if __name__ == '__main__':
     unittest.main()

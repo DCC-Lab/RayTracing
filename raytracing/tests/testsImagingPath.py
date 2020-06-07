@@ -69,26 +69,6 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath(elements)
         self.assertTupleEqual(path.entrancePupil(), (None, None))
 
-    def testDisplayRangeMagnificationTimesObjHeight(self):
-        path = ImagingPath()
-        path.append(Space(2))
-        path.append(CurvedMirror(-5, 10))
-        self.assertAlmostEqual(path.displayRange(), 50)
-
-    def testDisplayRangeLargestDiam(self):
-        path = ImagingPath()
-        path.append(Space(2))
-        path.append(CurvedMirror(-5, 10))
-        path.objectHeight = 1
-        self.assertEqual(path.displayRange(), 10)
-
-    def testDisplayRangeWithEmptyPath(self):
-        path = ImagingPath()
-
-        largestDiameter = path.objectHeight * 2
-
-        self.assertEqual(path.displayRange(), largestDiameter)
-
     def testEntrancePupilAIs0(self):
         space = Space(2)
         lens = Lens(10, 110)

@@ -10,6 +10,7 @@ def multiplyBy2(value) -> float:
 
 
 class TestMultiProcessorSupport(unittest.TestCase):
+    @unittest.skipIf(sys.platform == 'darwin',"Because of matplotlib, causes an exception on darwin and prevent tests completion")
     def testMultiPool(self):
         processes = 8
         inputValues = [1, 2, 3, 4]
