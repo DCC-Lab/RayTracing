@@ -21,27 +21,25 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, 1)
         self.assertListEqual(mg.elements, [])
 
-    def testMatrixGroupAcceptsAnything(self):
+    def testMatrixGroupDoesNotAcceptRandomClass(self):
         class Toto:
             def __init__(self):
                 self.L = "Hello"
 
         with self.assertRaises(TypeError) as exception:
+            MatrixGroup([Toto(), Matrix()])
+        self.assertEqual(str(exception.exception), "'matrix' must be a Matrix instance.")
+
+    def testMatrixGroupDoesnNotAcceptStr(self):
+        with self.assertRaises(TypeError) as exception:
             MatrixGroup(["Matrix", Matrix()])
         self.assertEqual(str(exception.exception), "'matrix' must be a Matrix instance.")
 
-        with self.assertRaises(TypeError) as exception2:
-            MatrixGroup([Toto(), Matrix()])
-        self.assertEqual(str(exception2.exception), str(exception.exception))
-
+    def testMatrixGroupDoesNotAcceptNonIterable(self):
         with self.assertRaises(TypeError) as exception:
             MatrixGroup(123)
         self.assertEqual(str(exception.exception),
                          "'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
-
-        with self.assertRaises(TypeError) as exception2:
-            MatrixGroup(TypeError)
-        self.assertEqual(str(exception2.exception), str(exception.exception))
 
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
@@ -108,12 +106,12 @@ class TestMatrixGroup(unittest.TestCase):
 
         otherElement = Space(10)
         mg.append(otherElement)
-        self.assertEqual(len(mg.elements), 2)
+        transferMat = otherElement * element
         msg = "If this fails, it is because the appended object is copied or it is not the right object: it is not" \
               "the same instance. At the time this test was written, the original object is appended." \
               "It is a short way to check if it is the right one at the end of the list."
+        self.assertEqual(len(mg.elements), 2)
         self.assertIs(mg.elements[-1], otherElement, msg=msg)
-        transferMat = otherElement * element
         self.assertEqual(mg.L, transferMat.L)
         self.assertEqual(mg.A, transferMat.A)
         self.assertEqual(mg.B, transferMat.B)
@@ -137,10 +135,8 @@ class TestMatrixGroup(unittest.TestCase):
         element = DielectricInterface(1, 1.33, 10)
         mg.append(element)
         otherElement = Space(10)
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            with self.assertRaises(UserWarning):
-                mg.append(otherElement)
+        with self.assertWarns(UserWarning):
+            mg.append(otherElement)
 
     def testAppendSpaceMustAdoptIndexOfRefraction(self):
         mEquivalent = MatrixGroup()
@@ -152,6 +148,11 @@ class TestMatrixGroup(unittest.TestCase):
         mEquivalent.append(d2)
         self.assertEqual(d1.backIndex, s.frontIndex)
         self.assertEqual(d2.frontIndex, s.backIndex)
+
+    def testAppendNotSpaceIndexOfRefractionMismatch(self):
+        mg = MatrixGroup([Space(10)])
+        with self.assertRaises(ValueError):
+            mg.append(DielectricInterface(1.33, 1.22))
 
     def testAppendNotCorrectType(self):
         mg = MatrixGroup()
@@ -174,8 +175,8 @@ class TestMatrixGroup(unittest.TestCase):
         elements.append(l2)
         elements.append(s4)
         mg = MatrixGroup(elements, label="Test")
-        self.assertEqual(len(mg.elements), len(elements))
         transferMat = s4 * l2 * s3 * s2 * l1 * s1
+        self.assertEqual(len(mg.elements), len(elements))
         self.assertEqual(mg.L, transferMat.L)
         self.assertAlmostEqual(mg.A, transferMat.A, places=10)
         self.assertAlmostEqual(mg.B, transferMat.B, places=10)
@@ -186,7 +187,7 @@ class TestMatrixGroup(unittest.TestCase):
         mg = MatrixGroup()
         self.assertListEqual(mg.transferMatrices(), [])
 
-    def testTransferMatrices(self):
+    def testTransferMatricesOneElement(self):
         msg = "The equality of matrices is based upon their id. It was sufficient when writing this test, because" \
               "the matrix was not copied or changed: it was the 'whole' object that was appended (i.e. the original " \
               "object and the appended object is the same object, same memory spot). If this fails, either" \
@@ -197,11 +198,18 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(len(transferMatrices), 1)
         self.assertListEqual(transferMatrices, [element1], msg=msg)
 
+    def transferMatrixTwoElements(self):
+        msg = "The equality of matrices is based upon their id. It was sufficient when writing this test, because" \
+              "the matrix was not copied or changed: it was the 'whole' object that was appended (i.e. the original " \
+              "object and the appended object is the same object, same memory spot). If this fails, either" \
+              "they are not the same object anymore (but can still be 'equal') or they are purely different."
+        element1 = Space(10)
+        mg = MatrixGroup([element1])
         element2 = Lens(2)
         mg.append(element2)
         transferMatrices = mg.transferMatrices()
         self.assertEqual(len(transferMatrices), 2)
-        self.assertListEqual(transferMatrices, [element1, element2])
+        self.assertListEqual(transferMatrices, [element1, element2], msg=msg)
 
     def testTraceEmptyMatrixGroup(self):
         mg = MatrixGroup()
@@ -224,11 +232,20 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertListEqual(mg._lastRayTrace, trace)
         self.assertEqual(mg._lastRayToBeTraced, trace[0])
 
-        mgTrace = mg.trace(ray)
+    def testTraceAlreadyTraced(self):
+        s = Space(2, diameter=5)
+        l = Lens(6, diameter=5)
+        ray = Ray(2, 2)
+        mg = MatrixGroup([s, l])
+        trace = [ray, ray, Ray(6, 2), Ray(6, 1)]
+        mgTrace1 = mg.trace(ray)
+
+        mgTrace2 = mg.trace(ray)  # Trace a 2nd time
         self.assertListEqual(mg._lastRayTrace, trace)
-        self.assertListEqual(mgTrace, trace)
+        self.assertListEqual(mgTrace2, trace)
+        self.assertListEqual(mgTrace1, mgTrace2)
         self.assertEqual(mg._lastRayToBeTraced, trace[0])
-        self.assertTrue(mgTrace[-1].isBlocked)
+        self.assertTrue(mgTrace2[-1].isBlocked)
 
     def testTraceIncorrectType(self):
         s = Space(2, diameter=5)
@@ -236,18 +253,6 @@ class TestMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([s, l])
         with self.assertRaises(TypeError):
             mg.trace("Ray")
-
-    @unittest.skip("Importation problem...")
-    def testImagingPath(self):
-        mg = MatrixGroup()
-        path = mg.ImagingPath()
-        self.assertIsNotNone(path)
-
-    @unittest.skip("Importation problem...")
-    def testLaserPath(self):
-        mg = MatrixGroup()
-        path = mg.LaserPath()
-        self.assertIsNotNone(path)
 
     def testIntermediateConjugatesEmptyGroup(self):
         mg = MatrixGroup()
@@ -297,7 +302,7 @@ class TestMatrixGroup(unittest.TestCase):
         mg = MatrixGroup()
         self.assertIs(mg.flipOrientation(), mg)
 
-    def testFlipOrientation(self):
+    def testFlipOrientation_1(self):
         space = Space(10)
         mg = MatrixGroup([space])
         mg.flipOrientation()
@@ -308,6 +313,7 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, space.D)
         self.assertEqual(mg.L, space.L)
 
+    def testFlipOrientation_2(self):
         space = Space(10)
         slab = DielectricSlab(1, 10)
         interface = DielectricInterface(1, 1.33)
@@ -602,7 +608,10 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.dirName = "tempDir"
-        os.mkdir(cls.dirName)
+        try:
+            os.mkdir(cls.dirName)
+        except:
+            pass
 
     @classmethod
     def tearDownClass(cls) -> None:
