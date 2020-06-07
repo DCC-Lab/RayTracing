@@ -339,7 +339,10 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.dirName = "tempDir"
-        os.mkdir(cls.dirName)
+        try:
+            os.mkdir(cls.dirName)
+        except:
+            pass
 
     @classmethod
     def tearDownClass(cls) -> None:
