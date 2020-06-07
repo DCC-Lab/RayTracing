@@ -26,7 +26,7 @@ from raytracing import *
 def rayCount(nRays=10000, objectHalfHeight=5, path=ImagingPath()):
 
     # Production of rays from a focal spot with a radius of objectHalfHeight
-    inputRays = RandomUniformRays(yMax=objectHalfHeight, yMin=objectHalfHeight, maxCount=nRays)
+    inputRays = RandomUniformRays(yMax=objectHalfHeight, yMin= -objectHalfHeight, maxCount=nRays)
     outputRays = Rays()
 
     # Counts how many rays make it through the system
@@ -57,7 +57,6 @@ def imagingPath(a=10, b=10, title=""):
     path.append(Lens(f=50, diameter=b, label="Second lens"))
     path.append(Space(d=50))
     path.append(Aperture(diameter=10, label='Camera'))
-    path.append(Space(d=50))
     
     return path
 
