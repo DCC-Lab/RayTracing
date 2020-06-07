@@ -53,6 +53,7 @@ class TestFigureAxesToDataScale(unittest.TestCase):
         self.assertEqual(xScaling, 20)
         self.assertEqual(yScaling, 10)
 
+    @unittest.skipIf(sys.platform == 'darwin',"FIXME: We hacked plt.show() on darwin to recover Ctrl-C")
     @patch('matplotlib.pyplot.show')
     def testWithImagingPath(self, mock):
         path = ImagingPath()
