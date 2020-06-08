@@ -1,11 +1,10 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestUniformRays(unittest.TestCase):
+class TestUniformRays(envtest.RaytracingTestCase):
     def testRays(self):
         rays = UniformRays(1, -1, 1, -1, 10, 11)
         raysList = []
@@ -37,7 +36,7 @@ class TestUniformRays(unittest.TestCase):
         self.assertListEqual(rays.rays, raysList)
 
 
-class TestLambertianRays(unittest.TestCase):
+class TestLambertianRays(envtest.RaytracingTestCase):
 
     def testLambertianRays(self):
         rays = LambertianRays(1, -1, 10, 11, 12)
@@ -70,7 +69,7 @@ class TestLambertianRays(unittest.TestCase):
         self.assertListEqual(rays.rays, raysList)
 
 
-class TestRandomRays(unittest.TestCase):
+class TestRandomRays(envtest.RaytracingTestCase):
 
     def testRandomRays(self):
         rays = RandomRays()
@@ -145,7 +144,7 @@ class TestRandomRays(unittest.TestCase):
             rays[-6]
 
 
-class TestRandomUniformRays(unittest.TestCase):
+class TestRandomUniformRays(envtest.RaytracingTestCase):
 
     def testRandomUniformRays(self):
         rays = RandomUniformRays()
@@ -235,7 +234,7 @@ class TestRandomUniformRays(unittest.TestCase):
             rays[-item]
 
 
-class TestRandomLambertianRays(unittest.TestCase):
+class TestRandomLambertianRays(envtest.RaytracingTestCase):
 
     def testRandomLambertianRays(self):
         rays = RandomLambertianRays()
@@ -324,4 +323,4 @@ class TestRandomLambertianRays(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

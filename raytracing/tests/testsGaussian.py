@@ -1,11 +1,10 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestBeam(unittest.TestCase):
+class TestBeam(envtest.RaytracingTestCase):
     def testBeam(self):
         beam = GaussianBeam(w=1)
         self.assertEqual(beam.w, 1)
@@ -112,4 +111,4 @@ class TestBeam(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

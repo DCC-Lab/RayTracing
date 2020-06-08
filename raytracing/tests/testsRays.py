@@ -1,4 +1,3 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
@@ -9,7 +8,7 @@ inf = float("+inf")
 testSaveHugeFile = True
 
 
-class TestRays(unittest.TestCase):
+class TestRays(envtest.RaytracingTestCase):
 
     def testRaysNoArgs(self):
         r = Rays()
@@ -270,26 +269,11 @@ class TestRays(unittest.TestCase):
             rays.append("This is a ray")
 
 
-class TestRaysSaveAndLoad(unittest.TestCase):
-    dirName = ""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.dirName = "tempDir"
-        try:
-            os.mkdir(cls.dirName)
-        except:
-            pass #already exists
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        for file in os.listdir(cls.dirName):
-            os.remove(os.path.join(cls.dirName, file))
-        os.rmdir(cls.dirName)
+class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
     def setUp(self) -> None:
         self.testRays = Rays([Ray(), Ray(1, 1), Ray(-1, 1), Ray(-1, -1)])
-        self.fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'testFile.pkl')
+        self.fileName = self.tempFilePath('testFile.pkl')
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testRays.rays)
         time.sleep(0.5)  # Make sure everything is ok
@@ -334,7 +318,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
 
     def testLoadWrongIterable(self):
         wrongObj = 7734
-        fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
+        fileName = self.tempFilePath('wrongObj.pkl')
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongObj)
         time.sleep(0.5)  # Make sure everything is ok
@@ -342,7 +326,7 @@ class TestRaysSaveAndLoad(unittest.TestCase):
             Rays().load(fileName)
 
     def testLoadWrongTypeInIterable(self):
-        fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
+        fileName = self.tempFilePath('wrongObj.pkl')
         wrongIterType = [Ray(), Ray(1), [1, 1]]
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
@@ -359,41 +343,41 @@ class TestRaysSaveAndLoad(unittest.TestCase):
 
     def testSaveInEmptyFile(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
-        name = os.path.join(TestRaysSaveAndLoad.dirName, "emptyFile.pkl")
-        self.assertSaveNotFailed(rays, name)
+        fileName = self.tempFilePath('wrongObj.pkl')
+        self.assertSaveNotFailed(rays, fileName)
 
     def testSaveInFileNotEmpty(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
         self.assertSaveNotFailed(rays, self.fileName)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
     def testSaveHugeFile(self):
-        fname = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
+        fileName = self.tempFilePath('hugeFile.pkl')
         nbRays = 100_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
-        self.assertSaveNotFailed(rays, fname)
+        self.assertSaveNotFailed(rays, fileName)
 
     def testSaveThenLoad(self):
         raysList = [Ray(), Ray(-1), Ray(2), Ray(3)]
         rays = Rays(raysList)
-        name = os.path.join(TestRaysSaveAndLoad.dirName, "testSaveAndLoad.pkl")
+        fileName = self.tempFilePath('testSaveAndLoad.pkl')
         raysLoad = Rays()
-        self.assertSaveNotFailed(rays, name)
-        self.assertLoadNotFailed(raysLoad, name)
+        self.assertSaveNotFailed(rays, fileName)
+        self.assertLoadNotFailed(raysLoad, fileName)
         self.assertListEqual(raysLoad.rays, rays.rays)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
     def testSaveThenLoadHugeFile(self):
         nbRays = 100_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
         raysLoad = Rays()
-        name = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
-        self.assertSaveNotFailed(rays, name)
-        self.assertLoadNotFailed(raysLoad, name)
+        fileName = self.tempFilePath('hugeFile.pkl')
+        self.assertSaveNotFailed(rays, fileName)
+        self.assertLoadNotFailed(raysLoad, fileName)
         self.assertListEqual(raysLoad.rays, rays.rays)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

@@ -319,7 +319,7 @@ class Rays:
         # axis1.set_title('Intensity profile')
         axis1.plot(x, y, 'k-', label="Intensity")
         axis1.set_ylim([0, max(y) * 1.1])
-        axis1.set_xlabel("Distance")
+        axis1.set_xlabel("Height of ray")
         axis1.set_ylabel("Ray count")
         axis1.legend(["Intensity"])
 
@@ -328,7 +328,7 @@ class Rays:
         axis2.plot(x, y, 'k--', label="Orientation profile")
         axis2.set_ylim([0, max(y) * 1.1])
         axis2.set_xlim([-pi / 2, pi / 2])
-        axis2.set_xlabel("Angles [rad]")
+        axis2.set_xlabel("Angle of ray [rad]")
         axis2.set_ylabel("Ray count")
         axis2.legend(["Angle"])
 
