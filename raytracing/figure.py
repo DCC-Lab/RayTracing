@@ -79,6 +79,32 @@ class Figure:
         self.axes.text(0.05, 0.15, text, transform=self.axes.transAxes,
                        fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
 
+    def design(self, rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
+               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
+        # todo: maybe move all display() arguments here instead
+        """ Update the design parameters of the figure.
+        All parameters are None by default to allow for the update of one parameter at a time.
+        Parameters
+        ----------
+        rayColors : List[Union[str, tuple]], optional
+            List of the colors to use for the three different ray type (. Default is ['b', 'r', 'g'].
+        onlyAxialRay : bool, optional
+            Only draw the ray fans coming from the center of the object (axial rays).
+            Works with fanAngle and fanNumber. Default to False.
+        imageColor : Union[str, tuple], optional
+            Color of image arrows. Default to 'r'.
+        objectColor : Union[str, tuple], optional
+            Color of object arrow. Default to 'b'.
+        """
+
+        params = locals()
+        for key, value in params.items():
+            if value is not None:
+                if key is 'rayColors':
+                    assert len(value) is 3, \
+                        "rayColors has to be a list with 3 elements."
+                self.designParams[key] = value
+
     def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
                 removeBlockedRaysCompletely=False, filepath=None):
         """ Display the optical system and trace the rays.
