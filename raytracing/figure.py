@@ -374,9 +374,7 @@ class Figure:
 
             if self.path.showElementLabels:
                 graphic.drawLabels(z, self.axes)
-            z += element.L
-        return z
-
+            z += graphic.L
 
     def axesToDataScale(self):
         """ Display dimensions in data units.
@@ -415,6 +413,10 @@ class Figure:
 class MatrixGraphic:
     def __init__(self, matrix: Matrix):
         self.matrix = matrix
+
+    @property
+    def L(self):
+        return self.matrix.L
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
