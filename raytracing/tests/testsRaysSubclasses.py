@@ -102,16 +102,25 @@ class TestRandomRays(envtest.RaytracingTestCase):
             self.fail("This should not raise any exception.")
         self.assertEqual(ray, Ray())
 
-    @envtest.expectedFailure
-    # FIXME: Rays now warns only when it takes a long time (more than 3 seconds)
     def testRandomRaysGetWarnsWhenGeneratingRaysOnlyForLongTimes(self):
-        rays = RandomRays()
-        with self.assertRaises(UserWarning):
-            # Can't use assertWarns because an exception is raised after
-            # We must 'raise' the warning as an exception before the other exception
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("error")
-                rays[10000]
+
+        class RandomRaysTest(RandomRays):
+
+            def __init__(self, maxCount: int = 10_000):
+                super(RandomRaysTest, self).__init__(maxCount=maxCount)
+
+            def randomRay(self):
+                if len(self._rays) == self.maxCount:
+                    raise AttributeError("Cannot generate more random rays, maximum count achieved")
+                ray = Ray()  # Just the basic y = theta = 0 ray
+                time.sleep(1)  # Make it sleep for 1 second
+                self.append(ray)
+                return ray
+
+        rays = RandomRaysTest(int(1e6))
+        
+        with self.assertWarns(UserWarning):
+            rays[3]
 
     def testRandomRaysGetNotImplemented(self):
         rays = RandomRays()
