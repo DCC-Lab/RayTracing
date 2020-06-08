@@ -324,7 +324,7 @@ class TestMatrix(unittest.TestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
-    @unittest.skipIf(sys.platform == 'darwin',"Endless loop on macOS")
+    @unittest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -337,7 +337,7 @@ class TestMatrix(unittest.TestCase):
         except:
             pass
 
-    @unittest.skipIf(sys.platform == 'darwin',"Endless loop on macOS")
+    @unittest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]

@@ -10,7 +10,8 @@ def multiplyBy2(value) -> float:
 
 
 class TestMultiProcessorSupport(unittest.TestCase):
-    @unittest.skipIf(sys.platform == 'darwin',"Because of matplotlib, causes an exception on darwin and prevent tests completion")
+    @unittest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testMultiPool(self):
         processes = 8
         inputValues = [1, 2, 3, 4]
