@@ -8,7 +8,7 @@ def multiplyBy2(value) -> float:
     return 2 * value
 
 
-class TestMultiProcessorSupport(envtest.TestCase):
+class TestMultiProcessorSupport(envtest.RaytracingTestCase):
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
