@@ -802,7 +802,6 @@ class ImagingPath(MatrixGroup):
                 x.append(ray.z)
                 y.append(ray.y)
             elif removeBlockedRaysCompletely:
-                x = []
-                y = []
+                return [], []
             # else: # ray will simply stop drawing from here
-        return (x, y)
+        return x, y
