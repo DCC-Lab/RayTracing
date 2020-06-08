@@ -85,7 +85,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
         self.assertEqual(path.displayRange(), largestDiameter)
 
-
     def testEntrancePupilAIs0(self):
         space = Space(2)
         lens = Lens(10, 110)
@@ -172,7 +171,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertAlmostEqual(path.imageSize(), imgSize, 2)
 
     def testSave(self):
-        filename = "test.png"
+        filename = os.path.join(TestImagingPath.dirName, "test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
         path.save(filename, comments=comments)
@@ -238,7 +237,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
         principalRay = path.principalRay()
         self.assertAlmostEqual(principalRay.y, 20, 2)
         self.assertAlmostEqual(principalRay.theta, -2, 3)
-
 
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
@@ -321,7 +319,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path = ImagingPath(System2f(10, 10))
         with self.assertRaises(ValueError):
             path.chiefRay()
-
 
 
 if __name__ == '__main__':
