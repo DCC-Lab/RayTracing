@@ -79,7 +79,7 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
 
 
     illumination = ImagingPath()
-    illumination.append(Space(d=focalspotPosition))
+    illumination.append(Space(d=focalSpotPosition))
     illumination.append(Lens(f=objFocalLength))
     illumination.append(Space(d=105))
     illumination.append(Lens(f=100))
@@ -114,7 +114,7 @@ for pinhole in pinholeModifier:
         # Working distance of the objective + position
         newPosition = 5 + (z*0.000001)
 
-        illuminationPath(pinholeFactor = pinhole, focalspot=newPosition)
+        illuminationPath(pinholeFactor = pinhole, focalSpotPosition=newPosition)
 
 
     pinholeModifier[pinhole] = finalRays  # Incorporates the final list of transmission efficiencies into the dictionary
