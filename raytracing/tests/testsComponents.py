@@ -1,11 +1,10 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class Test4fSystem(unittest.TestCase):
+class Test4fSystem(envtest.RaytracingTestCase):
 
     def test4fSystem(self):
         elements = [Space(10), Lens(10), Space(15), Lens(5), Space(5)]
@@ -57,4 +56,4 @@ class Test4fSystem(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

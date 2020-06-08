@@ -1,12 +1,10 @@
-import unittest
-import envtest # modifies path
+import envtest  # modifies path
 from raytracing import *
-import warnings
 
 inf = float("+inf")
 
 
-class TestMatrix(unittest.TestCase):
+class TestMatrix(envtest.RaytracingTestCase):
     def testMatrix(self):
         m = Matrix()
         self.assertIsNotNone(m)
@@ -14,5 +12,6 @@ class TestMatrix(unittest.TestCase):
     def testThorlabsLensesWarning(self):
         l = thorlabs.AC254_030_A()
 
+
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()
