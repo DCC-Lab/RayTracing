@@ -365,13 +365,10 @@ class Figure:
                 closed=False,
                 color='r'))
 
-    def drawElements(self, elements, z=0):
-        z = z
+    def drawElements(self, elements):
+        z = 0
         for element in elements:
-            if issubclass(type(element), MatrixGroup):  # recursive for systems and objectives
-                z = self.drawElements(element.elements, z=z)
-                continue
-            graphic = self.graphicOf(element)
+            graphic = Graphic(element)
             graphic.drawAt(z, self.axes)
             graphic.drawAperture(z, self.axes)
 
@@ -952,3 +949,67 @@ class ApertureGraphic(MatrixGraphic):
         aperture for any object is drawn with drawAperture()
         """
         return
+
+
+class MatrixGroupGraphic(MatrixGraphic):
+    def __init__(self, matrixGroup: MatrixGroup):
+        self.matrixGroup = matrixGroup
+        super().__init__(matrixGroup)
+
+    @property
+    def L(self):
+        L = 0
+        for element in self.matrixGroup.elements:
+            L += element.L
+        return L
+
+    def drawAt(self, z, axes, showLabels=True):
+        """ Draw each element of this group """
+        for element in self.matrixGroup:
+            graphic = Graphic(element)
+            graphic.drawAt(z, axes)
+            graphic.drawAperture(z, axes)
+
+            if showLabels:
+                graphic.drawLabels(z, axes)
+            z += graphic.L
+
+    def drawPointsOfInterest(self, z, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
+        labels = {}  # Gather labels at same z
+
+        zElement = 0
+        # For the group as a whole, then each element
+        for pointOfInterest in self.matrixGroup.pointsOfInterest(z=zElement):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        # Points of interest for each element
+        for element in self.matrixGroup.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                label = pointOfInterest['label']
+                if zStr in labels:
+                    labels[zStr] = labels[zStr] + ", " + label
+                else:
+                    labels[zStr] = label
+            zElement += element.L
+
+        halfHeight = self.matrixGroup.largestDiameter() / 2
+        for zStr, label in labels.items():
+            z = float(zStr)
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                          xycoords='data', fontsize=12,
+                          ha='center', va='bottom')
+
