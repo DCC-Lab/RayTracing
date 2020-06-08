@@ -91,6 +91,7 @@ class ImagingPath(MatrixGroup):
 
         # Display properties
         self.figure = Figure(opticPath=self)
+        self.design = self.figure.design
         self.showObject = True
         self.showImages = True
         self.showEntrancePupil = False
