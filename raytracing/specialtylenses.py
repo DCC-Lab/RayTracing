@@ -89,6 +89,14 @@ class AchromatDoubletLens(MatrixGroup):
                   "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
+
 
 class SingletLens(MatrixGroup):
     """
@@ -149,6 +157,14 @@ class SingletLens(MatrixGroup):
             msg = "Singlet {2}: obtained thickness {0:.1f} does not match expected " \
                   "{1:0.1f}".format(corner2 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
+
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
 
 class Objective(MatrixGroup):
@@ -217,3 +233,13 @@ reproduce the objective."
 
             z = z + element.L
         return self
+
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+        'z':position
+        'label':the label to be used.  Can include LaTeX math code.
+        """
+        if self.isFlipped:
+            return [{'z': z + self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
+        else:
+            return [{'z': z, 'label': '$F_b$'}, {'z': z + self.focusToFocusLength, 'label': '$F_f$'}]

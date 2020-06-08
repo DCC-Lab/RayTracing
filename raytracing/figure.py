@@ -1112,14 +1112,6 @@ class AchromatDoubletLensGraphic(MatrixGroupGraphic):
                 closed=False,
                 color='0.7'))
 
-    def pointsOfInterest(self, z):
-        """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
-        """
-        (f1, f2) = self.matrixGroup.focusPositions(z)
-        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
-
 
 class SingletLensGraphic(MatrixGroupGraphic):
     def drawAt(self, z, axes, showLabels=False):
@@ -1203,29 +1195,11 @@ class SingletLensGraphic(MatrixGroupGraphic):
                 closed=False,
                 color='0.7'))
 
-    def pointsOfInterest(self, z):
-        """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
-        """
-        (f1, f2) = self.matrixGroup.focusPositions(z)
-        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
-
 
 class ObjectiveGraphic(MatrixGroupGraphic):
     def __init__(self, objective: Objective):
         super().__init__(objective)
         self.matrixGroup = objective
-
-    def pointsOfInterest(self, z):
-        """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
-        """
-        if self.matrixGroup.isFlipped:
-            return [{'z': z + self.matrixGroup.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
-        else:
-            return [{'z': z, 'label': '$F_b$'}, {'z': z + self.matrixGroup.focusToFocusLength, 'label': '$F_f$'}]
 
     def drawAperture(self, z, axes):
         # This MatrixGroup is special: we want to use apertureDiameter as the back aperture
