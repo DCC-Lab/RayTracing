@@ -374,6 +374,76 @@ class Figure:
                 graphic.drawLabels(z, self.axes)
             z += element.L
 
+    def rayTraceLines(self, onlyChiefAndMarginalRays,
+                      removeBlockedRaysCompletely=True):
+        """ A list of all ray trace line objects corresponding to either
+        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber)
+        2. the principal rays (chief and marginal)
+        """
+
+        color = self.designParams['rayColors']
+
+        if onlyChiefAndMarginalRays:
+            halfHeight = self.path.objectHeight / 2.0
+            chiefRay = self.path.chiefRay(y=halfHeight - 0.01)
+            (marginalUp, marginalDown) = self.path.marginalRays(y=0)
+            rayGroup = (chiefRay, marginalUp)
+            linewidth = 1.5
+        else:
+            halfAngle = self.path.fanAngle / 2.0
+            halfHeight = self.path.objectHeight / 2.0
+            rayGroup = Ray.fanGroup(
+                yMin=-halfHeight,
+                yMax=halfHeight,
+                M=self.path.rayNumber,
+                radianMin=-halfAngle,
+                radianMax=halfAngle,
+                N=self.path.fanNumber)
+            linewidth = 0.5
+
+        manyRayTraces = self.path.traceMany(rayGroup)
+
+        lines = []
+        for rayTrace in manyRayTraces:
+            (x, y) = self.rearrangeRayTraceForPlotting(
+                rayTrace, removeBlockedRaysCompletely)
+            if len(y) == 0:
+                continue  # nothing to plot, ray was fully blocked
+
+            rayInitialHeight = y[0]
+            binSize = 2.0 * halfHeight / (len(color) - 1)
+            colorIndex = int(
+                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
+
+            line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
+            lines.append(line)
+
+        return lines
+
+    def rearrangeRayTraceForPlotting(self, rayList: List[Ray],
+                                     removeBlockedRaysCompletely=True):
+        """
+        This function removes the rays that are blocked in the imaging path.
+
+        Parameters
+        ----------
+        rayList : List of Rays
+            an object from rays class or a list of rays
+        removeBlockedRaysCompletely : bool
+            If True, the blocked rays will be removed of the list (default=True)
+
+        """
+        x = []
+        y = []
+        for ray in rayList:
+            if not ray.isBlocked:
+                x.append(ray.z)
+                y.append(ray.y)
+            elif removeBlockedRaysCompletely:
+                return [], []
+            # else: # ray will simply stop drawing from here
+        return x, y
+
     def graphicOf(self, element):
         if type(element) is Lens:
             return LensGraphic(element)
