@@ -6,7 +6,7 @@ from .matrix import *
 
 
 class Figure:
-    def __init__(self, opticPath, comments=None, title=None):
+    def __init__(self, opticPath):
         self.path = opticPath
         self.figure = None
         self.axes = None  # Where the optical system is
@@ -14,7 +14,6 @@ class Figure:
 
         self.designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
                              'imageColor': 'r', 'objectColor': 'b'}
-        self.createFigure(comments=comments, title=title)
 
     def createFigure(self, comments=None, title=None):
         if comments is not None:

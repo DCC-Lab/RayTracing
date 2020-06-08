@@ -90,6 +90,7 @@ class ImagingPath(MatrixGroup):
         self.maxHeight = 10000.0
 
         # Display properties
+        self.figure = Figure(opticPath=self)
         self.showObject = True
         self.showImages = True
         self.showEntrancePupil = False
@@ -692,11 +693,11 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        figure = Figure(opticPath=self, title=self.label, comments=comments)
+        self.figure.createFigure(title=self.label, comments=comments)
 
-        figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                       onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                       removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+        self.figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
     def save(self, filepath,
              limitObjectToFieldOfView=False,
