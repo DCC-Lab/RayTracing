@@ -1,4 +1,7 @@
+from .matrixgroup import MatrixGroup
+from .specialtylenses import *
 import matplotlib.pyplot as plt
+from matplotlib import path as mpath
 import matplotlib.patches as patches
 from .matrix import *
 
@@ -164,7 +167,7 @@ class Figure:
         if self.path.showEntrancePupil:
             self.drawEntrancePupil(z=0)
 
-        self.drawElements()
+        self.drawElements(self.path.elements)
         if self.path.showPointsOfInterest:
             self.drawPointsOfInterest(z=0)
             self.drawStops(z=0)
@@ -363,30 +366,16 @@ class Figure:
                 closed=False,
                 color='r'))
 
-    def drawElements(self):
+    def drawElements(self, elements):
         z = 0
-        for element in self.path.elements:
-            graphic = self.graphicOf(element)
+        for element in elements:
+            graphic = Graphic(element)
             graphic.drawAt(z, self.axes)
             graphic.drawAperture(z, self.axes)
 
             if self.path.showElementLabels:
                 graphic.drawLabels(z, self.axes)
-            z += element.L
-
-    def graphicOf(self, element):
-        if type(element) is Lens:
-            return LensGraphic(element)
-        if type(element) is Space:
-            return SpaceGraphic(element)
-        if type(element) is DielectricInterface:
-            return DielectricInterfaceGraphic(element)
-        if type(element) is DielectricSlab:
-            return DielectricSlabGraphic(element)
-        if type(element) is Aperture:
-            return ApertureGraphic(element)
-        else:
-            return MatrixGraphic(element)
+            z += graphic.L
 
     def axesToDataScale(self):
         """ Display dimensions in data units.
@@ -425,6 +414,10 @@ class Figure:
 class MatrixGraphic:
     def __init__(self, matrix: Matrix):
         self.matrix = matrix
+
+    @property
+    def L(self):
+        return self.matrix.L
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
@@ -946,3 +939,326 @@ class ApertureGraphic(MatrixGraphic):
         aperture for any object is drawn with drawAperture()
         """
         return
+
+
+class MatrixGroupGraphic(MatrixGraphic):
+    def __init__(self, matrixGroup: MatrixGroup):
+        self.matrixGroup = matrixGroup
+        super().__init__(matrixGroup)
+
+    @property
+    def L(self):
+        L = 0
+        for element in self.matrixGroup.elements:
+            L += element.L
+        return L
+
+    def drawAt(self, z, axes, showLabels=True):
+        """ Draw each element of this group """
+        for element in self.matrixGroup:
+            graphic = Graphic(element)
+            graphic.drawAt(z, axes)
+            graphic.drawAperture(z, axes)
+
+            if showLabels:
+                graphic.drawLabels(z, axes)
+            z += graphic.L
+
+    def drawPointsOfInterest(self, z, axes):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
+        labels = {}  # Gather labels at same z
+
+        zElement = 0
+        # For the group as a whole, then each element
+        for pointOfInterest in self.matrixGroup.pointsOfInterest(z=zElement):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        # Points of interest for each element
+        for element in self.matrixGroup.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                label = pointOfInterest['label']
+                if zStr in labels:
+                    labels[zStr] = labels[zStr] + ", " + label
+                else:
+                    labels[zStr] = label
+            zElement += element.L
+
+        halfHeight = self.matrixGroup.largestDiameter() / 2
+        for zStr, label in labels.items():
+            z = float(zStr)
+            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
+                          xycoords='data', fontsize=12,
+                          ha='center', va='bottom')
+
+
+class AchromatDoubletLensGraphic(MatrixGroupGraphic):
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw the doublet as two dielectric of different colours.
+
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
+        Because the element can be flipped with flipOrientation()
+        we collect information from the list of elements.
+        """
+        R1 = self.matrixGroup.elements[0].R
+        tc1 = self.matrixGroup.elements[1].L
+        R2 = self.matrixGroup.elements[2].R
+        tc2 = self.matrixGroup.elements[3].L
+        R3 = self.matrixGroup.elements[4].R
+
+        h = self.matrixGroup.largestDiameter / 2.0
+        v1 = z
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
+        corner1 = v1 + delta1
+
+        v2 = v1 + tc1
+        phi2 = math.asin(h / abs(R2))
+        delta2 = R2 * (1.0 - math.cos(phi2))
+        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
+        corner2 = v2 + delta2
+
+        v3 = z + tc1 + tc2
+        phi3 = math.asin(h / abs(R3))
+        delta3 = R3 * (1.0 - math.cos(phi3))
+        ctl3 = abs((1.0 - math.cos(phi3)) / math.sin(phi3) * R3)
+        corner3 = v3 + delta3
+
+        Path = mpath.Path
+        p1 = patches.PathPatch(
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h),
+                  (corner1, -h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.85, 0.95, 0.95],
+            fill=True,
+            transform=axes.transData)
+
+        p2 = patches.PathPatch(
+            Path([(corner2, -h), (v2, -ctl2), (v2, 0),
+                  (v2, 0), (v2, ctl2), (corner2, h),
+                  (corner3, h), (v3, ctl3), (v3, 0),
+                  (v3, 0), (v3, -ctl3), (corner3, -h),
+                  (corner2, -h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.80, 0.90, 0.95],
+            fill=True,
+            transform=axes.transData)
+
+        axes.add_patch(p1)
+        axes.add_patch(p2)
+        if showLabels:
+            self.drawLabels(z, axes)
+
+        self.drawAperture(z, axes)
+
+    def drawAperture(self, z, axes):
+        """ Draw the aperture size for this element.
+        The lens requires special care because the corners are not
+        separated by self.L: the curvature makes the edges shorter.
+        We are picky and draw it right.
+        """
+
+        if self.matrixGroup.apertureDiameter != float('+Inf'):
+            R1 = self.matrixGroup.elements[0].R
+            tc1 = self.matrixGroup.elements[1].L
+            R2 = self.matrixGroup.elements[2].R
+            tc2 = self.matrixGroup.elements[3].L
+            R3 = self.matrixGroup.elements[4].R
+
+            h = self.matrixGroup.largestDiameter / 2.0
+            phi1 = math.asin(h / abs(R1))
+            corner1 = z + R1 * (1.0 - math.cos(phi1))
+
+            phi3 = math.asin(h / abs(R3))
+            corner3 = z + tc1 + tc2 + R3 * (1.0 - math.cos(phi3))
+
+            axes.add_patch(patches.Polygon(
+                [[corner1, h], [corner3, h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+            axes.add_patch(patches.Polygon(
+                [[corner1, -h], [corner3, -h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+
+
+class SingletLensGraphic(MatrixGroupGraphic):
+    def drawAt(self, z, axes, showLabels=False):
+        """ Draw the doublet as two dielectric of different colours.
+
+        An arc would be perfect, but matplotlib does not allow to fill
+        an arc, hence we must use a patch and Bezier curve.
+        We might as well draw it properly: it is possible to draw a
+        quadratic bezier curve that looks like an arc, see:
+        https://pomax.github.io/bezierinfo/#circles_cubic
+
+        Because the element can be flipped with flipOrientation()
+        we collect information from the list of elements.
+        """
+        R1 = self.matrixGroup.elements[0].R
+        tc = self.matrixGroup.elements[1].L
+        R2 = self.matrixGroup.elements[2].R
+
+        h = self.matrixGroup.largestDiameter / 2.0
+        v1 = z
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
+        corner1 = v1 + delta1
+
+        v2 = v1 + tc
+        phi2 = math.asin(h / abs(R2))
+        delta2 = R2 * (1.0 - math.cos(phi2))
+        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
+        corner2 = v2 + delta2
+
+        Path = mpath.Path
+        p1 = patches.PathPatch(
+            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
+                  (v1, 0), (v1, ctl1), (corner1, h),
+                  (corner2, h), (v2, ctl2), (v2, 0),
+                  (v2, 0), (v2, -ctl2), (corner2, -h),
+                  (corner1, -h)],
+                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO, Path.CURVE3, Path.CURVE3,
+                  Path.LINETO]),
+            color=[0.85, 0.95, 0.95],
+            fill=True,
+            transform=axes.transData)
+
+        axes.add_patch(p1)
+        if showLabels:
+            self.drawLabels(z, axes)
+
+        self.drawAperture(z, axes)
+
+    def drawAperture(self, z, axes):
+        """ Draw the aperture size for this element.
+        The lens requires special care because the corners are not
+        separated by self.L: the curvature makes the edges shorter.
+        We are picky and draw it right.
+        """
+
+        if self.matrixGroup.apertureDiameter != float('+Inf'):
+            R1 = self.matrixGroup.elements[0].R
+            tc = self.matrixGroup.elements[1].L
+            R2 = self.matrixGroup.elements[2].R
+
+            h = self.matrixGroup.largestDiameter / 2.0
+            phi1 = math.asin(h / abs(R1))
+            corner1 = z + R1 * (1.0 - math.cos(phi1))
+
+            phi2 = math.asin(h / abs(R2))
+            corner2 = z + tc + R2 * (1.0 - math.cos(phi2))
+
+            axes.add_patch(patches.Polygon(
+                [[corner1, h], [corner2, h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+            axes.add_patch(patches.Polygon(
+                [[corner1, -h], [corner2, -h]],
+                linewidth=3,
+                closed=False,
+                color='0.7'))
+
+
+class ObjectiveGraphic(MatrixGroupGraphic):
+    def __init__(self, objective: Objective):
+        super().__init__(objective)
+        self.matrixGroup = objective
+
+    def drawAperture(self, z, axes):
+        # This MatrixGroup is special: we want to use apertureDiameter as the back aperture
+        # but we don't want to draw it becuase it looks like garbage.  Each element will
+        # draw its own aperture, so that is ok.
+        return
+
+    def drawAt(self, z, axes, showLabels=False):
+        L = self.matrixGroup.focusToFocusLength
+        f = self.matrixGroup.f
+        wd = self.matrixGroup.workingDistance
+        halfHeight = self.matrixGroup.backAperture / 2
+        shoulder = halfHeight / self.matrixGroup.NA
+
+        points = [[0, halfHeight],
+                  [(L - shoulder), halfHeight],
+                  [(L - wd), self.matrixGroup.frontAperture / 2],
+                  [(L - wd), -self.matrixGroup.frontAperture / 2],
+                  [(L - shoulder), -halfHeight],
+                  [0, -halfHeight]]
+
+        if self.matrixGroup.isFlipped:
+            trans = transforms.Affine2D().scale(-1).translate(tx=z + L, ty=0) + axes.transData
+        else:
+            trans = transforms.Affine2D().translate(tx=z, ty=0) + axes.transData
+
+        axes.add_patch(patches.Polygon(
+            points,
+            linewidth=1, linestyle='--', closed=True,
+            color='k', fill=False, transform=trans))
+
+        self.drawCardinalPoints(z, axes)
+
+        for element in self.matrixGroup.elements:
+            graphic = Graphic(element)
+            graphic.drawAperture(z, axes)
+            z += graphic.L
+
+
+class Graphic:
+    def __new__(cls, element):
+        if type(element) is AchromatDoubletLens:
+            return AchromatDoubletLensGraphic(element)
+        if type(element) is SingletLens:
+            return SingletLensGraphic(element)
+        if issubclass(type(element), Objective):
+            return ObjectiveGraphic(element)
+        if issubclass(type(element), MatrixGroup):
+            return MatrixGroupGraphic(element)
+
+        if type(element) is Lens:
+            return LensGraphic(element)
+        if type(element) is Space:
+            return SpaceGraphic(element)
+        if type(element) is DielectricInterface:
+            return DielectricInterfaceGraphic(element)
+        if type(element) is DielectricSlab:
+            return DielectricSlabGraphic(element)
+        if type(element) is Aperture:
+            return ApertureGraphic(element)
+        else:
+            return MatrixGraphic(element)
