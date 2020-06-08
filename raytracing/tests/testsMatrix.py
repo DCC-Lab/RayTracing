@@ -323,7 +323,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
-    @envtest.skipIf(sys.platform == 'darwin', "Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -336,7 +336,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         except:
             pass
 
-    @envtest.skipIf(sys.platform == 'darwin', "Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -354,10 +354,19 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertListEqual(m.pointsOfInterest(1), [])
 
     def testIsImaging(self):
-        m1 = Matrix(A=1, B=0, C=3, D=4)
-        self.assertTrue(m1.isImaging)
-        m2 = Matrix(A=1, B=1, C=3, D=4)
-        self.assertFalse(m2.isImaging)
+        m = Matrix(A=1, B=0, C=3, D=4)
+        self.assertTrue(m.isImaging)
+
+    def testIsNotImaging(self):
+        m = Matrix(A=1, B=1, C=3, D=4)
+        self.assertFalse(m.isImaging)
+
+    def testLagrangeInvariantSpace(self):
+        m = Space(d=10)
+        self.assertIsNotNone(m)
+        before = m.lagrangeInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        after = m.lagrangeInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        self.assertAlmostEqual(before, after)
 
     def testHasNoPower(self):
         f1 = 1.0000000000000017
@@ -420,22 +429,23 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix()
         self.assertTupleEqual(m.focusPositions(0), (None, None))
 
-    def testFiniteForwardConjugate(self):
-        m1 = Lens(f=5) * Space(d=10)
+    def testFiniteForwardConjugate_1(self):
+        m1 = Matrix(1, 0, -1 / 5, 1) * Matrix(1, 10, 0, 1)
         (d, m2) = m1.forwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 10)
         self.assertEqual(m1.determinant, 1)
         self.assertEqual(m2.determinant, 1)
 
-        m1 = Space(d=5) * Lens(f=5) * Space(d=10)
+    def testFiniteForwardConjugates_2(self):
+        m1 = Matrix(1, 5, 0, 1) * Matrix(1, 0, -1 / 5, 1) * Matrix(1, 10, 0, 1)
         (d, m2) = m1.forwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 5)
         self.assertEqual(m2.determinant, 1)
 
     def testInfiniteForwardConjugate(self):
-        m1 = Lens(f=5) * Space(d=5)
+        m1 = Matrix(1, 0, -1 / 5, 1) * Matrix(1, 5, 0, 1)
         (d, m2) = m1.forwardConjugate()
         self.assertIsNone(m2)
         self.assertEqual(d, float("+inf"))
@@ -445,15 +455,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix(A=0)
         self.assertTupleEqual(m.backwardConjugate(), (float("+inf"), None))
 
-    def testFiniteBackConjugate(self):
-        m1 = Space(d=10) * Lens(f=5)
+    def testFiniteBackConjugate_1(self):
+        m1 = Matrix(1, 10, 0, 1) * Matrix(1, 0, -1 / 5, 1)
         (d, m2) = m1.backwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 10)
         self.assertEqual(m1.determinant, 1)
         self.assertEqual(m2.determinant, 1)
 
-        m1 = Space(d=10) * Lens(f=5) * Space(d=5)
+    def testFiniteBackConjugate_2(self):
+        m1 = Matrix(1, 10, 0, 1) * Matrix(1, 0, -1 / 5, 1) * Matrix(1, 5, 0, 1)
         (d, m2) = m1.backwardConjugate()
         self.assertTrue(m2.isImaging)
         self.assertEqual(d, 5)
@@ -509,19 +520,10 @@ class TestMatrix(envtest.RaytracingTestCase):
         minSize = 2
         self.assertEqual(m.displayHalfHeight(minSize), m.apertureDiameter / 2)
 
-        m.apertureDiameter = inf
+    def testDisplayHalfHeightInfiniteDiameter(self):
+        m = Matrix(apertureDiameter=inf)
         self.assertEqual(m.displayHalfHeight(), 4)
-
         self.assertEqual(m.displayHalfHeight(6), 6)
-
-    def testAxesToDataScale(self):
-        m = Matrix()
-        min, max = -10, 10
-        axes = plt.subplot()
-        axes.set_ylim(min, max)
-        axes.set_xlim(min, max)
-        val = len(range(min, max))
-        self.assertTupleEqual(m.axesToDataScale(axes), (val, val))
 
 
 if __name__ == '__main__':
