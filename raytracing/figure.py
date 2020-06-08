@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
+from typing import List, Union
 import matplotlib.patches as patches
+from matplotlib import path as mpath
 from .matrix import *
 
 
@@ -10,6 +12,8 @@ class Figure:
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
 
+        self.designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
+                             'imageColor': 'r', 'objectColor': 'b'}
         self.createFigure(comments=comments, title=title)
 
     def createFigure(self, comments=None, title=None):
@@ -93,8 +97,8 @@ class Figure:
         self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView,
                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
 
-        self.drawLines(self.path.rayTraceLines(onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                               removeBlockedRaysCompletely=removeBlockedRaysCompletely))
+        self.drawLines(self.rayTraceLines(onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                                          removeBlockedRaysCompletely=removeBlockedRaysCompletely))
 
         self.drawDisplayObjects()
 
@@ -213,8 +217,8 @@ class Figure:
             0,
             self.path._objectHeight,
             width=arrowHeadWidth / 5,
-            fc='b',
-            ec='b',
+            fc=self.designParams['objectColor'],
+            ec=self.designParams['objectColor'],
             head_length=arrowHeadHeight,
             head_width=arrowHeadWidth,
             length_includes_head=True)
@@ -246,8 +250,8 @@ class Figure:
                 0,
                 magnification * self.path._objectHeight,
                 width=arrowHeadWidth / 5,
-                fc='r',
-                ec='r',
+                fc=self.designParams['imageColor'],
+                ec=self.designParams['imageColor'],
                 head_length=arrowHeadHeight,
                 head_width=arrowHeadWidth,
                 length_includes_head=True)
