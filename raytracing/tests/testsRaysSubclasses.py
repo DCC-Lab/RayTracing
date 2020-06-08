@@ -102,7 +102,7 @@ class TestRandomRays(envtest.RaytracingTestCase):
             self.fail("This should not raise any exception.")
         self.assertEqual(ray, Ray())
 
-    @unittest.expectedFailure
+    @envtest.expectedFailure
     # FIXME: Rays now warns only when it takes a long time (more than 3 seconds)
     def testRandomRaysGetWarnsWhenGeneratingRaysOnlyForLongTimes(self):
         rays = RandomRays()

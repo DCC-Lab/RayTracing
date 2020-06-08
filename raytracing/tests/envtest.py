@@ -20,6 +20,10 @@ def skipUnless(condition: object, reason: str):
     return unittest.skipUnless(condition, reason)
 
 
+def expectedFailure(func):
+    return unittest.expectedFailure(func)
+
+
 class RaytracingTestCase(unittest.TestCase):
     dirName = os.path.join(tempfile.gettempdir(), "tempDir")
     removeAlreadyExists = False

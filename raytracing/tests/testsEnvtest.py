@@ -26,6 +26,10 @@ class TestUnittestSkipMethodsWrapper(unittest.TestCase):
     def testSkipUnlessFalseCondition(self):
         self.fail()
 
+    @envtest.expectedFailure
+    def testShouldFail(self):
+        self.fail()
+
 
 class TestEnvtestClass(unittest.TestCase):
     dirname = envtest.RaytracingTestCase.dirName
