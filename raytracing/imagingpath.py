@@ -84,7 +84,6 @@ class ImagingPath(MatrixGroup):
         self.fanAngle = 0.1  # full fan angle for rays
         self.fanNumber = 9  # number of rays in fan
         self.rayNumber = 3  # number of points on object
-        self.design = {'rayColors': ['b', 'r', 'g']}  # design variables accessible to the user for customization
 
         # Constants when calculating field stop
         self.precision = 0.001
