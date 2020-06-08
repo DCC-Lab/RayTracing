@@ -1,4 +1,4 @@
-import envtest # modifies path
+import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
@@ -8,9 +8,9 @@ def multiplyBy2(value) -> float:
     return 2 * value
 
 
-
-class TestMultiProcessorSupport(unittest.TestCase):
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
+class TestMultiProcessorSupport(envtest.TestCase):
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testMultiPool(self):
         processes = 8
@@ -22,4 +22,3 @@ class TestMultiProcessorSupport(unittest.TestCase):
 
 if __name__ == '__main__':
     envtest.main()
-
