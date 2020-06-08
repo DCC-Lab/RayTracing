@@ -3,27 +3,6 @@ import os
 import unittest
 import tempfile
 
-
-def main():
-    unittest.main()
-
-
-def skip(reason: str):
-    return unittest.skip(reason)
-
-
-def skipIf(condition: object, reason: str):
-    return unittest.skipIf(condition, reason)
-
-
-def skipUnless(condition: object, reason: str):
-    return unittest.skipUnless(condition, reason)
-
-
-def expectedFailure(func):
-    return unittest.expectedFailure(func)
-
-
 class RaytracingTestCase(unittest.TestCase):
     dirName = os.path.join(tempfile.gettempdir(), "tempDir")
     removeAlreadyExists = False
@@ -58,6 +37,21 @@ class RaytracingTestCase(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.deleteTempDirectory()
 
+
+def main():
+    unittest.main()
+
+def skip(reason: str):
+    return unittest.skip(reason)
+
+def skipIf(condition: object, reason: str):
+    return unittest.skipIf(condition, reason)
+
+def skipUnless(condition: object, reason: str):
+    return unittest.skipUnless(condition, reason)
+
+def expectedFailure(func):
+    return unittest.expectedFailure(func)
 
 # append module root directory to sys.path
 sys.path.insert(0,
