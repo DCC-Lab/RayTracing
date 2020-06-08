@@ -377,19 +377,6 @@ class Figure:
             z += element.L
         return z
 
-    def graphicOf(self, element):
-        if type(element) is Lens:
-            return LensGraphic(element)
-        if type(element) is Space:
-            return SpaceGraphic(element)
-        if type(element) is DielectricInterface:
-            return DielectricInterfaceGraphic(element)
-        if type(element) is DielectricSlab:
-            return DielectricSlabGraphic(element)
-        if type(element) is Aperture:
-            return ApertureGraphic(element)
-        else:
-            return MatrixGraphic(element)
 
     def axesToDataScale(self):
         """ Display dimensions in data units.
@@ -1013,3 +1000,26 @@ class MatrixGroupGraphic(MatrixGraphic):
                           xycoords='data', fontsize=12,
                           ha='center', va='bottom')
 
+class Graphic:
+    def __new__(cls, element):
+        if type(element) is AchromatDoubletLens:
+            return AchromatDoubletLensGraphic(element)
+        if type(element) is SingletLens:
+            return SingletLensGraphic(element)
+        if issubclass(type(element), Objective):
+            return ObjectiveGraphic(element)
+        if issubclass(type(element), MatrixGroup):
+            return MatrixGroupGraphic(element)
+
+        if type(element) is Lens:
+            return LensGraphic(element)
+        if type(element) is Space:
+            return SpaceGraphic(element)
+        if type(element) is DielectricInterface:
+            return DielectricInterfaceGraphic(element)
+        if type(element) is DielectricSlab:
+            return DielectricSlabGraphic(element)
+        if type(element) is Aperture:
+            return ApertureGraphic(element)
+        else:
+            return MatrixGraphic(element)
