@@ -68,6 +68,9 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
         pinholeFactor : Float
             Factor changing the pinhole size according to the ideal pinhole size. 
 
+        focalSpotPosition : float
+            Position of the focal spot according to the objective (first lens)
+
     Returns
     -------
         illumination : object of ImagingPath class.
@@ -107,7 +110,7 @@ for pinhole in pinholeModifier:
     print(".")
 
     for z in positions:
-        
+
         # Working distance of the objective + position
         newPosition = 5 + (z*0.000001)
 
@@ -116,6 +119,7 @@ for pinhole in pinholeModifier:
 
     pinholeModifier[pinhole] = finalRays  # Incorporates the final list of transmission efficiencies into the dictionary
 
+# Prints a plot of the three configurations. 
 plt.plot(positions, pinholeModifier[1/3], label='Pinhole Size S/3', linestyle='dashed')
 plt.plot(positions, pinholeModifier[1], label='Pinhole Size S')
 plt.plot(positions, pinholeModifier[3], label='Pinhole Size 3S', linestyle='dotted')
