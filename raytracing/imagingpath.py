@@ -725,9 +725,10 @@ class ImagingPath(MatrixGroup):
 
 
         """
-        figure = Figure(opticPath=self, title=self.label, comments=comments)
 
-        figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                       onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                       removeBlockedRaysCompletely=removeBlockedRaysCompletely,
-                       filepath=filepath)
+        self.figure.createFigure(title=self.label, comments=comments)
+
+        self.figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                            removeBlockedRaysCompletely=removeBlockedRaysCompletely,
+                            filepath=filepath)
