@@ -1,4 +1,3 @@
-import unittest
 import envtest  # modifies path
 import sys
 from raytracing import *
@@ -6,7 +5,7 @@ from raytracing import *
 inf = float("+inf")
 
 
-class TestMatrix(unittest.TestCase):
+class TestMatrix(envtest.RaytracingTestCase):
     def testWarningsFormat(self):
         message = "This is a test."
         filename = "test.py"
@@ -324,7 +323,7 @@ class TestMatrix(unittest.TestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
-    @unittest.skipIf(sys.platform == 'darwin',"Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -337,7 +336,7 @@ class TestMatrix(unittest.TestCase):
         except:
             pass
 
-    @unittest.skipIf(sys.platform == 'darwin',"Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -349,7 +348,7 @@ class TestMatrix(unittest.TestCase):
                 self.assertTrue(traceWithNumberProcesses[i] in rays)
         except:
             pass
-            
+
     def testPointsOfInterest(self):
         m = Matrix()
         self.assertListEqual(m.pointsOfInterest(1), [])
@@ -528,4 +527,4 @@ class TestMatrix(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

@@ -319,7 +319,7 @@ class Rays:
         # axis1.set_title('Intensity profile')
         axis1.plot(x, y, 'k-', label="Intensity")
         axis1.set_ylim([0, max(y) * 1.1])
-        axis1.set_xlabel("Distance")
+        axis1.set_xlabel("Height of ray")
         axis1.set_ylabel("Ray count")
         axis1.legend(["Intensity"])
 
@@ -328,7 +328,7 @@ class Rays:
         axis2.plot(x, y, 'k--', label="Orientation profile")
         axis2.set_ylim([0, max(y) * 1.1])
         axis2.set_xlim([-pi / 2, pi / 2])
-        axis2.set_xlabel("Angles [rad]")
+        axis2.set_xlabel("Angle of ray [rad]")
         axis2.set_ylabel("Ray count")
         axis2.legend(["Angle"])
 
@@ -627,9 +627,11 @@ class RandomRays(Rays):
         if item < 0 or item >= self.maxCount:
             raise IndexError(f"Index {item} out of bound, min = 0, max {self.maxCount}.")
 
+        start = time.monotonic()
         while len(self._rays) <= item:
-            warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
             self.randomRay()
+            if time.monotonic() - start > 3:
+                warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
 
         return self._rays[item]
 

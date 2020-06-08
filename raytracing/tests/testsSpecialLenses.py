@@ -1,12 +1,11 @@
 import envtest  # modifies path
-import unittest
 
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestSpecialLenses(unittest.TestCase):
+class TestSpecialLenses(envtest.RaytracingTestCase):
 
     def testOlympusLens(self):
         self.assertIsNotNone(olympus.LUMPlanFL40X())
@@ -51,4 +50,4 @@ class TestSpecialLenses(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

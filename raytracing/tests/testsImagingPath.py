@@ -1,12 +1,12 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestImagingPath(unittest.TestCase):
-    def testImagingPathEmptyElements(self):
+
+class TestImagingPath(envtest.RaytracingTestCase):
+    def testImagingPath(self):
         path = ImagingPath()
         self.assertIsNotNone(path)
         self.assertListEqual(path.elements, [])
@@ -157,8 +157,8 @@ class TestImagingPath(unittest.TestCase):
         imgSize = 2 * 10 / 3 * 2
         self.assertAlmostEqual(path.imageSize(), imgSize, 2)
 
-    def testSaveWithComments(self):
-        filename = "test.png"
+    def testSave(self):
+        filename = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
         path.save(filename, comments=comments)
@@ -167,7 +167,7 @@ class TestImagingPath(unittest.TestCase):
         os.remove(filename)
 
     def testSaveWithoutComments(self):
-        filename = "test.png"
+        filename = self.tempFilePath("test.png")
         path = ImagingPath(System4f(10, 10, 10, 10))
         path.save(filename)
         if not os.path.exists(filename):
@@ -294,4 +294,5 @@ class TestImagingPath(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()
+
