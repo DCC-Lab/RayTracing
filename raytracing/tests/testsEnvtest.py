@@ -32,13 +32,13 @@ class TestUnittestSkipMethodsWrapper(unittest.TestCase):
 
 
 class TestEnvtestClass(unittest.TestCase):
-    dirname = envtest.RaytracingTestCase.dirName
+    tempDir = envtest.RaytracingTestCase.tempDir
 
     def clearTempDir(self):
-        if os.path.exists(self.dirname):
-            for file in os.listdir(self.dirname):
-                os.remove(os.path.join(self.dirname, file))
-            os.rmdir(self.dirname)
+        if os.path.exists(self.tempDir):
+            for file in os.listdir(self.tempDir):
+                os.remove(os.path.join(self.tempDir, file))
+            os.rmdir(self.tempDir)
 
     def setUp(self) -> None:
         self.clearTempDir()
@@ -52,8 +52,8 @@ class TestEnvtestClass(unittest.TestCase):
         if delete:
             os.rmdir(path)
 
-    def testTempDirName(self):
-        self.assertTrue(self.dirname.endswith("tempDir"))
+    def testTemptempDir(self):
+        self.assertTrue(self.tempDir.endswith("tempDir"))
 
     def testRemoveAlreadyExistsFalse(self):
         envtest.RaytracingTestCase.removeAlreadyExists = False
@@ -64,93 +64,93 @@ class TestEnvtestClass(unittest.TestCase):
         self.assertTrue(envtest.RaytracingTestCase.removeAlreadyExists)
 
     def testCreateTempDirectoryAlreadyExistsDoNotDelete(self):
-        msg = f"'{self.dirname}' directory already exists. Please set RaytracingTestCase.removeAlreadyExists to True if"
+        msg = f"'{self.tempDir}' directory already exists. Please set RaytracingTestCase.removeAlreadyExists to True if"
         msg += f" you want to delete this directory."
         envtest.RaytracingTestCase.removeAlreadyExists = False
-        os.mkdir(self.dirname)
+        os.mkdir(self.tempDir)
         with self.assertRaises(FileExistsError) as context:
             envtest.RaytracingTestCase.createTempDirectory()
         self.assertEqual(str(context.exception), msg)
-        os.rmdir(self.dirname)  # Delete the directory!
+        os.rmdir(self.tempDir)  # Delete the directory!
 
     def testCreateTempDirectoryAlreadyExistsAndDelete(self):
-        dirname = envtest.RaytracingTestCase.dirName
+        tempDir = envtest.RaytracingTestCase.tempDir
         envtest.RaytracingTestCase.removeAlreadyExists = True
-        os.mkdir(dirname)
+        os.mkdir(tempDir)
         try:
             envtest.RaytracingTestCase.createTempDirectory()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertEmptyDirectory(dirname)
+        self.assertEmptyDirectory(tempDir)
 
     def testCreateTempDirectoryNotAlreadyPresent(self):
         try:
             envtest.RaytracingTestCase.createTempDirectory()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertEmptyDirectory(self.dirname)
+        self.assertEmptyDirectory(self.tempDir)
 
     def testDeleteTempDirectoryNotAlreadyPresent(self):
         try:
             envtest.RaytracingTestCase.deleteTempDirectory()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertFalse(os.path.exists(self.dirname))
+        self.assertFalse(os.path.exists(self.tempDir))
 
     def testDeleteTempDirectoryAlreadyExists(self):
-        os.mkdir(self.dirname)
-        self.assertTrue(os.path.exists(self.dirname))  # make sure it exists
+        os.mkdir(self.tempDir)
+        self.assertTrue(os.path.exists(self.tempDir))  # make sure it exists
         try:
             envtest.RaytracingTestCase.deleteTempDirectory()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertFalse(os.path.exists(self.dirname))
+        self.assertFalse(os.path.exists(self.tempDir))
 
     def testDeleteTempDirectoryFilesInDirectory(self):
-        os.mkdir(self.dirname)
+        os.mkdir(self.tempDir)
         fname = lambda x: f"test_{x}.txt"
         fnames = []
         for x in range(100):
             tempName = fname(x)
-            name = os.path.join(self.dirname, tempName)
+            name = os.path.join(self.tempDir, tempName)
             fnames.append(tempName)
             with open(name, "w") as file:
                 file.write(f"This is the {x}th file. This file is only for tests. If you read this, have a nice day")
-        self.assertTrue(os.path.exists(self.dirname))
-        self.assertEqual(Counter(os.listdir(self.dirname)), Counter(fnames))
+        self.assertTrue(os.path.exists(self.tempDir))
+        self.assertEqual(Counter(os.listdir(self.tempDir)), Counter(fnames))
         try:
             envtest.RaytracingTestCase.deleteTempDirectory()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertFalse(os.path.exists(self.dirname))
+        self.assertFalse(os.path.exists(self.tempDir))
 
     def testSetupClass(self):
         try:
             envtest.RaytracingTestCase.setUpClass()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertEmptyDirectory(self.dirname)
+        self.assertEmptyDirectory(self.tempDir)
 
     def testTearDownClass(self):
-        os.mkdir(self.dirname)
-        self.assertTrue(os.path.exists(self.dirname))  # make sure it exists
+        os.mkdir(self.tempDir)
+        self.assertTrue(os.path.exists(self.tempDir))  # make sure it exists
         try:
             envtest.RaytracingTestCase.tearDownClass()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertFalse(os.path.exists(self.dirname))
+        self.assertFalse(os.path.exists(self.tempDir))
 
     def testSetUpThenTearDownClass(self):
         try:
             envtest.RaytracingTestCase.setUpClass()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertEmptyDirectory(self.dirname)
+        self.assertEmptyDirectory(self.tempDir)
         try:
             envtest.RaytracingTestCase.tearDownClass()
         except Exception as exception:
             self.fail(f"An exception was raised!\n{exception}")
-        self.assertFalse(os.path.exists(self.dirname))
+        self.assertFalse(os.path.exists(self.tempDir))
 
 
 if __name__ == '__main__':

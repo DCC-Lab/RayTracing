@@ -158,7 +158,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertAlmostEqual(path.imageSize(), imgSize, 2)
 
     def testSave(self):
-        filename = os.path.join(TestImagingPath.dirName, "test.png")
+        filename = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
         path.save(filename, comments=comments)
@@ -167,7 +167,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         os.remove(filename)
 
     def testSaveWithoutComments(self):
-        filename = os.path.join(TestImagingPath.dirName, "test.png")
+        filename = self.tempFilePath("test.png")
         path = ImagingPath(System4f(10, 10, 10, 10))
         path.save(filename)
         if not os.path.exists(filename):

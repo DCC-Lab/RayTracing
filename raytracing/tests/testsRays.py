@@ -273,7 +273,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
     def setUp(self) -> None:
         self.testRays = Rays([Ray(), Ray(1, 1), Ray(-1, 1), Ray(-1, -1)])
-        self.fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'testFile.pkl')
+        self.fileName = self.tempFilePath('testFile.pkl')
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testRays.rays)
         time.sleep(0.5)  # Make sure everything is ok
@@ -318,7 +318,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
     def testLoadWrongIterable(self):
         wrongObj = 7734
-        fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
+        fileName = self.tempFilePath('wrongObj.pkl')
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongObj)
         time.sleep(0.5)  # Make sure everything is ok
@@ -326,7 +326,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
             Rays().load(fileName)
 
     def testLoadWrongTypeInIterable(self):
-        fileName = os.path.join(TestRaysSaveAndLoad.dirName, 'wrongObj.pkl')
+        fileName = self.tempFilePath('wrongObj.pkl')
         wrongIterType = [Ray(), Ray(1), [1, 1]]
         with open(fileName, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
@@ -343,8 +343,8 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
     def testSaveInEmptyFile(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
-        name = os.path.join(TestRaysSaveAndLoad.dirName, "emptyFile.pkl")
-        self.assertSaveNotFailed(rays, name)
+        fileName = self.tempFilePath('wrongObj.pkl')
+        self.assertSaveNotFailed(rays, fileName)
 
     def testSaveInFileNotEmpty(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
@@ -352,19 +352,19 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
     @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
     def testSaveHugeFile(self):
-        fname = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
+        fileName = self.tempFilePath('hugeFile.pkl')
         nbRays = 100_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
-        self.assertSaveNotFailed(rays, fname)
+        self.assertSaveNotFailed(rays, fileName)
 
     def testSaveThenLoad(self):
         raysList = [Ray(), Ray(-1), Ray(2), Ray(3)]
         rays = Rays(raysList)
-        name = os.path.join(TestRaysSaveAndLoad.dirName, "testSaveAndLoad.pkl")
+        fileName = self.tempFilePath('testSaveAndLoad.pkl')
         raysLoad = Rays()
-        self.assertSaveNotFailed(rays, name)
-        self.assertLoadNotFailed(raysLoad, name)
+        self.assertSaveNotFailed(rays, fileName)
+        self.assertLoadNotFailed(raysLoad, fileName)
         self.assertListEqual(raysLoad.rays, rays.rays)
 
     @envtest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
@@ -373,9 +373,9 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
         raysLoad = Rays()
-        name = os.path.join(TestRaysSaveAndLoad.dirName, "hugeFile.pkl")
-        self.assertSaveNotFailed(rays, name)
-        self.assertLoadNotFailed(raysLoad, name)
+        fileName = self.tempFilePath('hugeFile.pkl')
+        self.assertSaveNotFailed(rays, fileName)
+        self.assertLoadNotFailed(raysLoad, fileName)
         self.assertListEqual(raysLoad.rays, rays.rays)
 
 

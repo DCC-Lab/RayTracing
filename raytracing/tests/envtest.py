@@ -4,7 +4,7 @@ import unittest
 import tempfile
 
 class RaytracingTestCase(unittest.TestCase):
-    dirName = os.path.join(tempfile.gettempdir(), "tempDir")
+    tempDir = os.path.join(tempfile.gettempdir(), "tempDir")
     removeAlreadyExists = False
 
     def __init__(self, tests=()):
@@ -12,22 +12,22 @@ class RaytracingTestCase(unittest.TestCase):
 
     @classmethod
     def createTempDirectory(cls):
-        if os.path.exists(cls.dirName):
+        if os.path.exists(cls.tempDir):
             if cls.removeAlreadyExists:
                 cls.deleteTempDirectory()
             else:
-                fullDirName = os.path.join(os.getcwd(), cls.dirName)
-                msg = f"'{fullDirName}' directory already exists. " \
+                fulltempDir = os.path.join(os.getcwd(), cls.tempDir)
+                msg = f"'{fulltempDir}' directory already exists. " \
                     f"Please set RaytracingTestCase.removeAlreadyExists to True if you want to delete this directory."
                 raise FileExistsError(msg)
-        os.mkdir(cls.dirName)
+        os.mkdir(cls.tempDir)
 
     @classmethod
     def deleteTempDirectory(cls):
-        if os.path.exists(cls.dirName):
-            for file in os.listdir(cls.dirName):
-                os.remove(os.path.join(cls.dirName, file))
-            os.rmdir(cls.dirName)
+        if os.path.exists(cls.tempDir):
+            for file in os.listdir(cls.tempDir):
+                os.remove(os.path.join(cls.tempDir, file))
+            os.rmdir(cls.tempDir)
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -37,6 +37,8 @@ class RaytracingTestCase(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.deleteTempDirectory()
 
+    def tempFilePath(self, filename="temp.dat") -> str:
+        return os.path.join(RaytracingTestCase.tempDir, filename)
 
 def main():
     unittest.main()
