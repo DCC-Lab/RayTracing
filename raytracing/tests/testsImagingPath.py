@@ -174,31 +174,6 @@ class TestImagingPath(unittest.TestCase):
             self.fail("No file saved (without comments)")
         os.remove(filename)
 
-    def testRearrangeRayTraceForPlottingAllNonBlocked(self):
-        path = ImagingPath([Space(10), Lens(5, 20), Space(10)])
-        initialRay = Ray(0, 1)  # Will go through without being blocked
-        listOfRays = path.trace(initialRay)
-        xy = path.rearrangeRayTraceForPlotting(listOfRays, True)
-        x = [0, 0, 10, 10, 10, 0]
-        z = [0, 0, 10, 10, 10, 20]
-        self.assertTupleEqual(xy, (z, x))
-
-    def testRearrangeRayTraceForPlottingAllBlockedAndRemoved(self):
-        path = ImagingPath([Space(10), Lens(5, 20), Space(10)])
-        initialRay = Ray(0, 1.01)  # Will be blocked
-        listOfRays = path.trace(initialRay)
-        xy = path.rearrangeRayTraceForPlotting(listOfRays, True)
-        self.assertTupleEqual(xy, ([], []))
-
-    def testRearrangeRayTraceForPlottingSomeBlockedAndRemoved(self):
-        path = ImagingPath([Space(10), Lens(5, 20), Space(10)])
-        initialRay = Ray(0, 1.01)  # Will be blocked
-        listOfRays = path.trace(initialRay)
-        xy = path.rearrangeRayTraceForPlotting(listOfRays, False)
-        x = [0, 0, 10.1]
-        z = [0, 0, 10]
-        self.assertTupleEqual(xy, (z, x))
-
     def testChiefRayNoApertureStop(self):
         path = ImagingPath(System2f(10))
         chiefRay = path.chiefRay()

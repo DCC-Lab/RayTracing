@@ -33,6 +33,40 @@ class TestFigure(unittest.TestCase):
 
         self.assertEqual(figure.displayRange(), largestDiameter)
 
+    def testRearrangeRayTraceForPlottingAllNonBlocked(self):
+        path = ImagingPath([Space(10), Lens(5, 20), Space(10)])
+        initialRay = Ray(0, 1)  # Will go through without being blocked
+        listOfRays = path.trace(initialRay)
+        figure = Figure(path)
+
+        xy = figure.rearrangeRayTraceForPlotting(listOfRays, True)
+        x = [0, 0, 10, 10, 10, 0]
+        z = [0, 0, 10, 10, 10, 20]
+
+        self.assertTupleEqual(xy, (z, x))
+
+    def testRearrangeRayTraceForPlottingAllBlockedAndRemoved(self):
+        path = ImagingPath([Space(10), Lens(5, 20), Space(10)])
+        initialRay = Ray(0, 1.01)  # Will be blocked
+        listOfRays = path.trace(initialRay)
+        figure = Figure(path)
+
+        xy = figure.rearrangeRayTraceForPlotting(listOfRays, True)
+
+        self.assertTupleEqual(xy, ([], []))
+
+    def testRearrangeRayTraceForPlottingSomeBlockedAndRemoved(self):
+        path = ImagingPath([Space(10), Lens(5, 20), Space(10)])
+        initialRay = Ray(0, 1.01)  # Will be blocked
+        listOfRays = path.trace(initialRay)
+        figure = Figure(path)
+
+        xy = figure.rearrangeRayTraceForPlotting(listOfRays, False)
+        x = [0, 0, 10.1]
+        z = [0, 0, 10]
+
+        self.assertTupleEqual(xy, (z, x))
+
 
 class TestFigureAxesToDataScale(unittest.TestCase):
     def testWithEmptyImagingPath(self):
