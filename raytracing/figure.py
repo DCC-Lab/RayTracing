@@ -1,4 +1,6 @@
+from .matrixgroup import MatrixGroup
 import matplotlib.pyplot as plt
+from matplotlib import path as mpath
 import matplotlib.patches as patches
 from .matrix import *
 
@@ -164,7 +166,7 @@ class Figure:
         if self.path.showEntrancePupil:
             self.drawEntrancePupil(z=0)
 
-        self.drawElements()
+        self.drawElements(self.path.elements)
         if self.path.showPointsOfInterest:
             self.drawPointsOfInterest(z=0)
             self.drawStops(z=0)
@@ -363,9 +365,12 @@ class Figure:
                 closed=False,
                 color='r'))
 
-    def drawElements(self):
-        z = 0
-        for element in self.path.elements:
+    def drawElements(self, elements, z=0):
+        z = z
+        for element in elements:
+            if issubclass(type(element), MatrixGroup):  # recursive for systems and objectives
+                z = self.drawElements(element.elements, z=z)
+                continue
             graphic = self.graphicOf(element)
             graphic.drawAt(z, self.axes)
             graphic.drawAperture(z, self.axes)
@@ -373,6 +378,7 @@ class Figure:
             if self.path.showElementLabels:
                 graphic.drawLabels(z, self.axes)
             z += element.L
+        return z
 
     def graphicOf(self, element):
         if type(element) is Lens:
