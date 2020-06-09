@@ -374,23 +374,12 @@ class MatrixGroup(Matrix):
             return MatrixGroup(self.elements[item])
         return self.elements[item]
 
-    def removeElement(self, index: int, pad: bool = False):
-        maxIndex = len(self)
-        if index < 0:
-            index += maxIndex
-        if index >= maxIndex or index < 0:
-            raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex - 1}.")
-        tempElements = self.elements[:]
-        self.elements = []
-        for i in range(maxIndex):
-            element = tempElements[i]
-            if i == index:
-                length = element.L
-                if length > 0 and pad:  # No need to pad if length is null
-                    element = Space(length)
-                    self.append(element)
-            else:
-                self.append(element)
+    def pop(self, index: int):
+        self.elements.pop(index)  # We pop the matrix in the list
+        tempElements = self.elements[:]  # We "copy" the list
+        self.elements.clear()  # We clear the attribute
+        for element in tempElements:
+            self.append(element)  # We rebuild the attribute (check indices, compute ABCD, etc)
 
     def insertElement(self, index: int, element: Matrix):
         if not isinstance(element, collections.Iterable):
