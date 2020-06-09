@@ -87,32 +87,20 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
 
 
 for pinhole in pinholeModifier:
-
     finalRays = pinholeModifier[pinhole]
-    print(".")
+    print("\nComputing transmission for pinhole size {0:0.1f}".format(pinhole))
 
     for z in positions:
+        print(".",end='')
         # Working distance of the objective + position
         newPosition = 5 + (z * 0.000001)
-
         illuminationPath(pinholeFactor=pinhole, focalSpotPosition=newPosition)
 
     pinholeModifier[pinhole] = finalRays  # Incorporates the final list of transmission efficiencies into the dictionary
 
-# Some decent parameters
-# See https://matplotlib.org/api/font_manager_api.html#matplotlib.font_manager.FontProperties.set_size
-params = {'legend.fontsize': 'x-large',
-          'figure.figsize': (10, 7),
-         'axes.labelsize': 'x-large',
-         'axes.titlesize':'x-large',
-         'xtick.labelsize':'x-large',
-         'ytick.labelsize':'x-large',
-         'font.family':'helvetica'}
-plt.rcParams.update(params)
-
-plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Pinhole Size S/3', linestyle='dashed')
-plt.plot(positions, pinholeModifier[1], 'k-', label='Pinhole Size S')
-plt.plot(positions, pinholeModifier[3], 'k--', label='Pinhole Size 3S', linestyle='dotted')
+plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Small pinhole', linestyle='dashed')
+plt.plot(positions, pinholeModifier[1], 'k-', label='Ideal pinhole')
+plt.plot(positions, pinholeModifier[3], 'k--', label='Large pinhole', linestyle='dotted')
 plt.ylabel('Transmission efficiency')
 plt.xlabel('Position of the focal spot (nm)')
 plt.legend()
