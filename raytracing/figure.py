@@ -36,7 +36,7 @@ class Figure:
 
         self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
-    def initializeDisplay(self, limitObjectToFieldOfView=False,
+    def initializeDisplay(self, limitObjectToFieldOfView=True,
                           onlyPrincipalAndAxialRays=True):
         """
         Configure the imaging path and the figure according to the display conditions.
@@ -44,7 +44,7 @@ class Figure:
         Other parameters
         ----------------
         limitObjectToFieldOfView: bool
-            Use the calculated field of view instead of the objectHeight. Default to False.
+            Use the calculated field of view instead of the objectHeight. Default to True.
         onlyPrincipalAndAxialRays: bool
             Only show principal and axial rays. Default to True.
 
@@ -127,7 +127,7 @@ class Figure:
                         "rayColors has to be a list with 3 elements."
                 self.designParams[key] = value
 
-    def display(self, limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True,
+    def display(self, limitObjectToFieldOfView=True, onlyPrincipalAndAxialRays=True,
                 removeBlockedRaysCompletely=False, filepath=None):
         """ Display the optical system and trace the rays.
 
@@ -135,7 +135,7 @@ class Figure:
         ----------
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
+            the calculated field of view will be used instead of the objectHeight(default=True)
         onlyPrincipalAndAxialRays : bool (Optional)
             If True, only the principal ray and the axial ray will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)

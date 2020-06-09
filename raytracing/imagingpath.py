@@ -676,7 +676,7 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def display(self, limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True,
+    def display(self, limitObjectToFieldOfView=True, onlyPrincipalAndAxialRays=True,
                 removeBlockedRaysCompletely=False, comments=None):
         """ Display the optical system and trace the rays.
 
@@ -684,7 +684,7 @@ class ImagingPath(MatrixGroup):
         ----------
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
+            the calculated field of view will be used instead of the objectHeight (default=True)
         onlyPrincipalAndAxialRays : bool (Optional)
             If True, only the principal and axial rays will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
@@ -701,8 +701,8 @@ class ImagingPath(MatrixGroup):
                             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
     def save(self, filepath,
-             limitObjectToFieldOfView=False,
-             onlyChiefAndMarginalRays=False,
+             limitObjectToFieldOfView=True,
+             onlyPrincipalAndAxialRays=True,
              removeBlockedRaysCompletely=False,
              comments=None):
         """
@@ -716,9 +716,9 @@ class ImagingPath(MatrixGroup):
             ensure that the correct backend is used.
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
-        onlyChiefAndMarginalRays : bool (Optional)
-            If True, only the principal rays will appear on the plot (default=False)
+            the calculated field of view will be used instead of the objectHeight(default=True)
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal rays will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
@@ -730,6 +730,6 @@ class ImagingPath(MatrixGroup):
         self.figure.createFigure(title=self.label, comments=comments)
 
         self.figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
+                            onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                             removeBlockedRaysCompletely=removeBlockedRaysCompletely,
                             filepath=filepath)
