@@ -5,6 +5,7 @@ from matplotlib import path as mpath
 from .matrix import *
 from .matrixgroup import *
 from .specialtylenses import *
+import warnings
 
 
 class Figure:
@@ -58,19 +59,17 @@ class Figure:
                 self.path.objectHeight = fieldOfView
                 note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
             else:
-                raise ValueError(
-                    "Infinite field of view: cannot use\
-                    limitObjectToFieldOfView=True.")
+                warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True.")
+                limitObjectToFieldOfView = False
 
             imageSize = self.path.imageSize()
             if imageSize != float('+Inf'):
                 note1 += " Image size: {0:.2f}".format(imageSize)
             else:
-                raise ValueError(
-                    "Infinite image size: cannot use\
-                    limitObjectToFieldOfView=True.")
+                warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
+                limitObjectToFieldOfView = False
 
-        else:
+        if not limitObjectToFieldOfView:
             note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
 
         if onlyPrincipalAndAxialRays:
