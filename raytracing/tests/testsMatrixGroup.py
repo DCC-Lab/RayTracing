@@ -331,6 +331,173 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         mg2 = MatrixGroup(mg)
         self.assertListEqual(mg.elements, mg2.elements)
 
+    def testLenEmptyGroup(self):
+        mg = MatrixGroup()
+        self.assertEqual(len(mg), 0)
+
+    def testLenNotEmpty(self):
+        nbElements = 10
+        mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
+        self.assertEqual(len(mg), nbElements)
+
+    def testGetItemOutOfBoundsSingleIndex(self):
+        mg = MatrixGroup([Lens(10) for _ in range(10)])
+        index = len(mg)
+        with self.assertRaises(IndexError):
+            mg[index]
+
+    def testGetItemOutOfBoundsEmpty(self):
+        mg = MatrixGroup()
+        with self.assertRaises(IndexError):
+            mg[0]
+
+    def testGetItem(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        for i in range(len(mg)):
+            self.assertIsInstance(mg[i], Matrix)
+            self.assertEqual(mg[i], listOfElements[i])
+
+    def testGetItemSlice(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        sliceMG = mg[:]
+        self.assertIsInstance(sliceMG, MatrixGroup)
+        self.assertListEqual(sliceMG.elements, mg.elements)
+
+    def testRemoveElementPositiveIndexOutOfBounds(self):
+        nbElements = 10
+        mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
+        with self.assertRaises(IndexError):
+            mg.pop(len(mg))
+
+    def testRemoveElementNegativeIndexOutOfBounds(self):
+        nbElements = 10
+        mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
+        with self.assertRaises(IndexError):
+            mg.pop(-(len(mg) + 1))
+
+    def testRemoveElementLastNoPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg1 = MatrixGroup(listOfElements)
+        mg2 = MatrixGroup(listOfElements)
+        mg1.pop(-1)
+        mg2.pop((len(mg2) - 1))
+        self.assertListEqual(mg1.elements, [space, lens])
+        self.assertListEqual(mg1.elements, mg2.elements)
+
+    def testRemoveElementFirstNoPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg1 = MatrixGroup(listOfElements)
+        mg2 = MatrixGroup(listOfElements)
+        mg1.pop(0)
+        mg2.pop(-len(mg2))
+        self.assertListEqual(mg1.elements, [lens, space])
+        self.assertListEqual(mg1.elements, mg2.elements)
+
+    def testRemoveAllNoPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        mg.pop(1)
+        mg.pop(0)
+        mg.pop(0)
+        self.assertListEqual(mg.elements, [])
+
+    def testRemoveElementPad(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg1 = MatrixGroup(listOfElements)
+        mg2 = MatrixGroup(listOfElements)
+        mg3 = MatrixGroup(listOfElements)
+        mg1.pop(0, True)
+        mg2.pop(1, True)
+        mg3.pop(2, True)
+        self.assertIsInstance(mg1[0], Space)
+        self.assertEqual(mg1[0].L, 10)
+        self.assertEqual(len(mg2), 2)
+        self.assertIsInstance(mg1[2], Space)
+        self.assertEqual(mg1[2].L, 10)
+
+    def testInsertElementNotMatrix(self):
+        mg = MatrixGroup()
+        with self.assertRaises(TypeError):
+            mg.insert(0, Ray())
+
+    def testInsertElementNegativeIndexOutOfBounds(self):
+        mg = MatrixGroup([Lens(10)])
+        with self.assertRaises(IndexError):
+            mg.insert(-2, Space(10))
+
+    def testInsertElementPositiveIndexOutOfBounds(self):
+        mg = MatrixGroup([Lens(10)])
+        with self.assertRaises(IndexError):
+            mg.insert(2, Space(10))
+
+    def testInsertElementAtTheEnd(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([space, lens])
+        mg.insert(2, space)
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testInsertElementAtFirst(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([lens, space])
+        mg.insert(0, space)
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testInsertElementIterable(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([space, space, lens, space])
+        insertion = MatrixGroup([lens, space])
+        mg.insert(1, insertion)
+        self.assertListEqual(mg.elements, [space, lens, space, space, lens, space])
+
+    def testSetPositiveSingleIndexOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(5), ThickLens(1.33, 10, -10, 2)])
+        with self.assertRaises(IndexError):
+            mg[12] = CurvedMirror(5, 20)
+
+    def testSetPositiveSliceOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(5), ThickLens(1.33, 10, -10, 2)])
+        with self.assertRaises(IndexError):
+            mg[10:12] = Aperture(50)  # First index out of bounds
+
+        with self.assertRaises(IndexError):
+            mg[0:10] = Aperture(80)  # Second index out of bounds
+
+    def testSetNegativeSliceOutOfBounds(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(5), ThickLens(1.33, 10, -10, 2)])
+        with self.assertRaises(IndexError):
+            mg[-20:-1] = Aperture(50)
+
+        with self.assertRaises(IndexError):
+            mg[-1:-7] = Aperture(100)
+
+    def testSetStepWarning(self):
+        space10 = Space(10)
+        lens10 = Lens(10)
+        space5 = Space(5)
+        lens5 = Lens(5)
+        mg = MatrixGroup([space10, lens10, space5, space10, ThickLens(1.33, 10, -10, 2), space5])
+        with self.assertWarns(UserWarning) as w:
+            mg[2:4:2] = [space10, space5, lens5]
+        self.assertEqual(str(w.warning), "Not using the step of the slice.")
+        self.assertListEqual(mg.elements, [space10, lens10, space10, space5, lens5, space5])
+
 
 class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
 
