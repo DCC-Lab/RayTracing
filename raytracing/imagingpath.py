@@ -5,6 +5,7 @@ from .matrixgroup import *
 from .ray import *
 from .figure import Figure
 import sys
+import warnings
 
 
 class ImagingPath(MatrixGroup):
@@ -84,13 +85,14 @@ class ImagingPath(MatrixGroup):
         self.fanAngle = 0.1  # full fan angle for rays
         self.fanNumber = 9  # number of rays in fan
         self.rayNumber = 3  # number of points on object
-        self.design = {'rayColors': ['b', 'r', 'g']}  # design variables accessible to the user for customization
 
         # Constants when calculating field stop
         self.precision = 0.001
         self.maxHeight = 10000.0
 
         # Display properties
+        self.figure = Figure(opticalPath=self)
+        self.design = self.figure.design
         self.showObject = True
         self.showImages = True
         self.showEntrancePupil = False
@@ -675,33 +677,37 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
-                removeBlockedRaysCompletely=False, comments=None):
+    def display(self, limitObjectToFieldOfView=True, onlyPrincipalAndAxialRays=True,
+                removeBlockedRaysCompletely=False, comments=None, onlyChiefAndMarginalRays=None):
         """ Display the optical system and trace the rays.
 
         Parameters
         ----------
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
-        onlyChiefAndMarginalRays : bool (Optional)
-            If True, only the principal rays will appear on the plot (default=False)
+            the calculated field of view will be used instead of the objectHeight (default=True)
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal and axial rays will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
+        if onlyChiefAndMarginalRays is not None:
+            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
+                          "use onlyPrincipalAndAxialRays instead.")
+            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
 
-        figure = Figure(opticPath=self, title=self.label, comments=comments)
+        self.figure.createFigure(title=self.label, comments=comments)
 
-        figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                       onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                       removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+        self.figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                            onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
+                            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
     def save(self, filepath,
-             limitObjectToFieldOfView=False,
-             onlyChiefAndMarginalRays=False,
+             limitObjectToFieldOfView=True,
+             onlyPrincipalAndAxialRays=True,
              removeBlockedRaysCompletely=False,
              comments=None):
         """
@@ -715,9 +721,9 @@ class ImagingPath(MatrixGroup):
             ensure that the correct backend is used.
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
-        onlyChiefAndMarginalRays : bool (Optional)
-            If True, only the principal rays will appear on the plot (default=False)
+            the calculated field of view will be used instead of the objectHeight(default=True)
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal rays will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
@@ -725,84 +731,10 @@ class ImagingPath(MatrixGroup):
 
 
         """
-        figure = Figure(opticPath=self, title=self.label, comments=comments)
 
-        figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                       onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                       removeBlockedRaysCompletely=removeBlockedRaysCompletely,
-                       filepath=filepath)
+        self.figure.createFigure(title=self.label, comments=comments)
 
-    def rayTraceLines(self, onlyChiefAndMarginalRays,
-                      removeBlockedRaysCompletely=True):
-        # todo: remove plt dependence
-        """ *renamed and refactored version of drawRayTraces*
-        A list of all ray trace line objects corresponding to either
-        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber)
-        2. the principal rays (chief and marginal)
-
-            removeBlockedRaysCompletely=False to remove rays that are blocked.
-        """
-
-        color = self.design['rayColors']
-
-        if onlyChiefAndMarginalRays:
-            halfHeight = self.objectHeight / 2.0
-            chiefRay = self.chiefRay(y=halfHeight - 0.01)
-            (marginalUp, marginalDown) = self.marginalRays(y=0)
-            rayGroup = (chiefRay, marginalUp)
-            linewidth = 1.5
-        else:
-            halfAngle = self.fanAngle / 2.0
-            halfHeight = self.objectHeight / 2.0
-            rayGroup = Ray.fanGroup(
-                yMin=-halfHeight,
-                yMax=halfHeight,
-                M=self.rayNumber,
-                radianMin=-halfAngle,
-                radianMax=halfAngle,
-                N=self.fanNumber)
-            linewidth = 0.5
-
-        manyRayTraces = self.traceMany(rayGroup)
-
-        lines = []
-        for rayTrace in manyRayTraces:
-            (x, y) = self.rearrangeRayTraceForPlotting(
-                rayTrace, removeBlockedRaysCompletely)
-            if len(y) == 0:
-                continue  # nothing to plot, ray was fully blocked
-
-            rayInitialHeight = y[0]
-            binSize = 2.0 * halfHeight / (len(color) - 1)
-            colorIndex = int(
-                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-
-            line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
-            lines.append(line)
-
-        return lines
-
-    def rearrangeRayTraceForPlotting(self, rayList,
-                                     removeBlockedRaysCompletely=True):
-        """
-        This function removes the rays that are blocked in the imaging path.
-
-        Parameters
-        ----------
-        rayList : List of Rays
-            an object from rays class or a list of rays
-        removeBlockedRaysCompletely : bool
-            If True, the blocked rays will be removed of the list (default=True)
-
-        """
-        x = []
-        y = []
-        for ray in rayList:
-            if not ray.isBlocked:
-                x.append(ray.z)
-                y.append(ray.y)
-            elif removeBlockedRaysCompletely:
-                x = []
-                y = []
-            # else: # ray will simply stop drawing from here
-        return (x, y)
+        self.figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
+                            onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
+                            removeBlockedRaysCompletely=removeBlockedRaysCompletely,
+                            filepath=filepath)
