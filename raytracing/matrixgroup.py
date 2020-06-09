@@ -91,6 +91,42 @@ class MatrixGroup(Matrix):
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
 
+    def __len__(self):
+        return len(self.elements)
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):  # If we get a slice, return a matrix group
+            return MatrixGroup(self.elements[item])
+        return self.elements[item]
+
+    def pop(self, index: int):
+        self.elements.pop(index)  # We pop the matrix in the list
+        tempElements = self.elements[:]  # We "copy" the list
+        self.elements.clear()  # We clear the attribute
+        for element in tempElements:
+            self.append(element)  # We rebuild the attribute (check indices, compute ABCD, etc)
+
+    def insert(self, index: int, element: Matrix):
+        if not isinstance(element, collections.Iterable):
+            element = MatrixGroup([element])
+        else:
+            element = MatrixGroup(element)
+        self.elements = self.elements[:index] + element.elements + self.elements[index:]
+        tempElements = self.elements[:]
+        self.elements.clear()
+        for matrix in tempElements:
+            self.append(matrix)
+
+    def __setitem__(self, key, value: Matrix):
+        if isinstance(key, slice):
+            if key.step is not None:
+                warnings.warn("Not using the step of the slice.", UserWarning)
+            self.elements = self.elements[:key.start] + self.elements[key.stop:]
+            self.insert(key.start, value)
+        else:
+            self.pop(key)
+            self.insert(key, value)
+
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
 
@@ -365,54 +401,6 @@ class MatrixGroup(Matrix):
             self.iteration += 1
             return element
         raise StopIteration
-
-    def __len__(self):
-        return len(self.elements)
-
-    def __getitem__(self, item):
-        if isinstance(item, slice):  # If we get a slice, return a matrix group
-            return MatrixGroup(self.elements[item])
-        return self.elements[item]
-
-    def pop(self, index: int):
-        self.elements.pop(index)  # We pop the matrix in the list
-        tempElements = self.elements[:]  # We "copy" the list
-        self.elements.clear()  # We clear the attribute
-        for element in tempElements:
-            self.append(element)  # We rebuild the attribute (check indices, compute ABCD, etc)
-
-    def insert(self, index: int, element: Matrix):
-        if not isinstance(element, collections.Iterable):
-            element = MatrixGroup([element])
-        else:
-            element = MatrixGroup(element)
-        maxIndex = len(self)
-        if index < 0:
-            index += maxIndex
-        if index > maxIndex or index < 0:
-            raise IndexError(f"Index {index} out of bound, min = 0, max {maxIndex}.")
-        if index == maxIndex:
-            for newElement in element:
-                self.append(newElement)
-        else:
-            tempElements = self.elements[:]
-            self.elements = []
-            for i in range(maxIndex):
-                previousElement = tempElements[i]
-                if i == index:
-                    for newElement in element:
-                        self.append(newElement)
-                    self.append(previousElement)
-                else:
-                    self.append(previousElement)
-
-    def __setitem__(self, key, value: Matrix):
-        if isinstance(key, slice):
-            if key.step is not None:
-                warnings.warn("Not using the step of the slice.", UserWarning)
-            self.replaceChunk(key.start, key.stop, value)
-        else:
-            self.replaceSingle(key, value)
 
     def save(self, filePath: str):
 
