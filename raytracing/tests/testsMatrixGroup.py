@@ -373,13 +373,13 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         nbElements = 10
         mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
         with self.assertRaises(IndexError):
-            mg.removeElement(len(mg))
+            mg.pop(len(mg))
 
     def testRemoveElementNegativeIndexOutOfBounds(self):
         nbElements = 10
         mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
         with self.assertRaises(IndexError):
-            mg.removeElement(-(len(mg) + 1))
+            mg.pop(-(len(mg) + 1))
 
     def testRemoveElementLastNoPad(self):
         space = Space(10)
@@ -387,8 +387,8 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         listOfElements = [space, lens, space]
         mg1 = MatrixGroup(listOfElements)
         mg2 = MatrixGroup(listOfElements)
-        mg1.removeElement(-1)
-        mg2.removeElement((len(mg2) - 1))
+        mg1.pop(-1)
+        mg2.pop((len(mg2) - 1))
         self.assertListEqual(mg1.elements, [space, lens])
         self.assertListEqual(mg1.elements, mg2.elements)
 
@@ -398,8 +398,8 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         listOfElements = [space, lens, space]
         mg1 = MatrixGroup(listOfElements)
         mg2 = MatrixGroup(listOfElements)
-        mg1.removeElement(0)
-        mg2.removeElement(-len(mg2))
+        mg1.pop(0)
+        mg2.pop(-len(mg2))
         self.assertListEqual(mg1.elements, [lens, space])
         self.assertListEqual(mg1.elements, mg2.elements)
 
@@ -408,9 +408,9 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         lens = Lens(10)
         listOfElements = [space, lens, space]
         mg = MatrixGroup(listOfElements)
-        mg.removeElement(1)
-        mg.removeElement(0)
-        mg.removeElement(0)
+        mg.pop(1)
+        mg.pop(0)
+        mg.pop(0)
         self.assertListEqual(mg.elements, [])
 
     def testRemoveElementPad(self):
@@ -420,9 +420,9 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         mg1 = MatrixGroup(listOfElements)
         mg2 = MatrixGroup(listOfElements)
         mg3 = MatrixGroup(listOfElements)
-        mg1.removeElement(0, True)
-        mg2.removeElement(1, True)
-        mg3.removeElement(2, True)
+        mg1.pop(0, True)
+        mg2.pop(1, True)
+        mg3.pop(2, True)
         self.assertIsInstance(mg1[0], Space)
         self.assertEqual(mg1[0].L, 10)
         self.assertEqual(len(mg2), 2)
