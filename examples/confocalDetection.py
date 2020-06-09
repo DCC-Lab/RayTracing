@@ -23,6 +23,19 @@ inputRays = RandomUniformRays(yMax=focalRadius, yMin=-focalRadius, maxCount=nRay
 # Focal length of the objective
 objFocalLength = 5
 
+def path(focalSpotPosition=objFocalLength): 
+
+    illumination = ImagingPath()
+    illumination.append(Space(d=focalSpotPosition))
+    illumination.append(Lens(f=objFocalLength))
+    illumination.append(Space(d=105))
+    illumination.append(Lens(f=100))
+    illumination.append(Space(d=100))
+    illumination.append(System4f(f1=100, f2=75))
+    illumination.append(System4f(f1=40, f2=50))  # Path finishes at the pinhole position
+
+    return illumination
+
 
 def optimalPinholeSize():
     """
@@ -35,14 +48,8 @@ def optimalPinholeSize():
             Returns the optimal pinhole size
     """
 
-    illumination = ImagingPath()
-    illumination.append(System4f(f1=objFocalLength, f2=100))
-    illumination.append(System4f(f1=100, f2=75))
-    illumination.append(System4f(f1=40, f2=50))
-  # Path finishes at the pinhole position
-
     # Dictionnary of the position and magnification of all conjugate planes of the focal spot. 
-    planes = illumination.intermediateConjugates()
+    planes = path().intermediateConjugates()
     # The last conjugate plane is the pinhole. The magnification of this position is saved in mag. 
     mag = planes[-1][1]
     # Calculates the pinhole size that fits perfectly the focal spot diameter.
@@ -69,14 +76,7 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
             Returns the illumination path
     """
 
-    illumination = ImagingPath()
-    illumination.append(Space(d=focalSpotPosition))
-    illumination.append(Lens(f=objFocalLength))
-    illumination.append(Space(d=105))
-    illumination.append(Lens(f=100))
-    illumination.append(Space(d=100))
-    illumination.append(System4f(f1=100, f2=75))
-    illumination.append(System4f(f1=40, f2=50))
+    illumination = path(focalSpotPosition)
 
     pinholeSize = optimalPinholeSize() * pinholeFactor
     illumination.append(Aperture(diameter=pinholeSize))
