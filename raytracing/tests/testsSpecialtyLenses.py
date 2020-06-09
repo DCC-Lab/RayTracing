@@ -1,11 +1,10 @@
-import unittest
 import envtest # modifies path
 import matplotlib.pyplot as plt
 
 from raytracing import *
 
 
-class TestAchromatDoubletLens(unittest.TestCase):
+class TestAchromatDoubletLens(envtest.RaytracingTestCase):
     def testInit(self):
         achromat = AchromatDoubletLens(fa=-100.0, fb=-103.6, R1=-52.0, R2=49.9, R3=600.0, tc1=2.0, tc2=4.0, te=7.7,
                                        n1=N_BAK4.n(0.5876), n2=SF5.n(0.5876), diameter=25.4, url='https://www.test.com',
@@ -48,7 +47,7 @@ class TestAchromatDoubletLens(unittest.TestCase):
         self.assertAlmostEqual(points[1]['z'], fb)
 
 
-class TestAchromatDoubletLensSubclasses(unittest.TestCase):
+class TestAchromatDoubletLensSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = AchromatDoubletLens.__subclasses__()
 
@@ -85,7 +84,7 @@ class TestAchromatDoubletLensSubclasses(unittest.TestCase):
         self.assertEqual([], fails)
 
 
-class TestSingletLens(unittest.TestCase):
+class TestSingletLens(envtest.RaytracingTestCase):
     def testInit(self):
         achromat = SingletLens(f=75.0, fb=72.0, R1=38.6, R2=100000, tc=4.1, te=2.0, n=N_BK7.n(0.5876),
                                        diameter=25.4, url='https://www.test.com', label="TestInit Singlet")
@@ -109,7 +108,7 @@ class TestSingletLens(unittest.TestCase):
                                            label="TestEffectiveFocalLength Singlet")
 
 
-class TestSingletLensSubclasses(unittest.TestCase):
+class TestSingletLensSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = SingletLens.__subclasses__()
 
@@ -146,7 +145,7 @@ class TestSingletLensSubclasses(unittest.TestCase):
         self.assertEqual([], fails)
 
 
-class TestObjectives(unittest.TestCase):
+class TestObjectives(envtest.RaytracingTestCase):
     def testInit(self):
         objective = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
                               label='TestInit Objective', url="https://www.test.com")
@@ -200,7 +199,7 @@ class TestObjectives(unittest.TestCase):
         self.assertAlmostEqual(points[1]['z'], fb)
 
 
-class TestObjectivesSubclasses(unittest.TestCase):
+class TestObjectivesSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = Objective.__subclasses__()
 
@@ -269,4 +268,4 @@ class TestObjectivesSubclasses(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

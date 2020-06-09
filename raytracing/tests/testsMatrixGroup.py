@@ -1,4 +1,3 @@
-import unittest
 import envtest  # modifies path
 
 from raytracing import *
@@ -8,7 +7,7 @@ inf = float("+inf")
 testSaveHugeFile = True
 
 
-class TestMatrixGroup(unittest.TestCase):
+class TestMatrixGroup(envtest.RaytracingTestCase):
 
     def testMatrixGroup(self):
         mg = MatrixGroup()
@@ -602,26 +601,11 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertListEqual(mg.elements, [space10, lens10, space10, space5, lens5, space5])
 
 
-class TestSaveAndLoadMatrixGroup(unittest.TestCase):
-    dirName = ""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.dirName = "tempDir"
-        try:
-            os.mkdir(cls.dirName)
-        except:
-            pass
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        for file in os.listdir(cls.dirName):
-            os.remove(os.path.join(cls.dirName, file))
-        os.rmdir(cls.dirName)
+class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
 
     def setUp(self) -> None:
         self.testMG = MatrixGroup([Space(10), Lens(10), Space(10)])
-        self.fileName = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "testMG.pkl")
+        self.fileName = self.tempFilePath("testMG.pkl")
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testMG.elements)
         time.sleep(0.5)  # Make sure everything is ok
@@ -657,12 +641,12 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
             self.assertEqual(loadMatrixGroup.elements[i].backVertex, tempList[i].backVertex)
 
     def testSaveEmpty(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "emptyMG.pkl")
+        fname = self.tempFilePath("emptyMG.pkl")
         mg = MatrixGroup()
         self.assertSaveNotFailed(mg, fname)
 
     def testSaveNotEmpty(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "notEmptyMG.pkl")
+        fname = self.tempFilePath("notEmptyMG.pkl")
         mg = MatrixGroup([Space(10), Lens(10, 20), Space(20), Lens(10, 21), Space(10)])
         self.assertSaveNotFailed(mg, fname)
 
@@ -670,9 +654,9 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
         self.assertSaveNotFailed(mg, self.fileName)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveHugeFile(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
+        fname = self.tempFilePath("hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
         lenses = [Lens(10) for _ in range(500)]
         elements = spaces + lenses
@@ -703,7 +687,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
     def testLoadWrongObjectType(self):
         wrongObj = 7734
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, 'wrongObj.pkl')
+        fname = self.tempFilePath("wrongObj.pkl")
         with open(fname, 'wb') as file:
             pickle.Pickler(file).dump(wrongObj)
         time.sleep(0.5)  # Make sure everything is ok
@@ -715,7 +699,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
             self.fail(str(exception))
 
     def testLoadWrongIterType(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, 'wrongObj.pkl')
+        fname = self.tempFilePath("wrongObj.pkl")
         wrongIterType = [Lens(5), Lens(10), Ray()]
         with open(fname, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
@@ -727,16 +711,16 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
             self.fail(str(exception))
 
     def testSaveThenLoad(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "saveThenLoad.pkl")
+        fname = self.tempFilePath("saveThenLoad.pkl")
         mg1 = MatrixGroup([Space(10), Lens(10, 100), Space(10), Aperture(50)])
         mg2 = MatrixGroup()
         self.assertSaveNotFailed(mg1, fname)
         self.assertLoadNotFailed(mg2, fname)
         self.assertLoadEqualsMatrixGroup(mg2, mg1)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveThenLoadHugeFile(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
+        fname = self.tempFilePath("hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
         lenses = [Lens(10) for _ in range(500)]
         elements = spaces + lenses
@@ -748,4 +732,4 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()
