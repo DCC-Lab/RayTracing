@@ -37,7 +37,7 @@ def imagingPath(a=10, b=10, title=""):
 
 
 # Input from the expected field of view
-nRays=100000
+nRays=1000000
 objectHalfHeight = 5
 inputRays = RandomUniformRays(yMax = objectHalfHeight, 
                               yMin = -objectHalfHeight,
