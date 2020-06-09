@@ -21,31 +21,6 @@ paths containing different lens diameter.
 import envexamples
 from raytracing import *
 
-# Counts the number of rays starting at the object makes it through the system.
-# nRays if the total number of rays emitted from the object. 
-def rayCount(nRays=10000, objectHalfHeight=5, path=ImagingPath()):
-
-    # Production of rays from a focal spot with a radius of objectHalfHeight
-    inputRays = RandomUniformRays(yMax=objectHalfHeight, yMin= -objectHalfHeight, maxCount=nRays)
-    outputRays = Rays()
-
-    # Counts how many rays make it through the system
-    for ray in inputRays:
-        lastRay = path.traceThrough(ray)
-
-        # if the ray passes through, it's added in outputRays
-        if lastRay.isNotBlocked: 
-            outputRays.append(lastRay)
-    inputRays.displayProgress()
-
-    print("Number of rays sent: {0}".format(inputRays.count))
-    print("Number of rays received: {0}".format(outputRays.count))
-    print("Transmission efficiency: {0}".format(outputRays.count/inputRays.count))
-    
-
-    return outputRays.display("Output profile")
-
-
 # Defines the path. a and b are the diameter of the lenses.
 def imagingPath(a=10, b=10, title=""):
     
@@ -61,15 +36,30 @@ def imagingPath(a=10, b=10, title=""):
     return path
 
 
-# Three paths with different sets of lenses diameter. 
+# Input from the expected field of view
+nRays=100000
+objectHalfHeight = 5
+inputRays = RandomUniformRays(yMax = objectHalfHeight, 
+                              yMin = -objectHalfHeight,
+                              thetaMin = -0.5,
+                              thetaMax = +0.5,
+                              maxCount=nRays)
+
+# Three paths with different sets of lens diameter. 
 path1 = imagingPath(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
+outputRays = path1.traceManyThrough(inputRays)
+efficiency = 100*outputRays.count/inputRays.count
 path1.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
-rayCount(path=path1)
+outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
 
 path2 = imagingPath(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
+outputRays = path2.traceManyThrough(inputRays)
+efficiency = 100*outputRays.count/inputRays.count
 path2.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
-rayCount(path=path2)
+outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
 
-path3 = imagingPath(a=25, b=25, title="Optimal AS at first lens and FS at Camera")
+path3 = imagingPath(a=25, b=50, title="Better AS at first lens and FS at Camera")
+outputRays = path3.traceManyThrough(inputRays)
+efficiency = 100*outputRays.count/inputRays.count
 path3.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
-rayCount(path=path3)
+outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
