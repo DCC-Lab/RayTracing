@@ -14,8 +14,16 @@ class Figure:
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
 
-        self.designParams = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
-                             'imageColor': 'r', 'objectColor': 'b'}
+        self.styles = dict()
+        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
+                                  'imageColor': 'r', 'objectColor': 'b'}
+        self.styles['publication'] = self.styles['default'].copy()
+        self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
+
+        self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
+                                           'imageColor': '0.3', 'objectColor': '0.1'})
+
+        self.designParams = self.styles['default']
 
     def createFigure(self, comments=None, title=None):
         if comments is not None:
@@ -80,23 +88,34 @@ class Figure:
         self.axes.text(0.05, 0.15, text, transform=self.axes.transAxes,
                        fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
 
-    def design(self, rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
+    def design(self, style: str = None,
+               rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
                imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
         # todo: maybe move all display() arguments here instead
         """ Update the design parameters of the figure.
+
         All parameters are None by default to allow for the update of one parameter at a time.
+
         Parameters
         ----------
+        style: str, optional
+            Set all design parameters following a supported design style : 'default', 'presentation', 'publication'.
         rayColors : List[Union[str, tuple]], optional
-            List of the colors to use for the three different ray type (. Default is ['b', 'r', 'g'].
+            List of the colors to use for the three different ray type. Default is ['b', 'r', 'g'].
         onlyAxialRay : bool, optional
-            Only draw the ray fans coming from the center of the object (axial rays).
+            Only draw the ray fan coming from the center of the object (axial ray).
             Works with fanAngle and fanNumber. Default to False.
         imageColor : Union[str, tuple], optional
             Color of image arrows. Default to 'r'.
         objectColor : Union[str, tuple], optional
             Color of object arrow. Default to 'b'.
         """
+        if style is not None:
+            if style in self.styles.keys():
+                self.designParams = self.styles[style]
+            else:
+                raise ValueError("Available styles are : {}".format(self.styles.keys()))
+
         newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
                            'imageColor': imageColor, 'objectColor': objectColor}
         for key, value in newDesignParams.items():
