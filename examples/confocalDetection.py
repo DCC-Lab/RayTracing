@@ -36,19 +36,10 @@ def optimalPinholeSize():
     """
 
     illumination = ImagingPath()
-    illumination.append(Space(d=objFocalLength))
-    illumination.append(Lens(f=objFocalLength))
-    illumination.append(Space(d=105))
-    illumination.append(Lens(f=100))
-    illumination.append(Space(d=200))
-    illumination.append(Lens(f=100))
-    illumination.append(Space(d=175))
-    illumination.append(Lens(f=75))
-    illumination.append(Space(d=115))
-    illumination.append(Lens(f=40))
-    illumination.append(Space(d=90))
-    illumination.append(Lens(f=50))
-    illumination.append(Space(d=50))  # Path finishes at the pinhole position
+    illumination.append(System4f(f1=objFocalLength, f2=100))
+    illumination.append(System4f(f1=100, f2=75))
+    illumination.append(System4f(f1=40, f2=50))
+  # Path finishes at the pinhole position
 
     # Dictionnary of the position and magnification of all conjugate planes of the focal spot. 
     planes = illumination.intermediateConjugates()
@@ -83,15 +74,9 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
     illumination.append(Lens(f=objFocalLength))
     illumination.append(Space(d=105))
     illumination.append(Lens(f=100))
-    illumination.append(Space(d=200))
-    illumination.append(Lens(f=100))
-    illumination.append(Space(d=175))
-    illumination.append(Lens(f=75))
-    illumination.append(Space(d=115))
-    illumination.append(Lens(f=40))
-    illumination.append(Space(d=90))
-    illumination.append(Lens(f=50))
-    illumination.append(Space(d=50))
+    illumination.append(Space(d=100))
+    illumination.append(System4f(f1=100, f2=75))
+    illumination.append(System4f(f1=40, f2=50))
 
     pinholeSize = optimalPinholeSize() * pinholeFactor
     illumination.append(Aperture(diameter=pinholeSize))
