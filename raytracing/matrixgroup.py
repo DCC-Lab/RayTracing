@@ -381,7 +381,7 @@ class MatrixGroup(Matrix):
         for element in tempElements:
             self.append(element)  # We rebuild the attribute (check indices, compute ABCD, etc)
 
-    def insertElement(self, index: int, element: Matrix):
+    def insert(self, index: int, element: Matrix):
         if not isinstance(element, collections.Iterable):
             element = MatrixGroup([element])
         else:

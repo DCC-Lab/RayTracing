@@ -432,30 +432,30 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
     def testInsertElementNotMatrix(self):
         mg = MatrixGroup()
         with self.assertRaises(TypeError):
-            mg.insertElement(0, Ray())
+            mg.insert(0, Ray())
 
     def testInsertElementNegativeIndexOutOfBounds(self):
         mg = MatrixGroup([Lens(10)])
         with self.assertRaises(IndexError):
-            mg.insertElement(-2, Space(10))
+            mg.insert(-2, Space(10))
 
     def testInsertElementPositiveIndexOutOfBounds(self):
         mg = MatrixGroup([Lens(10)])
         with self.assertRaises(IndexError):
-            mg.insertElement(2, Space(10))
+            mg.insert(2, Space(10))
 
     def testInsertElementAtTheEnd(self):
         space = Space(10)
         lens = Lens(10)
         mg = MatrixGroup([space, lens])
-        mg.insertElement(2, space)
+        mg.insert(2, space)
         self.assertListEqual(mg.elements, [space, lens, space])
 
     def testInsertElementAtFirst(self):
         space = Space(10)
         lens = Lens(10)
         mg = MatrixGroup([lens, space])
-        mg.insertElement(0, space)
+        mg.insert(0, space)
         self.assertListEqual(mg.elements, [space, lens, space])
 
     def testInsertElementIterable(self):
@@ -463,7 +463,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         lens = Lens(10)
         mg = MatrixGroup([space, space, lens, space])
         insertion = MatrixGroup([lens, space])
-        mg.insertElement(1, insertion)
+        mg.insert(1, insertion)
         self.assertListEqual(mg.elements, [space, lens, space, space, lens, space])
 
     def testSetPositiveSingleIndexOutOfBounds(self):
