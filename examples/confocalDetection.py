@@ -81,22 +81,20 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
 
     # Counts how many rays make it through the pinhole
     outputRays = illumination.traceManyThroughInParallel(inputRays, progress=False)
-    finalRays.append(outputRays.count / inputRays.count)  # Calculates the transmission efficiency
 
-    return illumination
+    return outputRays.count / inputRays.count
 
 
 for pinhole in pinholeModifier:
-    finalRays = pinholeModifier[pinhole]
     print("\nComputing transmission for pinhole size {0:0.1f}".format(pinhole))
 
+    efficiencyValues = []
     for z in positions:
         print(".",end='')
-        # Working distance of the objective + position
         newPosition = 5 + (z * 0.000001)
-        illuminationPath(pinholeFactor=pinhole, focalSpotPosition=newPosition)
-
-    pinholeModifier[pinhole] = finalRays  # Incorporates the final list of transmission efficiencies into the dictionary
+        efficiency = illuminationPath(pinholeFactor=pinhole, focalSpotPosition=newPosition)
+        efficiencyValues.append(efficiency)
+    pinholeModifier[pinhole] = efficiencyValues
 
 plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Small pinhole', linestyle='dashed')
 plt.plot(positions, pinholeModifier[1], 'k-', label='Ideal pinhole')
