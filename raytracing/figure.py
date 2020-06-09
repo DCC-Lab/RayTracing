@@ -97,9 +97,9 @@ class Figure:
         objectColor : Union[str, tuple], optional
             Color of object arrow. Default to 'b'.
         """
-
-        params = locals()
-        for key, value in params.items():
+        newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
+                           'imageColor': imageColor, 'objectColor': objectColor}
+        for key, value in newDesignParams.items():
             if value is not None:
                 if key is 'rayColors':
                     assert len(value) is 3, \
