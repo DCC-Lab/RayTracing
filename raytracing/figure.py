@@ -1,19 +1,30 @@
-from .matrixgroup import MatrixGroup
-from .specialtylenses import *
+from typing import List, Union
 import matplotlib.pyplot as plt
-from matplotlib import path as mpath
 import matplotlib.patches as patches
+from matplotlib import path as mpath
 from .matrix import *
+from .matrixgroup import *
+from .specialtylenses import *
+import warnings
 
 
 class Figure:
-    def __init__(self, opticPath, comments=None, title=None):
-        self.path = opticPath
+    def __init__(self, opticalPath):
+        self.path = opticalPath
         self.figure = None
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
 
-        self.createFigure(comments=comments, title=title)
+        self.styles = dict()
+        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
+                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True}
+        self.styles['publication'] = self.styles['default'].copy()
+        self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
+
+        self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
+                                           'imageColor': '0.3', 'objectColor': '0.1'})
+
+        self.designParams = self.styles['default']
 
     def createFigure(self, comments=None, title=None):
         if comments is not None:
@@ -26,17 +37,16 @@ class Figure:
 
         self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
-    def initializeDisplay(self, limitObjectToFieldOfView=False,
-                          onlyChiefAndMarginalRays=False):
-        """ *Renamed and refactored version of createRayTracePlot*
+    def initializeDisplay(self, limitObjectToFieldOfView=True):
+        """
         Configure the imaging path and the figure according to the display conditions.
 
-            Three optional parameters:
-            limitObjectToFieldOfView=False, to use the calculated field of view
-            instead of the objectHeight
-            onlyChiefAndMarginalRays=False, to only show principal rays
-            removeBlockedRaysCompletely=False to remove rays that are blocked.
-         """
+        Other parameters
+        ----------------
+        limitObjectToFieldOfView: bool
+            Use the calculated field of view instead of the objectHeight. Default to True.
+
+        """
 
         note1 = ""
         note2 = ""
@@ -46,29 +56,27 @@ class Figure:
                 self.path.objectHeight = fieldOfView
                 note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
             else:
-                raise ValueError(
-                    "Infinite field of view: cannot use\
-                    limitObjectToFieldOfView=True.")
+                warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True.")
+                limitObjectToFieldOfView = False
 
             imageSize = self.path.imageSize()
             if imageSize != float('+Inf'):
                 note1 += " Image size: {0:.2f}".format(imageSize)
             else:
-                raise ValueError(
-                    "Infinite image size: cannot use\
-                    limitObjectToFieldOfView=True.")
+                warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
+                limitObjectToFieldOfView = False
 
-        else:
+        if not limitObjectToFieldOfView:
             note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
 
-        if onlyChiefAndMarginalRays:
+        if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
             if stopPosition is None:
-                raise ValueError(
-                    "No aperture stop in system: cannot use\
-                    onlyChiefAndMarginalRays=True since they\
-                    are not defined.")
-            note2 = "Only chief and marginal rays shown"
+                warnings.warn("No aperture stop in system: cannot use onlyPrincipalAndAxialRays=True since they are "
+                              "not defined.")
+                self.designParams['onlyPrincipalAndAxialRays'] = False
+            else:
+                note2 = "Only chief and marginal rays shown"
 
         self.addFigureInfo(text=note1 + "\n" + note2)
 
@@ -78,7 +86,44 @@ class Figure:
         self.axes.text(0.05, 0.15, text, transform=self.axes.transAxes,
                        fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
 
-    def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
+    def design(self, style: str = None,
+               rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
+               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
+        # todo: maybe move all display() arguments here instead
+        """ Update the design parameters of the figure.
+
+        All parameters are None by default to allow for the update of one parameter at a time.
+
+        Parameters
+        ----------
+        style: str, optional
+            Set all design parameters following a supported design style : 'default', 'presentation', 'publication'.
+        rayColors : List[Union[str, tuple]], optional
+            List of the colors to use for the three different ray type. Default is ['b', 'r', 'g'].
+        onlyAxialRay : bool, optional
+            Only draw the ray fan coming from the center of the object (axial ray).
+            Works with fanAngle and fanNumber. Default to False.
+        imageColor : Union[str, tuple], optional
+            Color of image arrows. Default to 'r'.
+        objectColor : Union[str, tuple], optional
+            Color of object arrow. Default to 'b'.
+        """
+        if style is not None:
+            if style in self.styles.keys():
+                self.designParams = self.styles[style]
+            else:
+                raise ValueError("Available styles are : {}".format(self.styles.keys()))
+
+        newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
+                           'imageColor': imageColor, 'objectColor': objectColor}
+        for key, value in newDesignParams.items():
+            if value is not None:
+                if key is 'rayColors':
+                    assert len(value) is 3, \
+                        "rayColors has to be a list with 3 elements."
+                self.designParams[key] = value
+
+    def display(self, limitObjectToFieldOfView=True, onlyPrincipalAndAxialRays=True,
                 removeBlockedRaysCompletely=False, filepath=None):
         """ Display the optical system and trace the rays.
 
@@ -86,19 +131,18 @@ class Figure:
         ----------
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
-        onlyChiefAndMarginalRays : bool (Optional)
-            If True, only the principal rays will appear on the plot (default=False)
+            the calculated field of view will be used instead of the objectHeight(default=True)
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal ray and the axial ray will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
             If True, the blocked rays are removed (default=False)
 
         """
-        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                               onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
 
-        self.drawLines(self.path.rayTraceLines(onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                               removeBlockedRaysCompletely=removeBlockedRaysCompletely))
+        self.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView)
 
+        self.drawLines(self.rayTraceLines(removeBlockedRaysCompletely=removeBlockedRaysCompletely))
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
@@ -168,6 +212,7 @@ class Figure:
             self.drawEntrancePupil(z=0)
 
         self.drawElements(self.path.elements)
+
         if self.path.showPointsOfInterest:
             self.drawPointsOfInterest(z=0)
             self.drawStops(z=0)
@@ -216,8 +261,8 @@ class Figure:
             0,
             self.path._objectHeight,
             width=arrowHeadWidth / 5,
-            fc='b',
-            ec='b',
+            fc=self.designParams['objectColor'],
+            ec=self.designParams['objectColor'],
             head_length=arrowHeadHeight,
             head_width=arrowHeadWidth,
             length_includes_head=True)
@@ -249,8 +294,8 @@ class Figure:
                 0,
                 magnification * self.path._objectHeight,
                 width=arrowHeadWidth / 5,
-                fc='r',
-                ec='r',
+                fc=self.designParams['imageColor'],
+                ec=self.designParams['imageColor'],
                 head_length=arrowHeadHeight,
                 head_width=arrowHeadWidth,
                 length_includes_head=True)
@@ -376,6 +421,75 @@ class Figure:
             if self.path.showElementLabels:
                 graphic.drawLabels(z, self.axes)
             z += graphic.L
+
+    def rayTraceLines(self, removeBlockedRaysCompletely=True):
+        """ A list of all ray trace line objects corresponding to either
+        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber).
+        2. the principal and axial rays.
+        """
+
+        color = self.designParams['rayColors']
+
+        if self.designParams['onlyPrincipalAndAxialRays']:
+            halfHeight = self.path.objectHeight / 2.0
+            chiefRay = self.path.chiefRay(y=halfHeight - 0.01)  # fixme: refactor required for the renaming of rays
+            (marginalUp, marginalDown) = self.path.marginalRays(y=0)
+            rayGroup = (chiefRay, marginalUp)
+            linewidth = 1.5
+        else:
+            halfAngle = self.path.fanAngle / 2.0
+            halfHeight = self.path.objectHeight / 2.0
+            rayGroup = Ray.fanGroup(
+                yMin=-halfHeight,
+                yMax=halfHeight,
+                M=self.path.rayNumber,
+                radianMin=-halfAngle,
+                radianMax=halfAngle,
+                N=self.path.fanNumber)
+            linewidth = 0.5
+
+        manyRayTraces = self.path.traceMany(rayGroup)
+
+        lines = []
+        for rayTrace in manyRayTraces:
+            (x, y) = self.rearrangeRayTraceForPlotting(
+                rayTrace, removeBlockedRaysCompletely)
+            if len(y) == 0:
+                continue  # nothing to plot, ray was fully blocked
+
+            rayInitialHeight = y[0]
+            binSize = 2.0 * halfHeight / (len(color) - 1)
+            colorIndex = int(
+                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
+
+            line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
+            lines.append(line)
+
+        return lines
+
+    def rearrangeRayTraceForPlotting(self, rayList: List[Ray],
+                                     removeBlockedRaysCompletely=True):
+        """
+        This function removes the rays that are blocked in the imaging path.
+
+        Parameters
+        ----------
+        rayList : List of Rays
+            an object from rays class or a list of rays
+        removeBlockedRaysCompletely : bool
+            If True, the blocked rays will be removed of the list (default=True)
+
+        """
+        x = []
+        y = []
+        for ray in rayList:
+            if not ray.isBlocked:
+                x.append(ray.z)
+                y.append(ray.y)
+            elif removeBlockedRaysCompletely:
+                return [], []
+            # else: # ray will simply stop drawing from here
+        return x, y
 
     def axesToDataScale(self):
         """ Display dimensions in data units.
@@ -751,14 +865,14 @@ class LensGraphic(MatrixGraphic):
         halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
-        arrowHeadHeight = 2 * halfHeight * 0.1
+        arrowHeadHeight = 2 * halfHeight * 0.08
 
         heightFactor = halfHeight * 2 / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
+        arrowHeadWidth = xScaling * 0.008 * (heightFactor / 0.2) ** (3 / 4)
 
-        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
+        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
