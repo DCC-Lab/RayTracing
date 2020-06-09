@@ -44,7 +44,7 @@ class XLUMPlanFLN20X(Objective):
         "focusToFocusLength", "80"
         "backAperture", "22"
         "Numerical Aperture (NA)", "1.00"
-        "Cover Glass Thickness (mm):", "0.00"
+        "Cover Glass Thickness (mm)", "0.00"
         "Working Distance (mm)", "2"
         "Objective Field Number (mm)", "22"
 
@@ -73,7 +73,7 @@ class MVPlapo2XC(Objective):
         "focusToFocusLength", "137"
         "backAperture", "45"
         "Numerical Aperture (NA)", "0.50"
-        "Cover Glass Thickness (mm):", "0.00"
+        "Cover Glass Thickness (mm)", "0.00"
         "Working Distance (mm)", "20"
 
 
@@ -142,7 +142,7 @@ class XLPLN25X(Objective):
     -----
     Immersion not considered at this point.
     More info: https://www.olympus-lifescience.com/en/objectives/multiphoton/
-    
+
     """
 
     def __init__(self):
