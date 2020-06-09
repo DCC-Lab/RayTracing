@@ -17,14 +17,13 @@ pinholeModifier = {1 / 3: [], 1: [], 3: []}
 # list of all relative positions from the ideal focal spot position in nm
 positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -300, -500, -800, -1000]
 # Number of total rays produced by the focal spot
-nRays = 10000
+nRays = 100000
 # Production of rays from a focal spot with a radius determined by focalRadius
 inputRays = RandomUniformRays(yMax=focalRadius, yMin=-focalRadius, maxCount=nRays)
 # Focal length of the objective
 objFocalLength = 5
 
 def path(focalSpotPosition=objFocalLength): 
-
     illumination = ImagingPath()
     illumination.append(Space(d=focalSpotPosition))
     illumination.append(Lens(f=objFocalLength))
@@ -35,7 +34,6 @@ def path(focalSpotPosition=objFocalLength):
     illumination.append(System4f(f1=40, f2=50))  # Path finishes at the pinhole position
 
     return illumination
-
 
 def optimalPinholeSize():
     """
@@ -82,7 +80,7 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
     illumination.append(Aperture(diameter=pinholeSize))
 
     # Counts how many rays make it through the pinhole
-    outputRays = illumination.traceManyThrough(inputRays, progress=False)
+    outputRays = illumination.traceManyThroughInParallel(inputRays, progress=False)
     finalRays.append(outputRays.count / inputRays.count)  # Calculates the transmission efficiency
 
     return illumination
@@ -101,10 +99,20 @@ for pinhole in pinholeModifier:
 
     pinholeModifier[pinhole] = finalRays  # Incorporates the final list of transmission efficiencies into the dictionary
 
-# Prints a plot of the three configurations. 
-plt.plot(positions, pinholeModifier[1 / 3], label='Pinhole Size S/3', linestyle='dashed')
-plt.plot(positions, pinholeModifier[1], label='Pinhole Size S')
-plt.plot(positions, pinholeModifier[3], label='Pinhole Size 3S', linestyle='dotted')
+# Some decent parameters
+# See https://matplotlib.org/api/font_manager_api.html#matplotlib.font_manager.FontProperties.set_size
+params = {'legend.fontsize': 'x-large',
+          'figure.figsize': (10, 7),
+         'axes.labelsize': 'x-large',
+         'axes.titlesize':'x-large',
+         'xtick.labelsize':'x-large',
+         'ytick.labelsize':'x-large',
+         'font.family':'helvetica'}
+plt.rcParams.update(params)
+
+plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Pinhole Size S/3', linestyle='dashed')
+plt.plot(positions, pinholeModifier[1], 'k-', label='Pinhole Size S')
+plt.plot(positions, pinholeModifier[3], 'k--', label='Pinhole Size 3S', linestyle='dotted')
 plt.ylabel('Transmission efficiency')
 plt.xlabel('Position of the focal spot (nm)')
 plt.legend()
