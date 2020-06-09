@@ -91,6 +91,42 @@ class MatrixGroup(Matrix):
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
 
+    def __len__(self):
+        return len(self.elements)
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):  # If we get a slice, return a matrix group
+            return MatrixGroup(self.elements[item])
+        return self.elements[item]
+
+    def pop(self, index: int):
+        self.elements.pop(index)  # We pop the matrix in the list
+        tempElements = self.elements[:]  # We "copy" the list
+        self.elements.clear()  # We clear the attribute
+        for element in tempElements:
+            self.append(element)  # We rebuild the attribute (check indices, compute ABCD, etc)
+
+    def insert(self, index: int, element: Matrix):
+        if not isinstance(element, collections.Iterable):
+            element = MatrixGroup([element])
+        else:
+            element = MatrixGroup(element)
+        self.elements = self.elements[:index] + element.elements + self.elements[index:]
+        tempElements = self.elements[:]
+        self.elements.clear()
+        for matrix in tempElements:
+            self.append(matrix)
+
+    def __setitem__(self, key, value: Matrix):
+        if isinstance(key, slice):
+            if key.step is not None:
+                warnings.warn("Not using the step of the slice.", UserWarning)
+            self.elements = self.elements[:key.start] + self.elements[key.stop:]
+            self.insert(key.start, value)
+        else:
+            self.pop(key)
+            self.insert(key, value)
+
     def transferMatrix(self, upTo=float('+Inf')):
         """ The transfer matrix between front edge and distance=upTo
 
@@ -366,7 +402,7 @@ class MatrixGroup(Matrix):
             return element
         raise StopIteration
 
-    def save(self, filePath:str):
+    def save(self, filePath: str):
 
         """ A MatrixGroup can be saved using this function and loaded with `load()`
 
