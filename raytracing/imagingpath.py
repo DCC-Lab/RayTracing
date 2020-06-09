@@ -90,7 +90,7 @@ class ImagingPath(MatrixGroup):
         self.maxHeight = 10000.0
 
         # Display properties
-        self.figure = Figure(opticPath=self)
+        self.figure = Figure(opticalPath=self)
         self.design = self.figure.design
         self.showObject = True
         self.showImages = True

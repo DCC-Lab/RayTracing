@@ -17,7 +17,7 @@ class Figure:
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
-                                  'imageColor': 'r', 'objectColor': 'b'}
+                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
 
@@ -37,8 +37,7 @@ class Figure:
 
         self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
-    def initializeDisplay(self, limitObjectToFieldOfView=True,
-                          onlyPrincipalAndAxialRays=True):
+    def initializeDisplay(self, limitObjectToFieldOfView=True):
         """
         Configure the imaging path and the figure according to the display conditions.
 
@@ -46,8 +45,6 @@ class Figure:
         ----------------
         limitObjectToFieldOfView: bool
             Use the calculated field of view instead of the objectHeight. Default to True.
-        onlyPrincipalAndAxialRays: bool
-            Only show principal and axial rays. Default to True.
 
         """
 
@@ -72,14 +69,14 @@ class Figure:
         if not limitObjectToFieldOfView:
             note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
 
-        if onlyPrincipalAndAxialRays:
+        if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
             if stopPosition is None:
-                raise ValueError(
-                    "No aperture stop in system: cannot use\
-                    onlyPrincipalAndAxialRays=True since they\
-                    are not defined.")
-            note2 = "Only chief and marginal rays shown"
+                warnings.warn("No aperture stop in system: cannot use onlyPrincipalAndAxialRays=True since they are "
+                              "not defined.")
+                self.designParams['onlyPrincipalAndAxialRays'] = False
+            else:
+                note2 = "Only chief and marginal rays shown"
 
         self.addFigureInfo(text=note1 + "\n" + note2)
 
@@ -141,12 +138,11 @@ class Figure:
             If True, the blocked rays are removed (default=False)
 
         """
-        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                               onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays)
 
-        self.drawLines(self.rayTraceLines(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
-                                          removeBlockedRaysCompletely=removeBlockedRaysCompletely))
+        self.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView)
 
+        self.drawLines(self.rayTraceLines(removeBlockedRaysCompletely=removeBlockedRaysCompletely))
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
@@ -426,8 +422,7 @@ class Figure:
                 graphic.drawLabels(z, self.axes)
             z += graphic.L
 
-    def rayTraceLines(self, onlyPrincipalAndAxialRays,
-                      removeBlockedRaysCompletely=True):
+    def rayTraceLines(self, removeBlockedRaysCompletely=True):
         """ A list of all ray trace line objects corresponding to either
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber).
         2. the principal and axial rays.
@@ -435,7 +430,7 @@ class Figure:
 
         color = self.designParams['rayColors']
 
-        if onlyPrincipalAndAxialRays:
+        if self.designParams['onlyPrincipalAndAxialRays']:
             halfHeight = self.path.objectHeight / 2.0
             chiefRay = self.path.chiefRay(y=halfHeight - 0.01)  # fixme: refactor required for the renaming of rays
             (marginalUp, marginalDown) = self.path.marginalRays(y=0)
