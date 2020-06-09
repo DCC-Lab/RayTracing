@@ -9,8 +9,8 @@ import warnings
 
 
 class Figure:
-    def __init__(self, opticPath):
-        self.path = opticPath
+    def __init__(self, opticalPath):
+        self.path = opticalPath
         self.figure = None
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
