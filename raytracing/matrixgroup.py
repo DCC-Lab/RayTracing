@@ -100,11 +100,12 @@ class MatrixGroup(Matrix):
         return self.elements[item]
 
     def pop(self, index: int):
-        self.elements.pop(index)  # We pop the matrix in the list
+        poppedElement = self.elements.pop(index)  # We pop the matrix in the list
         tempElements = self.elements[:]  # We "copy" the list
         self.elements.clear()  # We clear the attribute
         for element in tempElements:
             self.append(element)  # We rebuild the attribute (check indices, compute ABCD, etc)
+        return poppedElement
 
     def insert(self, index: int, element: Matrix):
         if not isinstance(element, collections.Iterable):
@@ -119,9 +120,13 @@ class MatrixGroup(Matrix):
 
     def __setitem__(self, key, value: Matrix):
         if isinstance(key, slice):
-            if key.step is not None:
+            if key.step is not None and key.step != 1:
                 warnings.warn("Not using the step of the slice.", UserWarning)
-            self.elements = self.elements[:key.start] + self.elements[key.stop:]
+            if key.start is None:
+                key = slice(0, key.stop)
+            if key.stop is None:
+                key = slice(key.start, len(self))
+            self.elements = self.elements[:key.start] + self.elements[key.stop:]  # "Cut" the original list
             self.insert(key.start, value)
         else:
             self.pop(key)
