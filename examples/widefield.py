@@ -33,7 +33,7 @@ def imagingPath(a=10, b=10, title=""):
 
 
 # Input from the expected field of view
-nRays=1000000
+nRays=1000
 objectHalfHeight = 5
 inputRays = RandomUniformRays(yMax = objectHalfHeight, 
                               yMin = -objectHalfHeight,
@@ -45,7 +45,7 @@ inputRays = RandomUniformRays(yMax = objectHalfHeight,
 path1 = imagingPath(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
 outputRays = path1.traceManyThrough(inputRays)
 efficiency = 100*outputRays.count/inputRays.count
-path1.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
+path1.display(limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=True)
 outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
 
 path2 = imagingPath(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
