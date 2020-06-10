@@ -46,14 +46,3 @@ path3.lagrangeInvariant()
 print(path3.lagrangeInvariant())
 path3.display(onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=False)
 
-path4 = ImagingPath()
-path4.objectHeight = 15
-path4.append(Space(d=5))
-path4.append(Lens(f=5, diameter=45))
-path4.append(Space(d=15))
-path4.append(Lens(f=10,diameter=45))
-path4.append(Space(d=10))
-path4.lagrangeInvariant()
-print(path4.lagrangeInvariant())
-path4.display(onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=False)
-
