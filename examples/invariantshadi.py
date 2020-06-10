@@ -2,7 +2,7 @@ import envexamples
 from raytracing import *
 
 path = ImagingPath()
-path.objectHeight = 2
+path.objectHeight = 0.5
 path.append(Space(d=5))
 path.append(Lens(f=5, diameter=2.5))
 path.append(Space(d=15))
