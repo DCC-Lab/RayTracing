@@ -14,9 +14,7 @@ class LUMPlanFL40X(Objective):
         "Diameter (mm)", "21.00"
         "Field Number (mm)", "26.5"
         "Length (mm)", "41.70"
-        "Working Distance (mm)", "3.3"
-
-    #fixme : in the given link the working distance is 3.3 but in the input it has been written 2
+        "Working Distance (mm)", "2"
 
     Notes
     -----
@@ -69,7 +67,6 @@ class MVPlapo2XC(Objective):
     .. csv-table::
         :header: Parameter, value
 
-        "Magnification", #fixme "2x"
         "focusToFocusLength", "137"
         "backAperture", "45"
         "Numerical Aperture (NA)", "0.50"
@@ -80,7 +77,6 @@ class MVPlapo2XC(Objective):
     Notes
     -----
     Immersion not considered at this point.
-    More info: #fixme
 
 
     """
