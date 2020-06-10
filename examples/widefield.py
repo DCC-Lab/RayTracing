@@ -26,11 +26,7 @@ def imagingPath(a=10, b=10, title=""):
     
     path = ImagingPath()
     path.label=title
-    path.append(Space(d=50))
-    path.append(Lens(f=50, diameter=a, label="First lens"))
-    path.append(Space(d=100))
-    path.append(Lens(f=50, diameter=b, label="Second lens"))
-    path.append(Space(d=50))
+    path.append(System4f(f1=50, diameter1=a, f2=50, diameter2=b))
     path.append(Aperture(diameter=10, label='Camera'))
     
     return path
