@@ -677,8 +677,9 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def display(self, limitObjectToFieldOfView=True, onlyPrincipalAndAxialRays=True,
-                removeBlockedRaysCompletely=False, comments=None, onlyChiefAndMarginalRays=None):
+    def display(self, onlyPrincipalAndAxialRays=True,
+                removeBlockedRaysCompletely=False, comments=None,
+                limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -698,18 +699,18 @@ class ImagingPath(MatrixGroup):
             warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
                           "use onlyPrincipalAndAxialRays instead.")
             onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
 
         self.figure.createFigure(title=self.label, comments=comments)
 
-        self.figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                            onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
+        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
     def save(self, filepath,
-             limitObjectToFieldOfView=True,
              onlyPrincipalAndAxialRays=True,
-             removeBlockedRaysCompletely=False,
-             comments=None):
+             removeBlockedRaysCompletely=False, comments=None,
+             limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
         """
         The figure of the imaging path can be saved using this function.
 
@@ -729,12 +730,16 @@ class ImagingPath(MatrixGroup):
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
-
         """
+        if onlyChiefAndMarginalRays is not None:
+            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
+                          "use onlyPrincipalAndAxialRays instead.")
+            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
 
         self.figure.createFigure(title=self.label, comments=comments)
 
-        self.figure.display(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                            onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
+        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                             removeBlockedRaysCompletely=removeBlockedRaysCompletely,
                             filepath=filepath)

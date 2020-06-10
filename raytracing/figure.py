@@ -17,7 +17,8 @@ class Figure:
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
-                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True}
+                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
+                                  'limitObjectToFieldOfView': True}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
 
@@ -37,36 +38,28 @@ class Figure:
 
         self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
-    def initializeDisplay(self, limitObjectToFieldOfView=True):
-        """
-        Configure the imaging path and the figure according to the display conditions.
-
-        Other parameters
-        ----------------
-        limitObjectToFieldOfView: bool
-            Use the calculated field of view instead of the objectHeight. Default to True.
-
-        """
+    def initializeDisplay(self):
+        """ Configure the imaging path and the figure according to the display conditions. """
 
         note1 = ""
         note2 = ""
-        if limitObjectToFieldOfView:
+        if self.designParams['limitObjectToFieldOfView']:
             fieldOfView = self.path.fieldOfView()
             if fieldOfView != float('+Inf'):
                 self.path.objectHeight = fieldOfView
                 note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
             else:
                 warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True.")
-                limitObjectToFieldOfView = False
+                self.designParams['limitObjectToFieldOfView'] = False
 
             imageSize = self.path.imageSize()
             if imageSize != float('+Inf'):
                 note1 += " Image size: {0:.2f}".format(imageSize)
             else:
                 warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
-                limitObjectToFieldOfView = False
+                self.designParams['limitObjectToFieldOfView'] = False
 
-        if not limitObjectToFieldOfView:
+        if not self.designParams['limitObjectToFieldOfView']:
             note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
 
         if self.designParams['onlyPrincipalAndAxialRays']:
@@ -123,15 +116,12 @@ class Figure:
                         "rayColors has to be a list with 3 elements."
                 self.designParams[key] = value
 
-    def display(self, limitObjectToFieldOfView=True, onlyPrincipalAndAxialRays=True,
+    def display(self, onlyPrincipalAndAxialRays=True,
                 removeBlockedRaysCompletely=False, filepath=None):
         """ Display the optical system and trace the rays.
 
         Parameters
         ----------
-        limitObjectToFieldOfView : bool (Optional)
-            If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=True)
         onlyPrincipalAndAxialRays : bool (Optional)
             If True, only the principal ray and the axial ray will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
@@ -140,7 +130,7 @@ class Figure:
         """
 
         self.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
-        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView)
+        self.initializeDisplay()
 
         self.drawLines(self.rayTraceLines(removeBlockedRaysCompletely=removeBlockedRaysCompletely))
         self.drawDisplayObjects()
