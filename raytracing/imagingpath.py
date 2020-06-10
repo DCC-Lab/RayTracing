@@ -115,6 +115,7 @@ class ImagingPath(MatrixGroup):
         if objectHeight < 0:
             raise ValueError("The object height can't be negative.")
         self._objectHeight = objectHeight
+        self.figure.designParams['limitObjectToFieldOfView'] = False
 
     def chiefRay(self, y=None):
         """This function returns the chief ray for a height y at object.
