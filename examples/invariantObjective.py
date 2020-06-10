@@ -34,7 +34,7 @@ def opticalPath1(oHeight = None, lensDiameter1 = None, lensDiameter2 = None):
 
 	return path
 
-path1 = opticalPath1(oHeight = 10, lensDiameter1 = 25.4, lensDiameter2 = 25.4)
+path1 = opticalPath1(oHeight = 20, lensDiameter1 = 25.4, lensDiameter2 = 25.4)
 print(path1.lagrangeInvariant())
 path1.display()
 
