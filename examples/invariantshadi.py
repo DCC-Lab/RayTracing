@@ -13,7 +13,7 @@ print(path.lagrangeInvariant())
 path.display(onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=False)
 
 path1 = ImagingPath()
-path.objectHeight = 20
+path1.objectHeight = 20
 path1.append(Space(d=5))
 path1.append(Lens(f=5, diameter=50))
 path1.append(Space(d=15))
