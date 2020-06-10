@@ -24,7 +24,7 @@ print(path1.lagrangeInvariant())
 path1.display(onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=False)
 
 path2 = ImagingPath()
-path.objectHeight = 10
+path2.objectHeight = 10
 path2.append(Space(d=5))
 path2.append(Lens(f=5, diameter=40))
 path2.append(Space(d=15))
@@ -36,7 +36,7 @@ path2.display(onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=False)
 
 
 path3 = ImagingPath()
-path.objectHeight = 10
+path3.objectHeight = 10
 path3.append(Space(d=5))
 path3.append(Lens(f=5, diameter=30))
 path3.append(Space(d=15))
