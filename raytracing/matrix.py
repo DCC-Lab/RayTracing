@@ -776,9 +776,7 @@ class Matrix(object):
         inputRays : object of Ray class
             A group of rays
         progress : bool
-            if True, the progress of the raceTrough is shown (default=Trye)
-        #fixme processes : (tyoe?)
-        #fixme   description?
+            If True, the progress in percentage of the traceTrough is shown (default=True)
 
         Returns
         -------
