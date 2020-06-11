@@ -31,7 +31,7 @@ class ImagingPath(MatrixGroup):
     objectPosition : float
         This attribute defines the position of the object which must be defined zero for now. (default=0)
     fanAngle : float
-        this value indicates full fan angle in radians for rays (max? min?) (default=0.1)
+        This value indicates full fan angle in radians for rays (default=0.1)
     fanNumber : int
         This value indicates the number of ray(s) in fan (default=9)
     precision : float
@@ -118,7 +118,7 @@ class ImagingPath(MatrixGroup):
         self.figure.designParams['limitObjectToFieldOfView'] = False
 
     def chiefRay(self, y=None):
-        """This function returns the chief ray for a height y at object.
+        r"""This function returns the chief ray for a height y at object.
         The chief ray for height y is the ray that goes
         through the center of the aperture stop.
 
@@ -208,7 +208,7 @@ class ImagingPath(MatrixGroup):
         return principalRay
 
     def marginalRays(self, y=0):
-        """This function calculates the marginal rays for a height y at object.
+        r"""This function calculates the marginal rays for a height y at object.
         The marginal rays for height y are the rays that hit the upper and lower
         edges of the aperture stop. There are always two marginal rays for any
         point on the object.  They are symmetric on either side of the optic axis
