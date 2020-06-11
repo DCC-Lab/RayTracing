@@ -36,7 +36,7 @@ class MatrixGroup(Matrix):
         self._lastRayTrace = None
 
     def append(self, matrix):
-        """This function adds an element at the end of the path.
+        r"""This function adds an element at the end of the path.
 
          Parameters
          ----------
@@ -133,7 +133,7 @@ class MatrixGroup(Matrix):
             self.insert(key, value)
 
     def transferMatrix(self, upTo=float('+Inf')):
-        """ The transfer matrix between front edge and distance=upTo
+        r""" The transfer matrix between front edge and distance=upTo
 
         Parameters
         ----------
@@ -188,7 +188,7 @@ class MatrixGroup(Matrix):
         return transferMatrix
 
     def transferMatrices(self):
-        """ The list of Matrix() that corresponds to the propagation through 
+        r""" The list of Matrix() that corresponds to the propagation through
         this element (or group). For a Matrix(), it simply returns a list 
         with a single element [self].
         For a MatrixGroup(), it returns the transferMatrices for 
