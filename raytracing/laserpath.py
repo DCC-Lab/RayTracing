@@ -49,46 +49,11 @@ class LaserPath(MatrixGroup):
 
     def __init__(self, elements=None, label=""):
         self.inputBeam = None
-        self.isResonator = False
         self.showElementLabels = True
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
         super(LaserPath, self).__init__(elements=elements, label=label)
-
-    def eigenModes(self):
-        """
-        Returns the two complex radii that are identical after a
-        round trip, assuming the matrix of the LaserPath() is one
-        round trip: you will need to duplicate elements in reverse
-        and append them manually. 
-        """
-        if not self.hasPower:
-            return None, None
-
-        b = self.D - self.A
-        sqrtDelta = cmath.sqrt(b * b + 4.0 * self.B * self.C)
-
-        q1 = (- b + sqrtDelta) / (2.0 * self.C)
-        q2 = (- b - sqrtDelta) / (2.0 * self.C)
-
-        return (GaussianBeam(q=q1), GaussianBeam(q=q2))
-
-    def laserModes(self):
-        """
-        Returns the laser modes that are physical (finite) when 
-        calculating the eigenmodes. 
-        """
-
-        (q1, q2) = self.eigenModes()
-        q = []
-        if q1 is not None and q1.isFinite:
-            q.append(q1)
-
-        if q2 is not None and q2.isFinite:
-            q.append(q2)
-
-        return q
 
     def display(self, inputBeam=None, inputBeams=None, comments=None):  # pragma: no cover
         """ Display the optical system and trace the laser beam. 
@@ -106,11 +71,7 @@ class LaserPath(MatrixGroup):
 
         """
 
-        if self.isResonator:
-            beams = self.laserModes()
-            if self.label == "":
-                self.label = "Laser modes as calculated"
-        elif inputBeam is not None:
+        if inputBeam is not None:
             beams = [inputBeam]
         elif inputBeams is not None:
             beams = inputBeams
@@ -215,3 +176,106 @@ class LaserPath(MatrixGroup):
                        width=0.1, fc='g', ec='g',
                        head_length=arrowHeight, head_width=arrowWidth,
                        length_includes_head=True)
+
+
+class LaserCavity(MatrixGroup):
+    """The main class of the module for coherent
+    laser beams: it is the combination of Matrix() or MatrixGroup()
+    to be used as a laser path with a laser beam (GaussianBeam)
+    at the entrance.
+
+    Usage is to create the LaserPath(), then append() elements
+    and display(). You may change the inputBeam to any GaussianBeam(),
+    or provide one to display(beam=GaussianBeam())
+
+    Parameters
+    ----------
+    elements : list of elements
+        A list of ABCD matrices in the imaging path
+    label : string
+        the label for the imaging path (Optional)
+
+    Attributes
+    ----------
+    inputBeam : object of GaussianBeam class
+        the input beam of the imaging path is defined using this parameter.
+    isResonator : bool
+        If True, the laser path is considered a resonator cavity 
+    showElementLabels : bool
+        If True, the labels of the elements will be shown on display. (default=True)
+    showPointsOfInterest : bool
+        If True, the points of interest will be shown on display. (default=True)
+    showPointsOfInterestLabels : bool
+        If True, the labels of the points of interest will be shown on display. (default=True)
+    showPlanesAcrossPointsOfInterest : bool
+        If True, the planes across the points of interest will be shown on display. (default=True)
+
+    See Also
+    --------
+    raytracing.GaussianBeam
+
+    Notes
+    -----
+    Gaussian laser beams are not "blocked" by aperture. The formalism
+    does not explicitly allow that.  However, if it appears that a 
+    GaussianBeam() would be clipped by  finite aperture, a property 
+    is set to indicate it, but it will propagate nevertheless
+    and without diffraction due to that aperture.
+    """
+
+    def __init__(self, elements=None, label=""):
+        self.showElementLabels = True
+        self.showPointsOfInterest = True
+        self.showPointsOfInterestLabels = True
+        self.showPlanesAcrossPointsOfInterest = True
+        super(LaserCavity, self).__init__(elements=elements, label=label)
+
+    def eigenModes(self):
+        """
+        Returns the two complex radii that are identical after a
+        round trip, assuming the matrix of the LaserPath() is one
+        round trip: you will need to duplicate elements in reverse
+        and append them manually. 
+        """
+        if not self.hasPower:
+            return None, None
+
+        b = self.D - self.A
+        sqrtDelta = cmath.sqrt(b * b + 4.0 * self.B * self.C)
+
+        q1 = (- b + sqrtDelta) / (2.0 * self.C)
+        q2 = (- b - sqrtDelta) / (2.0 * self.C)
+
+        return (GaussianBeam(q=q1), GaussianBeam(q=q2))
+
+    def laserModes(self):
+        """
+        Returns the laser modes that are physical (finite) when 
+        calculating the eigenmodes. 
+        """
+
+        (q1, q2) = self.eigenModes()
+        q = []
+        if q1 is not None and q1.isFinite:
+            q.append(q1)
+
+        if q2 is not None and q2.isFinite:
+            q.append(q2)
+
+        return q
+
+    def display(self, comments=None):  # pragma: no cover
+        """ Display the optical system and trace the laser beam. 
+        If comments are included they will be displayed on a
+        graph in the bottom half of the plot.
+
+        Parameters
+        ----------
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+
+        """
+
+        beams = self.laserModes()
+        if self.label == "":
+            self.label = "Laser modes as calculated"
