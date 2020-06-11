@@ -69,6 +69,7 @@ from .imagingpath import *
 """ ABCD matrices for gaussian beams """
 from .gaussianbeam import *
 from .laserpath import *
+from .lasercavity import *
 
 """ Matrices for components: System4f (synonym: Telescope), System2f """
 from .components import *
