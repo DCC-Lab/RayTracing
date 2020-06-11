@@ -33,9 +33,9 @@ class Rays:
     Attributes
     ----------
     iteration : int
-        The number of iteration? (default=0)
+        #fixme The number of iteration? (default=0)
     progressLog : int(?)
-        number of??? (default=1000)
+        #fixme number of??? (default=1000)
     -yValues : array
         An array of shape N*1 (N is the number of rays) which shows the height of each ray
     -thetaValues : array
@@ -44,10 +44,10 @@ class Rays:
         An array that shows the values in the histogram of the rays according to the height of rays
     -thetaHistogram : array
         An array that shows the in the histogram of the rays' angle
-    _directionBinEdges : ???
-        ???
-    _countHistogramParameters : ???
-        ???
+    #fixme _directionBinEdges : ???
+    #fixme    ???
+    #fixme _countHistogramParameters : ???
+    #fixme    ???
     _xValuesCountHistogram : array
         The x values for the histogram of rays' height
     _anglesHistogramParameters : array
