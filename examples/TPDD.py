@@ -15,7 +15,9 @@ nRays = 1000000
 minHeight=-0.5
 maxHeight=0.5
 inputRays = RandomLambertianRays(yMin=minHeight, yMax=maxHeight,maxCount=nRays)
-path.display(onlyPrincipalAndAxialRays=False, limitObjectToFieldOfView=False)
+outputRays = path.traceManyThrough(inputrays)
+outputRays.display(“title”)
+#path.display(onlyPrincipalAndAxialRays=False, limitObjectToFieldOfView=False)
 
 
  
