@@ -98,18 +98,20 @@ class MatrixGroup(Matrix):
         return len(self.elements)
 
     def __getitem__(self, key):
-        """ This function is used to substitutes a single matrix or a whole group with a single or multiple matrices.
+        """ This function is used to obtain a single element.
 
         Parameters
         ----------
         key : int or slice
             If key is an int, returns a single matrix.
-            If it is a slice, returns the group starting from key.start to key.stop - 1. The stop index is excluded.
+            If it is a slice, returns the group starting from key.start to 
+            key.stop - 1. The stop index is excluded.
 
         Returns
         -------
-        wantedElement : Matrix
-            The wanted matrix or matrix group, depending if key is an int or a slice.
+        element : Matrix
+            The requested matrix or matrix group, depending if key is an int
+            or a slice.
 
         Examples
         --------
@@ -144,10 +146,9 @@ class MatrixGroup(Matrix):
         raytracing.MatrixGroup.__setitem__
         """
         if isinstance(key, slice):  # If we get a slice, return a matrix group
-            wantedElement = MatrixGroup(self.elements[key])
-            return wantedElement
-        wantedElement = self.elements[key]
-        return wantedElement
+            return MatrixGroup(self.elements[key])
+
+        return self.elements[key]
 
     def pop(self, index: int):
         """ This function is used to remove a matrix at a specific index.
@@ -226,13 +227,15 @@ class MatrixGroup(Matrix):
             self.append(matrix)
 
     def __setitem__(self, key, element: Matrix):
-        """ This function is used to substitutes a single matrix or a whole group with a single or multiple matrices.
+        """ This function is used to substitute a single matrix 
+        or a whole group with a single or multiple matrices.
 
         Parameters
         ----------
         key : int or slice
             If key is an int, substitutes a single matrix.
-            If it is a slice, substitutes the group starting from key.start to key.stop - 1. The stop index is excluded.
+            If it is a slice, substitutes the group starting from 
+            key.start to key.stop - 1. The stop index is excluded.
         element: Matrix
             Matrix object or matrix group used for the substitution.
 
