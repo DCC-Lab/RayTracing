@@ -16,7 +16,7 @@ minHeight=-0.5
 maxHeight=0.5
 inputRays = RandomLambertianRays(yMin=minHeight, yMax=maxHeight,maxCount=nRays)
 outputRays = path.traceManyThrough(inputrays)
-outputRays.display(“title”)
+outputRays.display()
 #path.display(onlyPrincipalAndAxialRays=False, limitObjectToFieldOfView=False)
 
 
