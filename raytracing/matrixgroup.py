@@ -103,7 +103,7 @@ class MatrixGroup(Matrix):
         Parameters
         ----------
         key : int or slice
-            If item is an int, returns a single matrix.
+            If key is an int, returns a single matrix.
             If it is a slice, returns the group starting from key.start to key.stop - 1. The stop index is excluded.
 
         Returns
