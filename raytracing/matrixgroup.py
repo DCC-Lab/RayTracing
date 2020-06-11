@@ -98,7 +98,7 @@ class MatrixGroup(Matrix):
         return len(self.elements)
 
     def __getitem__(self, key):
-        """ This function is used to obtain a single element.
+        r""" This function is used to obtain a single element.
 
         Parameters
         ----------
