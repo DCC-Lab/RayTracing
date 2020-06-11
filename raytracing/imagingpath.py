@@ -118,7 +118,7 @@ class ImagingPath(MatrixGroup):
         self.figure.designParams['limitObjectToFieldOfView'] = False
 
     def chiefRay(self, y=None):
-        """This function returns the chief ray for a height y at object.
+        r"""This function returns the chief ray for a height y at object.
         The chief ray for height y is the ray that goes
         through the center of the aperture stop.
 
@@ -206,7 +206,7 @@ class ImagingPath(MatrixGroup):
         return self.chiefRay()
 
     def marginalRays(self, y=0):
-        """This function calculates the marginal rays for a height y at object.
+        r"""This function calculates the marginal rays for a height y at object.
         The marginal rays for height y are the rays that hit the upper and lower
         edges of the aperture stop. There are always two marginal rays for any
         point on the object.  They are symmetric on either side of the optic axis

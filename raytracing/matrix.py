@@ -14,11 +14,12 @@ def warningLineFormat(message, category, filename, lineno, line=None):
 
 warnings.formatwarning = warningLineFormat
 
+
 # todo: fix docstrings since draw-related methods were removed
 
 
 class Matrix(object):
-    """A matrix and an optical element that can transform a ray or another
+    r"""A matrix and an optical element that can transform a ray or another
     matrix.
 
     The general properties (A,B,C,D) are defined here. The operator "*" is
@@ -181,7 +182,7 @@ class Matrix(object):
                  cannot be multiplied by a Matrix".format(rightSide))
 
     def mul_matrix(self, rightSideMatrix):
-        """ This function is used to combine two elements into a single matrix.
+        r""" This function is used to combine two elements into a single matrix.
         The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
         Total length of the elements is calculated (z) but apertures are lost. We compute
         the first and last vertices.
@@ -271,7 +272,7 @@ class Matrix(object):
         return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L)
 
     def mul_ray(self, rightSideRay):
-        """This function does the multiplication of a ray by a matrix.
+        r"""This function does the multiplication of a ray by a matrix.
         The output shows the propagated ray through the system.
         New position of ray is updated by the physical length of the matrix.
 
@@ -419,7 +420,7 @@ class Matrix(object):
         return self.apertureDiameter != float("+Inf")
 
     def transferMatrix(self, upTo=float('+Inf')):
-        """ The Matrix() that corresponds to propagation from the edge
+        r""" The Matrix() that corresponds to propagation from the edge
         of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is
         provided, the transfer matrix will be from the front edge to the back edge.
         If the element has a null thickness, the matrix representing the element
@@ -632,7 +633,7 @@ class Matrix(object):
         return rayTrace[-1]
 
     def traceMany(self, inputRays):
-        """This function trace each ray from a group of rays from front edge of element to
+        r"""This function trace each ray from a group of rays from front edge of element to
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
 
@@ -1120,7 +1121,7 @@ class Matrix(object):
         return (p1, p2)
 
     def forwardConjugate(self):
-        """ With an object at the front edge of the element, where
+        r""" With an object at the front edge of the element, where
         is the image? Distance after the element by which a ray
         must travel to reach the conjugate plane of the front of
         the element. A positive distance means the image is "distance"
@@ -1173,7 +1174,7 @@ class Matrix(object):
         return (distance, conjugateMatrix)
 
     def backwardConjugate(self):
-        """ With an image at the back edge of the element,
+        r""" With an image at the back edge of the element,
         where is the object ? Distance before the element by
         which a ray must travel to reach the conjugate plane at
         the back of the element. A positive distance means the
@@ -1346,7 +1347,7 @@ class Matrix(object):
 
 
 class Lens(Matrix):
-    """A thin lens of focal f, null thickness and infinite or finite diameter
+    r"""A thin lens of focal f, null thickness and infinite or finite diameter
 
     Parameters
     ----------
@@ -1406,7 +1407,7 @@ class Lens(Matrix):
 
 
 class CurvedMirror(Matrix):
-    """A curved mirror of radius R and infinite or finite diameter.
+    r"""A curved mirror of radius R and infinite or finite diameter.
 
     Parameters
     ----------
@@ -1488,7 +1489,7 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
 
 
 class Space(Matrix):
-    """Free space of length d
+    r"""Free space of length d
 
     Parameters
     ----------
@@ -1610,7 +1611,7 @@ class DielectricInterface(Matrix):
 
 
 class ThickLens(Matrix):
-    """A thick lens of first radius R1 and then R2, with an index n
+    r"""A thick lens of first radius R1 and then R2, with an index n
     and length d
 
     Parameters
@@ -1737,7 +1738,7 @@ class ThickLens(Matrix):
 
 
 class DielectricSlab(ThickLens):
-    """A slab of dielectric material of index n and length d, with flat faces
+    r"""A slab of dielectric material of index n and length d, with flat faces
 
     Parameters
     ----------
@@ -1795,7 +1796,7 @@ class DielectricSlab(ThickLens):
 
 
 class Aperture(Matrix):
-    """An aperture of finite diameter, null thickness.
+    r"""An aperture of finite diameter, null thickness.
 
     Parameters
     ----------
