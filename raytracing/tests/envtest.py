@@ -5,7 +5,6 @@ import tempfile
 
 class RaytracingTestCase(unittest.TestCase):
     tempDir = os.path.join(tempfile.gettempdir(), "tempDir")
-    removeAlreadyExists = True
 
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
@@ -13,13 +12,7 @@ class RaytracingTestCase(unittest.TestCase):
     @classmethod
     def createTempDirectory(cls):
         if os.path.exists(cls.tempDir):
-            if cls.removeAlreadyExists:
-                cls.deleteTempDirectory()
-            else:
-                fulltempDir = os.path.join(os.getcwd(), cls.tempDir)
-                msg = f"'{fulltempDir}' directory already exists. " \
-                    f"Please set RaytracingTestCase.removeAlreadyExists to True if you want to delete this directory."
-                raise FileExistsError(msg)
+            cls.deleteTempDirectory()
         os.mkdir(cls.tempDir)
 
     @classmethod

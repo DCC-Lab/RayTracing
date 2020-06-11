@@ -55,27 +55,8 @@ class TestEnvtestClass(unittest.TestCase):
     def testTemptempDir(self):
         self.assertTrue(self.tempDir.endswith("tempDir"))
 
-    def testRemoveAlreadyExistsFalse(self):
-        envtest.RaytracingTestCase.removeAlreadyExists = False
-        self.assertFalse(envtest.RaytracingTestCase.removeAlreadyExists)
-
-    def testRemoveAlreadyExistsTrue(self):
-        envtest.RaytracingTestCase.removeAlreadyExists = True
-        self.assertTrue(envtest.RaytracingTestCase.removeAlreadyExists)
-
-    def testCreateTempDirectoryAlreadyExistsDoNotDelete(self):
-        msg = f"'{self.tempDir}' directory already exists. Please set RaytracingTestCase.removeAlreadyExists to True if"
-        msg += f" you want to delete this directory."
-        envtest.RaytracingTestCase.removeAlreadyExists = False
-        os.mkdir(self.tempDir)
-        with self.assertRaises(FileExistsError) as context:
-            envtest.RaytracingTestCase.createTempDirectory()
-        self.assertEqual(str(context.exception), msg)
-        os.rmdir(self.tempDir)  # Delete the directory!
-
     def testCreateTempDirectoryAlreadyExistsAndDelete(self):
         tempDir = envtest.RaytracingTestCase.tempDir
-        envtest.RaytracingTestCase.removeAlreadyExists = True
         os.mkdir(tempDir)
         try:
             envtest.RaytracingTestCase.createTempDirectory()
