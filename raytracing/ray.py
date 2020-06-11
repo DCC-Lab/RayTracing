@@ -13,9 +13,9 @@ class Ray:
     Parameters
     ----------
     y : float
-        Initial height of the ray. Defaults to 0.
+        Initial height of the ray. (Default=0)
     theta : float
-        Initial angle of the ray. Defaults to 0.
+        Initial angle of the ray. (Default=0)
 
     Attributes
     ----------

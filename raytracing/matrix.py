@@ -204,9 +204,9 @@ class Matrix(object):
             Value of the index (1,2) in the ABCD matrix of the combination of the two elements.
         d : float
             Value of the index (2,2) in the ABCD matrix of the combination of the two elements.
-        frontVertex : (type?)
+        frontVertex : float
             First interface used for FFL
-        backVertex : (type?)
+        backVertex : float
             Last interface used for BFL
         physicalLength: float
             Length of the combination of the two elements.
@@ -777,9 +777,7 @@ class Matrix(object):
         inputRays : object of Ray class
             A group of rays
         progress : bool
-            if True, the progress of the raceTrough is shown (default=Trye)
-        processes : (tyoe?)
-            ???????
+            If True, the progress in percentage of the traceTrough is shown (default=True)
 
         Returns
         -------
@@ -1091,7 +1089,7 @@ class Matrix(object):
         Parameters
         ----------
         z : float
-            what does this parameter shows?
+            The position
 
         Returns
         -------
@@ -1390,8 +1388,6 @@ class Lens(Matrix):
         ----------
         z : float
             Position of the lens
-        label : string
-            (is it the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -1461,8 +1457,6 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
         ----------
         z : float
             Position of the lens
-        label : string
-            (is it in the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -1680,8 +1674,6 @@ class ThickLens(Matrix):
         ----------
         z : float
             Position of the element
-        label : string
-            (is it in the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------

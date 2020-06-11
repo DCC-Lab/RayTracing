@@ -31,7 +31,7 @@ class ImagingPath(MatrixGroup):
     objectPosition : float
         This attribute defines the position of the object which must be defined zero for now. (default=0)
     fanAngle : float
-        this value indicates full fan angle in radians for rays (max? min?) (default=0.1)
+        This value indicates full fan angle in radians for rays (default=0.1)
     fanNumber : int
         This value indicates the number of ray(s) in fan (default=9)
     precision : float
