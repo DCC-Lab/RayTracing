@@ -243,13 +243,9 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
     def testAxialRay(self):
         path = ImagingPath(System2f(10, 100))
-        rays = path.axialRay()
-        ray1, ray2 = rays[0], rays[1]
-        self.assertEqual(len(rays), 2)
-        self.assertEqual(ray1.y, 0)
-        self.assertEqual(ray1.theta, 5)
-        self.assertEqual(ray2.y, 0)
-        self.assertEqual(ray2.theta, -5)
+        ray = path.axialRay()
+        self.assertEqual(ray.y, 0)
+        self.assertEqual(ray.theta, 5)
 
     def testLagrangeImagingPathNoAperture(self):
         path = ImagingPath()
