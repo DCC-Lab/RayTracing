@@ -308,14 +308,20 @@ class Rays:
 
         """
         plt.ioff()
-        fig, axes = plt.subplots(2)
-        fig.suptitle(title)
-        fig.tight_layout(pad=3.0)
+        if showTheta:
+            fig, axes = plt.subplots(2)
+            fig.suptitle(title)
+            fig.tight_layout(pad=3.0)
 
-        axis1 = axes[0]
-        axis2 = axes[1]
+            axis1 = axes[0]
+            axis2 = axes[1]
+        else:
+            fig, axis1 = plt.subplots(1)
+            fig.suptitle(title)
+            fig.tight_layout(pad=3.0)
 
         (x, y) = self.rayCountHistogram()
+
         # axis1.set_title('Intensity profile')
         axis1.plot(x, y, 'k-', label="Intensity")
         axis1.set_ylim([0, max(y) * 1.1])
@@ -323,14 +329,15 @@ class Rays:
         axis1.set_ylabel("Ray count")
         axis1.legend(["Intensity"])
 
-        (x, y) = self.rayAnglesHistogram()
-        # axis2.set_title('Angle histogram')
-        axis2.plot(x, y, 'k--', label="Orientation profile")
-        axis2.set_ylim([0, max(y) * 1.1])
-        axis2.set_xlim([-pi / 2, pi / 2])
-        axis2.set_xlabel("Angle of ray [rad]")
-        axis2.set_ylabel("Ray count")
-        axis2.legend(["Angle"])
+        if showTheta:
+            (x, y) = self.rayAnglesHistogram()
+            # axis2.set_title('Angle histogram')
+            axis2.plot(x, y, 'k--', label="Orientation profile")
+            axis2.set_ylim([0, max(y) * 1.1])
+            axis2.set_xlim([-pi / 2, pi / 2])
+            axis2.set_xlabel("Angle of ray [rad]")
+            axis2.set_ylabel("Ray count")
+            axis2.legend(["Angle"])
 
         plt.show()
 
