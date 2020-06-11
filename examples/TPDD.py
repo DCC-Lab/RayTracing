@@ -1,17 +1,25 @@
 import envexamples
 from raytracing import *
+from numpy import *
+import matplotlib.pyplot as plt
+import sys
+import os
+
+f=20
+path = ImagingPath()
+path.append(Space(d=f))
+path.append(Lens(f=f,diameter=f))
+path.append(Space(d=45))
+path.append(Lens(f=25, diameter=f))
+path.append(Space(d=25))
+path.append(Aperture(diameter=2, label='Camera'))
+
 
 nRays = 1000000
 minHeight=-0.5
 maxHeight=0.5
-inputRays = RandomLambertianRays(yMin=minHeight, yMax=maxHeight)
-  
-path = ImagingPath()
-path.append(Space(d=20))
-path.append(Lens(f=20,diameter=20))
-path.append(Space(d=45))
-path.append(Lens(f=25, diameter=20))
-path.append(Space(d=25))
-path.append(Aperture(diameter=2, label='Camera'))
+inputRays = RandomLambertianRays(yMin=minHeight, yMax=maxHeight,maxCount=nRays)
 path.display(onlyPrincipalAndAxialRays=False, limitObjectToFieldOfView=False)
+
+
  
