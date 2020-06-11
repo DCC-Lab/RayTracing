@@ -25,6 +25,7 @@ class TestLaserPath(envtest.RaytracingTestCase):
         with self.assertRaises(TypeError):
             LaserPath(elements)
 
+    @envtest.skip("This test needs to be moved to Figure")
     def testRearrangeBeamTraceForPlotting(self):
         x = [x for x in range(1, 6)]
         y = [y for y in range(1, 6)]
