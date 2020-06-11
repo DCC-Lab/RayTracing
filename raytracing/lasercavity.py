@@ -7,7 +7,7 @@ class LaserCavity(LaserPath):
     through all elements from first to last, then again through the first element.
 
 
-    Usage is to create the LaserPath(), then append() elements
+    Usage is to create the LaserCavity(), then append() elements
     and display(). You need to include the elements twice: forward then backward
     propagation.  
 

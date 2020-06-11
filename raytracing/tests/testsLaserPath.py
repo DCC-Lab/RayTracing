@@ -83,5 +83,23 @@ class TestLaserCavity(envtest.RaytracingTestCase):
         lp = LaserCavity()
         self.assertListEqual(lp.laserModes(), [])
 
+    def testLaserUnstableCavity(self):
+        laser = LaserCavity()
+        laser.append(Space(d=10))
+        laser.append(Lens(f=5))
+        laser.append(Space(d=10))
+
+        self.assertIsNotNone(laser)
+        self.assertTrue(len(laser.laserModes()) == 0)
+
+    def testLaserStableCavity(self):
+        laser = LaserCavity()
+        laser.append(Space(d=10))
+        laser.append(Lens(f=20))
+        laser.append(Space(d=10))
+
+        self.assertIsNotNone(laser)
+        self.assertTrue(len(laser.laserModes()) == 1)
+
 if __name__ == '__main__':
     envtest.main()
