@@ -180,7 +180,7 @@ class ImagingPath(MatrixGroup):
             return None
 
         if y is None:
-            y = self.fieldOfView()
+            y = self.fieldOfView()/2
             if abs(y) == float("+inf"):
                 raise ValueError("Must provide y when the field of view is infinite")
 
@@ -203,7 +203,9 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
 
         """
-        return self.chiefRay()
+        principalRay = self.chiefRay(y=self.fieldOfView()/2)
+        principalRay.y -= 0.001
+        return principalRay
 
     def marginalRays(self, y=0):
         """This function calculates the marginal rays for a height y at object.
@@ -306,7 +308,8 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
         raytracing.ImagingPath.principalRay
         """
-        return self.marginalRays()
+        rayUp, rayDown = self.marginalRays()
+        return rayUp
 
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
