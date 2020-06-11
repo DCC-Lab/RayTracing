@@ -5,7 +5,7 @@ import tempfile
 
 class RaytracingTestCase(unittest.TestCase):
     tempDir = os.path.join(tempfile.gettempdir(), "tempDir")
-    removeAlreadyExists = False
+    removeAlreadyExists = True
 
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
