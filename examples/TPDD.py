@@ -1,9 +1,5 @@
 import envexamples
 from raytracing import *
-from numpy import *
-import matplotlib.pyplot as plt
-import sys
-import os
 
 f=20
 path = ImagingPath()
