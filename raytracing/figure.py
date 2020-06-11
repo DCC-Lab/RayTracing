@@ -180,6 +180,8 @@ class Figure:
         conjugates = self.path.intermediateConjugates()
         if len(conjugates) != 0:
             for (planePosition, magnification) in conjugates:
+                if not 0 <= planePosition <= self.path.L:
+                    continue
                 magnification = abs(magnification)
                 if displayRange < self.path._objectHeight * magnification:
                     displayRange = self.path._objectHeight * magnification

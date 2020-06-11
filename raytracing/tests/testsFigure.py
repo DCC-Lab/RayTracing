@@ -14,12 +14,12 @@ class TestFigure(unittest.TestCase):
 
         self.assertEqual(path.figure.displayRange(), largestDiameter)
 
-    def testDisplayRange(self):
+    def testDisplayRangeImageOutOfView(self):
         path = ImagingPath()
         path.append(Space(2))
         path.append(CurvedMirror(-5, 10))
 
-        self.assertAlmostEqual(path.figure.displayRange(), 5 * 10)
+        self.assertAlmostEqual(path.figure.displayRange(), 20)
 
         path.objectHeight = 1
         self.assertEqual(path.figure.displayRange(), 10)
