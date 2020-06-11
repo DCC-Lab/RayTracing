@@ -12,5 +12,5 @@ path.append(Space(d=45))
 path.append(Lens(f=25, diameter=8))
 path.append(Space(d=25))
 path.append(Aperture(diameter=2, label='Camera'))
-path.display(onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=False)
+path.display(onlyPrincipalAndAxialRays=False, limitObjectToFieldOfView=False)
  
