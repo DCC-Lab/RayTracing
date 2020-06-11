@@ -422,7 +422,7 @@ class ImagingPath(MatrixGroup):
                 return None, None
             else:
                 (Mt, Ma) = matrixToPupil.magnification()
-                return (-pupilPosition, stopDiameter / Mt)
+                return (-pupilPosition, stopDiameter / abs(Mt))
         else:
             return (None, None)
 
