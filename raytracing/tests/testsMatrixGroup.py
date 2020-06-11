@@ -275,6 +275,12 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         self.assertAlmostEqual(intermediateConjugates[0][0], results[0][0])
         self.assertAlmostEqual(intermediateConjugates[0][1], results[0][1])
 
+    def testIntermediateConjugatesDuplicates(self):
+        elements = [Space(10), Lens(10), Space(15), Lens(5), Space(5)]
+        mg = MatrixGroup(elements)
+        intermediateConj = mg.intermediateConjugates()
+        self.assertListEqual(intermediateConj, [[30.0, -0.5]])
+
     def testHasFiniteApertutreDiameter(self):
         space = Space(10, 1.2541255)
         mg = MatrixGroup([space])
