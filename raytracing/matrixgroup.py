@@ -262,7 +262,10 @@ class MatrixGroup(Matrix):
                 planePosition = transferMatrix.L + distance
                 if planePosition != 0 and conjugate is not None:
                     magnification = conjugate.A
-                    planes.append([planePosition, magnification])
+                    if any([isclose(pos, planePosition) and isclose(mag, magnification) for pos, mag in planes]):
+                        continue
+                    else:
+                        planes.append([planePosition, magnification])
         return planes
 
     def trace(self, inputRay):
