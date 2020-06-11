@@ -7,7 +7,6 @@ maxHeight=0.5
 inputRays = RandomLambertianRays(yMin=minHeight, yMax=maxHeight)
   
 path = ImagingPath()
-path.append(inputRays=RandomLambertianRays(yMin=minHeight, yMax=maxHeight))
 path.append(Space(d=20))
 path.append(Lens(f=20,diameter=20))
 path.append(Space(d=45))
