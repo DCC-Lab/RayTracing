@@ -192,9 +192,16 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertAlmostEqual(chiefRay.y, 10, 2)
         self.assertAlmostEqual(chiefRay.theta, -1, 3)
 
+    def testPrincipalRayIsNone(self):
+        path = ImagingPath()
+        path.append(System2f(f=10, diameter=float("+inf")))
+        path.append(Aperture(diameter=20))
+        principalRay = path.principalRay()
+        self.assertIsNone(principalRay, principalRay)
+
     def testPrincipalRayIsNotNone(self):
         path = ImagingPath()
-        path.append(System2f(10, 10))
+        path.append(System2f(f=10, diameter=10))
         path.append(Aperture(diameter=20))
         principalRay = path.principalRay()
         self.assertAlmostEqual(principalRay.y, 10, 2)

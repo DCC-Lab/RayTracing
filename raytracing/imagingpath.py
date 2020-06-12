@@ -203,7 +203,12 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
 
         """
-        principalRay = self.chiefRay(y=self.fieldOfView()/2)
+
+        objectEdge = self.fieldOfView()/2
+        if objectEdge == float("+inf"):
+            return None
+
+        principalRay = self.chiefRay(y=objectEdge)
         principalRay.y -= 0.001 #FIXME: be more intelligent than this.
         return principalRay
 
