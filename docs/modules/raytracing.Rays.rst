@@ -38,6 +38,7 @@ Rays
 
     
       ~Rays.count
+      ~Rays.rays
       ~Rays.thetaValues
       ~Rays.yValues
 

@@ -32,6 +32,7 @@ RandomRays
 
     
       ~RandomRays.count
+      ~RandomRays.rays
       ~RandomRays.thetaValues
       ~RandomRays.yValues
 
