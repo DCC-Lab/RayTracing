@@ -180,21 +180,21 @@ class ImagingPath(MatrixGroup):
             return None
 
         if y is None:
-            y = self.fieldOfView()
+            y = self.fieldOfView()/2
             if abs(y) == float("+inf"):
                 raise ValueError("Must provide y when the field of view is infinite")
 
         return Ray(y=y, theta=-A * y / B)
 
     def principalRay(self):
-        """This function returns the chief ray for the height y at the edge 
-        of the field of view. The chief ray for height y is the ray that goes
-        through the center of the aperture stop.
+        """This function returns the principal ray, which is the chief ray 
+        for the height y at the edge of the field of view. The chief ray
+        is the ray that goes through the center of the aperture stop.
 
         Returns
         -------
         principalRay : object of Ray class
-            The properties (i.e. height and the angle of the marginal ray).
+            The properties (i.e. height and the angle of the principal ray).
 
         See Also
         --------
@@ -203,7 +203,14 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
 
         """
-        return self.chiefRay()
+
+        objectEdge = self.fieldOfView()/2
+        if objectEdge == float("+inf"):
+            return None
+
+        principalRay = self.chiefRay(y=objectEdge)
+        principalRay.y -= 0.001 #FIXME: be more intelligent than this.
+        return principalRay
 
     def marginalRays(self, y=0):
         r"""This function calculates the marginal rays for a height y at object.
@@ -306,7 +313,8 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
         raytracing.ImagingPath.principalRay
         """
-        return self.marginalRays()
+        rayUp, rayDown = self.marginalRays()
+        return rayUp
 
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits

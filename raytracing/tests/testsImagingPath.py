@@ -189,25 +189,23 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path.append(System2f(10, 10))
         path.append(Aperture(diameter=20))
         chiefRay = path.chiefRay()
-        self.assertAlmostEqual(chiefRay.y, 20, 2)
-        self.assertAlmostEqual(chiefRay.theta, -2, 3)
+        self.assertAlmostEqual(chiefRay.y, 10, 2)
+        self.assertAlmostEqual(chiefRay.theta, -1, 3)
 
-    def testPrincipalRayIsNoneNoFiniteElement(self):
-        path = ImagingPath(System4f(10, 10))
-        self.assertIsNone(path.principalRay())
-
-    def testPrincipalRayIsNoneFiniteElement(self):
-        path = ImagingPath(System4f(10, 10))
-        path.append(Aperture(10))
-        self.assertIsNone(path.principalRay())
+    def testPrincipalRayIsNone(self):
+        path = ImagingPath()
+        path.append(System2f(f=10, diameter=float("+inf")))
+        path.append(Aperture(diameter=20))
+        principalRay = path.principalRay()
+        self.assertIsNone(principalRay, principalRay)
 
     def testPrincipalRayIsNotNone(self):
         path = ImagingPath()
-        path.append(System2f(10, 10))
+        path.append(System2f(f=10, diameter=10))
         path.append(Aperture(diameter=20))
         principalRay = path.principalRay()
-        self.assertAlmostEqual(principalRay.y, 20, 2)
-        self.assertAlmostEqual(principalRay.theta, -2, 3)
+        self.assertAlmostEqual(principalRay.y, 10, 2)
+        self.assertAlmostEqual(principalRay.theta, -1, 3)
 
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
@@ -243,13 +241,9 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
     def testAxialRay(self):
         path = ImagingPath(System2f(10, 100))
-        rays = path.axialRay()
-        ray1, ray2 = rays[0], rays[1]
-        self.assertEqual(len(rays), 2)
-        self.assertEqual(ray1.y, 0)
-        self.assertEqual(ray1.theta, 5)
-        self.assertEqual(ray2.y, 0)
-        self.assertEqual(ray2.theta, -5)
+        ray = path.axialRay()
+        self.assertEqual(ray.y, 0)
+        self.assertEqual(ray.theta, 5)
 
     def testLagrangeImagingPathNoAperture(self):
         path = ImagingPath()

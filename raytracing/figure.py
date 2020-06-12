@@ -424,9 +424,9 @@ class Figure:
 
         if self.designParams['onlyPrincipalAndAxialRays']:
             halfHeight = self.path.objectHeight / 2.0
-            chiefRay = self.path.chiefRay(y=halfHeight - 0.01)  # fixme: refactor required for the renaming of rays
-            (marginalUp, marginalDown) = self.path.marginalRays(y=0)
-            rayGroup = (chiefRay, marginalUp)
+            principalRay = self.path.principalRay()
+            axialRay = self.path.axialRay()
+            rayGroup = (principalRay, axialRay)
             linewidth = 1.5
         else:
             halfAngle = self.path.fanAngle / 2.0
@@ -450,9 +450,16 @@ class Figure:
                 continue  # nothing to plot, ray was fully blocked
 
             rayInitialHeight = y[0]
-            binSize = 2.0 * halfHeight / (len(color) - 1)
+            # FIXME: We must take the maximum y in the starting point of manyRayTraces,
+            # not halfHeight
+            maxStartingHeight = halfHeight # FIXME
+            binSize = 2.0 * maxStartingHeight / (len(color) - 1)
             colorIndex = int(
-                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
+                (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
+            if colorIndex < 0:
+                colorIndex = 0
+            elif colorIndex >= len(color):
+                colorIndex = len(color) - 1
 
             line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
             lines.append(line)
