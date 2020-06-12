@@ -21,7 +21,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertIsNotNone(m)
 
     def testMatrixExplicit(self):
-        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1,
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1,
                    frontVertex=0, backVertex=0, apertureDiameter=1.0)
         self.assertIsNotNone(m)
         self.assertEqual(m.A, 1)
@@ -30,8 +30,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m.D, 4)
 
     def testMatrixProductMath(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4)
-        m2 = Matrix(A=5, B=6, C=7, D=8)
+        m1 = Matrix(A=1, B=0, C=0, D=1)
+        m2 = Matrix(A=1, B=0, C=0, D=1)
         m3 = m2 * m1
         self.assertEqual(m3.A, 1 * 5 + 3 * 6)
         self.assertEqual(m3.B, 2 * 5 + 4 * 6)
@@ -39,96 +39,96 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.D, 2 * 7 + 4 * 8)
 
     def testMatrixProductWithRayMath(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4)
+        m1 = Matrix(A=1, B=0, C=0, D=1)
         rayIn = Ray(y=1, theta=0.1)
         rayOut = m1 * rayIn
         self.assertEqual(rayOut.y, 1 * 1 + 2 * 0.1)
         self.assertEqual(rayOut.theta, 3 * 1 + 4 * 0.1)
 
     def testMatrixProductOutpuRayLength(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=2)
+        m1 = Matrix(A=1, B=0, C=0, D=1, physicalLength=2)
         rayIn = Ray(y=1, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertEqual(rayOut.z, 2 + 1)
 
     def testMatrixProductOutputRayAperture(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=2)
+        m1 = Matrix(A=1, B=0, C=0, D=1, physicalLength=2)
         rayIn = Ray(y=1, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertEqual(rayOut.apertureDiameter, inf)
 
     def testMatrixProductWithRayGoesOverAperture(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        m1 = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
         rayIn = Ray(y=6, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
 
     def testMatrixProductWithRayGoesUnderAperture(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        m1 = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
         rayIn = Ray(y=-6, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
 
     def testMatrixProductRayGoesInAperture(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        m1 = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
         rayIn = Ray(y=-1, theta=0.1, z=1)
         rayOut = m1 * rayIn
         self.assertFalse(rayOut.isBlocked)
 
     def testMatrixProductRayAlreadyBlocked(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        m1 = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
         rayIn = Ray(y=-1, theta=0.1, z=1, isBlocked=True)
         rayOut = m1 * rayIn
         self.assertTrue(rayOut.isBlocked)
 
     def testMatrixProductLength(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4)
-        m2 = Matrix(A=5, B=6, C=7, D=8)
+        m1 = Matrix(A=1, B=0, C=0, D=1)
+        m2 = Matrix(A=1, B=0, C=0, D=1)
         m3 = m2 * m1
         self.assertEqual(m3.L, m1.L + m2.L)
         self.assertIsNone(m3.frontVertex)
         self.assertIsNone(m3.backVertex)
 
     def testMatrixProductVertices(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=10, frontVertex=0, backVertex=10)
+        m1 = Matrix(A=1, B=0, C=0, D=1, physicalLength=10, frontVertex=0, backVertex=10)
         self.assertEqual(m1.frontVertex, 0)
         self.assertEqual(m1.backVertex, 10)
 
     def testMatrixProductVerticesAllNone(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4)
-        m2 = Matrix(A=5, B=6, C=7, D=8)
+        m1 = Matrix(A=1, B=0, C=0, D=1)
+        m2 = Matrix(A=1, B=0, C=0, D=1)
         m3 = m2 * m1
         self.assertEqual(m3.L, m1.L + m2.L)
         self.assertIsNone(m3.frontVertex)
         self.assertIsNone(m3.backVertex)
 
     def testMatrixProductVerticesSecondNone(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=10, frontVertex=0, backVertex=10)
-        m2 = Matrix(A=5, B=6, C=7, D=8)
+        m1 = Matrix(A=1, B=0, C=0, D=1, physicalLength=10, frontVertex=0, backVertex=10)
+        m2 = Matrix(A=1, B=0, C=0, D=1)
         m3 = m2 * m1
         self.assertEqual(m3.L, m1.L + m2.L)
         self.assertEqual(m3.frontVertex, 0)
         self.assertEqual(m3.backVertex, 10)
 
     def testMatrixProductVerticesFirstNone(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4)
-        m2 = Matrix(A=5, B=6, C=7, D=8, physicalLength=10, frontVertex=0, backVertex=10)
+        m1 = Matrix(A=1, B=0, C=0, D=1)
+        m2 = Matrix(A=1, B=0, C=0, D=1, physicalLength=10, frontVertex=0, backVertex=10)
         m3 = m2 * m1
         self.assertEqual(m3.L, m1.L + m2.L)
         self.assertEqual(m3.frontVertex, 0)
         self.assertEqual(m3.backVertex, 10)
 
     def testMatrixProductVerticesTwoElements(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=5, frontVertex=0, backVertex=5)
-        m2 = Matrix(A=5, B=6, C=7, D=8, physicalLength=10, frontVertex=0, backVertex=10)
+        m1 = Matrix(A=1, B=0, C=0, D=1, physicalLength=5, frontVertex=0, backVertex=5)
+        m2 = Matrix(A=1, B=0, C=0, D=1, physicalLength=10, frontVertex=0, backVertex=10)
         m3 = m2 * m1
         self.assertEqual(m3.L, m1.L + m2.L)
         self.assertEqual(m3.frontVertex, 0)
         self.assertEqual(m3.backVertex, 15)
 
     def testMatrixProductVerticesTwoElementsRepresentingGroups(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, physicalLength=5, frontVertex=1, backVertex=4)
-        m2 = Matrix(A=5, B=6, C=7, D=8, physicalLength=10, frontVertex=2, backVertex=9)
+        m1 = Matrix(A=1, B=0, C=0, D=1, physicalLength=5, frontVertex=1, backVertex=4)
+        m2 = Matrix(A=1, B=0, C=0, D=1, physicalLength=10, frontVertex=2, backVertex=9)
         m3 = m2 * m1
         self.assertEqual(m3.L, m1.L + m2.L)
         self.assertEqual(m3.frontVertex, 1)
@@ -140,14 +140,14 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.backVertex, 14)
 
     def testMatrixProductGaussianBeamMath(self):
-        m = Matrix(A=1, B=2, C=3, D=4)
+        m = Matrix(A=1, B=0, C=0, D=1)
         beamIn = GaussianBeam(w=1, wavelength=1)  # q = j\pi
         beamOut = m * beamIn
         q = complex(0, math.pi)
         self.assertEqual(beamOut.q, (1 * q + 2) / (3 * q + 4))
 
     def testMatrixProductGaussianNotSameRefractionIndex(self):
-        m = Matrix(A=1, B=2, C=3, D=4)
+        m = Matrix(A=1, B=0, C=0, D=1)
         beam = GaussianBeam(w=1, n=1.2)
 
         with self.assertRaises(UserWarning):
@@ -156,38 +156,38 @@ class TestMatrix(envtest.RaytracingTestCase):
                 m * beam
 
     def testMatrixProductGaussianBeamWavelengthOut(self):
-        m = Matrix(A=1, B=2, C=3, D=4, )
+        m = Matrix(A=1, B=0, C=0, D=1, )
         beamIn = GaussianBeam(w=1, wavelength=1)
         beamOut = m * beamIn
         self.assertEqual(beamOut.wavelength, 1)
 
     def testMatrixProductGaussianRefractIndexOut(self):
-        m = Matrix(A=1, B=2, C=3, D=4, frontIndex=1.33, backIndex=1.33)
+        m = Matrix(A=1, B=0, C=0, D=1, frontIndex=1.33, backIndex=1.33)
         beamIn = GaussianBeam(w=1, wavelength=1, n=1.33)
         beamOut = m * beamIn
         self.assertEqual(beamOut.n, 1.33)
 
     def testMatrixProductGaussianLength(self):
-        m = Matrix(A=1, B=2, C=3, D=4, frontIndex=1.33, physicalLength=1.2)
+        m = Matrix(A=1, B=0, C=0, D=1, frontIndex=1.33, physicalLength=1.2)
         beamIn = GaussianBeam(w=1, wavelength=1, z=1, n=1.33)
         beamOut = m * beamIn
         self.assertEqual(beamOut.z, 2.2)
 
     def testMatrixProductGaussianClippedOverAperture(self):
-        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1.2, apertureDiameter=2)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1.2, apertureDiameter=2)
         beamIn = GaussianBeam(w=1.1, wavelength=1, z=1)
         beamOut = m * beamIn
         self.assertTrue(beamOut.isClipped)
 
     def testMatrixProductGaussianInitiallyClipped(self):
-        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1.2, apertureDiameter=2)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1.2, apertureDiameter=2)
         beamIn = GaussianBeam(w=0.5, wavelength=1, z=1)
         beamIn.isClipped = True
         beamOut = m * beamIn
         self.assertTrue(beamOut.isClipped)
 
     def testMatrixProductGaussianNotClipped(self):
-        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1.2)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1.2)
         beamIn = GaussianBeam(w=1.1, wavelength=1, z=1)
         beamOut = m * beamIn
         self.assertFalse(beamOut.isClipped)
@@ -199,20 +199,20 @@ class TestMatrix(envtest.RaytracingTestCase):
             m * other
 
     def testApertureDiameter(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=2)
+        m1 = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=2)
         self.assertTrue(m1.hasFiniteApertureDiameter())
         self.assertEqual(m1.largestDiameter, 2.0)
-        m2 = Matrix(A=1, B=2, C=3, D=4)
+        m2 = Matrix(A=1, B=0, C=0, D=1)
         self.assertFalse(m2.hasFiniteApertureDiameter())
         self.assertEqual(m2.largestDiameter, float("+inf"))
 
     def testTransferMatrix(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4)
+        m1 = Matrix(A=1, B=0, C=0, D=1)
         # Null length returns self
         self.assertEqual(m1.transferMatrix(), m1)
 
         # Length == 1 returns self if upTo >= 1
-        m2 = Matrix(A=1, B=2, C=3, D=4, physicalLength=1)
+        m2 = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
         self.assertEqual(m2.transferMatrix(upTo=1), m2)
         self.assertEqual(m2.transferMatrix(upTo=2), m2)
 
@@ -223,31 +223,31 @@ class TestMatrix(envtest.RaytracingTestCase):
             m2.transferMatrix(upTo=0.5)
 
     def testTransferMatrices(self):
-        m1 = Matrix(A=1, B=2, C=3, D=4, frontIndex=2)
+        m1 = Matrix(A=1, B=0, C=0, D=1, frontIndex=2)
         self.assertEqual(m1.transferMatrices(), [m1])
         m1 * GaussianBeam(w=1, n=2)
 
     def testTrace(self):
         ray = Ray(y=1, theta=1)
-        m = Matrix(A=1, B=2, C=3, D=4, physicalLength=1)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
         trace = [ray, m * ray]
         self.assertListEqual(m.trace(ray), trace)
 
     def testTraceNullLength(self):
         ray = Ray(y=1, theta=1)
-        m = Matrix(A=1, B=2, C=3, D=4)
+        m = Matrix(A=1, B=0, C=0, D=1)
         trace = [m * ray]
         self.assertListEqual(m.trace(ray), trace)
 
     def testTraceBlocked(self):
         ray = Ray(y=10, theta=1)
-        m = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10, physicalLength=1)
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10, physicalLength=1)
         trace = m.trace(ray)
         self.assertTrue(all(x.isBlocked for x in trace))
 
     def testTraceGaussianBeam(self):
         beam = GaussianBeam(w=1)
-        m = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
         outputBeam = m * beam
         tracedBeam = m.trace(beam)[-1]
         self.assertEqual(tracedBeam.w, outputBeam.w)
@@ -258,7 +258,7 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testTraceThrough(self):
         ray = Ray()
-        m = Matrix(A=1, B=2, C=3, D=4, apertureDiameter=10)
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
         trace = m.traceThrough(ray)
         self.assertEqual(trace, m * ray)
 
@@ -380,7 +380,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertFalse(m.hasPower)
 
     def testEffectiveFocalLengthsHasPower(self):
-        m = Matrix(1, 2, 3, 4)
+        m = Matrix(A=1, B=0, C=3, D=1)
         focalLengths = (-1 / 3, -1 / 3)
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 
@@ -390,27 +390,29 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 
     def testMatrixBackFocalLength(self):
-        m = Matrix(1, 2, 3, 4, backVertex=1, physicalLength=1)
-        f2 = -1 / 3
-        p2 = 0 + 1 + (1 - 1) / 3
-        self.assertEqual(m.backFocalLength(), p2 + f2 - 1)
+        R = 10
+        n1 = 1.2
+        n2 = 1.5
+        m = DielectricInterface(n1=n1, n2=n2, R=R)
+        self.assertAlmostEqual(m.backFocalLength(), -m.A/m.C)
 
     def testBackFocalLengthSupposedNone(self):
         m = Matrix()
         self.assertIsNone(m.backFocalLength())
 
     def testMatrixFrontFocalLength(self):
-        m = Matrix(1, 2, 3, 4, frontVertex=1, physicalLength=1)
-        f1 = -1 / 3
-        p1 = 0 - (1 - 4) / 3
-        self.assertEqual(m.frontFocalLength(), -(p1 - f1 - 1))
+        R = 10
+        n1 = 1.2
+        n2 = 1.5
+        m = DielectricInterface(n1=n1, n2=n2, R=R)
+        self.assertAlmostEqual(m.frontFocalLength(), -m.D/m.C)
 
     def testFrontFocalLengthSupposedNone(self):
         m = Matrix()
         self.assertIsNone(m.frontFocalLength())
 
     def testPrincipalPlanePositions(self):
-        m = Matrix(1, 2, 3, 4, physicalLength=1)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
         p1 = 0 - (1 - 4) / 3
         p2 = 0 + 1 + (1 - 1) / 3
         self.assertTupleEqual(m.principalPlanePositions(0), (p1, p2))
@@ -420,7 +422,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertTupleEqual(m.principalPlanePositions(0), (None, None))
 
     def testFocusPositions(self):
-        m = Matrix(1, 2, 3, 4, physicalLength=1)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
         f1 = -1 / 3
         p1 = 1
         f2 = -1 / 3

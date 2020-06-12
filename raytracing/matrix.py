@@ -135,6 +135,8 @@ class Matrix(object):
         self.label = label
         self.isFlipped = False
         super(Matrix, self).__init__()
+        if self.determinant != self.frontIndex/self.backIndex:
+            raise ValueError("The matrix has inconsistent values")
 
     @property
     def determinant(self):
@@ -938,9 +940,7 @@ class Matrix(object):
         """
         if self.hasPower:
             focalLength2 = -1.0 / self.C # left (n1) to right (n2)
-            temporaryCopy = self.copy()
-            temporaryCopy.flipOrientation()
-            focalLength1 = -1.0 / self.C # right (n2) to left (n2)
+            focalLength1 = -(self.frontIndex/self.backIndex) / self.C # right (n2) to left (n2)
         else:
             focalLength1 = float("+Inf")
             focalLength2 = float("+Inf")
