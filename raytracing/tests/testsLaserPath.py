@@ -1,11 +1,10 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestLaserPath(unittest.TestCase):
+class TestLaserPath(envtest.RaytracingTestCase):
 
     def testLaserPathNoElements(self):
         lasPath = LaserPath()
@@ -40,6 +39,7 @@ class TestLaserPath(unittest.TestCase):
         self.assertAlmostEqual(beam1.q.imag, -5 * 3 ** 0.5)
         self.assertAlmostEqual(beam2.q.imag, 5 * 3 ** 0.5)
 
+    def testEigenModesQIs0(self):
         lp = LaserPath([Lens(10)])
         beam1, beam2 = lp.eigenModes()
         self.assertEqual(beam1.q, beam2.q)
@@ -49,24 +49,27 @@ class TestLaserPath(unittest.TestCase):
         lp = LaserPath([Space(10)])
         self.assertListEqual(lp.laserModes(), [])
 
-    def testLaserModes(self):
+    def testLaserModesOneModeQ1isNone(self):
         lp = LaserPath([Space(10), Lens(10)])
         laserModes = lp.laserModes()
-        self.assertEqual(len(laserModes), 1)
         beam = laserModes[0]
+        self.assertEqual(len(laserModes), 1)
         self.assertEqual(beam.q.real, -5)
         self.assertAlmostEqual(beam.q.imag, 5 * 3 ** 0.5)
 
+    def testLaserModesOneModeQ2isNone(self):
         elements = [Space(1, 1.33), DielectricInterface(1.33, 1, 1), ThickLens(1.33, -10, -5, -20)]
         lp = LaserPath(elements)
         laserModes = lp.laserModes()
-        self.assertEqual(len(laserModes), 1)
         beam = laserModes[0]
+        self.assertEqual(len(laserModes), 1)
         self.assertAlmostEqual(beam.q.real, -5.90770102)
         self.assertAlmostEqual(beam.q.imag, 1.52036515)
 
+    def testLaserModesNoModeInfineElements(self):
         lp = LaserPath([Space(10), CurvedMirror(5)])
         self.assertListEqual(lp.laserModes(), [])
+    def testLaserModesNoModeNoElement(self):
         lp = LaserPath()
         self.assertListEqual(lp.laserModes(), [])
 
@@ -77,5 +80,6 @@ class TestLaserPath(unittest.TestCase):
         lp = LaserPath()
         self.assertTupleEqual(lp.rearrangeBeamTraceForPlotting(rayList), (x, y))
 
+
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

@@ -4,10 +4,6 @@ from .rays import *
 
 import multiprocessing
 import sys
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.path as mpath
-import matplotlib.transforms as transforms
 import math
 import warnings
 
@@ -19,8 +15,11 @@ def warningLineFormat(message, category, filename, lineno, line=None):
 warnings.formatwarning = warningLineFormat
 
 
+# todo: fix docstrings since draw-related methods were removed
+
+
 class Matrix(object):
-    """A matrix and an optical element that can transform a ray or another
+    r"""A matrix and an optical element that can transform a ray or another
     matrix.
 
     The general properties (A,B,C,D) are defined here. The operator "*" is
@@ -183,7 +182,7 @@ class Matrix(object):
                  cannot be multiplied by a Matrix".format(rightSide))
 
     def mul_matrix(self, rightSideMatrix):
-        """ This function is used to combine two elements into a single matrix.
+        r""" This function is used to combine two elements into a single matrix.
         The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
         Total length of the elements is calculated (z) but apertures are lost. We compute
         the first and last vertices.
@@ -205,9 +204,9 @@ class Matrix(object):
             Value of the index (1,2) in the ABCD matrix of the combination of the two elements.
         d : float
             Value of the index (2,2) in the ABCD matrix of the combination of the two elements.
-        frontVertex : (type?)
+        frontVertex : float
             First interface used for FFL
-        backVertex : (type?)
+        backVertex : float
             Last interface used for BFL
         physicalLength: float
             Length of the combination of the two elements.
@@ -273,7 +272,7 @@ class Matrix(object):
         return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L)
 
     def mul_ray(self, rightSideRay):
-        """This function does the multiplication of a ray by a matrix.
+        r"""This function does the multiplication of a ray by a matrix.
         The output shows the propagated ray through the system.
         New position of ray is updated by the physical length of the matrix.
 
@@ -421,7 +420,7 @@ class Matrix(object):
         return self.apertureDiameter != float("+Inf")
 
     def transferMatrix(self, upTo=float('+Inf')):
-        """ The Matrix() that corresponds to propagation from the edge
+        r""" The Matrix() that corresponds to propagation from the edge
         of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is
         provided, the transfer matrix will be from the front edge to the back edge.
         If the element has a null thickness, the matrix representing the element
@@ -634,7 +633,7 @@ class Matrix(object):
         return rayTrace[-1]
 
     def traceMany(self, inputRays):
-        """This function trace each ray from a group of rays from front edge of element to
+        r"""This function trace each ray from a group of rays from front edge of element to
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
 
@@ -778,9 +777,7 @@ class Matrix(object):
         inputRays : object of Ray class
             A group of rays
         progress : bool
-            if True, the progress of the raceTrough is shown (default=Trye)
-        processes : (tyoe?)
-            ???????
+            If True, the progress in percentage of the traceTrough is shown (default=True)
 
         Returns
         -------
@@ -846,7 +843,8 @@ class Matrix(object):
 
     @property
     def hasPower(self):
-        """ If True, then there is a non-null focal length because C!=0
+        """ If True, then there is a non-null focal length because C!=0. We compare to an epsilon value, because
+        computational errors can occur and lead to C being very small, but not 0.
 
         Examples
         --------
@@ -861,7 +859,7 @@ class Matrix(object):
         >>> print('hasPower:' , M2.hasPower)
         hasPower: False
         """
-        return self.C != 0
+        return abs(self.C) > Matrix.__epsilon__
 
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
@@ -875,7 +873,6 @@ class Matrix(object):
         #     ptsOfInterest.append({'z': self.backVertex, 'label': '$V_b$'})
 
         return []
-
 
     def focalDistances(self):
         """ This is the synonym of effectiveFocalLengths()
@@ -902,7 +899,6 @@ class Matrix(object):
         """
 
         return self.effectiveFocalLengths()
-
 
     def effectiveFocalLengths(self):
         """ The effective focal lengths calculated from the power (C)
@@ -942,7 +938,7 @@ class Matrix(object):
         """
         if self.hasPower:
             focalLength2 = -1.0 / self.C # left (n1) to right (n2)
-            temporaryCopy = self
+            temporaryCopy = self.copy()
             temporaryCopy.flipOrientation()
             focalLength1 = -1.0 / self.C # right (n2) to left (n2)
         else:
@@ -1135,7 +1131,7 @@ class Matrix(object):
         return (p1, p2)
 
     def forwardConjugate(self):
-        """ With an object at the front edge of the element, where
+        r""" With an object at the front edge of the element, where
         is the image? Distance after the element by which a ray
         must travel to reach the conjugate plane of the front of
         the element. A positive distance means the image is "distance"
@@ -1188,7 +1184,7 @@ class Matrix(object):
         return (distance, conjugateMatrix)
 
     def backwardConjugate(self):
-        """ With an image at the back edge of the element,
+        r""" With an image at the back edge of the element,
         where is the object ? Distance before the element by
         which a ray must travel to reach the conjugate plane at
         the back of the element. A positive distance means the
@@ -1322,284 +1318,20 @@ class Matrix(object):
 
         return self
 
-    def display(self):  # pragma: no cover
-        """ Display this component, without any ray tracing but with
-        all of its cardinal points and planes.
-
-        Examples
-        --------
-        >>> from raytracing import *
-        >>> # Mat is an ABCD matrix of an object
-        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,
-        >>>            frontIndex=1.5,backIndex=1,label='Lens')
-        >>> Mat.display()
-
-        And the result is shown in the following figure:
-
-        .. image:: display.png
-            :width: 70%
-            :align: center
-
-
-        Notes
-        -----
-        If the component has no power (i.e. C == 0) this will fail.
-        """
-
-        fig, axes = plt.subplots(figsize=(10, 7))
-        displayRange = 2 * self.largestDiameter
-        if displayRange == float('+Inf'):
-            displayRange = self.displayHalfHeight() * 4
-
-        axes.set(xlabel='Distance', ylabel='Height', title="Properties of {0}".format(self.label))
-        axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
-
-        self.drawAt(z=0, axes=axes)
-        self.drawLabels(z=0, axes=axes)
-        self.drawCardinalPoints(z=0, axes=axes)
-        if self.L != 0:
-            self.drawVertices(z=0, axes=axes)
-        self.drawPointsOfInterest(z=0, axes=axes)
-        self.drawPrincipalPlanes(z=0, axes=axes)
-
-        self._showPlot()
-
-    def _showPlot(self):  # pragma: no cover
-        # internal, do not use
-        try:
-            plt.plot()
-            if sys.platform.startswith('win'):
-                plt.show()
-            else:
-                plt.draw()
-                while True:
-                    if plt.get_fignums():
-                        plt.pause(0.001)
-                    else:
-                        break
-
-        except KeyboardInterrupt:
-            plt.close()
-
-    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw element on plot with starting edge at 'z'.
-
-        Parameters
-        ----------
-        z : float
-            the starting position of the element on display
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        showLabels : bool
-            If True, the label of the element will be shown (default=False)
-
-        Notes
-        -----
-        Default is a black box of appropriate length.
-        """
-        halfHeight = self.largestDiameter / 2
-        if halfHeight == float("+Inf"):
-            halfHeight = self.displayHalfHeight()
-
-        p = patches.Rectangle((z, -halfHeight), self.L,
-                              2 * halfHeight, color='k', fill=False,
-                              transform=axes.transData, clip_on=True)
-        axes.add_patch(p)
-
-    def drawVertices(self, z, axes):  # pragma: no cover
-        """ Draw vertices of the system
-
-        Parameters
-        ----------
-        z : float
-            the starting position of the element on display
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        """
-
-        axes.plot([z + self.frontVertex, z + self.backVertex], [0, 0], 'ko', markersize=4, color="0.5", linewidth=0.2)
-        halfHeight = self.displayHalfHeight()
-        axes.text(z + self.frontVertex, 0, '$V_f$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-        axes.text(z + self.backVertex, 0, '$V_b$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-
-    def drawCardinalPoints(self, z, axes):  # pragma: no cover
-        """Draw the focal points of a thin lens as black dots
-
-        Parameters
-        ----------
-        z : float
-            the starting position of the element on display
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        """
-        (f1, f2) = self.focusPositions(z)
-        axes.plot([f1, f2], [0, 0], 'ko', markersize=4, color='k', linewidth=0.4)
-
-    def drawPrincipalPlanes(self, z, axes):  # pragma: no cover
-        """Draw the principal planes
-
-        Parameters
-        ----------
-        z : float
-            the starting position of the element on display
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        """
-        halfHeight = self.displayHalfHeight()
-        (p1, p2) = self.principalPlanePositions(z=z)
-
-        if p1 is None or p2 is None:
-            return
-
-        axes.plot([p1, p1], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
-        axes.plot([p2, p2], [-halfHeight, halfHeight], linestyle='--', color='k', linewidth=1)
-        axes.text(p1, halfHeight * 1.2, '$P_f$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-        axes.text(p2, halfHeight * 1.2, '$P_b$', ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-
-        (f1, f2) = self.effectiveFocalLengths()
-        FFL = self.frontFocalLength()
-        BFL = self.backFocalLength()
-        (F1, F2) = self.focusPositions(z=z)
-
-        h = halfHeight * 0.4
-        # Front principal plane to front focal spot (effective focal length)
-        axes.annotate("", xy=(p1, h), xytext=(F1, h),
-                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text(p1 - f1 / 2, h, 'EFL = {0:0.1f}'.format(f1),
-                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-        # Back principal plane to back focal spot (effective focal length)
-        axes.annotate("", xy=(p2, -h), xytext=(F2, -h),
-                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text(p2 + f2 / 2, -h, 'EFL = {0:0.1f}'.format(f1),
-                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-
-        # Front vertex to front focal spot (front focal length or FFL)
-        h = 0.5
-
-        axes.annotate("", xy=(self.frontVertex, h), xytext=(F1, h),
-                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text((self.frontVertex + F1) / 2, h, 'FFL = {0:0.1f}'.format(FFL),
-                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-
-        # Back vertex to back focal spot (back focal length or BFL)
-        axes.annotate("", xy=(self.backVertex, -h), xytext=(F2, -h),
-                      xycoords='data', arrowprops=dict(arrowstyle='<->'),
-                      clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        axes.text((self.backVertex + F2) / 2, -h, 'BFL = {0:0.1f}'.format(BFL),
-                  ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-
-    def drawLabels(self, z, axes):  # pragma: no cover
-        """ Draw element labels on plot with starting edge at 'z'.
-
-        Parameters
-        ----------
-        z : float
-            the starting position of the labels on display
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        Notes
-        -----
-        Labels are drawn 50% above the display height
-        """
-        if self.hasFiniteApertureDiameter():
-            halfHeight = self.largestDiameter / 2.0
-        else:
-            halfHeight = self.displayHalfHeight()
-
-        center = z + self.L / 2.0
-        axes.annotate(self.label, xy=(center, 0.0),
-                      xytext=(center, halfHeight * 1.4),
-                      fontsize=8, xycoords='data', ha='center',
-                      va='bottom', clip_box=axes.bbox, clip_on=True)
-
-    def drawPointsOfInterest(self, z, axes):  # pragma: no cover
-        """
-        Labels of general points of interest are drawn below the
-        axis, at 25% of the largest diameter.
-
-        Parameters
-        ----------
-        z : float
-            the starting position of the label on display
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-        labels = {}  # Gather labels at same z
-        for pointOfInterest in self.pointsOfInterest(z=z):
-            zStr = "{0:3.3f}".format(pointOfInterest['z'])
-            label = pointOfInterest['label']
-            if zStr in labels:
-                labels[zStr] = labels[zStr] + ", " + label
-            else:
-                labels[zStr] = label
-
-        halfHeight = self.displayHalfHeight()
-        for zStr, label in labels.items():
-            z = float(zStr)
-            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                          xycoords='data', fontsize=12,
-                          ha='center', va='bottom')
-
-    def drawAperture(self, z, axes):  # pragma: no cover
-        """ Draw the aperture size for this element.  Any element may
-        have a finite aperture size, so this function is general for all elements.
-
-        Parameters
-        ----------
-        z : float
-            the starting position of the apreture
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-
-        if self.apertureDiameter != float('+Inf'):
-            halfHeight = self.apertureDiameter / 2.0
-
-            center = z + self.L / 2
-            if self.L == 0:
-                (xScaling, yScaling) = self.axesToDataScale(axes)
-                heightFactor = halfHeight * 2 / yScaling
-                width = xScaling * 0.01 / 2 * (heightFactor / 0.2) ** (3 / 4)
-            else:
-                width = self.L / 2
-
-            axes.add_patch(patches.Polygon(
-                [[center - width, halfHeight],
-                 [center + width, halfHeight]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-            axes.add_patch(patches.Polygon(
-                [[center - width, -halfHeight],
-                 [center + width, -halfHeight]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-
     def displayHalfHeight(self, minSize=0):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
-
         If the element is infinite, the half-height is currently
         set to '4' or to the specified minimum half height.
         If not, it is the apertureDiameter/2.
-
         Parameters
         ----------
         minSize : float
             The minimum size to be considered as the aperture half height
-
         Returns
         -------
         halfHeight : float
             The half height of the optical element
-
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
         if minSize > halfHeight:
@@ -1607,28 +1339,6 @@ class Matrix(object):
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
-
-    def axesToDataScale(self, axes):
-        """ Display dimensions in data units.
-        Used to properly draw elements on the display
-        with appropriate data coordinates.
-
-        Parameters
-        ----------
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        Returns
-        -------
-        xScale: float
-            The scale of x axes
-        yScale : float
-            The scale of y axes
-        """
-
-        xScale, yScale = axes.viewLim.bounds[2:]
-
-        return xScale, yScale
 
     def __str__(self):
         """ String description that allows the use of print(Matrix())
@@ -1647,7 +1357,7 @@ class Matrix(object):
 
 
 class Lens(Matrix):
-    """A thin lens of focal f, null thickness and infinite or finite diameter
+    r"""A thin lens of focal f, null thickness and infinite or finite diameter
 
     Parameters
     ----------
@@ -1681,38 +1391,6 @@ class Lens(Matrix):
                                    backVertex=0,
                                    label=label)
 
-    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw a thin lens at z
-
-        Parameters
-        ----------
-        z : float
-            The position of the lens
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        showLabels : bool
-            If True, the label for the lens is shown (default=False)
-        """
-        maxRayHeight = 0
-        for line in axes.lines:
-            if line.get_label() == 'ray':  # FIXME: need a more robust reference to rayTraces
-                if max(line._y) > maxRayHeight:
-                    maxRayHeight = max(line._y)
-
-        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
-
-        (xScaling, yScaling) = self.axesToDataScale(axes)
-        arrowHeadHeight = 2 * halfHeight * 0.1
-
-        heightFactor = halfHeight * 2 / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
-
-        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 5, fc='k', ec='k',
-                   head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        self.drawCardinalPoints(z, axes)
-
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
 
@@ -1720,8 +1398,6 @@ class Lens(Matrix):
         ----------
         z : float
             Position of the lens
-        label : string
-            (is it the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -1741,7 +1417,7 @@ class Lens(Matrix):
 
 
 class CurvedMirror(Matrix):
-    """A curved mirror of radius R and infinite or finite diameter.
+    r"""A curved mirror of radius R and infinite or finite diameter.
 
     Parameters
     ----------
@@ -1791,8 +1467,6 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
         ----------
         z : float
             Position of the lens
-        label : string
-            (is it in the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -1825,7 +1499,7 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
 
 
 class Space(Matrix):
-    """Free space of length d
+    r"""Free space of length d
 
     Parameters
     ----------
@@ -1865,10 +1539,6 @@ class Space(Matrix):
                                     backIndex=n,
                                     apertureDiameter=diameter,
                                     label=label)
-
-    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """This function draws nothing because free space is not visible. """
-        return
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a Matrix() corresponding to a partial propagation
@@ -1929,49 +1599,6 @@ class DielectricInterface(Matrix):
                                                   backIndex=n2,
                                                   label=label)
 
-    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw a curved surface starting at 'z'.
-        We are not able yet to determine the color to fill with.
-
-        Parameters
-        ----------
-        z : float
-            The starting position of the curved surface
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        showLabels : bool (Optional)
-            If True, the label of the curved surface is shown. (default=False)
-
-        Notes
-        -----
-        It is possible to draw a
-        quadratic bezier curve that looks like an arc, see:
-        https://pomax.github.io/bezierinfo/#circles_cubic
-
-        """
-        h = self.displayHalfHeight()
-
-        # For simplicity, 1 is front, 2 is back.
-        # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
-        v1 = z + self.frontVertex
-        phi1 = math.asin(h / abs(self.R))
-        delta1 = self.R * (1.0 - math.cos(phi1))
-        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * self.R)
-        corner1 = v1 + delta1
-
-        Path = mpath.Path
-        p = patches.PathPatch(
-            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
-                  (v1, 0), (v1, ctl1), (corner1, h)],
-                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3]),
-            fill=False,
-            transform=axes.transData)
-
-        axes.add_patch(p)
-        if showLabels:
-            self.drawLabels(z, axes)
-
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
 
@@ -1994,7 +1621,7 @@ class DielectricInterface(Matrix):
 
 
 class ThickLens(Matrix):
-    """A thick lens of first radius R1 and then R2, with an index n
+    r"""A thick lens of first radius R1 and then R2, with an index n
     and length d
 
     Parameters
@@ -2050,100 +1677,6 @@ class ThickLens(Matrix):
                                         backVertex=thickness,
                                         label=label)
 
-    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw a faint blue box with slightly curved interfaces
-        of length 'thickness' starting at 'z'.
-
-        Parameters
-        ----------
-        z : float
-            The starting position of the curved surface
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        showLabels : bool (Optional)
-            If True, the label of the curved surface is shown. (default=False)
-
-        Notes
-        -----
-        An arc would be perfect, but matplotlib does not allow to fill
-        an arc, hence we must use a patch and Bezier curve.
-        We might as well draw it properly: it is possible to draw a
-        quadratic bezier curve that looks like an arc, see:
-        https://pomax.github.io/bezierinfo/#circles_cubic
-
-        """
-        h = self.displayHalfHeight()
-
-        # For simplicity, 1 is front, 2 is back.
-        # For details, see https://pomax.github.io/bezierinfo/#circles_cubic
-        v1 = z + self.frontVertex
-        phi1 = math.asin(h / abs(self.R1))
-        delta1 = self.R1 * (1.0 - math.cos(phi1))
-        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * self.R1)
-        corner1 = v1 + delta1
-
-        v2 = z + self.backVertex
-        phi2 = math.asin(h / abs(self.R2))
-        delta2 = self.R2 * (1.0 - math.cos(phi2))
-        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * self.R2)
-        corner2 = v2 + delta2
-
-        Path = mpath.Path
-        p = patches.PathPatch(
-            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
-                  (v1, 0), (v1, ctl1), (corner1, h),
-                  (corner2, h), (v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h),
-                  (corner1, -h)],
-                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO]),
-            color=[0.85, 0.95, 0.95],
-            fill=True,
-            transform=axes.transData)
-
-        axes.add_patch(p)
-        if showLabels:
-            self.drawLabels(z, axes)
-
-        self.drawCardinalPoints(z=z, axes=axes)
-
-    def drawAperture(self, z, axes):  # pragma: no cover
-        """ Draw the aperture size for this element.
-        The thick lens requires special care because the corners are not
-        separated by self.L: the curvature makes the edges shorter.
-        We are picky and draw it right.
-
-        Parameters
-        ----------
-        z : float
-            The starting position of the curved surface
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-
-        if self.apertureDiameter != float('+Inf'):
-            h = self.largestDiameter / 2.0
-            phi1 = math.asin(h / abs(self.R1))
-            corner1 = z + self.frontVertex + self.R1 * (1.0 - math.cos(phi1))
-
-            phi2 = math.asin(h / abs(self.R2))
-            corner2 = z + self.backVertex + self.R2 * (1.0 - math.cos(phi2))
-
-            axes.add_patch(patches.Polygon(
-                [[corner1, h], [corner2, h]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-            axes.add_patch(patches.Polygon(
-                [[corner1, -h], [corner2, -h]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
 
@@ -2151,8 +1684,6 @@ class ThickLens(Matrix):
         ----------
         z : float
             Position of the element
-        label : string
-            (is it in the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -2217,7 +1748,7 @@ class ThickLens(Matrix):
 
 
 class DielectricSlab(ThickLens):
-    """A slab of dielectric material of index n and length d, with flat faces
+    r"""A slab of dielectric material of index n and length d, with flat faces
 
     Parameters
     ----------
@@ -2252,27 +1783,6 @@ class DielectricSlab(ThickLens):
                                              diameter=diameter,
                                              label=label)
 
-    def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
-        """ Draw a faint blue box of length L starting at 'z'.
-
-        Parameters
-        ----------
-        z : float
-            The starting position of the curved surface
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        showLabels : bool (Optional)
-            If True, the label of the curved surface is shown. (default=False)
-
-
-        """
-        halfHeight = self.displayHalfHeight()
-        p = patches.Rectangle((z, -halfHeight), self.L,
-                              2 * halfHeight, color=[0.85, 0.95, 0.95],
-                              fill=True, transform=axes.transData,
-                              clip_on=True)
-        axes.add_patch(p)
-
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
                 if the requested distance is smaller than the length of this element
@@ -2296,7 +1806,7 @@ class DielectricSlab(ThickLens):
 
 
 class Aperture(Matrix):
-    """An aperture of finite diameter, null thickness.
+    r"""An aperture of finite diameter, null thickness.
 
     Parameters
     ----------
@@ -2335,8 +1845,3 @@ class Aperture(Matrix):
             physicalLength=0,
             apertureDiameter=diameter,
             label=label)
-
-    def drawAt(self, z, axes, showLabels=False):
-        """ Currently nothing specific to draw because any
-        aperture for any object is drawn with drawAperture()
-        """

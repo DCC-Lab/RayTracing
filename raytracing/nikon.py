@@ -3,6 +3,16 @@ from .specialtylenses import *
 class LWD16X(Objective):
     """ Nikon 16x immersion objective
 
+    .. csv-table::
+        :header: Parameter, value
+
+        "f", "200/16"
+        "backAperture", "20"
+        "Numerical Aperture (NA)", "1.56"
+        "Working Distance (mm)", "3"
+
+    Notes
+    -----
     Immersion not considered at this point.
     """
 
