@@ -2,7 +2,10 @@ import sys
 import os
 import matplotlib.pyplot as plt
 
-# append module root directory to sys.path
+""" This file is needed so the examples in the `examples` directory can be run direclty from there with 
+the current version of the module """
+
+# Append module root directory to sys.path
 sys.path.insert(0,
     os.path.dirname(
         os.path.dirname(
