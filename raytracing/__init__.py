@@ -90,6 +90,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.2.9"
+__version__ = "1.2.10"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
