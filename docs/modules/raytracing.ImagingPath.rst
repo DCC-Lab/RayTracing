@@ -20,27 +20,17 @@ ImagingPath
     
         ~ImagingPath.__init__
         ~ImagingPath.apertureStop
-        ~ImagingPath.axialRays
+        ~ImagingPath.axialRay
         ~ImagingPath.chiefRay
-        ~ImagingPath.createRayTracePlot
         ~ImagingPath.display
-        ~ImagingPath.displayRange
-        ~ImagingPath.drawDisplayObjects
-        ~ImagingPath.drawEntrancePupil
-        ~ImagingPath.drawImages
-        ~ImagingPath.drawObject
-        ~ImagingPath.drawOpticalElements
-        ~ImagingPath.drawRayTraces
-        ~ImagingPath.drawStops
         ~ImagingPath.entrancePupil
         ~ImagingPath.fieldOfView
         ~ImagingPath.fieldStop
         ~ImagingPath.imageSize
         ~ImagingPath.lagrangeInvariant
         ~ImagingPath.marginalRays
-        ~ImagingPath.rearrangeRayTraceForPlotting
+        ~ImagingPath.principalRay
         ~ImagingPath.save
-        ~ImagingPath.updateDisplay
 
 
 
@@ -55,4 +45,6 @@ ImagingPath
       ~ImagingPath.determinant
       ~ImagingPath.hasPower
       ~ImagingPath.isImaging
+      ~ImagingPath.largestDiameter
+      ~ImagingPath.objectHeight
 

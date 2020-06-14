@@ -32,6 +32,7 @@ RandomUniformRays
 
     
       ~RandomUniformRays.count
+      ~RandomUniformRays.rays
       ~RandomUniformRays.thetaValues
       ~RandomUniformRays.yValues
 
