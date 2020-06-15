@@ -36,6 +36,14 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.C, 1 * 7 + 3 * 8)
         self.assertEqual(m3.D, 2 * 7 + 4 * 8)
 
+    def testIsIdentity(self):
+        m = Matrix()
+        self.assertTrue(m.isIdentity)
+
+    def testIsNotIdentity(self):
+        m = Matrix(1, 2, 0, 1)
+        self.assertFalse(m.isIdentity)
+
     def testMatrixProductIndicesBoth1(self):
         m1 = Matrix()
         m2 = Matrix()
@@ -43,12 +51,26 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.frontIndex, 1)
         self.assertEqual(m3.backIndex, 1)
 
-    def testMatrixProductIndicesNot1(self):
+    def testMatrixProductIndicesLHSIsIdentity(self):
         m1 = Matrix(backIndex=1.33)
-        m2 = Matrix(frontIndex=1.5)
+        m2 = Matrix(1, 10, 0, 1, frontIndex=1.5, backIndex=1.5)
         m3 = m1 * m2
         self.assertEqual(m3.frontIndex, 1.5)
-        self.assertEqual(m3.backIndex, 1.33)
+        self.assertEqual(m3.backIndex, 1.5)
+
+    def testMatrixProductIndicesRHSIsIdentity(self):
+        m1 = Matrix(backIndex=1.33)
+        m2 = Matrix(1, 10, 0, 1, frontIndex=1.5, backIndex=1.5)
+        m3 = m2 * m1
+        self.assertEqual(m3.frontIndex, 1.5)
+        self.assertEqual(m3.backIndex, 1.5)
+
+    def testMatrixProductIndicesNoIdentity(self):
+        m1 = Matrix(1, 10, 0, 1, backIndex=1.33, frontIndex=1)
+        m2 = Matrix(1, 10, 0, 1, backIndex=1, frontIndex=1.33)
+        m3 = m2 * m1
+        self.assertEqual(m3.frontIndex, 1)
+        self.assertEqual(m3.backIndex, 1)
 
     def testMatrixProductWithRayMath(self):
         m1 = Matrix(A=1, B=2, C=3, D=4)
@@ -337,7 +359,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -350,7 +373,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         except:
             pass
 
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
