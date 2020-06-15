@@ -183,7 +183,7 @@ class Matrix(object):
                 "Unrecognized right side element in multiply: '{0}'\
                  cannot be multiplied by a Matrix".format(rightSide))
 
-    def mul_matrix(self, rightSideMatrix):
+    def mul_matrix(self, rightSideMatrix: 'Matrix'):
         r""" This function is used to combine two elements into a single matrix.
         The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
         Total length of the elements is calculated (z) but apertures are lost. We compute
@@ -271,7 +271,8 @@ class Matrix(object):
         else:
             bv = rightSideMatrix.backVertex
 
-        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L)
+        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L, frontIndex=self.frontIndex,
+                      backIndex=rightSideMatrix.backIndex)
 
     def mul_ray(self, rightSideRay):
         r"""This function does the multiplication of a ray by a matrix.
@@ -1557,7 +1558,7 @@ class Space(Matrix):
         """
         distance = upTo
         if distance < self.L:
-            return Space(distance)
+            return Space(distance, self.frontIndex)
         else:
             return self
 

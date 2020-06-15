@@ -42,6 +42,20 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.C, 16)
         self.assertEqual(m3.D, 13)
 
+    def testMatrixProductIndicesBoth1(self):
+        m1 = Matrix()
+        m2 = Matrix()
+        m3 = m1 * m2
+        self.assertEqual(m3.frontIndex, 1)
+        self.assertEqual(m3.backIndex, 1)
+
+    def testMatrixProductIndicesNot1(self):
+        m1 = Matrix(frontIndex=1.33)
+        m2 = Matrix(backIndex=1.5)
+        m3 = m1 * m2
+        self.assertEqual(m3.frontIndex, 1.33)
+        self.assertEqual(m3.backIndex, 1.5)
+
     def testMatrixProductWithRayMath(self):
         m1 = Matrix(A=1, B=1, C=3, D=4)
         rayIn = Ray(y=1, theta=0.1)
