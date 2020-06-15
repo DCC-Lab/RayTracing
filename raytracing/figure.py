@@ -2,6 +2,8 @@ from typing import List, Union
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib import path as mpath
+from .imagingpath import *
+from .laserpath import *
 from .matrix import *
 from .matrixgroup import *
 from .specialtylenses import *
@@ -154,10 +156,8 @@ class Figure:
             A list of Gaussian beams
         """
 
-        self.initializeDisplay()  # fixme: this will probably crash.
-
         self.drawBeamTraces(beams=inputBeams)
-        self.drawDisplayObjects()
+        self.drawElements(self.path.elements)
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
         self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
@@ -168,15 +168,6 @@ class Figure:
             self._showPlot()
 
     def drawBeamTraces(self, beams):
-        # fixme: move inputBeam.w check in figure displayRange
-        displayRange = 2 * self.path.largestDiameter
-        if displayRange == float('+Inf'):
-            displayRange = self.path.inputBeam.w * 6
-
-        self.axes.set_ylim([-displayRange / 2 * 1.2, displayRange / 2 * 1.2])
-
-        # self.drawAt(z=0, axes=axes)  # fixme: this should already be handled by self.drawDisplayObjects
-
         for beam in beams:
             self.drawBeamTrace(beam)
             self.drawWaists(beam)
@@ -274,7 +265,12 @@ class Figure:
         display range : 7
 
         """
+        if type(self.path) is 'LaserPath':
+            return self.laserDisplayRange()
+        else:
+            return self.imagingDisplayRange()
 
+    def imagingDisplayRange(self):
         displayRange = self.path.largestDiameter
 
         if displayRange == float('+Inf') or displayRange <= 2 * self.path._objectHeight:
@@ -288,6 +284,13 @@ class Figure:
                 magnification = abs(magnification)
                 if displayRange < self.path._objectHeight * magnification:
                     displayRange = self.path._objectHeight * magnification
+
+        return displayRange
+
+    def laserDisplayRange(self):
+        displayRange = self.path.largestDiameter
+        if displayRange == float('+Inf'):
+            displayRange = self.path.inputBeam.w * 3
 
         return displayRange
 
