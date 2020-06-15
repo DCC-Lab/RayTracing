@@ -269,8 +269,8 @@ class Matrix(object):
         else:
             bv = rightSideMatrix.backVertex
 
-        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L, frontIndex=self.frontIndex,
-                      backIndex=rightSideMatrix.backIndex)
+        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L,
+                      frontIndex=rightSideMatrix.frontIndex, backIndex=self.backIndex)
 
     def mul_ray(self, rightSideRay):
         r"""This function does the multiplication of a ray by a matrix.
