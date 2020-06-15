@@ -25,27 +25,31 @@ class TestMatrix(envtest.RaytracingTestCase):
                    frontVertex=0, backVertex=0, apertureDiameter=1.0)
         self.assertIsNotNone(m)
         self.assertEqual(m.A, 1)
-        self.assertEqual(m.B, 2)
-        self.assertEqual(m.C, 3)
-        self.assertEqual(m.D, 4)
+        self.assertEqual(m.B, 0)
+        self.assertEqual(m.C, 0)
+        self.assertEqual(m.D, 1)
+        self.assertEqual(m.L, 1)
+        self.assertEqual(m.backVertex, 0)
+        self.assertEqual(m.frontVertex, 0)
+        self.assertEqual(m.apertureDiameter, 1)
 
     def testMatrixProductMath(self):
-        m1 = Matrix(A=1, B=0, C=0, D=1)
-        m2 = Matrix(A=1, B=0, C=0, D=1)
+        m1 = Matrix(A=4, B=3, C=1, D=1)
+        m2 = Matrix(A=1, B=1, C=3, D=4)
         m3 = m2 * m1
-        self.assertEqual(m3.A, 1 * 5 + 3 * 6)
-        self.assertEqual(m3.B, 2 * 5 + 4 * 6)
-        self.assertEqual(m3.C, 1 * 7 + 3 * 8)
-        self.assertEqual(m3.D, 2 * 7 + 4 * 8)
+        self.assertEqual(m3.A, 5)
+        self.assertEqual(m3.B, 4)
+        self.assertEqual(m3.C, 16)
+        self.assertEqual(m3.D, 13)
 
     def testMatrixProductWithRayMath(self):
-        m1 = Matrix(A=1, B=0, C=0, D=1)
+        m1 = Matrix(A=1, B=1, C=3, D=4)
         rayIn = Ray(y=1, theta=0.1)
         rayOut = m1 * rayIn
-        self.assertEqual(rayOut.y, 1 * 1 + 2 * 0.1)
-        self.assertEqual(rayOut.theta, 3 * 1 + 4 * 0.1)
+        self.assertEqual(rayOut.y, 1.1)
+        self.assertEqual(rayOut.theta, 3.4)
 
-    def testMatrixProductOutpuRayLength(self):
+    def testMatrixProductOutputRayLength(self):
         m1 = Matrix(A=1, B=0, C=0, D=1, physicalLength=2)
         rayIn = Ray(y=1, theta=0.1, z=1)
         rayOut = m1 * rayIn
@@ -140,11 +144,10 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.backVertex, 14)
 
     def testMatrixProductGaussianBeamMath(self):
-        m = Matrix(A=1, B=0, C=0, D=1)
-        beamIn = GaussianBeam(w=1, wavelength=1)  # q = j\pi
+        m = Matrix(A=2, B=1, C=3, D=2)
+        beamIn = GaussianBeam(w=1, wavelength=1)  # q = j*pi
         beamOut = m * beamIn
-        q = complex(0, math.pi)
-        self.assertEqual(beamOut.q, (1 * q + 2) / (3 * q + 4))
+        self.assertEqual(beamOut.q, (2j * pi + 1) / (3j * pi + 2))
 
     def testMatrixProductGaussianNotSameRefractionIndex(self):
         m = Matrix(A=1, B=0, C=0, D=1)
@@ -325,7 +328,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -338,7 +342,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         except:
             pass
 
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,"Endless loop on macOS")
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
@@ -385,7 +390,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 
     def testEffectiveFocalLengthsNoPower(self):
-        m = Matrix(1,0,0,1)
+        m = Matrix(1, 0, 0, 1)
         focalLengths = (inf, inf)
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 
@@ -394,7 +399,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         n1 = 1.2
         n2 = 1.5
         m = DielectricInterface(n1=n1, n2=n2, R=R)
-        self.assertAlmostEqual(m.backFocalLength(), -m.A/m.C)
+        self.assertAlmostEqual(m.backFocalLength(), -m.A / m.C)
 
     def testBackFocalLengthSupposedNone(self):
         m = Matrix()
@@ -405,16 +410,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         n1 = 1.2
         n2 = 1.5
         m = DielectricInterface(n1=n1, n2=n2, R=R)
-        self.assertAlmostEqual(m.frontFocalLength(), -m.D/m.C)
+        self.assertAlmostEqual(m.frontFocalLength(), -m.D / m.C)
 
     def testFrontFocalLengthSupposedNone(self):
         m = Matrix()
         self.assertIsNone(m.frontFocalLength())
 
     def testPrincipalPlanePositions(self):
-        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
-        p1 = 0 - (1 - 4) / 3
-        p2 = 0 + 1 + (1 - 1) / 3
+        m = Matrix(A=1, B=0, C=1, D=1, physicalLength=1)
+        p1 = 0
+        p2 = 1
         self.assertTupleEqual(m.principalPlanePositions(0), (p1, p2))
 
     def testPrincipalPlanePositionsNoPower(self):
@@ -422,11 +427,11 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertTupleEqual(m.principalPlanePositions(0), (None, None))
 
     def testFocusPositions(self):
-        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
-        f1 = -1 / 3
-        p1 = 1
-        f2 = -1 / 3
-        p2 = 1
+        m = Matrix(A=1 / 3, B=0, C=10, D=3, physicalLength=1)
+        f1 = -0.1
+        p1 = 0.2
+        f2 = -0.1
+        p2 = 16 / 15
         self.assertTupleEqual(m.focusPositions(0), (p1 - f1, p2 + f2))
 
     def testFocusPositionsNoPower(self):
@@ -440,8 +445,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         R = 10
         m = DielectricInterface(n1=n1, n2=n2, R=R)
         (f1, f2) = m.effectiveFocalLengths()
-        self.assertTrue(f2 == n2*R/(n2-n1))
-        self.assertTrue(f1 == n1*R/(n2-n1)) # flip R and n1,n2
+        self.assertTrue(f2 == n2 * R / (n2 - n1))
+        self.assertTrue(f1 == n1 * R / (n2 - n1))  # flip R and n1,n2
 
     def testFiniteForwardConjugate(self):
         m1 = Lens(f=5) * Space(d=10)
