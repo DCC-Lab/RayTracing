@@ -135,7 +135,7 @@ class Matrix(object):
         self.label = label
         self.isFlipped = False
         super(Matrix, self).__init__()
-        if self.determinant != self.frontIndex/self.backIndex:
+        if not isclose(self.determinant, self.frontIndex / self.backIndex, atol=self.__epsilon__):
             raise ValueError("The matrix has inconsistent values")
 
     @property
@@ -940,8 +940,8 @@ class Matrix(object):
 
         """
         if self.hasPower:
-            focalLength2 = -1.0 / self.C # left (n1) to right (n2)
-            focalLength1 = -(self.frontIndex/self.backIndex) / self.C # right (n2) to left (n2)
+            focalLength2 = -1.0 / self.C  # left (n1) to right (n2)
+            focalLength1 = -(self.frontIndex / self.backIndex) / self.C  # right (n2) to left (n2)
         else:
             focalLength1 = float("+Inf")
             focalLength2 = float("+Inf")
@@ -1123,7 +1123,7 @@ class Matrix(object):
         raytracing.Matrix.focusPositions
         """
         if self.hasPower:
-            p1 = z - (self.frontIndex/self.backIndex - self.D) / self.C
+            p1 = z - (self.frontIndex / self.backIndex - self.D) / self.C
             p2 = z + self.L + (1 - self.A) / self.C
         else:
             p1 = None
