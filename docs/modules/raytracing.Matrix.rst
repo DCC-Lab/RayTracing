@@ -19,18 +19,9 @@ Matrix
 
     
         ~Matrix.__init__
-        ~Matrix.axesToDataScale
         ~Matrix.backFocalLength
         ~Matrix.backwardConjugate
-        ~Matrix.display
         ~Matrix.displayHalfHeight
-        ~Matrix.drawAperture
-        ~Matrix.drawAt
-        ~Matrix.drawCardinalPoints
-        ~Matrix.drawLabels
-        ~Matrix.drawPointsOfInterest
-        ~Matrix.drawPrincipalPlanes
-        ~Matrix.drawVertices
         ~Matrix.effectiveFocalLengths
         ~Matrix.flipOrientation
         ~Matrix.focalDistances
@@ -39,7 +30,6 @@ Matrix
         ~Matrix.frontFocalLength
         ~Matrix.hasFiniteApertureDiameter
         ~Matrix.lagrangeInvariant
-        ~Matrix.largestDiameter
         ~Matrix.magnification
         ~Matrix.mul_beam
         ~Matrix.mul_matrix
@@ -50,7 +40,6 @@ Matrix
         ~Matrix.traceMany
         ~Matrix.traceManyThrough
         ~Matrix.traceManyThroughInParallel
-        ~Matrix.traceManyThroughInParallelNoChunks
         ~Matrix.traceThrough
         ~Matrix.transferMatrices
         ~Matrix.transferMatrix
@@ -68,4 +57,5 @@ Matrix
       ~Matrix.determinant
       ~Matrix.hasPower
       ~Matrix.isImaging
+      ~Matrix.largestDiameter
 

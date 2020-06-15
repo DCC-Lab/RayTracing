@@ -33,4 +33,5 @@ PN\_88\_593
       ~PN_88_593.determinant
       ~PN_88_593.hasPower
       ~PN_88_593.isImaging
+      ~PN_88_593.largestDiameter
 
