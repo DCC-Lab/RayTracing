@@ -2,8 +2,6 @@ from typing import List, Union
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib import path as mpath
-from .imagingpath import *
-from .laserpath import *
 from .matrix import *
 from .matrixgroup import *
 from .specialtylenses import *
@@ -157,7 +155,7 @@ class Figure:
         """
 
         self.drawBeamTraces(beams=inputBeams)
-        self.drawElements(self.path.elements)
+        self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
         self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
@@ -190,6 +188,7 @@ class Figure:
         We arbitrarily split Space() elements into N sub elements
         before plotting.
         """
+        from .imagingpath import ImagingPath  # Fixme: circular import fix
 
         N = 100
         highResolution = ImagingPath()
@@ -265,7 +264,9 @@ class Figure:
         display range : 7
 
         """
-        if type(self.path) is 'LaserPath':
+        from .laserpath import LaserPath   # Fixme: circular import fix
+
+        if isinstance(self.path, LaserPath):
             return self.laserDisplayRange()
         else:
             return self.imagingDisplayRange()
@@ -300,6 +301,10 @@ class Figure:
 
     def drawDisplayObjects(self):
         """ Draw the object, images and all elements to the figure. """
+        from .laserpath import LaserPath  # Fixme: circular import fix
+        if isinstance(self.path, LaserPath):
+            return self.drawElements(self.path.elements)
+
         if self.path.showObject:
             self.drawObject()
 
