@@ -1180,7 +1180,7 @@ class Matrix(object):
             conjugateMatrix = None  # Unable to compute with inf
         else:
             distance = -self.B / self.D
-            conjugateMatrix = Space(d=distance) * self
+            conjugateMatrix = Space(d=distance, n=self.backIndex) * self
 
         return (distance, conjugateMatrix)
 
