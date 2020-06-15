@@ -488,55 +488,6 @@ class MatrixGroup(Matrix):
 
         return self
 
-    def drawAt(self, z, axes, showLabels=True):  # pragma: no cover
-        """ Draw each element of this group """
-        for element in self.elements:
-            element.drawAt(z, axes)
-            element.drawAperture(z, axes)
-
-            if showLabels:
-                element.drawLabels(z, axes)
-            z += element.L
-
-    def drawPointsOfInterest(self, z, axes):  # pragma: no cover
-        """
-        Labels of general points of interest are drawn below the
-        axis, at 25% of the largest diameter.
-
-        AS and FS are drawn at 110% of the largest diameter
-        """
-        labels = {}  # Gather labels at same z
-
-        zElement = 0
-        # For the group as a whole, then each element
-        for pointOfInterest in self.pointsOfInterest(z=zElement):
-            zStr = "{0:3.3f}".format(pointOfInterest['z'])
-            label = pointOfInterest['label']
-            if zStr in labels:
-                labels[zStr] = labels[zStr] + ", " + label
-            else:
-                labels[zStr] = label
-
-        # Points of interest for each element
-        for element in self.elements:
-            pointsOfInterest = element.pointsOfInterest(zElement)
-
-            for pointOfInterest in pointsOfInterest:
-                zStr = "{0:3.3f}".format(pointOfInterest['z'])
-                label = pointOfInterest['label']
-                if zStr in labels:
-                    labels[zStr] = labels[zStr] + ", " + label
-                else:
-                    labels[zStr] = label
-            zElement += element.L
-
-        halfHeight = self.largestDiameter / 2
-        for zStr, label in labels.items():
-            z = float(zStr)
-            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                          xycoords='data', fontsize=12,
-                          ha='center', va='bottom')
-
     def __iter__(self):
         self.iteration = 0
         return self
