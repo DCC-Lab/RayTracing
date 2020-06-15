@@ -66,9 +66,10 @@ class LaserPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
+        # fixme: why is inputBeams not defined inside LaserPath ?
         figure = Figure(opticalPath=self)
 
         figure.createFigure(title=self.label, comments=comments)
 
-        figure.displayGaussianBeam(inputBeams=inputBeams, comments=comments)
+        figure.displayGaussianBeam(inputBeams=inputBeams)
 
