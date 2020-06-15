@@ -139,6 +139,12 @@ class Matrix(object):
             raise ValueError("The matrix has inconsistent values")
 
     @property
+    def isIdentity(self):
+        AisDis1 = self.A == 1 and self.D == 1
+        BisCis0 = self.B == 0 and self.C == 0
+        return AisDis1 and BisCis0
+
+    @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
         which is often 1.0
@@ -271,8 +277,17 @@ class Matrix(object):
         else:
             bv = rightSideMatrix.backVertex
 
-        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L,
-                      frontIndex=rightSideMatrix.frontIndex, backIndex=self.backIndex)
+        if self.isIdentity:  # If LHS is identity, take the other's indices
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = rightSideMatrix.backIndex
+        elif rightSideMatrix.isIdentity:  # If RHS is identity, take other's indices
+            fIndex = self.frontIndex
+            bIndex = self.backIndex
+        else:  # Else, take the "first one" front index and the "last one" back index (physical first and last)
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = self.backIndex
+
+        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L, frontIndex=fIndex, backIndex=bIndex)
 
     def mul_ray(self, rightSideRay):
         r"""This function does the multiplication of a ray by a matrix.
