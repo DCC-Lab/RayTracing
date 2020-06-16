@@ -137,6 +137,10 @@ class Matrix(object):
         super(Matrix, self).__init__()
 
     @property
+    def isIdentity(self):
+        return self.A == 1 and self.D == 1 and self.B == 0 and self.C == 0
+
+    @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
         which is often 1.0
@@ -181,7 +185,7 @@ class Matrix(object):
                 "Unrecognized right side element in multiply: '{0}'\
                  cannot be multiplied by a Matrix".format(rightSide))
 
-    def mul_matrix(self, rightSideMatrix):
+    def mul_matrix(self, rightSideMatrix: 'Matrix'):
         r""" This function is used to combine two elements into a single matrix.
         The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
         Total length of the elements is calculated (z) but apertures are lost. We compute
@@ -269,7 +273,17 @@ class Matrix(object):
         else:
             bv = rightSideMatrix.backVertex
 
-        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L)
+        if self.isIdentity:  # If LHS is identity, take the other's indices
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = rightSideMatrix.backIndex
+        elif rightSideMatrix.isIdentity:  # If RHS is identity, take other's indices
+            fIndex = self.frontIndex
+            bIndex = self.backIndex
+        else:  # Else, take the "first one" front index and the "last one" back index (physical first and last)
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = self.backIndex
+
+        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L, frontIndex=fIndex, backIndex=bIndex)
 
     def mul_ray(self, rightSideRay):
         r"""This function does the multiplication of a ray by a matrix.
@@ -1550,7 +1564,7 @@ class Space(Matrix):
         """
         distance = upTo
         if distance < self.L:
-            return Space(distance)
+            return Space(distance, self.frontIndex)
         else:
             return self
 
