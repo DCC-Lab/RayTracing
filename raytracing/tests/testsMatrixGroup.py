@@ -520,6 +520,33 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         mg[0] = space
         self.assertListEqual(mg.elements, [space, lens, space])
 
+    def testEqualityDifferentClassInstance(self):
+        mg = MatrixGroup()
+        self.assertNotEqual(mg, Matrix())
+        self.assertNotEqual(mg, Ray())
+        self.assertNotEqual(mg, [Space(10), Lens(10), Space(10)])
+        self.assertNotEqual(mg, complex(10, 20.12))
+
+    def testEqualityDifferentListLength(self):
+        mg1 = MatrixGroup()
+        mg2 = MatrixGroup([Space(10)])
+        self.assertNotEqual(mg1, mg2)
+
+    def testEqualitySameLengthDifferentElements(self):
+        mg1 = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        mg2 = MatrixGroup([Space(20), Lens(20), Space(20), Space(20), Lens(20), Space(20)])
+        self.assertNotEqual(mg1, mg2)
+
+    def testEqualitySameGroup(self):
+        mg1 = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        mg2 = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        self.assertEqual(mg1, mg2)
+
+    def testEqualityGroupIs4f(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        system4f = System4f(10, 10)
+        self.assertEqual(mg, system4f)
+
 
 class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
 

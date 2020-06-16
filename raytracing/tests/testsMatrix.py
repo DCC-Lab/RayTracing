@@ -563,6 +563,33 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m.displayHalfHeight(), 4)
         self.assertEqual(m.displayHalfHeight(6), 6)
 
+    def testEqualityNotSameClassInstance(self):
+        m = Matrix()
+        self.assertNotEqual(m, 10)
+        self.assertNotEqual(m, Ray())
+        self.assertNotEqual(m, "Trust me, this is a Matrix. This is equal to Matrix()")
+
+    def testEqualityMatricesNotEqualSameABCD(self):
+        m = Matrix()
+        m2 = Matrix(frontIndex=10)
+        self.assertNotEqual(m, m2)
+
+    def testEqualityMatricesNotEqualDifferentABCD(self):
+        m = Matrix()
+        m2 = Matrix(A=1 / 2, D=2)
+        self.assertNotEqual(m, m2)
+
+    def testEqualityMatricesAreEqual(self):
+        m = Matrix()
+        m2 = Matrix()
+        self.assertEqual(m, m2)
+
+    def testEqualityMatrixAndSpaceEqual(self):
+        d = 10
+        m = Matrix(B=d, physicalLength=d)
+        space = Space(d)
+        self.assertEqual(m, space)
+
 
 if __name__ == '__main__':
     envtest.main()
