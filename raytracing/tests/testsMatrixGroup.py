@@ -262,7 +262,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         self.assertListEqual(mg.intermediateConjugates(), [])
 
     def testIntermediateConjugatesNoConjugate(self):
-        mg = MatrixGroup([Matrix(1, 1, 1, 0, 1)])
+        mg = MatrixGroup([Matrix(1, 1, -1, 0, 1)])
         self.assertListEqual(mg.intermediateConjugates(), [])
 
     def testIntermediateConjugates(self):
