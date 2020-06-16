@@ -332,16 +332,19 @@ class Matrix(object):
         """
 
         outputRay = Ray()
-        outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
-        outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
 
-        outputRay.z = self.L + rightSideRay.z
-        outputRay.apertureDiameter = self.apertureDiameter
+        if rightSideRay.isNotBlocked:
+            outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
+            outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+            outputRay.z = self.L + rightSideRay.z
+            outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
-            outputRay.isBlocked = True
+            if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
+                outputRay.isBlocked = True
+            else:
+                outputRay.isBlocked = rightSideRay.isBlocked
         else:
-            outputRay.isBlocked = rightSideRay.isBlocked
+            outputRay = rightSideRay
 
         return outputRay
 
@@ -576,8 +579,8 @@ class Matrix(object):
         other elements there may be more.  For groups of elements, there can be any 
         number of rays in the list.
 
-		If you only care about the final ray that has propagated through, use 
-		`traceThrough()`
+        If you only care about the final ray that has propagated through, use 
+        `traceThrough()`
         """
 
         rayTrace = []
