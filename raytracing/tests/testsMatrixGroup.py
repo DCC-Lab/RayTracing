@@ -106,11 +106,9 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         otherElement = Space(10)
         mg.append(otherElement)
         transferMat = otherElement * element
-        msg = "If this fails, it is because the appended object is copied or it is not the right object: it is not" \
-              "the same instance. At the time this test was written, the original object is appended." \
-              "It is a short way to check if it is the right one at the end of the list."
         self.assertEqual(len(mg.elements), 2)
-        self.assertIs(mg.elements[-1], otherElement, msg=msg)
+        self.assertEqual(mg.elements[-1], otherElement)
+        self.assertEqual(mg.elements[-1], otherElement)
         self.assertEqual(mg.L, transferMat.L)
         self.assertEqual(mg.A, transferMat.A)
         self.assertEqual(mg.B, transferMat.B)
@@ -187,28 +185,20 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         self.assertListEqual(mg.transferMatrices(), [])
 
     def testTransferMatricesOneElement(self):
-        msg = "The equality of matrices is based upon their id. It was sufficient when writing this test, because" \
-              "the matrix was not copied or changed: it was the 'whole' object that was appended (i.e. the original " \
-              "object and the appended object is the same object, same memory spot). If this fails, either" \
-              "they are not the same object anymore (but can still be 'equal') or they are purely different."
         element1 = Space(10)
         mg = MatrixGroup([element1])
         transferMatrices = mg.transferMatrices()
         self.assertEqual(len(transferMatrices), 1)
-        self.assertListEqual(transferMatrices, [element1], msg=msg)
+        self.assertListEqual(transferMatrices, [element1])
 
-    def transferMatrixTwoElements(self):
-        msg = "The equality of matrices is based upon their id. It was sufficient when writing this test, because" \
-              "the matrix was not copied or changed: it was the 'whole' object that was appended (i.e. the original " \
-              "object and the appended object is the same object, same memory spot). If this fails, either" \
-              "they are not the same object anymore (but can still be 'equal') or they are purely different."
+    def testTransferMatrixTwoElements(self):
         element1 = Space(10)
         mg = MatrixGroup([element1])
         element2 = Lens(2)
         mg.append(element2)
         transferMatrices = mg.transferMatrices()
         self.assertEqual(len(transferMatrices), 2)
-        self.assertListEqual(transferMatrices, [element1, element2], msg=msg)
+        self.assertListEqual(transferMatrices, [element1, element2])
 
     def testTraceEmptyMatrixGroup(self):
         mg = MatrixGroup()
@@ -305,7 +295,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
 
     def testFlipOrientationEmptyGroup(self):
         mg = MatrixGroup()
-        self.assertIs(mg.flipOrientation(), mg)
+        self.assertEqual(mg.flipOrientation(), mg)
 
     def testFlipOrientation_1(self):
         space = Space(10)
