@@ -20,6 +20,7 @@ path.append(Space(d=25))
 path.append(Aperture(diameter=2, label='Camera'))
 # Counts how many rays make it through the detector
 outputRays = path.traceManyThroughInParallel(inputRays, progress=False)
+path.display()
 outputRays.display()
 
 
