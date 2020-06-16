@@ -58,22 +58,22 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.backIndex, 1)
 
     def testMatrixProductIndicesLHSIsIdentity(self):
-        m1 = Matrix(backIndex=1.33)
+        m1 = Matrix()
         m2 = Matrix(1, 10, 0, 1, frontIndex=1.5, backIndex=1.5)
         m3 = m1 * m2
         self.assertEqual(m3.frontIndex, 1.5)
         self.assertEqual(m3.backIndex, 1.5)
 
     def testMatrixProductIndicesRHSIsIdentity(self):
-        m1 = Matrix(backIndex=1.33)
+        m1 = Matrix()
         m2 = Matrix(1, 10, 0, 1, frontIndex=1.5, backIndex=1.5)
         m3 = m2 * m1
         self.assertEqual(m3.frontIndex, 1.5)
         self.assertEqual(m3.backIndex, 1.5)
 
     def testMatrixProductIndicesNoIdentity(self):
-        m1 = Matrix(1, 10, 0, 1, backIndex=1.33, frontIndex=1)
-        m2 = Matrix(1, 10, 0, 1, backIndex=1, frontIndex=1.33)
+        m1 = Matrix(1, 10, 0, 0.7518796992, backIndex=1.33, frontIndex=1)
+        m2 = Matrix(1.33, 10, 0, 1, backIndex=1, frontIndex=1.33)
         m3 = m2 * m1
         self.assertEqual(m3.frontIndex, 1)
         self.assertEqual(m3.backIndex, 1)
@@ -207,7 +207,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(beamOut.n, 1.33)
 
     def testMatrixProductGaussianLength(self):
-        m = Matrix(A=1, B=0, C=0, D=1, frontIndex=1.33, physicalLength=1.2)
+        m = Matrix(A=1, B=0, C=0, D=1.33, frontIndex=1.33, physicalLength=1.2)
         beamIn = GaussianBeam(w=1, wavelength=1, z=1, n=1.33)
         beamOut = m * beamIn
         self.assertEqual(beamOut.z, 2.2)
@@ -262,9 +262,8 @@ class TestMatrix(envtest.RaytracingTestCase):
             m2.transferMatrix(upTo=0.5)
 
     def testTransferMatrices(self):
-        m1 = Matrix(A=1, B=0, C=0, D=1, frontIndex=2)
+        m1 = Matrix(A=1, B=0, C=0, D=2, frontIndex=2)
         self.assertEqual(m1.transferMatrices(), [m1])
-        m1 * GaussianBeam(w=1, n=2)
 
     def testTrace(self):
         ray = Ray(y=1, theta=1)
@@ -388,16 +387,16 @@ class TestMatrix(envtest.RaytracingTestCase):
             traceWithNumberProcesses = m.traceManyThroughInParallel(rays, processes=2)
             for i in range(len(rays)):
                 # Order is not kept, we have to check if the ray traced is in the original list
-                self.assertTrue(traceWithNumberProcesses[i] in rays)
-        except:
-            pass
+                self.assertIn(traceWithNumberProcesses[i], rays)
+        except Exception as exception:
+            self.fail(f"Exception raised:\n{exception}")
 
     def testPointsOfInterest(self):
         m = Matrix()
         self.assertListEqual(m.pointsOfInterest(1), [])
 
     def testIsImaging(self):
-        m = Matrix(A=1, B=0, C=3, D=4)
+        m = Matrix(A=1, B=0, C=3, D=1)
         self.assertTrue(m.isImaging)
 
     def testIsNotImaging(self):
@@ -503,12 +502,12 @@ class TestMatrix(envtest.RaytracingTestCase):
         m1 = Matrix(1, 0, -1 / 5, 1) * Matrix(1, 5, 0, 1)
         (d, m2) = m1.forwardConjugate()
         self.assertIsNone(m2)
-        self.assertEqual(d, float("+inf"))
+        self.assertEqual(d, inf)
         self.assertEqual(m1.determinant, 1)
 
     def testInfiniteBackConjugate(self):
-        m = Matrix(A=0)
-        self.assertTupleEqual(m.backwardConjugate(), (float("+inf"), None))
+        m = Matrix(A=0, B=1, C=-1)
+        self.assertTupleEqual(m.backwardConjugate(), (inf, None))
 
     def testFiniteBackConjugate_1(self):
         m1 = Matrix(1, 10, 0, 1) * Matrix(1, 0, -1 / 5, 1)
@@ -539,7 +538,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         backVertexInit = 20
         frontIndexInit = 1
         backIndexInit = 2
-        m = Matrix(frontVertex=frontVertexInit, backVertex=backVertexInit, frontIndex=frontIndexInit,
+        m = Matrix(A=0.5, frontVertex=frontVertexInit, backVertex=backVertexInit, frontIndex=frontIndexInit,
                    backIndex=backIndexInit)
         m.flipOrientation()
         self.assertTrue(m.isFlipped)
