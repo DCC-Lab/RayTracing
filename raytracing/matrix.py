@@ -139,6 +139,10 @@ class Matrix(object):
             raise ValueError("The matrix has inconsistent values")
 
     @property
+    def isIdentity(self):
+        return self.A == 1 and self.D == 1 and self.B == 0 and self.C == 0
+
+    @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
         which is often 1.0
@@ -271,8 +275,17 @@ class Matrix(object):
         else:
             bv = rightSideMatrix.backVertex
 
-        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L,
-                      frontIndex=rightSideMatrix.frontIndex, backIndex=self.backIndex)
+        if self.isIdentity:  # If LHS is identity, take the other's indices
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = rightSideMatrix.backIndex
+        elif rightSideMatrix.isIdentity:  # If RHS is identity, take other's indices
+            fIndex = self.frontIndex
+            bIndex = self.backIndex
+        else:  # Else, take the "first one" front index and the "last one" back index (physical first and last)
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = self.backIndex
+
+        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L, frontIndex=fIndex, backIndex=bIndex)
 
     def mul_ray(self, rightSideRay):
         r"""This function does the multiplication of a ray by a matrix.
@@ -335,16 +348,19 @@ class Matrix(object):
         """
 
         outputRay = Ray()
-        outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
-        outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
 
-        outputRay.z = self.L + rightSideRay.z
-        outputRay.apertureDiameter = self.apertureDiameter
+        if rightSideRay.isNotBlocked:
+            outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
+            outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+            outputRay.z = self.L + rightSideRay.z
+            outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
-            outputRay.isBlocked = True
+            if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
+                outputRay.isBlocked = True
+            else:
+                outputRay.isBlocked = rightSideRay.isBlocked
         else:
-            outputRay.isBlocked = rightSideRay.isBlocked
+            outputRay = rightSideRay
 
         return outputRay
 
