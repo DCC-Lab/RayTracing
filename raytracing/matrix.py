@@ -1372,6 +1372,11 @@ class Matrix(object):
             description += "\nf = +inf (afocal)\n"
         return description
 
+    def __eq__(self, other):
+        if isinstance(other, Matrix):
+            return self.__dict__ == other.__dict__
+        return False
+
 
 class Lens(Matrix):
     r"""A thin lens of focal f, null thickness and infinite or finite diameter
