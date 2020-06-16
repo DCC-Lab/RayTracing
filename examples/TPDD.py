@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 nRays = 1000000
 minHeight=-0.5
 maxHeight=0.5
-inputRays = RandomLambertianRays(yMax=focalRadius, yMin=-focalRadius, maxCount=nRays)
+inputRays = RandomLambertianRays(yMax=maxHeight, yMin=-minHeight, maxCount=nRays)
 f=20
 path = ImagingPath()
 path.append(Space(d=f))
