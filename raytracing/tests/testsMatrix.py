@@ -42,20 +42,6 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.C, 16)
         self.assertEqual(m3.D, 13)
 
-    def testMatrixProductIndicesBoth1(self):
-        m1 = Matrix()
-        m2 = Matrix()
-        m3 = m1 * m2
-        self.assertEqual(m3.frontIndex, 1)
-        self.assertEqual(m3.backIndex, 1)
-
-    def testMatrixProductIndicesNot1(self):
-        m1 = Matrix(backIndex=1.33)
-        m2 = Matrix(frontIndex=1.5)
-        m3 = m1 * m2
-        self.assertEqual(m3.frontIndex, 1.5)
-        self.assertEqual(m3.backIndex, 1.33)
-
     def testIsIdentity(self):
         m = Matrix()
         self.assertTrue(m.isIdentity)
