@@ -8,7 +8,9 @@ And the size of the diffused light dictates certain detectionlenses and detector
 Therefore,  it is of great importance to find a well-sized detector that fits in the optical system.  
 """
 
-nRays = 1000000
+#How to optimize the detector size ?
+
+nRays = 100000
 minHeight=-0.5
 maxHeight=0.5
 inputRays = RandomLambertianRays(yMax=maxHeight, yMin=minHeight, maxCount=nRays)
@@ -21,7 +23,7 @@ path.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
 
 ###
-nRays = 1000000
+nRays = 100000
 minHeight=-0.5
 maxHeight=0.5
 inputRays = RandomLambertianRays(yMax=maxHeight, yMin=minHeight, maxCount=nRays)
