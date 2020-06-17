@@ -586,12 +586,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertNotEqual(m, "Trust me, this is a Matrix. This is equal to Matrix()")
 
     def testEqualityMatricesNotEqualSameABCD(self):
-        m = Matrix()
-        m2 = Matrix(frontIndex=10)
+        m = Matrix(1,0,0,1)
+        m2 = Matrix(1,0,0,1, frontVertex=1)
+        self.assertNotEqual(m, m2)
+        m2 = Matrix(1,0,0,1, backVertex=1)
+        self.assertNotEqual(m, m2)
+        m2 = Matrix(1,0,0,1, frontIndex=10, backIndex=10)
         self.assertNotEqual(m, m2)
 
     def testEqualityMatricesNotEqualDifferentABCD(self):
-        m = Matrix()
+        m = Matrix(1,0,0,1)
         m2 = Matrix(A=1 / 2, D=2)
         self.assertNotEqual(m, m2)
 

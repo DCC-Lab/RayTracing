@@ -145,7 +145,10 @@ class Matrix(object):
     @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
-        which is often 1.0
+        which is often 1.0. 
+        We make a calculation exception when C == 0 and B is infinity: since
+        B is never really infinity, but C can be precisely zero (especially
+        in free space), then B*C is zero in that particular case.
 
         Examples
         --------
@@ -157,6 +160,10 @@ class Matrix(object):
         the determinant of matrix is equal to : 1.0
 
         """
+
+        if self.C == 0:
+            return self.A * self.D
+        
         return self.A * self.D - self.B * self.C
 
     def __mul__(self, rightSide):
