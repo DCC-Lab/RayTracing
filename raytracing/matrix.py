@@ -135,6 +135,8 @@ class Matrix(object):
         self.label = label
         self.isFlipped = False
         super(Matrix, self).__init__()
+        if not isclose(self.determinant, self.frontIndex / self.backIndex, atol=self.__epsilon__):
+            raise ValueError("The matrix has inconsistent values")
 
     @property
     def isIdentity(self):
@@ -143,7 +145,10 @@ class Matrix(object):
     @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
-        which is often 1.0
+        which is often 1.0. 
+        We make a calculation exception when C == 0 and B is infinity: since
+        B is never really infinity, but C can be precisely zero (especially
+        in free space), then B*C is zero in that particular case.
 
         Examples
         --------
@@ -155,6 +160,10 @@ class Matrix(object):
         the determinant of matrix is equal to : 1.0
 
         """
+
+        if self.C == 0:
+            return self.A * self.D
+        
         return self.A * self.D - self.B * self.C
 
     def __mul__(self, rightSide):
@@ -921,10 +930,18 @@ class Matrix(object):
         """ The effective focal lengths calculated from the power (C)
         of the matrix.
 
+        There are in general two effective focal lengths: front effective
+        and back effective focal lengths (not to be confused with back focal
+        and front focal lengths which are measured from the physical interface).
+        The easiest way to calculate this is to use
+        f = -1/C for current matrix, then flipOrientation and f = -1/C
+
+
         Returns
         -------
         effectiveFocalLengths : array
-            Returns the FFL and BFL
+            Returns the effective focal lengths in the forward and backward
+            directions. When in air, both are equal.
 
         See Also
         --------
@@ -944,17 +961,15 @@ class Matrix(object):
         >>> print('focal distances:' , f1)
         focal distances: (5.0, 5.0)
 
-        Notes
-        -----
-        Currently, it is assumed the index is n=1 on either side and
-        both focal lengths are the same.
         """
         if self.hasPower:
-            focalLength = -1.0 / self.C  # FIXME: Assumes n=1 on either side
+            focalLength2 = -1.0 / self.C  # left (n1) to right (n2)
+            focalLength1 = -(self.frontIndex / self.backIndex) / self.C  # right (n2) to left (n2)
         else:
-            focalLength = float("+Inf")
+            focalLength1 = float("+Inf")
+            focalLength2 = float("+Inf")
 
-        return (focalLength, focalLength)
+        return (focalLength1, focalLength2)
 
     def backFocalLength(self):
         """ The focal lengths measured from the back vertex.
@@ -995,8 +1010,8 @@ class Matrix(object):
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
 
-        Currently, it is assumed the index is n=1 on either side and
-        both focal distances are the same.
+        The front and back focal lengths will be different if the index
+        of refraction is different on both sides.
         """
 
         if self.backVertex is not None and self.hasPower:
@@ -1047,8 +1062,8 @@ class Matrix(object):
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
 
-        Currently, it is assumed the index is n=1 on either side and
-        both focal distances are the same.
+        The front and back focal lengths will be different if the index
+        of refraction is different on both sides.
         """
 
         if self.frontVertex is not None and self.hasPower:
@@ -1062,10 +1077,13 @@ class Matrix(object):
     def focusPositions(self, z):
         """ Positions of both focal points on either side of the element.
 
+        The front and back focal spots will be different if the index
+        of refraction is different on both sides.
+
         Parameters
         ----------
         z : float
-            The position in which the object is placed
+            Position from where the positions are calculated
 
         Returns
         -------
@@ -1106,7 +1124,7 @@ class Matrix(object):
         Parameters
         ----------
         z : float
-            The position
+            Position from where the positions are calculated
 
         Returns
         -------
@@ -1128,8 +1146,7 @@ class Matrix(object):
         raytracing.Matrix.focusPositions
         """
         if self.hasPower:
-            p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
-            # FIXME: Assumes n=1 on either side
+            p1 = z - (self.frontIndex / self.backIndex - self.D) / self.C
             p2 = z + self.L + (1 - self.A) / self.C
         else:
             p1 = None
@@ -1186,7 +1203,7 @@ class Matrix(object):
             conjugateMatrix = None  # Unable to compute with inf
         else:
             distance = -self.B / self.D
-            conjugateMatrix = Space(d=distance) * self
+            conjugateMatrix = Space(d=distance, n=self.backIndex) * self
 
         return (distance, conjugateMatrix)
 
