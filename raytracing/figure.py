@@ -14,6 +14,7 @@ class Figure:
         self.figure = None
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
+        self.elementGraphics = []
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
@@ -272,7 +273,10 @@ class Figure:
             return self.imagingDisplayRange()
 
     def imagingDisplayRange(self):
-        displayRange = self.path.largestDiameter
+        displayRange = 0
+        for graphic in self.elementGraphics:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
 
         if displayRange == float('+Inf') or displayRange <= self.path._objectHeight:
             displayRange = self.path._objectHeight
@@ -289,8 +293,12 @@ class Figure:
         return displayRange
 
     def laserDisplayRange(self):
-        displayRange = self.path.largestDiameter
-        if displayRange == float('+Inf'):
+        displayRange = 0
+        for graphic in self.elementGraphics:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
+
+        if displayRange == float('+Inf') or displayRange == 0:
             displayRange = self.path.inputBeam.w * 3
 
         return displayRange
@@ -515,6 +523,7 @@ class Figure:
                 color='r'))
 
     def drawElements(self, elements):
+        self.elementGraphics = []
         z = 0
         for element in elements:
             graphic = Graphic(element)
@@ -524,6 +533,7 @@ class Figure:
             if self.path.showElementLabels:
                 graphic.drawLabels(z, self.axes)
             z += graphic.L
+            self.elementGraphics.append(graphic)
 
     def rayTraceLines(self, removeBlockedRaysCompletely=True):
         """ A list of all ray trace line objects corresponding to either
@@ -638,10 +648,17 @@ class Figure:
 class MatrixGraphic:
     def __init__(self, matrix: Matrix):
         self.matrix = matrix
+        self._halfHeight = None
 
     @property
     def L(self):
         return self.matrix.L
+
+    @property
+    def halfHeight(self):
+        if self._halfHeight is None:
+            self._halfHeight = self.displayHalfHeight()
+        return self._halfHeight
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
@@ -972,17 +989,17 @@ class LensGraphic(MatrixGraphic):
                 if max(line._y) > maxRayHeight:
                     maxRayHeight = max(line._y)
 
-        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
+        self._halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
-        arrowHeadHeight = 2 * halfHeight * 0.08
+        arrowHeadHeight = 2 * self._halfHeight * 0.08
 
-        heightFactor = halfHeight * 2 / yScaling
+        heightFactor = self._halfHeight * 2 / yScaling
         arrowHeadWidth = xScaling * 0.008 * (heightFactor / 0.2) ** (3 / 4)
 
-        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
+        axes.arrow(z, 0, 0, self._halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
+        axes.arrow(z, 0, 0, -self._halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
