@@ -42,6 +42,13 @@ class TestBeam(envtest.RaytracingTestCase):
         beam = GaussianBeam(w=inf, R=10)
         self.assertEqual(beam.w, inf)
 
+    def testNull(self):
+        beam = GaussianBeam(0)
+        self.assertFalse(beam.isFinite)
+        self.assertEqual(beam.w, float("+Inf"))
+        self.assertEqual(beam.R, float("+Inf"))
+        self.assertEqual(beam.wavelength, 0.0006328)
+
     def testZ0is0(self):
         beam = GaussianBeam(w=inf, R=1)
         self.assertEqual(beam.zo, 0)

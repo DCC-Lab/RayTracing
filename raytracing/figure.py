@@ -143,6 +143,99 @@ class Figure:
         else:
             self._showPlot()
 
+    def displayGaussianBeam(self, inputBeams=None, filepath=None):
+        """ Display the optical system and trace the laser beam.
+        If comments are included they will be displayed on a
+        graph in the bottom half of the plot.
+
+        Parameters
+        ----------
+        inputBeams : list of object of GaussianBeam class
+            A list of Gaussian beams
+        """
+
+        self.drawBeamTraces(beams=inputBeams)
+        self.drawDisplayObjects()
+
+        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+        self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
+
+        if filepath is not None:
+            self.figure.savefig(filepath, dpi=600)
+        else:
+            self._showPlot()
+
+    def drawBeamTraces(self, beams):
+        for beam in beams:
+            self.drawBeamTrace(beam)
+            self.drawWaists(beam)
+
+    def rearrangeBeamTraceForPlotting(self, rayList):
+        x = []
+        y = []
+        for ray in rayList:
+            x.append(ray.z)
+            y.append(ray.w)
+        return (x, y)
+
+    def drawBeamTrace(self, beam):
+        """ Draw beam trace corresponding to input beam 
+        Because the laser beam diffracts through space, we cannot
+        simply propagate the beam over large distances and trace it
+        (as opposed to rays, where we can). We must split Space() 
+        elements into sub elements to watch the beam size expand.
+        
+        We arbitrarily split Space() elements into N sub elements
+        before plotting.
+        """
+        from .imagingpath import ImagingPath  # Fixme: circular import fix
+
+        N = 100
+        highResolution = ImagingPath()
+        for element in self.path.elements:
+            if isinstance(element, Space):
+                for i in range(N):
+                    highResolution.append(Space(d=element.L / N,
+                                                n=element.frontIndex))
+            else:
+                highResolution.append(element)
+
+        beamTrace = highResolution.trace(beam)
+        (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
+        self.axes.plot(x, y, 'r', linewidth=1)
+        self.axes.plot(x, [-v for v in y], 'r', linewidth=1)
+
+    def drawWaists(self, beam):
+        """ Draws the expected waist (i.e. the focal spot or the spot where the
+        size is minimum) for all positions of the beam. This will show "waists" that
+        are virtual if there is an additional lens between the beam and the expceted
+        waist.
+
+        It is easy to obtain the waist position from the complex radius of curvature
+        because it is the position where the complex radius is imaginary. The position
+        returned is relative to the position of the beam, which is why we add the actual
+        position of the beam to the relative position. """
+
+        (xScaling, yScaling) = self.axesToDataScale()
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
+        arrowSize = arrowHeight * 3
+
+        beamTrace = self.path.trace(beam)
+        for beam in beamTrace:
+            relativePosition = beam.waistPosition
+            position = beam.z + relativePosition
+            size = beam.waist
+
+            self.axes.arrow(position, size + arrowSize, 0, -arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
+            self.axes.arrow(position, -size - arrowSize, 0, arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
+
     def displayRange(self):
         """ We return the largest object in the ImagingPath for display purposes.
         The object is considered only "half" because it starts on axis and goes up.
@@ -171,7 +264,14 @@ class Figure:
         display range : 7
 
         """
+        from .laserpath import LaserPath   # Fixme: circular import fix
 
+        if isinstance(self.path, LaserPath):
+            return self.laserDisplayRange()
+        else:
+            return self.imagingDisplayRange()
+
+    def imagingDisplayRange(self):
         displayRange = self.path.largestDiameter
 
         if displayRange == float('+Inf') or displayRange <= 2 * self.path._objectHeight:
@@ -188,12 +288,23 @@ class Figure:
 
         return displayRange
 
+    def laserDisplayRange(self):
+        displayRange = self.path.largestDiameter
+        if displayRange == float('+Inf'):
+            displayRange = self.path.inputBeam.w * 3
+
+        return displayRange
+
     def drawLines(self, lines):
         for line in lines:
             self.axes.add_line(line)
 
     def drawDisplayObjects(self):
         """ Draw the object, images and all elements to the figure. """
+        from .laserpath import LaserPath  # Fixme: circular import fix
+        if isinstance(self.path, LaserPath):
+            return self.drawElements(self.path.elements)
+
         if self.path.showObject:
             self.drawObject()
 
