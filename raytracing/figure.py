@@ -64,7 +64,7 @@ class Figure:
 
         if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
-            if stopPosition is None:
+            if stopPosition is None or self.path.principalRay() is None:
                 warnings.warn("No aperture stop in system: cannot use onlyPrincipalAndAxialRays=True since they are "
                               "not defined.")
                 self.designParams['onlyPrincipalAndAxialRays'] = False
