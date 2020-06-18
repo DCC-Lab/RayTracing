@@ -775,7 +775,7 @@ class MatrixGraphic:
 
         center = z + self.matrix.L / 2.0
         axes.annotate(self.matrix.label, xy=(center, 0.0),
-                      xytext=(center, halfHeight * 1.4),
+                      xytext=(center, halfHeight * 1.35),
                       fontsize=8, xycoords='data', ha='center',
                       va='bottom', clip_box=axes.bbox, clip_on=True)
 
