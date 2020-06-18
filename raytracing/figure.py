@@ -274,8 +274,8 @@ class Figure:
     def imagingDisplayRange(self):
         displayRange = self.path.largestDiameter
 
-        if displayRange == float('+Inf') or displayRange <= 2 * self.path._objectHeight:
-            displayRange = 2 * self.path._objectHeight
+        if displayRange == float('+Inf') or displayRange <= self.path._objectHeight:
+            displayRange = self.path._objectHeight
 
         conjugates = self.path.intermediateConjugates()
         if len(conjugates) != 0:

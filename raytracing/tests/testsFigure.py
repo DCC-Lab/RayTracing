@@ -19,7 +19,7 @@ class TestFigure(unittest.TestCase):
         path.append(Space(2))
         path.append(CurvedMirror(-5, 10))
 
-        self.assertAlmostEqual(path.figure.displayRange(), 20)
+        self.assertAlmostEqual(path.figure.displayRange(), 10)
 
         path.objectHeight = 1
         self.assertEqual(path.figure.displayRange(), 10)
@@ -27,7 +27,7 @@ class TestFigure(unittest.TestCase):
     def testDisplayRangeWithEmptyPath(self):
         path = ImagingPath()
 
-        largestDiameter = path.objectHeight * 2
+        largestDiameter = path.objectHeight
 
         self.assertEqual(path.figure.displayRange(), largestDiameter)
 
