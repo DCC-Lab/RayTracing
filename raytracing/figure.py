@@ -1007,6 +1007,10 @@ class LensGraphic(MatrixGraphic):
 
 
 class SpaceGraphic(MatrixGraphic):
+    def __init__(self, matrix):
+        super(SpaceGraphic, self).__init__(matrix)
+        self._halfHeight = 0
+
     def drawAt(self, z, axes, showLabels=False):
         """This function draws nothing because free space is not visible. """
         return
