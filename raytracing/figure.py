@@ -1476,6 +1476,8 @@ class Graphic:
 
         if type(element) is Lens:
             return LensGraphic(element)
+        if type(element) is ThickLens:
+            return ThickLensGraphic(element)
         if type(element) is Space:
             return SpaceGraphic(element)
         if type(element) is DielectricInterface:
