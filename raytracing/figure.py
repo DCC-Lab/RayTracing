@@ -137,7 +137,8 @@ class Figure:
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
-        self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
+        self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
+        self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
         if filepath is not None:
             self.figure.savefig(filepath, dpi=600)
@@ -160,7 +161,7 @@ class Figure:
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
         self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
-        self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
+        self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
         if filepath is not None:
             self.figure.savefig(filepath, dpi=600)
@@ -624,9 +625,8 @@ class Figure:
         yScale : float
             The scale of y axes
         """
-        # xScale, yScale = self.axes.viewLim.bounds[2:]
         xScale = self.path.L * 1.1
-        yScale = self.displayRange() * 1.5
+        yScale = self.displayRange() * 1.6
 
         return xScale, yScale
 
