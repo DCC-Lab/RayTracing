@@ -159,6 +159,7 @@ class Figure:
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+        self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
         self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
 
         if filepath is not None:
@@ -623,8 +624,9 @@ class Figure:
         yScale : float
             The scale of y axes
         """
-
-        xScale, yScale = self.axes.viewLim.bounds[2:]
+        # xScale, yScale = self.axes.viewLim.bounds[2:]
+        xScale = self.path.L * 1.1
+        yScale = self.displayRange() * 1.5
 
         return xScale, yScale
 
@@ -792,7 +794,7 @@ class MatrixGraphic:
 
         center = z + self.matrix.L / 2.0
         axes.annotate(self.matrix.label, xy=(center, 0.0),
-                      xytext=(center, halfHeight * 1.35),
+                      xytext=(center, halfHeight * 1.4),
                       fontsize=8, xycoords='data', ha='center',
                       va='bottom', clip_box=axes.bbox, clip_on=True)
 
