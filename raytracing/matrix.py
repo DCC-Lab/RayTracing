@@ -14,11 +14,12 @@ def warningLineFormat(message, category, filename, lineno, line=None):
 
 warnings.formatwarning = warningLineFormat
 
+
 # todo: fix docstrings since draw-related methods were removed
 
 
 class Matrix(object):
-    """A matrix and an optical element that can transform a ray or another
+    r"""A matrix and an optical element that can transform a ray or another
     matrix.
 
     The general properties (A,B,C,D) are defined here. The operator "*" is
@@ -134,11 +135,20 @@ class Matrix(object):
         self.label = label
         self.isFlipped = False
         super(Matrix, self).__init__()
+        if not isclose(self.determinant, self.frontIndex / self.backIndex, atol=self.__epsilon__):
+            raise ValueError("The matrix has inconsistent values")
+
+    @property
+    def isIdentity(self):
+        return self.A == 1 and self.D == 1 and self.B == 0 and self.C == 0
 
     @property
     def determinant(self):
         """The determinant of the ABCD matrix is always frontIndex/backIndex,
-        which is often 1.0
+        which is often 1.0. 
+        We make a calculation exception when C == 0 and B is infinity: since
+        B is never really infinity, but C can be precisely zero (especially
+        in free space), then B*C is zero in that particular case.
 
         Examples
         --------
@@ -150,6 +160,10 @@ class Matrix(object):
         the determinant of matrix is equal to : 1.0
 
         """
+
+        if self.C == 0:
+            return self.A * self.D
+        
         return self.A * self.D - self.B * self.C
 
     def __mul__(self, rightSide):
@@ -180,8 +194,8 @@ class Matrix(object):
                 "Unrecognized right side element in multiply: '{0}'\
                  cannot be multiplied by a Matrix".format(rightSide))
 
-    def mul_matrix(self, rightSideMatrix):
-        """ This function is used to combine two elements into a single matrix.
+    def mul_matrix(self, rightSideMatrix: 'Matrix'):
+        r""" This function is used to combine two elements into a single matrix.
         The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
         Total length of the elements is calculated (z) but apertures are lost. We compute
         the first and last vertices.
@@ -203,9 +217,9 @@ class Matrix(object):
             Value of the index (1,2) in the ABCD matrix of the combination of the two elements.
         d : float
             Value of the index (2,2) in the ABCD matrix of the combination of the two elements.
-        frontVertex : (type?)
+        frontVertex : float
             First interface used for FFL
-        backVertex : (type?)
+        backVertex : float
             Last interface used for BFL
         physicalLength: float
             Length of the combination of the two elements.
@@ -268,10 +282,20 @@ class Matrix(object):
         else:
             bv = rightSideMatrix.backVertex
 
-        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L)
+        if self.isIdentity:  # If LHS is identity, take the other's indices
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = rightSideMatrix.backIndex
+        elif rightSideMatrix.isIdentity:  # If RHS is identity, take other's indices
+            fIndex = self.frontIndex
+            bIndex = self.backIndex
+        else:  # Else, take the "first one" front index and the "last one" back index (physical first and last)
+            fIndex = rightSideMatrix.frontIndex
+            bIndex = self.backIndex
+
+        return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L, frontIndex=fIndex, backIndex=bIndex)
 
     def mul_ray(self, rightSideRay):
-        """This function does the multiplication of a ray by a matrix.
+        r"""This function does the multiplication of a ray by a matrix.
         The output shows the propagated ray through the system.
         New position of ray is updated by the physical length of the matrix.
 
@@ -331,16 +355,19 @@ class Matrix(object):
         """
 
         outputRay = Ray()
-        outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
-        outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
 
-        outputRay.z = self.L + rightSideRay.z
-        outputRay.apertureDiameter = self.apertureDiameter
+        if rightSideRay.isNotBlocked:
+            outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
+            outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+            outputRay.z = self.L + rightSideRay.z
+            outputRay.apertureDiameter = self.apertureDiameter
 
-        if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
-            outputRay.isBlocked = True
+            if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
+                outputRay.isBlocked = True
+            else:
+                outputRay.isBlocked = rightSideRay.isBlocked
         else:
-            outputRay.isBlocked = rightSideRay.isBlocked
+            outputRay = rightSideRay
 
         return outputRay
 
@@ -419,7 +446,7 @@ class Matrix(object):
         return self.apertureDiameter != float("+Inf")
 
     def transferMatrix(self, upTo=float('+Inf')):
-        """ The Matrix() that corresponds to propagation from the edge
+        r""" The Matrix() that corresponds to propagation from the edge
         of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is
         provided, the transfer matrix will be from the front edge to the back edge.
         If the element has a null thickness, the matrix representing the element
@@ -575,8 +602,8 @@ class Matrix(object):
         other elements there may be more.  For groups of elements, there can be any 
         number of rays in the list.
 
-		If you only care about the final ray that has propagated through, use 
-		`traceThrough()`
+        If you only care about the final ray that has propagated through, use 
+        `traceThrough()`
         """
 
         rayTrace = []
@@ -632,7 +659,7 @@ class Matrix(object):
         return rayTrace[-1]
 
     def traceMany(self, inputRays):
-        """This function trace each ray from a group of rays from front edge of element to
+        r"""This function trace each ray from a group of rays from front edge of element to
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
 
@@ -776,9 +803,7 @@ class Matrix(object):
         inputRays : object of Ray class
             A group of rays
         progress : bool
-            if True, the progress of the raceTrough is shown (default=Trye)
-        processes : (tyoe?)
-            ???????
+            If True, the progress in percentage of the traceTrough is shown (default=True)
 
         Returns
         -------
@@ -905,10 +930,18 @@ class Matrix(object):
         """ The effective focal lengths calculated from the power (C)
         of the matrix.
 
+        There are in general two effective focal lengths: front effective
+        and back effective focal lengths (not to be confused with back focal
+        and front focal lengths which are measured from the physical interface).
+        The easiest way to calculate this is to use
+        f = -1/C for current matrix, then flipOrientation and f = -1/C
+
+
         Returns
         -------
         effectiveFocalLengths : array
-            Returns the FFL and BFL
+            Returns the effective focal lengths in the forward and backward
+            directions. When in air, both are equal.
 
         See Also
         --------
@@ -928,17 +961,15 @@ class Matrix(object):
         >>> print('focal distances:' , f1)
         focal distances: (5.0, 5.0)
 
-        Notes
-        -----
-        Currently, it is assumed the index is n=1 on either side and
-        both focal lengths are the same.
         """
         if self.hasPower:
-            focalLength = -1.0 / self.C  # FIXME: Assumes n=1 on either side
+            focalLength2 = -1.0 / self.C  # left (n1) to right (n2)
+            focalLength1 = -(self.frontIndex / self.backIndex) / self.C  # right (n2) to left (n2)
         else:
-            focalLength = float("+Inf")
+            focalLength1 = float("+Inf")
+            focalLength2 = float("+Inf")
 
-        return (focalLength, focalLength)
+        return (focalLength1, focalLength2)
 
     def backFocalLength(self):
         """ The focal lengths measured from the back vertex.
@@ -979,8 +1010,8 @@ class Matrix(object):
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
 
-        Currently, it is assumed the index is n=1 on either side and
-        both focal distances are the same.
+        The front and back focal lengths will be different if the index
+        of refraction is different on both sides.
         """
 
         if self.backVertex is not None and self.hasPower:
@@ -1031,8 +1062,8 @@ class Matrix(object):
         we may not know where the front and back vertices are. In that case,
         we return None (or undefined).
 
-        Currently, it is assumed the index is n=1 on either side and
-        both focal distances are the same.
+        The front and back focal lengths will be different if the index
+        of refraction is different on both sides.
         """
 
         if self.frontVertex is not None and self.hasPower:
@@ -1046,10 +1077,13 @@ class Matrix(object):
     def focusPositions(self, z):
         """ Positions of both focal points on either side of the element.
 
+        The front and back focal spots will be different if the index
+        of refraction is different on both sides.
+
         Parameters
         ----------
         z : float
-            The position in which the object is placed
+            Position from where the positions are calculated
 
         Returns
         -------
@@ -1090,7 +1124,7 @@ class Matrix(object):
         Parameters
         ----------
         z : float
-            what does this parameter shows?
+            Position from where the positions are calculated
 
         Returns
         -------
@@ -1112,8 +1146,7 @@ class Matrix(object):
         raytracing.Matrix.focusPositions
         """
         if self.hasPower:
-            p1 = z - (1 - self.D) / self.C  # FIXME: Assumes n=1 on either side
-            # FIXME: Assumes n=1 on either side
+            p1 = z - (self.frontIndex / self.backIndex - self.D) / self.C
             p2 = z + self.L + (1 - self.A) / self.C
         else:
             p1 = None
@@ -1122,7 +1155,7 @@ class Matrix(object):
         return (p1, p2)
 
     def forwardConjugate(self):
-        """ With an object at the front edge of the element, where
+        r""" With an object at the front edge of the element, where
         is the image? Distance after the element by which a ray
         must travel to reach the conjugate plane of the front of
         the element. A positive distance means the image is "distance"
@@ -1170,12 +1203,12 @@ class Matrix(object):
             conjugateMatrix = None  # Unable to compute with inf
         else:
             distance = -self.B / self.D
-            conjugateMatrix = Space(d=distance) * self
+            conjugateMatrix = Space(d=distance, n=self.backIndex) * self
 
         return (distance, conjugateMatrix)
 
     def backwardConjugate(self):
-        """ With an image at the back edge of the element,
+        r""" With an image at the back edge of the element,
         where is the object ? Distance before the element by
         which a ray must travel to reach the conjugate plane at
         the back of the element. A positive distance means the
@@ -1346,9 +1379,14 @@ class Matrix(object):
             description += "\nf = +inf (afocal)\n"
         return description
 
+    def __eq__(self, other):
+        if isinstance(other, Matrix):
+            return self.__dict__ == other.__dict__
+        return False
+
 
 class Lens(Matrix):
-    """A thin lens of focal f, null thickness and infinite or finite diameter
+    r"""A thin lens of focal f, null thickness and infinite or finite diameter
 
     Parameters
     ----------
@@ -1389,8 +1427,6 @@ class Lens(Matrix):
         ----------
         z : float
             Position of the lens
-        label : string
-            (is it the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -1410,7 +1446,7 @@ class Lens(Matrix):
 
 
 class CurvedMirror(Matrix):
-    """A curved mirror of radius R and infinite or finite diameter.
+    r"""A curved mirror of radius R and infinite or finite diameter.
 
     Parameters
     ----------
@@ -1460,8 +1496,6 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
         ----------
         z : float
             Position of the lens
-        label : string
-            (is it in the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -1494,7 +1528,7 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
 
 
 class Space(Matrix):
-    """Free space of length d
+    r"""Free space of length d
 
     Parameters
     ----------
@@ -1552,7 +1586,7 @@ class Space(Matrix):
         """
         distance = upTo
         if distance < self.L:
-            return Space(distance)
+            return Space(distance, self.frontIndex)
         else:
             return self
 
@@ -1616,7 +1650,7 @@ class DielectricInterface(Matrix):
 
 
 class ThickLens(Matrix):
-    """A thick lens of first radius R1 and then R2, with an index n
+    r"""A thick lens of first radius R1 and then R2, with an index n
     and length d
 
     Parameters
@@ -1679,8 +1713,6 @@ class ThickLens(Matrix):
         ----------
         z : float
             Position of the element
-        label : string
-            (is it in the input?)the label to be used.  Can include LaTeX math code.
 
         Returns
         -------
@@ -1745,7 +1777,7 @@ class ThickLens(Matrix):
 
 
 class DielectricSlab(ThickLens):
-    """A slab of dielectric material of index n and length d, with flat faces
+    r"""A slab of dielectric material of index n and length d, with flat faces
 
     Parameters
     ----------
@@ -1803,7 +1835,7 @@ class DielectricSlab(ThickLens):
 
 
 class Aperture(Matrix):
-    """An aperture of finite diameter, null thickness.
+    r"""An aperture of finite diameter, null thickness.
 
     Parameters
     ----------

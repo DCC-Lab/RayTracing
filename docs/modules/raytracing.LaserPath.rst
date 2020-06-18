@@ -40,4 +40,5 @@ LaserPath
       ~LaserPath.determinant
       ~LaserPath.hasPower
       ~LaserPath.isImaging
+      ~LaserPath.largestDiameter
 

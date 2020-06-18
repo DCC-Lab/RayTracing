@@ -33,4 +33,5 @@ System2f
       ~System2f.determinant
       ~System2f.hasPower
       ~System2f.isImaging
+      ~System2f.largestDiameter
 

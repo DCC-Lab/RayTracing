@@ -33,4 +33,5 @@ ACN254\_075\_A
       ~ACN254_075_A.determinant
       ~ACN254_075_A.hasPower
       ~ACN254_075_A.isImaging
+      ~ACN254_075_A.largestDiameter
 
