@@ -1191,6 +1191,7 @@ class ApertureGraphic(MatrixGraphic):
 class MatrixGroupGraphic(MatrixGraphic):
     def __init__(self, matrixGroup: MatrixGroup):
         self.matrixGroup = matrixGroup
+        self._halfHeight = None
         super().__init__(matrixGroup)
 
     @property
@@ -1199,6 +1200,12 @@ class MatrixGroupGraphic(MatrixGraphic):
         for element in self.matrixGroup.elements:
             L += element.L
         return L
+
+    @property
+    def halfHeight(self):
+        if self._halfHeight is None:
+            self._halfHeight = self.displayHalfHeight()
+        return self._halfHeight
 
     def drawAt(self, z, axes, showLabels=True):
         """ Draw each element of this group """
@@ -1243,12 +1250,40 @@ class MatrixGroupGraphic(MatrixGraphic):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = self.matrixGroup.largestDiameter() / 2
+        halfHeight = self.matrixGroup.largestDiameter / 2
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
                           xycoords='data', fontsize=12,
                           ha='center', va='bottom')
+
+    def display(self):
+        fig, axes = plt.subplots(figsize=(10, 7))
+        self.drawAt(0, axes, showLabels=True)
+        self.drawAperture(0, axes)
+        self.drawPointsOfInterest(0, axes)
+        self.drawVertices(0, axes)
+        self.drawCardinalPoints(0, axes)
+        self.drawPrincipalPlanes(0, axes)
+        axes.set_ylim(-self.halfHeight * 1.6, self.halfHeight * 1.6)
+        self._showPlot()
+
+    def _showPlot(self):  # pragma: no cover
+        # internal, do not use
+        try:
+            plt.plot()
+            if sys.platform.startswith('win'):
+                plt.show()
+            else:
+                plt.draw()
+                while True:
+                    if plt.get_fignums():
+                        plt.pause(0.001)
+                    else:
+                        break
+
+        except KeyboardInterrupt:
+            plt.close()
 
 
 class AchromatDoubletLensGraphic(MatrixGroupGraphic):
