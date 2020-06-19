@@ -20,9 +20,17 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix()
         self.assertIsNotNone(m)
 
+    def testNullApertureDiameter(self):
+        with self.assertRaises(ValueError):
+            Matrix(apertureDiameter=0)
+
+    def testNegativeApertureDiameter(self):
+        with self.assertRaises(ValueError):
+            Matrix(apertureDiameter=-0.1)
+
     def testMatrixExplicit(self):
         m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1,
-                   frontVertex=0, backVertex=0, apertureDiameter=1.0)
+                   frontVertex=0, backVertex=0, apertureDiameter=0.5)
         self.assertIsNotNone(m)
         self.assertEqual(m.A, 1)
         self.assertEqual(m.B, 0)
@@ -31,7 +39,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m.L, 1)
         self.assertEqual(m.backVertex, 0)
         self.assertEqual(m.frontVertex, 0)
-        self.assertEqual(m.apertureDiameter, 1)
+        self.assertEqual(m.apertureDiameter, 0.5)
 
     def testMatrixProductMath(self):
         m1 = Matrix(A=4, B=3, C=1, D=1)
@@ -586,16 +594,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertNotEqual(m, "Trust me, this is a Matrix. This is equal to Matrix()")
 
     def testEqualityMatricesNotEqualSameABCD(self):
-        m = Matrix(1,0,0,1)
-        m2 = Matrix(1,0,0,1, frontVertex=1)
+        m = Matrix(1, 0, 0, 1)
+        m2 = Matrix(1, 0, 0, 1, frontVertex=1)
         self.assertNotEqual(m, m2)
-        m2 = Matrix(1,0,0,1, backVertex=1)
+        m2 = Matrix(1, 0, 0, 1, backVertex=1)
         self.assertNotEqual(m, m2)
-        m2 = Matrix(1,0,0,1, frontIndex=10, backIndex=10)
+        m2 = Matrix(1, 0, 0, 1, frontIndex=10, backIndex=10)
         self.assertNotEqual(m, m2)
 
     def testEqualityMatricesNotEqualDifferentABCD(self):
-        m = Matrix(1,0,0,1)
+        m = Matrix(1, 0, 0, 1)
         m2 = Matrix(A=1 / 2, D=2)
         self.assertNotEqual(m, m2)
 
