@@ -137,6 +137,12 @@ class AchromatDoubletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    def effectiveFocalLengths(self, wavelength=None):
+        if wavelength is not None:
+            # do it
+        else:
+            # do something else
+
 
 class SingletLens(MatrixGroup):
     """
