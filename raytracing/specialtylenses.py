@@ -137,11 +137,6 @@ class AchromatDoubletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
-    def display(self):
-        from .figure import AchromatDoubletLensGraphic
-        return AchromatDoubletLensGraphic(self).display()
-
-
 class SingletLens(MatrixGroup):
     """
     General singlet lens with an effective focal length of f, back focal

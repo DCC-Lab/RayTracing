@@ -1365,7 +1365,8 @@ class Matrix(object):
         return halfHeight
 
     def display(self):
-        MatrixGraphic(self).display()
+        from .figure import Graphic
+        return Graphic(self).display()
 
     def __str__(self):
         """ String description that allows the use of print(Matrix())
