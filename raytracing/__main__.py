@@ -67,7 +67,7 @@ if 2 in examples:
     path.display()
     """)
     # or
-    # path.save("Figure 2.pdf")
+    # path.saveFigure("Figure 2.pdf")
 
 if 3 in examples:
     path = ImagingPath()

@@ -161,7 +161,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         filename = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.save(filename, comments=comments)
+        path.saveFigure(filename, comments=comments)
         if not os.path.exists(filename):
             self.fail("No file saved (with comments)")
         os.remove(filename)
@@ -169,7 +169,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
     def testSaveWithoutComments(self):
         filename = self.tempFilePath("test.png")
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.save(filename)
+        path.saveFigure(filename)
         if not os.path.exists(filename):
             self.fail("No file saved (without comments)")
         os.remove(filename)
