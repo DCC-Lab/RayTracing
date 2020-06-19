@@ -1,5 +1,6 @@
 from .imagingpath import *
 from .laserpath import *
+from .lasercavity import *
 
 from .specialtylenses import *
 from .axicon import *
@@ -408,7 +409,7 @@ if 18 in examples:
     path.append(Space(d=10))
     path.display()""")
 if 19 in examples:
-    cavity = LaserPath(label="Laser cavity: round trip\nCalculated laser modes")
+    cavity = LaserCavity(label="Laser cavity: round trip\nCalculated laser modes")
     cavity.isResonator = True
     cavity.append(Space(d=160))
     cavity.append(DielectricSlab(thickness=100, n=1.8))
