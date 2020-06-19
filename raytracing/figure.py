@@ -1523,11 +1523,11 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 
 class Graphic:
     def __new__(cls, element):
-        if type(element) is AchromatDoubletLens:
+        if type(element) is AchromatDoubletLens or issubclass(type(element), AchromatDoubletLens):
             return AchromatDoubletLensGraphic(element)
-        if type(element) is SingletLens:
+        if type(element) is SingletLens or issubclass(type(element), SingletLens):
             return SingletLensGraphic(element)
-        if issubclass(type(element), Objective):
+        if issubclass(type(element), Objective) or issubclass(type(element), Objective):
             return ObjectiveGraphic(element)
         if issubclass(type(element), MatrixGroup):
             return MatrixGroupGraphic(element)
