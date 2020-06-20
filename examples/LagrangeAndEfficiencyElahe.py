@@ -1,3 +1,4 @@
+import envexamples
 from raytracing import *
 import numpy as np
 
@@ -56,7 +57,7 @@ for i in range(N):
         lagrangeNotBlocked.append(LI)
 print('something')
 
-showHistogram(lagrangeBlocked,lagrangeNotBlocked,"blocked rays", "none blocked rays", "LI for all rays Vs. marginal ray")
+showHistogram(lagrangeBlocked,lagrangeNotBlocked,"blocked rays", "none blocked rays", "LI for all rays Vs. principal ray")
 
 
 # calculations for the axial ray
