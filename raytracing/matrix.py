@@ -122,6 +122,8 @@ class Matrix(object):
         # Length of this element
         self.L = float(physicalLength)
         # Aperture
+        if apertureDiameter <= 0:
+            raise ValueError("The aperture diameter must be strictly positive.")
         self.apertureDiameter = apertureDiameter
 
         # First and last interfaces. Used for BFL and FFL
@@ -163,7 +165,7 @@ class Matrix(object):
 
         if self.C == 0:
             return self.A * self.D
-        
+
         return self.A * self.D - self.B * self.C
 
     def __mul__(self, rightSide):
