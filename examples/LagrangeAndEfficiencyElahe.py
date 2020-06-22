@@ -1,6 +1,7 @@
 import envexamples
 from raytracing import *
 import numpy as np
+import math
 
 def histogramValues(values):
     counts, binEdges = histogram(values, bins=40, density=True)
@@ -45,6 +46,8 @@ lagrangeBlocked = []
 lagrangeNotBlocked = []
 asPosition, size = path.apertureStop()
 
+## first approach
+
 # calculations for the principal ray
 for i in range(N):
     ray1 = prncplRay
@@ -74,3 +77,29 @@ print('something')
 
 showHistogram(lagrangeBlocked, lagrangeNotBlocked, "blocked rays" , "none blocked rays"
               , "LI for all rays Vs. axial ray")
+
+
+## second approach
+
+lagrangeBlocked = []
+lagrangeNotBlocked = []
+ray1 = prncplRay
+ray2 = axlRay
+for i in range(N):
+    ray3 = rays1[i]
+    ray3Out = path.traceThrough(ray3)
+    I12 = ray1.theta*ray2.y-ray2.theta*ray1.y
+    I13 = ray1.theta * ray3.y - ray3.theta * ray1.y
+    I32 = ray3.theta * ray2.y - ray2.theta * ray3.y
+    A = I32/I12
+    B = I13/I12
+    lagrangeVal = (abs(A*math.sin(ray3.theta)**2)/3.14)**0.5
+    if ray3Out.isBlocked:
+        lagrangeBlocked.append(lagrangeVal)
+    else:
+        lagrangeNotBlocked.append(lagrangeVal)
+print('something')
+
+showHistogram(lagrangeBlocked, lagrangeNotBlocked, "blocked rays" , "none blocked rays"
+              , "comparing LI for the third ray")
+
