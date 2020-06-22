@@ -1,5 +1,6 @@
 from raytracing import *
 import numpy as np
+import math
 
 def histogramValues(values):
     counts, binEdges = histogram(values, bins=40, density=True)
@@ -35,6 +36,8 @@ path.append(Aperture(diameter=10, label='Camera'))
 prncplRay = path.principalRay()
 axlRay = path.axialRay()
 
+## first approach with tracing all rays and computing the Lagrange invariante with each ray
+
 axialAngle = path.axialRay()
 maxAngle = axialAngle.theta
 halfFOV = path.fieldOfView()/2
@@ -45,31 +48,60 @@ lagrangeNotBlocked = []
 asPosition, size = path.apertureStop()
 
 # calculations for the principal ray
+# for i in range(N):
+#     ray1 = prncplRay
+#     ray2 = rays1[i]
+#     ray2Out = path.traceThrough(ray2)
+#     LI = path.lagrangeInvariant(ray1, ray2)
+#     if ray2Out.isBlocked:
+#         lagrangeBlocked.append(LI)
+#     else:
+#         lagrangeNotBlocked.append(LI)
+# print('something')
+#
+# showHistogram(lagrangeBlocked,lagrangeNotBlocked,"blocked rays", "none blocked rays", "LI for all rays Vs. marginal ray")
+#
+#
+# # calculations for the axial ray
+# for i in range(N):
+#     ray1 = axlRay
+#     ray2 = rays1[i]
+#     ray2Out = path.traceThrough(ray2)
+#     LI = path.lagrangeInvariant(ray1, ray2)
+#     if ray2Out.isBlocked:
+#         lagrangeBlocked.append(LI)
+#     else:
+#         lagrangeNotBlocked.append(LI)
+# print('something')
+#
+# showHistogram(lagrangeBlocked, lagrangeNotBlocked, "blocked rays" , "none blocked rays"
+#               , "LI for all rays Vs. axial ray")
+
+
+
+## Second approach with coefficients
+
+ray1 = axlRay
+ray2 = prncplRay
 for i in range(N):
-    ray1 = prncplRay
-    ray2 = rays1[i]
-    ray2Out = path.traceThrough(ray2)
-    LI = path.lagrangeInvariant(ray1, ray2)
-    if ray2Out.isBlocked:
-        lagrangeBlocked.append(LI)
+    ray3 = rays1[i]
+    ray3Out = path.traceThrough(ray3)
+    I12 = ray1.theta * ray2.y - ray2.theta * ray1.y
+    I13 = ray1.theta * ray3.y - ray3.theta * ray1.y
+    I32 = ray3.theta * ray2.y - ray2.theta * ray3.y
+    A = I32/I12
+    B = I13/I12
+    lagrangeVal = abs((A*math.sin(ray3.theta)**2)/3.14)**0.5
+    if ray3Out.isBlocked:
+        lagrangeBlocked.append(lagrangeVal)
     else:
-        lagrangeNotBlocked.append(LI)
-print('something')
+        lagrangeNotBlocked.append(lagrangeVal)
 
-showHistogram(lagrangeBlocked,lagrangeNotBlocked,"blocked rays", "none blocked rays", "LI for all rays Vs. marginal ray")
-
-
-# calculations for the axial ray
-for i in range(N):
-    ray1 = axlRay
-    ray2 = rays1[i]
-    ray2Out = path.traceThrough(ray2)
-    LI = path.lagrangeInvariant(ray1, ray2)
-    if ray2Out.isBlocked:
-        lagrangeBlocked.append(LI)
-    else:
-        lagrangeNotBlocked.append(LI)
 print('something')
 
 showHistogram(lagrangeBlocked, lagrangeNotBlocked, "blocked rays" , "none blocked rays"
               , "LI for all rays Vs. axial ray")
+
+
+
+
