@@ -145,7 +145,7 @@ class Figure:
         else:
             self._showPlot()
 
-    def displayGaussianBeam(self, inputBeams=None, filepath=None):
+    def displayGaussianBeam(self, beams=None, filepath=None):
         """ Display the optical system and trace the laser beam.
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -156,7 +156,9 @@ class Figure:
             A list of Gaussian beams
         """
 
-        self.drawBeamTraces(beams=inputBeams)
+        if len(beams) != 0:
+            self.drawBeamTraces(beams=beams)
+
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
@@ -301,7 +303,10 @@ class Figure:
                 displayRange = graphic.halfHeight * 2
 
         if displayRange == float('+Inf') or displayRange == 0:
-            displayRange = self.path.inputBeam.w * 3
+            if self.path.inputBeam is not None:
+                displayRange = self.path.inputBeam.w * 3
+            else:
+                displayRange = 100
 
         return displayRange
 

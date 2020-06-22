@@ -53,7 +53,7 @@ class LaserPath(MatrixGroup):
         self.showPlanesAcrossPointsOfInterest = True
         super(LaserPath, self).__init__(elements=elements, label=label)
 
-    def display(self, inputBeam=None, inputBeams=None, comments=None):  # pragma: no cover
+    def display(self, beams=None, comments=None):  # pragma: no cover
         """ Display the optical system and trace the laser beam. 
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -67,16 +67,11 @@ class LaserPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
-        if inputBeam is not None:
-            inputBeams = [inputBeam]
-            self.inputBeam = inputBeam
-        elif inputBeams is not None:
-            self.inputBeam = inputBeams[0]
-        else:
-            inputBeams = [self.inputBeam]
+        if beams is None :
+            beams = [self.inputBeam]
 
         figure = Figure(opticalPath=self)
 
         figure.createFigure(title=self.label, comments=comments)
 
-        figure.displayGaussianBeam(inputBeams=inputBeams)
+        figure.displayGaussianBeam(beams=beams)
