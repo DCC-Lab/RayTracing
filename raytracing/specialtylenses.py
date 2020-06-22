@@ -139,9 +139,9 @@ class AchromatDoubletLens(MatrixGroup):
 
     def effectiveFocalLengths(self, wavelength=None):
         if wavelength is not None:
-            # do it
+            pass
         else:
-            # do something else
+            pass
 
 
 class SingletLens(MatrixGroup):
