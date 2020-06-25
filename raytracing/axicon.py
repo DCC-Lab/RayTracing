@@ -119,7 +119,7 @@ class Axicon(Matrix):
         raise TypeError("Cannot calculate final matrix with axicon in path. \
 			You can only propagate rays all rhe way through")
 
-    def drawAt(self, z, axes):
+    def drawAt(self, z, axes):  # pragma: no cover
         halfHeight = 4
         if self.apertureDiameter != float('Inf'):
             halfHeight = self.apertureDiameter / 2
