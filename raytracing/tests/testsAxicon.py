@@ -87,11 +87,11 @@ class TestAxicon(envtest.RaytracingTestCase):
         matrix = Matrix()
         axicon = Axicon(2.6543, 1.2)
         with self.assertRaises(TypeError):
-            axicon.mul_mat(matrix)
+            axicon.mul_matrix(matrix)
 
     def testDifferentMultiplications(self):
         ray = Ray()
-        beam = GaussianBeam(w=1, R=10)
+        beam = GaussianBeam(w=1, R=10, n=1.67)
         matrix = Matrix()
         axicon = Axicon(4.3, 1.67)
         self.assertIsNotNone(axicon * ray)
