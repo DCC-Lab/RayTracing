@@ -63,15 +63,41 @@ class TestAxicon(envtest.RaytracingTestCase):
         axicon = Axicon(alpha, n, 100)
         self.assertAlmostEqual(axicon.focalLineLength(2), 2.385211688)
 
-    def testMulRayAlreadyBlockedAndYPositive(self):
-        ray = Ray(10, -3.141592, isBlocked=True)
+    def testMulRayYPositive(self):
+        ray = Ray(10, -3.141592)
         n = 1.1
         alpha = 2.56
         axicon = Axicon(alpha, n, 50)
-        outputRay = Ray(10, -3.141592, isBlocked=True)
+        outputRay = Ray(10, -3.141592)
         # Axicon stuff:
         outputRay.theta -= 0.256
         self.assertEqual(axicon.mul_ray(ray), outputRay)
+
+    def testMulRayYNegative(self):
+        ray = Ray(-10, 3.141592)
+        n = 1.1
+        alpha = 2.56
+        axicon = Axicon(alpha, n, 50)
+        outputRay = Ray(-10, 3.141592)
+        # Axicon stuff:
+        outputRay.theta += 0.256
+        self.assertEqual(axicon.mul_ray(ray), outputRay)
+
+    def testMulMatrix(self):
+        matrix = Matrix()
+        axicon = Axicon(2.6543, 1.2)
+        with self.assertRaises(TypeError):
+            axicon.mul_mat(matrix)
+
+    def testDifferentMultiplications(self):
+        ray = Ray()
+        beam = GaussianBeam(w=1, R=10)
+        matrix = Matrix()
+        axicon = Axicon(4.3, 1.67)
+        self.assertIsNotNone(axicon * ray)
+        self.assertIsNotNone(axicon * beam)
+        with self.assertRaises(TypeError):
+            axicon * matrix
 
 if __name__ == '__main__':
     envtest.main()
