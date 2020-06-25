@@ -44,3 +44,7 @@ if __name__ == "__main__":
             f.write(code)
         printed = subprocess.check_output(self.exec + " " + self.printHelloWorld, universal_newlines=True)
         self.assertEqual(printed.strip(), "Hello Toto\nHello Toto Jr.")
+
+
+if __name__ == '__main__':
+    envtest.main()
