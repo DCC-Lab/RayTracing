@@ -102,7 +102,7 @@ class Axicon(Matrix):
 
         return outputRay
 
-    def mul_mat(self, rightSideMatrix):
+    def mul_matrix(self, rightSideMatrix):
         """ The final matrix of an optical path with an axicon can be calculated using this function.
 
         Parameters
