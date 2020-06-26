@@ -2,6 +2,7 @@ import envtest
 
 from raytracing import *
 from numpy import random
+from numpy import *
 
 inf = float("+inf")
 degrees = math.pi/180
@@ -49,9 +50,11 @@ class TestAxicon(envtest.RaytracingTestCase):
         n = 1.5
         alpha = 2.6*degrees
         axicon = Axicon(alpha, n, 100)
-        self.assertAlmostEqual(axicon.focalLineLength(), 38.46153846)
+        y = 50
+        L = y/tan(axicon.deviationAngle())
+        self.assertAlmostEqual(axicon.focalLineLength(), L,0)
 
-    def testFocalLineLengthNegativeY(self):
+    def testFocalLineLengthSignOfY(self):
         n = 1.43
         alpha = 1.95*degrees
         axicon = Axicon(alpha=alpha, n=n, diameter=100)
@@ -61,27 +64,27 @@ class TestAxicon(envtest.RaytracingTestCase):
         n = 1.43
         alpha = 1.95*degrees
         axicon = Axicon(alpha, n, 100)
-        self.assertAlmostEqual(axicon.focalLineLength(2), 2.385211688)
+        y = 2
+        L = y/tan(axicon.deviationAngle())
+        self.assertAlmostEqual(axicon.focalLineLength(y), L, 1)
 
-    def testMulRayYPositive(self):
-        ray = Ray(10, -3.141592)
+    def testHighRayIsDeviatedDown(self):
+        ray = Ray(10, 0)
         n = 1.1
         alpha = 2.56*degrees
         axicon = Axicon(alpha, n, 50)
-        outputRay = Ray(10, -3.141592)
-        # Axicon stuff:
-        outputRay.theta -= 0.256
-        self.assertEqual(axicon.mul_ray(ray), outputRay)
+        outputRay = axicon*ray
+        self.assertEqual(outputRay.theta, -axicon.deviationAngle())
+        self.assertTrue(outputRay.theta < 0)
 
-    def testMulRayYNegative(self):
-        ray = Ray(-10, 3.141592)
+    def testLowRayIsDeviatedUp(self):
+        ray = Ray(-10, 0)
         n = 1.1
         alpha = 2.56*degrees
         axicon = Axicon(alpha, n, 50)
-        outputRay = Ray(-10, 3.141592)
-        # Axicon stuff:
-        outputRay.theta += 0.256
-        self.assertEqual(axicon.mul_ray(ray), outputRay)
+        outputRay = axicon*ray
+        self.assertEqual(outputRay.theta, axicon.deviationAngle())
+        self.assertTrue(outputRay.theta > 0)
 
     def testMulMatrix(self):
         matrix = Matrix()
