@@ -559,12 +559,12 @@ class Figure:
         else:
             halfAngle = self.path.fanAngle / 2.0
             halfHeight = self.path.objectHeight / 2.0
-            rayGroup = Ray.fanGroup(
+            rayGroup = UniformRays(
                 yMin=-halfHeight,
                 yMax=halfHeight,
                 M=self.path.rayNumber,
-                radianMin=-halfAngle,
-                radianMax=halfAngle,
+                thetaMin=-halfAngle,
+                thetaMax=halfAngle,
                 N=self.path.fanNumber)
             linewidth = 0.5
 
