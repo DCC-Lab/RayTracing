@@ -18,8 +18,8 @@ class TestAxicon(envtest.RaytracingTestCase):
         self.assertEqual(axicon.alpha, alpha)
         self.assertEqual(axicon.apertureDiameter, diameter)
         self.assertEqual(axicon.label, label)
-        self.assertEqual(axicon.frontIndex, n)
-        self.assertEqual(axicon.backIndex, n)
+        self.assertEqual(axicon.frontIndex, 1.0)
+        self.assertEqual(axicon.backIndex, 1.0)
 
     def testDeviationAngleIs0(self):
         n = 1
@@ -95,7 +95,9 @@ class TestAxicon(envtest.RaytracingTestCase):
         matrix = Matrix()
         axicon = Axicon(4.3, 1.67)
         self.assertIsNotNone(axicon * ray)
-        self.assertIsNotNone(axicon * beam)
+        with self.assertRaises(TypeError):
+            axicon * beam
+            
         with self.assertRaises(TypeError):
             axicon * matrix
 
