@@ -82,9 +82,11 @@ class ImagingPath(MatrixGroup):
 
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
-        self.fanAngle = 0.1  # full fan angle for rays
-        self.fanNumber = 9  # number of rays in fan
-        self.rayNumber = 3  # number of points on object
+        self._fanAngle = 0.1  # full fan angle for rays
+        self._fanNumber = 9  # number of rays in fan
+        self._rayNumber = 3  # number of points on object
+
+        self._rays = UniformRays(self.objectHeight, -self.objectHeight, -0.05, 0.05, 3, 9)
 
         # Constants when calculating field stop
         self.precision = 0.001
@@ -103,6 +105,55 @@ class ImagingPath(MatrixGroup):
         super(ImagingPath, self).__init__(elements=elements, label=label)
 
     @property
+    def fanAngle(self):
+        msg = "The usage of the 'fanAngle' property is deprecated and will be removed in a future version. "
+        msg += "Please refer to updateRays to modify the generated rays."
+        warnings.warn(msg, DeprecationWarning)
+        return self._fanAngle
+
+    @fanAngle.setter
+    def fanAngle(self, fanAngle: float):
+        msg = "The usage of the 'fanAngle' property is deprecated and will be removed in a future version. "
+        msg += "Please refer to updateRays to modify the generated rays."
+        warnings.warn(msg, DeprecationWarning)
+        self._fanAngle = fanAngle
+        self.updateRays(thetaMax=fanAngle / 2, thetaMin=fanAngle / 2)
+
+    @property
+    def fanNumber(self):
+        msg = "The usage of the 'fanNumber' property is deprecated and will be removed in a future version. "
+        msg += "Please refer to updateRays to modify the generated rays."
+        warnings.warn(msg, DeprecationWarning)
+        return self._fanNumber
+
+    @fanNumber.setter
+    def fanNumber(self, fanNumber: int):
+        msg = "The usage of the 'fanNumber' property is deprecated and will be removed in a future version. "
+        msg += "Please refer to updateRays to modify the generated rays."
+        warnings.warn(msg, DeprecationWarning)
+        if fanNumber <= 0:
+            raise ValueError("The number of fan must be at least 1.")
+        self._fanNumber = fanNumber
+        self.updateRays(M=fanNumber)
+
+    @property
+    def rayNumber(self):
+        msg = "The usage of the 'rayNumber' property is deprecated and will be removed in a future version. "
+        msg += "Please refer to updateRays to modify the generated rays."
+        warnings.warn(msg, DeprecationWarning)
+        return self._rayNumber
+
+    @rayNumber.setter
+    def rayNumber(self, numberOfRays: int):
+        msg = "The usage of the 'rayNumber' property is deprecated and will be removed in a future version. "
+        msg += "Please refer to updateRays to modify the generated rays."
+        warnings.warn(msg, DeprecationWarning)
+        if numberOfRays <= 0:
+            raise ValueError("There must be at least 1 ray per fan.")
+        self._rayNumber = numberOfRays
+        self.updateRays(N=numberOfRays)
+
+    @property
     def objectHeight(self):
         """Get or set the object height, at the starting edge of the ImagingPath.
         """
@@ -116,6 +167,27 @@ class ImagingPath(MatrixGroup):
             raise ValueError("The object height can't be negative.")
         self._objectHeight = objectHeight
         self.figure.designParams['limitObjectToFieldOfView'] = False
+        self.updateRays(yMax=objectHeight / 2, yMin=-objectHeight / 2)
+
+    @property
+    def rays(self):
+        return self._rays
+
+    def updateRays(self, yMax: float = None, yMin: float = None, thetaMax: float = None, thetaMin: float = None,
+                   M: int = None, N: int = None):
+        if yMax is None:
+            yMax = self._rays.yMax
+        if yMin is None:
+            yMin = self._rays.yMin
+        if thetaMax is None:
+            thetaMax = self.rays.thetaMax
+        if thetaMin is None:
+            thetaMin = self.rays.thetaMin
+        if M is None:
+            M = self.rays.M
+        if N is None:
+            N = self.rays.N
+        self._rays = UniformRays(yMax, yMin, thetaMax, thetaMin, M, N)
 
     def chiefRay(self, y=None):
         r"""This function returns the chief ray for a height y at object.
@@ -180,7 +252,7 @@ class ImagingPath(MatrixGroup):
             return None
 
         if y is None:
-            y = self.fieldOfView()/2
+            y = self.fieldOfView() / 2
             if abs(y) == float("+inf"):
                 raise ValueError("Must provide y when the field of view is infinite")
 
@@ -204,12 +276,12 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        objectEdge = self.fieldOfView()/2
+        objectEdge = self.fieldOfView() / 2
         if objectEdge == float("+inf"):
             return None
 
         principalRay = self.chiefRay(y=objectEdge)
-        principalRay.y -= 0.001 #FIXME: be more intelligent than this.
+        principalRay.y -= 0.001  # FIXME: be more intelligent than this.
         return principalRay
 
     def marginalRays(self, y=0):
