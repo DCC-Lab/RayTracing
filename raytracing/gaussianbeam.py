@@ -45,7 +45,7 @@ class GaussianBeam(object):
             raise ValueError("Please specify 'q' or 'w'.")
 
         if q is not None and w is not None:
-            if areNotEqualRelative(self.q, q, relTol):
+            if areRelativelyNotEqual(self.q, q, relTol):
                 msg = f"Mismatch between the given q '{q}' and the computed q '{self.q}' ({relTol * 100}% tolerance)."
                 raise ValueError(msg)
 

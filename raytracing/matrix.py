@@ -138,7 +138,7 @@ class Matrix(object):
         self.isFlipped = False
         super(Matrix, self).__init__()
 
-        if areNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
+        if areAbsolutelyNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
             raise ValueError("The matrix has inconsistent values: \
                 determinant is incorrect considering front and back indices.")
 
