@@ -75,7 +75,7 @@ class Axicon(Matrix):
         if yMax == None:
             yMax = self.apertureDiameter / 2
 
-        return yMax / (self.n - 1.0) / self.alpha
+        return abs(yMax) / (self.n - 1.0) / self.alpha
 
     def mul_ray(self, rightSideRay):
         """ This function is used to calculate the output ray through an axicon.
