@@ -106,14 +106,14 @@ class ImagingPath(MatrixGroup):
 
     @property
     def fanAngle(self):
-        msg = "The usage of the 'fanAngle' property is deprecated and will be removed in a future version. "
+        msg = "The use of the 'fanAngle' property is deprecated and will be removed in a future version. "
         msg += "Please refer to updateRays to modify the generated rays."
         warnings.warn(msg, DeprecationWarning)
         return self._fanAngle
 
     @fanAngle.setter
     def fanAngle(self, fanAngle: float):
-        msg = "The usage of the 'fanAngle' property is deprecated and will be removed in a future version. "
+        msg = "The use of the 'fanAngle' property is deprecated and will be removed in a future version. "
         msg += "Please refer to updateRays to modify the generated rays."
         warnings.warn(msg, DeprecationWarning)
         self._fanAngle = fanAngle
@@ -121,14 +121,14 @@ class ImagingPath(MatrixGroup):
 
     @property
     def fanNumber(self):
-        msg = "The usage of the 'fanNumber' property is deprecated and will be removed in a future version. "
+        msg = "The use of the 'fanNumber' property is deprecated and will be removed in a future version. "
         msg += "Please refer to updateRays to modify the generated rays."
         warnings.warn(msg, DeprecationWarning)
         return self._fanNumber
 
     @fanNumber.setter
     def fanNumber(self, fanNumber: int):
-        msg = "The usage of the 'fanNumber' property is deprecated and will be removed in a future version. "
+        msg = "The use of the 'fanNumber' property is deprecated and will be removed in a future version. "
         msg += "Please refer to updateRays to modify the generated rays."
         warnings.warn(msg, DeprecationWarning)
         if fanNumber <= 0:
@@ -138,14 +138,14 @@ class ImagingPath(MatrixGroup):
 
     @property
     def rayNumber(self):
-        msg = "The usage of the 'rayNumber' property is deprecated and will be removed in a future version. "
+        msg = "The use of the 'rayNumber' property is deprecated and will be removed in a future version. "
         msg += "Please refer to updateRays to modify the generated rays."
         warnings.warn(msg, DeprecationWarning)
         return self._rayNumber
 
     @rayNumber.setter
     def rayNumber(self, numberOfRays: int):
-        msg = "The usage of the 'rayNumber' property is deprecated and will be removed in a future version. "
+        msg = "The use of the 'rayNumber' property is deprecated and will be removed in a future version. "
         msg += "Please refer to updateRays to modify the generated rays."
         warnings.warn(msg, DeprecationWarning)
         if numberOfRays <= 0:
