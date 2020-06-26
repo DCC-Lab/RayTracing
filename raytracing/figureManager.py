@@ -1,57 +1,316 @@
+from .graphics import *
+from .ray import Ray
 import matplotlib.pyplot as plt
-import sys
 import itertools
-from raytracing.graphics import *
-from raytracing.interface import *
-from raytracing import *
-
-"""
-ImagingPath.display(mode='2D'):
-    for element in self.elements:
-        self.figure.add(Graphic(element))
-    
-    if mode is '2D':
-        self.figure.display2D()
-
-"""
+import warnings
+import sys
 
 
-class FigureContainer:
+class Figure:
     """Base class to contain the required objects of a figure.
-    Use a backend-derived Figure class to enable display features. """
-    def __init__(self):
+    Promote to a backend-derived Figure class to enable display features.
+    """
+    def __init__(self, opticalPath):
+        self.path = opticalPath
+
         self.graphics = []
         self.lines = []
         self.labels = []
 
-        self.style = "presentation"  # ['publication', 'blueprint']
-        self.grayscale = False
-        self.params = {}
+        self.styles = dict()
+        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
+                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
+                                  'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False}
+        self.styles['publication'] = self.styles['default'].copy()
+        self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
+        self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
+                                           'imageColor': '0.3', 'objectColor': '0.1'})
 
-    def addGraphic(self):
-        pass
+        self.designParams = self.styles['default']
 
-    def addLine(self):
-        pass
+    def design(self, style: str = None,
+               rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
+               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
+        """ Update the design parameters of the figure.
+        All parameters are None by default to allow for the update of one parameter at a time.
 
-    def addLabel(self):
-        pass
+        Parameters
+        ----------
+        style: str, optional
+            Set all design parameters following a supported design style : 'default', 'presentation', 'publication'.
+        rayColors : List[Union[str, tuple]], optional
+            List of the colors to use for the three different ray type. Default is ['b', 'r', 'g'].
+        onlyAxialRay : bool, optional
+            Only draw the ray fan coming from the center of the object (axial ray).
+            Works with fanAngle and fanNumber. Default to False.
+        imageColor : Union[str, tuple], optional
+            Color of image arrows. Default to 'r'.
+        objectColor : Union[str, tuple], optional
+            Color of object arrow. Default to 'b'.
+        """
+        if style is not None:
+            if style in self.styles.keys():
+                self.designParams = self.styles[style]
+            else:
+                raise ValueError("Available styles are : {}".format(self.styles.keys()))
 
-    def design(self):
-        pass
+        newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
+                           'imageColor': imageColor, 'objectColor': objectColor}
+        for key, value in newDesignParams.items():
+            if value is not None:
+                if key is 'rayColors':
+                    assert len(value) is 3, \
+                        "rayColors has to be a list with 3 elements."
+                self.designParams[key] = value
+
+    def initializeDisplay(self):
+        """ Configure the imaging path and the figure according to the display conditions. """
+
+        note1 = ""
+        note2 = ""
+        if self.designParams['limitObjectToFieldOfView']:
+            fieldOfView = self.path.fieldOfView()
+            if fieldOfView != float('+Inf'):
+                self.path.objectHeight = fieldOfView
+                note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
+            else:
+                warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True.")
+                self.designParams['limitObjectToFieldOfView'] = False
+
+            imageSize = self.path.imageSize()
+            if imageSize != float('+Inf'):
+                note1 += " Image size: {0:.2f}".format(imageSize)
+            else:
+                warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
+                self.designParams['limitObjectToFieldOfView'] = False
+
+        if not self.designParams['limitObjectToFieldOfView']:
+            note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
+
+        if self.designParams['onlyPrincipalAndAxialRays']:
+            (stopPosition, stopDiameter) = self.path.apertureStop()
+            if stopPosition is None or self.path.principalRay() is None:
+                warnings.warn("No aperture stop in system: cannot use onlyPrincipalAndAxialRays=True since they are "
+                              "not defined.")
+                self.designParams['onlyPrincipalAndAxialRays'] = False
+            else:
+                note2 = "Only chief and marginal rays shown"
+
+        # TODO, fixme, everything, toaster: implement Label and Label.patch with MPL figure
+        label = MplLabel(x=0.05, y=0.15, text=note1 + "\n" + note2, fontsize=12)  # todo: , useDataUnits=False)
+        self.labels.append(label)
+
+        # self.axes.text(0.05, 0.15, text, transform=self.axes.transAxes,
+        #                fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
+
+    def setGraphicsFromPath(self):
+        self.lines = self.rayTraceLines()
+
+        self.graphics = self.graphicsOfElements
+        self.graphics.append(self.graphicOfObject)
+        self.graphics.extend(self.graphicsOfImages)
+
+        (pupilPosition, pupilDiameter) = self.path.entrancePupil()
+        if pupilPosition is not None:
+            self.graphics.append(self.graphicOfEntrancePupil)
+
+    @property
+    def graphicsOfElements(self) -> List[Graphic]:
+        graphics = []
+        z = 0
+        for element in self.path.elements:
+            graphic = GraphicOf(element)
+            if graphic is not None:
+                graphic.x = z
+                graphics.append(graphic)
+            z += element.L
+        return graphics
+
+    @property
+    def graphicOfObject(self) -> Graphic:
+        objectArrow = Arrow(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
+        objectGraphic = Graphic([objectArrow], x=self.path.objectPosition)
+        return objectGraphic
+
+    @property
+    def graphicsOfImages(self) -> List[Graphic]:
+        imageGraphics = []
+
+        images = self.path.intermediateConjugates()
+
+        for (imagePosition, magnification) in images:
+            imageHeight = magnification * self.path.objectHeight
+
+            arrow = Arrow(dy=imageHeight, y=-imageHeight / 2, color='r')
+            graphic = Graphic([arrow], x=imagePosition)
+
+            imageGraphics.append(graphic)
+
+        return imageGraphics
+
+    @property
+    def graphicOfEntrancePupil(self) -> Graphic:
+        (pupilPosition, pupilDiameter) = self.path.entrancePupil()
+        if pupilPosition is not None:
+            halfHeight = pupilDiameter / 2.0
+
+            c1 = Aperture(y=halfHeight)
+            c2 = Aperture(y=-halfHeight)
+
+            apertureGraphic = Graphic([c1, c2], x=pupilPosition)
+            return apertureGraphic
+
+    @property
+    def displayRange(self):
+        """ The maximum height of the objects in the optical path. """
+        from .laserpath import LaserPath   # Fixme: circular import fix
+
+        if isinstance(self.path, LaserPath):
+            return self.laserDisplayRange()
+        else:
+            return self.imagingDisplayRange()
+
+    @property
+    def imagingDisplayRange(self):
+        displayRange = 0
+        for graphic in self.graphicsOfElements:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
+
+        if displayRange == float('+Inf') or displayRange <= self.path._objectHeight:
+            displayRange = self.path._objectHeight
+
+        conjugates = self.path.intermediateConjugates()
+        if len(conjugates) != 0:
+            for (planePosition, magnification) in conjugates:
+                if not 0 <= planePosition <= self.path.L:
+                    continue
+                magnification = abs(magnification)
+                if displayRange < self.path._objectHeight * magnification:
+                    displayRange = self.path._objectHeight * magnification
+
+        return displayRange
+
+    @property
+    def laserDisplayRange(self):
+        displayRange = 0
+        for graphic in self.graphicsOfElements:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
+
+        if displayRange == float('+Inf') or displayRange == 0:
+            if self.path.inputBeam is not None:
+                displayRange = self.path.inputBeam.w * 3
+            else:
+                displayRange = 100
+
+        return displayRange
+
+    def rayTraceLines(self) -> List[Line]:
+        """ A list of all ray trace line objects corresponding to either
+        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber).
+        2. the principal and axial rays.
+        """
+
+        color = self.designParams['rayColors']
+
+        if self.designParams['onlyPrincipalAndAxialRays']:
+            halfHeight = self.path.objectHeight / 2.0
+            principalRay = self.path.principalRay()
+            axialRay = self.path.axialRay()
+            rayGroup = (principalRay, axialRay)
+            lineWidth = 1.5
+        else:
+            halfAngle = self.path.fanAngle / 2.0
+            halfHeight = self.path.objectHeight / 2.0
+            rayGroup = Ray.fanGroup(
+                yMin=-halfHeight,
+                yMax=halfHeight,
+                M=self.path.rayNumber,
+                radianMin=-halfAngle,
+                radianMax=halfAngle,
+                N=self.path.fanNumber)
+            lineWidth = 0.5
+
+        manyRayTraces = self.path.traceMany(rayGroup)
+
+        lines = []
+        for rayTrace in manyRayTraces:
+            (x, y) = self.rearrangeRayTraceForPlotting(
+                rayTrace)
+            if len(y) == 0:
+                continue  # nothing to plot, ray was fully blocked
+
+            rayInitialHeight = y[0]
+            # FIXME: We must take the maximum y in the starting point of manyRayTraces,
+            #  not halfHeight
+            maxStartingHeight = halfHeight
+            binSize = 2.0 * maxStartingHeight / (len(color) - 1)
+            colorIndex = int(
+                (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
+            if colorIndex < 0:
+                colorIndex = 0
+            elif colorIndex >= len(color):
+                colorIndex = len(color) - 1
+
+            line = Line(x, y, color=color[colorIndex], lineWidth=lineWidth, label='ray')
+            lines.append(line)
+
+        return lines
+
+    def rearrangeRayTraceForPlotting(self, rayList: List[Ray]):
+        """
+        This function removes the rays that are blocked in the imaging path.
+        Parameters
+        ----------
+        rayList : List of Rays
+            an object from rays class or a list of rays
+        """
+        x = []
+        y = []
+        for ray in rayList:
+            if not ray.isBlocked:
+                x.append(ray.z)
+                y.append(ray.y)
+            elif self.designParams['removeBlockedRaysCompletely']:
+                return [], []
+            # else: # ray will simply stop drawing from here
+        return x, y
+
+    @property
+    def mplFigure(self) -> 'MplFigure':
+        figure = MplFigure(opticalPath=self.path)
+        figure.graphics = self.graphics
+        figure.lines = self.lines
+        figure.labels = self.labels
+        figure.designParams = self.designParams
+        return figure
+
+    def display(self, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
+        self.setGraphicsFromPath()
+
+        if backend is 'matplotlib':
+            mplFigure = self.mplFigure
+            mplFigure.create(comments, title)
+            if display3D:
+                mplFigure.display3D(filepath=filepath)
+            else:
+                mplFigure.display2D(filepath=filepath)
+        else:
+            raise NotImplementedError("The only supported backend is matplotlib.")
 
 
-class MplFigure(FigureContainer):
-    """Matplotlib Figure."""
-    def __init__(self):
-        super().__init__()
+class MplFigure(Figure):
+    """Matplotlib Figure"""
+    def __init__(self, opticalPath):
+        super().__init__(opticalPath)
 
         self.figure = None
         self.axes = None
         self.axesComments = None
 
     def create(self, comments=None, title=None):
-        if self.style == 'teaching':
+        if comments is not None:
             self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             self.axesComments.axis('off')
             self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
@@ -61,17 +320,33 @@ class MplFigure(FigureContainer):
 
         self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
-    def display2D(self):
-        self.drawGraphics()
-        self.updateGraphics()
+    def display2D(self, filepath=None):
+        self.draw()
 
-    def display3D(self):
+        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+
+        if filepath is not None:
+            self.figure.savefig(filepath, dpi=600)
+        else:
+            self._showPlot()
+
+    def display3D(self, filepath=None):
         raise NotImplementedError()
 
+    def draw(self):
+        self.drawGraphics()
+
+        for line in self.lines:
+            self.axes.add_line(line.patch)
+
+        for label in self.labels:
+            self.axes.add_artist(label)  # fixme with future Label: promote beforehand or call label.patch
+
+        self.updateDisplayRange()
+        self.updateGraphics()
+
     def drawGraphics(self):
-        z = 0
         for graphic in self.graphics:
-            graphic.z = z
             components = graphic.patches2D
 
             for component in components:
@@ -79,8 +354,6 @@ class MplFigure(FigureContainer):
 
             if graphic.hasLabel:
                 self.axes.add_artist(graphic.label.artist)
-
-            z += graphic.length
 
     def updateGraphics(self):
         for graphic in self.graphics:
@@ -94,6 +367,15 @@ class MplFigure(FigureContainer):
 
             if graphic.hasLabel:
                 graphic.label.artist.set_transform(translation + self.axes.transData)
+
+    def updateDisplayRange(self):
+        """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all graphics."""
+        halfDisplayHeight = self.displayRange/2 * 1.5
+        self.axes.autoscale()
+        self.axes.set_ylim(-halfDisplayHeight, halfDisplayHeight)
+
+    def onZoomCallback(self, axes):
+        self.updateGraphics()
 
     def scalingOfGraphic(self, graphic):
         if not graphic.useAutoScale:
@@ -112,424 +394,6 @@ class MplFigure(FigureContainer):
 
         return xScale, yScale
 
-
-class FigureManager:
-    def __init__(self, opticPath, style='presentation', comments=None, title=None):
-        self.path = opticPath
-        self.figure = None
-        self.axes = None  # Where the optical system is
-        self.axesComments = None  # Where the comments are (for teaching)
-        self.style = style  # ['publication', 'presentation', 'teaching']
-        self.outputFormats = ['pdf', 'png', 'screen']
-
-        self.labels = []
-        self.graphics = []
-        self.createFigure(comments=comments, title=title)
-
-    def createFigure(self, comments=None, title=None):
-        if self.style == 'teaching':
-            self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            self.axesComments.axis('off')
-            self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
-                                   fontsize=10, verticalalignment='top')
-        else:
-            self.figure, self.axes = plt.subplots(figsize=(10, 7))
-
-        self.axes.set(xlabel='Distance', ylabel='Height', title=title)
-
-    def add(self, *dataObjects):
-        """Add a supported object to the display.
-
-        Parameters
-        ----------
-            dataObjects: Variable number of Graphic or plt.Line2D objects
-        """
-        dataType = type([*dataObjects][0])
-        if dataType is plt.Line2D:
-            self.addLine(*dataObjects)
-        elif dataType is MatplotlibGraphic:
-            self.addGraphic(*dataObjects)
-        elif dataType is Label:
-            self.addLabel(*dataObjects)
-        elif dataObjects[0] is None:
-            pass
-        else:
-            raise ValueError("Data type not supported.")
-
-    def addGraphic(self, *graphics: Graphic):
-        for graphic in [*graphics]:
-            self.graphics.append(graphic)
-
-    def addLine(self, *lines: plt.Line2D):
-        for line in [*lines]:
-            self.axes.add_line(line)
-
-    def addLabel(self, *labels: Label):
-        for label in [*labels]:
-            self.labels.append(label)
-
-    def addFigureInfo(self, text):
-        """Text note in the bottom left of the figure. This note is fixed and cannot be moved."""
-        # fixme: might be better to put it out of the axes since it only shows object height and display conditions
-        self.axes.text(0.05, 0.15, text, transform=self.axes.transAxes,
-                       fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
-
-    def draw(self):
-        for graphic in self.graphics:
-            graphic.applyTo(self.axes)
-
-        for label in self.labels:
-            self.axes.add_artist(label)
-
-        self.updateDisplayRange()
-        self.update()
-
-    def onZoomCallback(self, axes):
-        self.update()
-
-    def updateDisplayRange(self):
-        """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all graphics."""
-        halfHeight = 0
-
-        for graphic in self.graphics:
-            if graphic.halfHeight() > halfHeight:
-                halfHeight = graphic.halfHeight()
-
-        self.axes.autoscale()
-        self.axes.set_ylim(-halfHeight * 1.5, halfHeight * 1.5)
-
-    def update(self):
-        """Update all figure graphics to properly rescale their dimensions with the display range.
-        Fix overlapping labels if any. """
-        for graphic in self.graphics:
-            graphic.update()
-
-        self.resetLabelOffsets()
-        self.fixLabelOverlaps()
-
-    def resetLabelOffsets(self):
-        """Reset previous offsets applied to the labels.
-
-        Used with a zoom callback to properly replace the labels.
-        """
-        for graphic in self.graphics:
-            if graphic.hasLabel:
-                graphic.label.resetPosition()
-
-        for label in self.labels:
-            label.resetPosition()
-
-    def getRenderedLabels(self) -> List[Label]:
-        """List of labels rendered inside the current display."""
-        labels = []
-        for graphic in self.graphics:
-            if graphic.hasLabel:
-                if graphic.label.isRenderedOn(self.figure):
-                    labels.append(graphic.label)
-
-        for label in self.labels:
-            if label.isRenderedOn(self.figure):
-                labels.append(label)
-
-        return labels
-
-    def fixLabelOverlaps(self, maxIteration: int = 5):
-        """Iteratively identify overlapping label pairs and move them apart in x-axis."""
-        labels = self.getRenderedLabels()
-        if len(labels) < 2:
-            return
-
-        i = 0
-        while i < maxIteration:
-            noOverlap = True
-            boxes = [label.boundingBox(self.axes, self.figure) for label in labels]
-            for (a, b) in itertools.combinations(range(len(labels)), 2):
-                boxA, boxB = boxes[a], boxes[b]
-
-                if boxA.overlaps(boxB):
-                    noOverlap = False
-                    if boxB.x1 > boxA.x1:
-                        requiredSpacing = boxA.x1 - boxB.x0
-                    else:
-                        requiredSpacing = boxA.x0 - boxB.x1
-
-                    self.translateLabel(labels[a], boxA, dx=-requiredSpacing/2)
-                    self.translateLabel(labels[b], boxB, dx=requiredSpacing/2)
-
-            i += 1
-            if noOverlap:
-                break
-
-    def translateLabel(self, label, bbox, dx):
-        """Internal method to translate a label and make sure it stays inside the display."""
-        label.translate(dx)
-
-        xMin, xMax = self.axes.get_xlim()
-        if bbox.x0 + dx < xMin:
-            label.translate(xMin - (bbox.x0 + dx))
-        elif bbox.x1 + dx > xMax:
-            label.translate(xMax - (bbox.x1 + dx))
-
-    def drawPoint(self, x, y, label=None):
-        """ Primitive to draw a point with or without labels """
-        raise (NotImplemented)
-
-    def drawMeasurement(self, zi, zf, label=None):
-        """ Primitive to draw a line with double arrows indicating length with or without labels """
-
-        # axes.annotate("", xy=(self.backVertex, -h), xytext=(F2, -h),
-        #               xycoords='data', arrowprops=dict(arrowstyle='<->'),
-        #               clip_box=axes.bbox, clip_on=True).arrow_patch.set_clip_box(axes.bbox)
-        # axes.text((self.backVertex + F2) / 2, -h, 'BFL = {0:0.1f}'.format(BFL),
-        #           ha='center', va='bottom', clip_box=axes.bbox, clip_on=True)
-        raise (NotImplemented)
-
-    def drawPlane(self, z, label=None):
-        """ Primitive to draw a plane with or without labels """
-        raise (NotImplemented)
-
-    def display(self, limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=False,
-                removeBlockedRaysCompletely=False):
-
-        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView,
-                               onlyChiefAndMarginalRays=onlyChiefAndMarginalRays)
-
-        self.add(*self.path.rayTraceLines(onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                          removeBlockedRaysCompletely=removeBlockedRaysCompletely))
-
-        self.createGraphics()
-
-        self.draw()
-
-        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
-        self._showPlot()
-
-    def initializeDisplay(self, limitObjectToFieldOfView=False,
-                          onlyChiefAndMarginalRays=False):
-        """ *Renamed and refactored version of createRayTracePlot*
-        Configure the imaging path and the figure according to the display conditions.
-
-            Three optional parameters:
-            limitObjectToFieldOfView=False, to use the calculated field of view
-            instead of the objectHeight
-            onlyChiefAndMarginalRays=False, to only show principal rays
-            removeBlockedRaysCompletely=False to remove rays that are blocked.
-         """
-
-        note1 = ""
-        note2 = ""
-        if limitObjectToFieldOfView:
-            fieldOfView = self.path.fieldOfView()
-            if fieldOfView != float('+Inf'):
-                self.path.objectHeight = fieldOfView
-                note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
-            else:
-                raise ValueError(
-                    "Infinite field of view: cannot use\
-                    limitObjectToFieldOfView=True.")
-
-            imageSize = self.path.imageSize()
-            if imageSize != float('+Inf'):
-                note1 += " Image size: {0:.2f}".format(imageSize)
-            else:
-                raise ValueError(
-                    "Infinite image size: cannot use\
-                    limitObjectToFieldOfView=True.")
-
-        else:
-            note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
-
-        if onlyChiefAndMarginalRays:
-            (stopPosition, stopDiameter) = self.path.apertureStop()
-            if stopPosition is None:
-                raise ValueError(
-                    "No aperture stop in system: cannot use\
-                    onlyChiefAndMarginalRays=True since they\
-                    are not defined.")
-            note2 = "Only chief and marginal rays shown"
-
-        self.addFigureInfo(text=note1 + "\n" + note2)
-
-    def createGraphics(self):
-        if self.path.showObject:
-            self.add(self.graphicOfObject())
-
-        if self.path.showImages:
-            self.add(*self.graphicsOfImages())
-
-        if self.path.showEntrancePupil:
-            self.add(self.graphicOfEntrancePupil())
-
-        if self.path.showPointsOfInterest:
-            self.add(*self.labelsOfStops())
-            self.add(*self.labelsOfPointsOfInterest())
-            # todo: change POI labels into a dot Graphic ? or add optional dot patch in label class
-
-        z = 0
-        for element in self.path.elements:
-            if element.surfaces:
-                graphic = self.graphicOfElement(element)
-                graphic.x = z
-                self.add(graphic)
-            z += element.L
-
-        # TODO: entrancePupil, POI, stops labels
-
-    def graphicOfObject(self) -> MatplotlibGraphic:
-        """ The graphic of the object.
-
-        Returns:
-            Graphic: The created Graphic object.
-        """
-        arrow = ArrowPatch(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
-        graphic = MatplotlibGraphic([arrow], x=self.path.objectPosition)
-
-        return graphic
-
-    def graphicsOfImages(self) -> List[MatplotlibGraphic]:
-        """ The graphic of all the images (real and virtual).
-
-        Returns:
-            List[Graphic]: A list of the created Graphic object for each image.
-        """
-
-        images = self.path.intermediateConjugates()
-
-        graphics = []
-        for (imagePosition, magnification) in images:
-            imageHeight = magnification * self.path.objectHeight
-
-            arrow = ArrowPatch(dy=imageHeight, y=-imageHeight/2, color='r')
-            graphic = MatplotlibGraphic([arrow], x=imagePosition)
-
-            graphics.append(graphic)
-
-        return graphics
-
-    def graphicOfEntrancePupil(self) -> MatplotlibGraphic:
-        """
-        Graphic of the entrance pupil on an optical system using the position and diameter of the
-        entrance pupil.
-
-        See Also
-        --------
-        raytracing.ImagingPath.entrancePupil
-
-        """
-        (pupilPosition, pupilDiameter) = self.path.entrancePupil()
-        pupilPosition = None
-        if pupilPosition is not None:
-            halfHeight = pupilDiameter / 2.0
-
-            p1 = AperturePatch(y=halfHeight, color='r')
-            p2 = AperturePatch(y=-halfHeight, color='r')
-
-            return MatplotlibGraphic([p1, p2], x=pupilPosition)
-
-    def graphicOfElement(self, element: Lens, showLabel=True) -> MatplotlibGraphic:
-        if not element.surfaces:
-            return MatplotlibGraphic([])
-
-        if type(element) is Lens:
-            return self.graphicOfThinLens(element, showLabel=showLabel)
-
-        else:
-            return self.graphicOfSurfaces(element, showLabel=showLabel)
-
-    def graphicOfThinLens(self, element, showLabel=True) -> MatplotlibGraphic:
-        components = []
-        halfHeight = element.displayHalfHeight(minSize=self.maxRayHeight())
-
-        components.append(DoubleArrowPatch(height=halfHeight*2))
-
-        if element.hasFiniteApertureDiameter():
-            components.append(AperturePatch(y=halfHeight, width=element.L))
-            components.append(AperturePatch(y=-halfHeight, width=element.L))
-
-        label = element.label if showLabel else None
-        return MatplotlibGraphic(components, label=label)
-
-    def graphicOfSurfaces(self, element, showLabel=True) -> MatplotlibGraphic:
-        components = []
-        halfHeight = element.displayHalfHeight()
-
-        z = 0
-        for i, surfaceA in enumerate(element.surfaces[:-1]):
-            surfaceB = element.surfaces[i+1]
-            p = SurfacePairPatch(surfaceA, surfaceB, x=z,
-                                 halfHeight=halfHeight)
-            z += surfaceA.L
-            components.append(p)
-
-            outerWidth = p.corners[1] - p.corners[0]
-            components.append(AperturePatch(y=halfHeight, x=p.corners[0], width=outerWidth))
-            components.append(AperturePatch(y=-halfHeight, x=p.corners[0], width=outerWidth))
-
-        label = element.label if showLabel else None
-        return MatplotlibGraphic(components, label=label, fixedWidth=True)
-
-    def labelsOfStops(self) -> List[Label]:
-        """ AS and FS labels are drawn at 110% of the largest diameter. """
-
-        labels = []
-        halfHeight = self.path.largestDiameter / 2
-        (apertureStopPosition, apertureStopDiameter) = self.path.apertureStop()
-
-        if apertureStopPosition is not None:
-            labels.append(Label('AS', x=apertureStopPosition, y=halfHeight*1.1, fontsize=18))
-
-        (fieldStopPosition, fieldStopDiameter) = self.path.fieldStop()
-        if fieldStopPosition is not None:
-            labels.append(Label('FS', x=fieldStopPosition, y=halfHeight * 1.1, fontsize=18))
-
-        return labels
-
-    def labelsOfPointsOfInterest(self) -> List[Label]:
-        """ Labels of general points of interest are drawn below the axis, at 25% of the largest diameter. """
-
-        labelStrings = {}  # Gather labels at same z
-
-        zElement = 0
-        # For the group as a whole, then each element
-        for pointOfInterest in self.path.pointsOfInterest(z=zElement):
-            zStr = "{0:3.3f}".format(pointOfInterest['z'])
-            labelString = pointOfInterest['label']
-            if zStr in labelStrings:
-                labelStrings[zStr] = labelStrings[zStr] + ", " + labelString
-            else:
-                labelStrings[zStr] = labelString
-
-        # Points of interest for each element
-        for element in self.path.elements:
-            pointsOfInterest = element.pointsOfInterest(zElement)
-
-            for pointOfInterest in pointsOfInterest:
-                zStr = "{0:3.3f}".format(pointOfInterest['z'])
-                labelString = pointOfInterest['label']
-                if zStr in labelStrings:
-                    labelStrings[zStr] = labelStrings[zStr] + ", " + labelString
-                else:
-                    labelStrings[zStr] = labelString
-            zElement += element.L
-
-        labels = []
-        halfHeight = self.path.largestDiameter / 2
-        for zStr, labelString in labelStrings.items():
-            z = float(zStr)
-            labels.append(Label(labelString, x=z, y=-halfHeight*0.5, fontsize=12))
-
-        return labels
-
-    def maxRayHeight(self):
-        # FIXME: need a more robust reference to rayTraces... and maybe maxRayHeightAt(y) instead?
-        maxRayHeight = 0
-        for line in self.axes.lines:
-            if line.get_label() == 'ray':
-                if max(abs(line._y)) > maxRayHeight:
-                    maxRayHeight = max(abs(line._y))
-
-        return maxRayHeight
-
     def _showPlot(self):
         try:
             plt.plot()
@@ -545,6 +409,3 @@ class FigureManager:
 
         except KeyboardInterrupt:
             plt.close()
-
-    def reset(self):
-        pass
