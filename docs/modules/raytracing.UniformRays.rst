@@ -31,6 +31,7 @@ UniformRays
 
     
       ~UniformRays.count
+      ~UniformRays.rays
       ~UniformRays.thetaValues
       ~UniformRays.yValues
 

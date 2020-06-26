@@ -1,23 +1,6 @@
 import setuptools
 
 """ 
-To document:
-===========
-cd docs
-pydoc -w raytracing.ray
-pydoc -w raytracing.rays
-pydoc -w raytracing.gaussianbeam
-pydoc -w raytracing.matrix
-pydoc -w raytracing.matrixgroup
-pydoc -w raytracing.imagingpath
-pydoc -w raytracing.laserpath
-
-pydoc -w raytracing.specialtylenses
-pydoc -w raytracing.materials
-pydoc -w raytracing.thorlabs
-pydoc -w raytracing.eo
-pydoc -w raytracing.olympus
-
 To distribute:
 =============
 rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/* 
@@ -27,7 +10,7 @@ rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/*
 
 setuptools.setup(
     name="raytracing",
-    version="1.2.9",
+    version="1.2.10",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",

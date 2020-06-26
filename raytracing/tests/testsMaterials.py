@@ -1,15 +1,13 @@
-import unittest
 import envtest # modifies path
-import numpy as np
 from raytracing import *
 
 
-class TestMaterial(unittest.TestCase):
+class TestMaterial(envtest.RaytracingTestCase):
     def testMaterialInvalid(self):
         self.assertRaises(TypeError, Material.n, 5)
 
 
-class TestMaterialSubclasses(unittest.TestCase):
+class TestMaterialSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.materials = Material.__subclasses__()
 
@@ -43,19 +41,19 @@ class TestMaterialSubclasses(unittest.TestCase):
                              'N_SF6HT': 1.8033, 'N_SF10': 1.7267, 'N_SF11': 1.7829, 'N_BAF10': 1.6692,
                              'E_BAF11': 1.6659, 'N_BAK1': 1.5719, 'N_BAK4': 1.5682, 'FK51A': 1.4862, 'LAFN7': 1.7482,
                              'N_LASF9': 1.8486,'N_LAK22': 1.6504, 'N_SSK5': 1.6576, 'E_FD10': 1.7267,
-                             'FusedSilica': 1.4580}
+                             'FusedSilica': 1.4580,'N_SF8':1.6876,'N_SF57':1.8445}
 
         for material in self.materials:
             name = material.__name__
             n = material.n(0.6)
 
-            if bool(np.isclose(n, refractiveIndices[name], 1e-4)) is False:
+            if bool(isclose(n, refractiveIndices[name], 1e-4)) is False:
                 fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(name, n))
         self.assertEqual([], fails)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()
 
 
 

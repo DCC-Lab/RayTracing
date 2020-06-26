@@ -35,4 +35,5 @@ CurvedMirror
       ~CurvedMirror.determinant
       ~CurvedMirror.hasPower
       ~CurvedMirror.isImaging
+      ~CurvedMirror.largestDiameter
 

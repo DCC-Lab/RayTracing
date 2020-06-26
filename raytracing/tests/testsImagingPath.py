@@ -1,11 +1,11 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestImagingPath(unittest.TestCase):
+
+class TestImagingPath(envtest.RaytracingTestCase):
     def testImagingPath(self):
         path = ImagingPath()
         self.assertIsNotNone(path)
@@ -25,6 +25,7 @@ class TestImagingPath(unittest.TestCase):
         self.assertTrue(path.showPlanesAcrossPointsOfInterest)
         self.assertFalse(path.showEntrancePupil)
 
+    def testImagingPathWithElements(self):
         space = Space(10)
         tLens = ThickLens(1, 10, 20, 2)
         elements = [space, tLens]
@@ -35,6 +36,13 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath()
         self.assertTrue(path.objectHeight, 10)
 
+    def testSetObjectHeight(self):
+        path = ImagingPath()
+        path.objectHeight = 100
+        self.assertTrue(path.objectHeight, 100)
+
+    def testSetObjectHeightError(self):
+        path = ImagingPath()
         with self.assertRaises(ValueError):
             path.objectHeight = -0.1
 
@@ -60,37 +68,6 @@ class TestImagingPath(unittest.TestCase):
         elements = [space, tLens, space2, lens]
         path = ImagingPath(elements)
         self.assertTupleEqual(path.entrancePupil(), (None, None))
-
-    def testDisplayRangeWithFiniteLens(self):
-        path = ImagingPath()  # default objectHeight is 10
-        path.append(Space(d=10))
-        path.append(Lens(f=5, diameter=20))
-
-        largestDiameter = 20
-
-        self.assertEqual(path.displayRange(), largestDiameter)
-
-    def testDisplayRange(self):
-        path = ImagingPath()
-        path.append(Space(2))
-        path.append(CurvedMirror(-5, 10))
-        self.assertAlmostEqual(path.displayRange(), 5 * 10)
-
-        path.objectHeight = 1
-        self.assertEqual(path.displayRange(), 10)
-
-    def testDisplayRangeWithEmptyPath(self):
-        path = ImagingPath()
-
-        largestDiameter = path.objectHeight * 2
-
-        self.assertEqual(path.displayRange(), largestDiameter)
-
-    @unittest.skip("Maybe will change")
-    def testDisplayRangeLargestDiameterBiggerThanObj(self):
-        path = ImagingPath(System4f(10, 10, 10, 20))
-        path.objectHeight = 1
-        print(path.displayRange())
 
     def testEntrancePupilAIs0(self):
         space = Space(2)
@@ -120,13 +97,15 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath([space, lens, space2, lens, space])
         self.assertTupleEqual(path.fieldStop(), fieldStop)
 
+    def testFieldStopFiniteDiameter(self):
+        fieldStop = (None, inf)
+        space = Space(10)
+        lens = Lens(10)
+        space2 = Space(20)
         path = ImagingPath([Lens(10, 450), space2, lens, space])
         self.assertTupleEqual(path.fieldStop(), fieldStop)
 
-        path = ImagingPath([space, Lens(10, 450), space2, lens, space])
-        self.assertTupleEqual(path.fieldStop(), fieldStop)
-
-    def testFieldStop(self):
+    def testFieldStop_1(self):
         space = Space(10)
         lens = Lens(10, 100)
         space2 = Space(20)
@@ -134,6 +113,7 @@ class TestImagingPath(unittest.TestCase):
         path = ImagingPath([space, lens, space2, lens2, space])
         self.assertTupleEqual(path.fieldStop(), (10, 100))
 
+    def testFieldStop_2(self):
         space = Space(10)
         lens = Lens(10, 25)
         space2 = Space(20)
@@ -178,39 +158,21 @@ class TestImagingPath(unittest.TestCase):
         self.assertAlmostEqual(path.imageSize(), imgSize, 2)
 
     def testSave(self):
-        filename = "test.png"
+        filename = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.save(filename, comments=comments)
+        path.saveFigure(filename, comments=comments)
         if not os.path.exists(filename):
             self.fail("No file saved (with comments)")
         os.remove(filename)
 
-        path.save(filename)
+    def testSaveWithoutComments(self):
+        filename = self.tempFilePath("test.png")
+        path = ImagingPath(System4f(10, 10, 10, 10))
+        path.saveFigure(filename)
         if not os.path.exists(filename):
             self.fail("No file saved (without comments)")
         os.remove(filename)
-
-    def testRearrangeRayTraceForPlottingAllNonBlocked(self):
-        path = ImagingPath([Space(10), Lens(5, 20), Space(10)])
-        initialRay = Ray(0, 1)  # Will go through without being blocked
-        listOfRays = path.trace(initialRay)
-        xy = path.rearrangeRayTraceForPlotting(listOfRays, True)
-        x = [0, 0, 10, 10, 10, 0]
-        z = [0, 0, 10, 10, 10, 20]
-        self.assertTupleEqual(xy, (z, x))
-
-        initialRay = Ray(0, 1.01)  # Will be blocked
-        listOfRays = path.trace(initialRay)
-        xy = path.rearrangeRayTraceForPlotting(listOfRays, True)
-        self.assertTupleEqual(xy, ([], []))
-
-        initialRay = Ray(0, 1.01)  # Will be blocked
-        listOfRays = path.trace(initialRay)
-        xy = path.rearrangeRayTraceForPlotting(listOfRays, False)
-        x = [0, 0, 10.1]
-        z = [0, 0, 10]
-        self.assertTupleEqual(xy, (z, x))
 
     def testChiefRayNoApertureStop(self):
         path = ImagingPath(System2f(10))
@@ -227,24 +189,23 @@ class TestImagingPath(unittest.TestCase):
         path.append(System2f(10, 10))
         path.append(Aperture(diameter=20))
         chiefRay = path.chiefRay()
-        self.assertAlmostEqual(chiefRay.y, 20, 2)
-        self.assertAlmostEqual(chiefRay.theta, -2, 3)
+        self.assertAlmostEqual(chiefRay.y, 10, 2)
+        self.assertAlmostEqual(chiefRay.theta, -1, 3)
 
-    def testPrincipalRay(self):
-        path = ImagingPath(System4f(10, 10))
-        self.assertIsNone(path.principalRay())
-
-        path = ImagingPath(System4f(10, 10))
-        path.append(Aperture(10))
-        self.assertIsNone(path.principalRay())
-
+    def testPrincipalRayIsNone(self):
         path = ImagingPath()
-        path.append(System2f(10, 10))
+        path.append(System2f(f=10, diameter=float("+inf")))
         path.append(Aperture(diameter=20))
         principalRay = path.principalRay()
-        self.assertAlmostEqual(principalRay.y, 20, 2)
-        self.assertAlmostEqual(principalRay.theta, -2, 3)
+        self.assertIsNone(principalRay, principalRay)
 
+    def testPrincipalRayIsNotNone(self):
+        path = ImagingPath()
+        path.append(System2f(f=10, diameter=10))
+        path.append(Aperture(diameter=20))
+        principalRay = path.principalRay()
+        self.assertAlmostEqual(principalRay.y, 10, 2)
+        self.assertAlmostEqual(principalRay.theta, -1, 3)
 
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
@@ -258,20 +219,21 @@ class TestImagingPath(unittest.TestCase):
     def testMarginalRays(self):
         path = ImagingPath(System2f(10, 10))
         rays = path.marginalRays(10)
-        self.assertEqual(len(rays), 2)
         ray1, ray2 = rays[0], rays[1]
+        self.assertEqual(len(rays), 2)
         self.assertEqual(ray1.y, 10)
         self.assertEqual(ray1.theta, -0.5)
         self.assertEqual(ray2.y, 10)
         self.assertEqual(ray2.theta, -1.5)
 
+    def testMarginalRaysThetaUpAndDownFlipped(self):
         path = ImagingPath(System2f(5))
         tl = ThickLens(1.1, 0.1, -0.1, 10)
         path.append(tl)
         path.append(Aperture(5))
         rays = path.marginalRays(10)
-        self.assertEqual(len(rays), 2)
         ray1, ray2 = rays[0], rays[1]
+        self.assertEqual(len(rays), 2)
         self.assertEqual(ray1.y, 10)
         self.assertAlmostEqual(ray1.theta, -0.38764, 5)
         self.assertEqual(ray2.y, 10)
@@ -279,13 +241,9 @@ class TestImagingPath(unittest.TestCase):
 
     def testAxialRay(self):
         path = ImagingPath(System2f(10, 100))
-        rays = path.axialRay()
-        self.assertEqual(len(rays), 2)
-        ray1, ray2 = rays[0], rays[1]
-        self.assertEqual(ray1.y, 0)
-        self.assertEqual(ray1.theta, 5)
-        self.assertEqual(ray2.y, 0)
-        self.assertEqual(ray2.theta, -5)
+        ray = path.axialRay()
+        self.assertEqual(ray.y, 0)
+        self.assertEqual(ray.theta, 5)
 
     def testLagrangeImagingPathNoAperture(self):
         path = ImagingPath()
@@ -329,6 +287,6 @@ class TestImagingPath(unittest.TestCase):
             path.chiefRay()
 
 
-
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()
+

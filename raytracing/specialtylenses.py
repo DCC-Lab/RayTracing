@@ -28,6 +28,43 @@ class AchromatDoubletLens(MatrixGroup):
     Most manufacturer's specifiy 1% tolerance, so if fa is more than 1% different
     from the final focal length, a warning is raised.
 
+    Parameters
+    ----------
+    fa : float
+        The effective focal length
+    fb : float
+        The back focal length
+    R1 : float
+        The first radius
+    R2 : float
+        The second radius
+    R3 : float
+        The third radius
+    tc1 : float
+        The first center thickness
+    tc2 : float
+        The second center thickness
+    te : float
+        The edge thickness
+    n1 : float
+        The refraction index of the first material
+    n2 : float
+        The refractive index of the second material
+    diameter : float
+        The diameter of the lens
+    mat1 : object of Matrix class
+        The transfer matrix of the first lens
+    mat2 : object of Matrix class
+        The transfer matrix of the second lens
+    wavelengthRef : float
+        The defined wavelength
+    url : string
+        A link to find more info for the lens
+    label : string
+        The name of the lens
+
+    Notes
+    -----
     Nomenclature from Thorlabs:
     https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 
 
@@ -89,134 +126,59 @@ class AchromatDoubletLens(MatrixGroup):
                   "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
-    def drawAt(self, z, axes, showLabels=False):
-        """ Draw the doublet as two dielectric of different colours.
-
-        An arc would be perfect, but matplotlib does not allow to fill
-        an arc, hence we must use a patch and Bezier curve.
-        We might as well draw it properly: it is possible to draw a
-        quadratic bezier curve that looks like an arc, see:
-        https://pomax.github.io/bezierinfo/#circles_cubic
-
-        Because the element can be flipped with flipOrientation()
-        we collect information from the list of elements.
-        """
-        R1 = self.elements[0].R
-        tc1 = self.elements[1].L
-        R2 = self.elements[2].R
-        tc2 = self.elements[3].L
-        R3 = self.elements[4].R
-
-        h = self.largestDiameter / 2.0
-        v1 = z
-        phi1 = math.asin(h / abs(R1))
-        delta1 = R1 * (1.0 - math.cos(phi1))
-        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
-        corner1 = v1 + delta1
-
-        v2 = v1 + tc1
-        phi2 = math.asin(h / abs(R2))
-        delta2 = R2 * (1.0 - math.cos(phi2))
-        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
-        corner2 = v2 + delta2
-
-        v3 = z + tc1 + tc2
-        phi3 = math.asin(h / abs(R3))
-        delta3 = R3 * (1.0 - math.cos(phi3))
-        ctl3 = abs((1.0 - math.cos(phi3)) / math.sin(phi3) * R3)
-        corner3 = v3 + delta3
-
-        Path = mpath.Path
-        p1 = patches.PathPatch(
-            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
-                  (v1, 0), (v1, ctl1), (corner1, h),
-                  (corner2, h), (v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h),
-                  (corner1, -h)],
-                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO]),
-            color=[0.85, 0.95, 0.95],
-            fill=True,
-            transform=axes.transData)
-
-        p2 = patches.PathPatch(
-            Path([(corner2, -h), (v2, -ctl2), (v2, 0),
-                  (v2, 0), (v2, ctl2), (corner2, h),
-                  (corner3, h), (v3, ctl3), (v3, 0),
-                  (v3, 0), (v3, -ctl3), (corner3, -h),
-                  (corner2, -h)],
-                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO]),
-            color=[0.80, 0.90, 0.95],
-            fill=True,
-            transform=axes.transData)
-
-        axes.add_patch(p1)
-        axes.add_patch(p2)
-        if showLabels:
-            self.drawLabels(z, axes)
-
-        self.drawAperture(z, axes)
-
-    def drawAperture(self, z, axes):
-        """ Draw the aperture size for this element.
-        The lens requires special care because the corners are not
-        separated by self.L: the curvature makes the edges shorter.
-        We are picky and draw it right.
-        """
-
-        if self.apertureDiameter != float('+Inf'):
-            R1 = self.elements[0].R
-            tc1 = self.elements[1].L
-            R2 = self.elements[2].R
-            tc2 = self.elements[3].L
-            R3 = self.elements[4].R
-
-            h = self.largestDiameter / 2.0
-            phi1 = math.asin(h / abs(R1))
-            corner1 = z + R1 * (1.0 - math.cos(phi1))
-
-            phi3 = math.asin(h / abs(R3))
-            corner3 = z + tc1 + tc2 + R3 * (1.0 - math.cos(phi3))
-
-            axes.add_patch(patches.Polygon(
-                [[corner1, h], [corner3, h]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-            axes.add_patch(patches.Polygon(
-                [[corner1, -h], [corner3, -h]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            The position
         """
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
-
 class SingletLens(MatrixGroup):
     """
-        General singlet lens with an effective focal length of f, back focal
-        length of fb.  The values f and fb are used to validate the final focal lengths
-        and back focal lengths that are obtained from the combination of elements.
-        Most manufacturer's specifiy 1% tolerance, so if f is more than 1% different
-        from the final focal length, a warning is raised.
+    General singlet lens with an effective focal length of f, back focal
+    length of fb.  The values f and fb are used to validate the final focal lengths
+    and back focal lengths that are obtained from the combination of elements.
+    Most manufacturer's specifiy 1% tolerance, so if f is more than 1% different
+    from the final focal length, a warning is raised.
 
-        Nomenclature from Thorlabs:
-        https://www.thorlabs.com/images/TabImages/Plano-Convex_Lens_Schematic.gif
+        Parameters
+    ----------
+    f : float
+        The effective focal length
+    fb : float
+        The back focal length
+    R1 : float
+        The first radius
+    R2 : float
+        The second radius
+    tc : float
+        The center thickness
+    te : float
+        The edge thickness
+    n : float
+        The refraction index of the material
+    diameter : float
+        The diameter of the lens
+    mat1 : object of Matrix class
+        The transfer matrix of the lens
+    wavelengthRef : float
+        The defined wavelength
+    url : string
+        A link to find more info for the lens
+    label : string
+        The name of the lens
 
-        """
+
+    Notes
+    -----
+    Nomenclature from Thorlabs:
+    https://www.thorlabs.com/images/TabImages/Plano-Convex_Lens_Schematic.gif
+
+    """
 
     def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat1=None, wavelengthRef=None,
                  url=None, label=''):
@@ -265,97 +227,40 @@ class SingletLens(MatrixGroup):
                   "{1:0.1f}".format(corner2 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
-    def drawAt(self, z, axes, showLabels=False):
-        """ Draw the doublet as two dielectric of different colours.
-
-        An arc would be perfect, but matplotlib does not allow to fill
-        an arc, hence we must use a patch and Bezier curve.
-        We might as well draw it properly: it is possible to draw a
-        quadratic bezier curve that looks like an arc, see:
-        https://pomax.github.io/bezierinfo/#circles_cubic
-
-        Because the element can be flipped with flipOrientation()
-        we collect information from the list of elements.
-        """
-        R1 = self.elements[0].R
-        tc = self.elements[1].L
-        R2 = self.elements[2].R
-
-        h = self.largestDiameter / 2.0
-        v1 = z
-        phi1 = math.asin(h / abs(R1))
-        delta1 = R1 * (1.0 - math.cos(phi1))
-        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
-        corner1 = v1 + delta1
-
-        v2 = v1 + tc
-        phi2 = math.asin(h / abs(R2))
-        delta2 = R2 * (1.0 - math.cos(phi2))
-        ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
-        corner2 = v2 + delta2
-
-        Path = mpath.Path
-        p1 = patches.PathPatch(
-            Path([(corner1, -h), (v1, -ctl1), (v1, 0),
-                  (v1, 0), (v1, ctl1), (corner1, h),
-                  (corner2, h), (v2, ctl2), (v2, 0),
-                  (v2, 0), (v2, -ctl2), (corner2, -h),
-                  (corner1, -h)],
-                 [Path.MOVETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO, Path.CURVE3, Path.CURVE3,
-                  Path.LINETO]),
-            color=[0.85, 0.95, 0.95],
-            fill=True,
-            transform=axes.transData)
-
-        axes.add_patch(p1)
-        if showLabels:
-            self.drawLabels(z, axes)
-
-        self.drawAperture(z, axes)
-
-    def drawAperture(self, z, axes):
-        """ Draw the aperture size for this element.
-        The lens requires special care because the corners are not
-        separated by self.L: the curvature makes the edges shorter.
-        We are picky and draw it right.
-        """
-
-        if self.apertureDiameter != float('+Inf'):
-            R1 = self.elements[0].R
-            tc = self.elements[1].L
-            R2 = self.elements[2].R
-
-            h = self.largestDiameter / 2.0
-            phi1 = math.asin(h / abs(R1))
-            corner1 = z + R1 * (1.0 - math.cos(phi1))
-
-            phi2 = math.asin(h / abs(R2))
-            corner2 = z + tc + R2 * (1.0 - math.cos(phi2))
-
-            axes.add_patch(patches.Polygon(
-                [[corner1, h], [corner2, h]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-            axes.add_patch(patches.Polygon(
-                [[corner1, -h], [corner2, -h]],
-                linewidth=3,
-                closed=False,
-                color='0.7'))
-
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            The position
+
         """
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
 
 class Objective(MatrixGroup):
+
+    """
+    Parameters
+    ----------
+    f : float
+        The focal length
+    NA : float
+        The numerical aperture
+    focusToFocusLength : float
+        The distance between the front focal point to the back focal point.
+    backAperture : float
+        The back aperture
+    workingDistance : float
+        The distance from the front lens element of the objective to the closest surface.
+    url : string
+        A link to find more info for the lens
+    label : string
+        The name of the lens
+
+    """
     warningDisplayed = False
 
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
@@ -402,16 +307,6 @@ reproduce the objective."
             warnings.warn(msg, FutureWarning)
             Objective.warningDisplayed = True
 
-    def pointsOfInterest(self, z):
-        """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
-        """
-        if self.isFlipped:
-            return [{'z': z + self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
-        else:
-            return [{'z': z, 'label': '$F_b$'}, {'z': z + self.focusToFocusLength, 'label': '$F_f$'}]
-
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
         self.isFlipped = not self.isFlipped
@@ -432,38 +327,15 @@ reproduce the objective."
             z = z + element.L
         return self
 
-    def drawAperture(self, z, axes):
-        # This MatrixGroup is special: we want to use apertureDiameter as the back aperture
-        # but we don't want to draw it becuase it looks like garbage.  Each element will
-        # draw its own aperture, so that is ok.
-        return
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
 
-    def drawAt(self, z, axes, showLabels=False):
-        L = self.focusToFocusLength
-        f = self.f
-        wd = self.workingDistance
-        halfHeight = self.backAperture / 2
-        shoulder = halfHeight / self.NA
-
-        points = [[0, halfHeight],
-                  [(L - shoulder), halfHeight],
-                  [(L - wd), self.frontAperture / 2],
-                  [(L - wd), -self.frontAperture / 2],
-                  [(L - shoulder), -halfHeight],
-                  [0, -halfHeight]]
-
+        Parameters
+        ----------
+        z : float
+            The position
+        """
         if self.isFlipped:
-            trans = transforms.Affine2D().scale(-1).translate(tx=z + L, ty=0) + axes.transData
+            return [{'z': z + self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
         else:
-            trans = transforms.Affine2D().translate(tx=z, ty=0) + axes.transData
-
-        axes.add_patch(patches.Polygon(
-            points,
-            linewidth=1, linestyle='--', closed=True,
-            color='k', fill=False, transform=trans))
-
-        self.drawCardinalPoints(z, axes)
-
-        for element in self.elements:
-            element.drawAperture(z, axes)
-            z += element.L
+            return [{'z': z, 'label': '$F_b$'}, {'z': z + self.focusToFocusLength, 'label': '$F_f$'}]

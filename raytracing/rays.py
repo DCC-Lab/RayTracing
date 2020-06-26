@@ -33,9 +33,11 @@ class Rays:
     Attributes
     ----------
     iteration : int
-        The number of iteration? (default=0)
-    progressLog : int(?)
-        number of??? (default=1000)
+        When used as an iterator, this represents the current iteration. Reinitialized to 
+        zero everytime.
+    progressLog : int
+        How many iterations after which the progress through the iterator is shown (default=1000)
+        This is mutliplied by 3 after progress report.
     -yValues : array
         An array of shape N*1 (N is the number of rays) which shows the height of each ray
     -thetaValues : array
@@ -43,11 +45,11 @@ class Rays:
     -yHistogram : array
         An array that shows the values in the histogram of the rays according to the height of rays
     -thetaHistogram : array
-        An array that shows the in the histogram of the rays' angle
-    _directionBinEdges : ???
-        ???
-    _countHistogramParameters : ???
-        ???
+        An array that shows in the histogram of the rays' angle
+    _directionBinEdges : struct
+        Cached value of the direction
+    _countHistogramParameters : struct
+        Cached value of the histogram parameters.
     _xValuesCountHistogram : array
         The x values for the histogram of rays' height
     _anglesHistogramParameters : array
@@ -308,29 +310,36 @@ class Rays:
 
         """
         plt.ioff()
-        fig, axes = plt.subplots(2)
-        fig.suptitle(title)
-        fig.tight_layout(pad=3.0)
+        if showTheta:
+            fig, axes = plt.subplots(2)
+            fig.suptitle(title)
+            fig.tight_layout(pad=3.0)
 
-        axis1 = axes[0]
-        axis2 = axes[1]
+            axis1 = axes[0]
+            axis2 = axes[1]
+        else:
+            fig, axis1 = plt.subplots(1)
+            fig.suptitle(title)
+            fig.tight_layout(pad=3.0)
 
         (x, y) = self.rayCountHistogram()
+
         # axis1.set_title('Intensity profile')
         axis1.plot(x, y, 'k-', label="Intensity")
         axis1.set_ylim([0, max(y) * 1.1])
-        axis1.set_xlabel("Distance")
+        axis1.set_xlabel("Height of ray")
         axis1.set_ylabel("Ray count")
         axis1.legend(["Intensity"])
 
-        (x, y) = self.rayAnglesHistogram()
-        # axis2.set_title('Angle histogram')
-        axis2.plot(x, y, 'k--', label="Orientation profile")
-        axis2.set_ylim([0, max(y) * 1.1])
-        axis2.set_xlim([-pi / 2, pi / 2])
-        axis2.set_xlabel("Angles [rad]")
-        axis2.set_ylabel("Ray count")
-        axis2.legend(["Angle"])
+        if showTheta:
+            (x, y) = self.rayAnglesHistogram()
+            # axis2.set_title('Angle histogram')
+            axis2.plot(x, y, 'k--', label="Orientation profile")
+            axis2.set_ylim([0, max(y) * 1.1])
+            axis2.set_xlim([-pi / 2, pi / 2])
+            axis2.set_xlabel("Angle of ray [rad]")
+            axis2.set_ylabel("Ray count")
+            axis2.legend(["Angle"])
 
         plt.show()
 
@@ -399,7 +408,7 @@ class Rays:
         ----------
         filePath : str or PathLike or file-like object
             A path, or a Python file-like object, or possibly some backend-dependent object.
-            (Is the format important? what is the default format?)
+            Must be provided in OS-dependent format.
         append : bool
             If True, the loaded rays will be appended to the current list of rays.
         """
@@ -423,7 +432,7 @@ class Rays:
         ----------
         filePath : str or PathLike or file-like object
             A path, or a Python file-like object, or possibly some backend-dependent object.
-            (Is the form at important? what is the default format?)
+            Must be provided in OS-dependent format.
         """
 
         with open(filePath, 'wb') as outfile:
@@ -627,9 +636,11 @@ class RandomRays(Rays):
         if item < 0 or item >= self.maxCount:
             raise IndexError(f"Index {item} out of bound, min = 0, max {self.maxCount}.")
 
+        start = time.monotonic()
         while len(self._rays) <= item:
-            warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
             self.randomRay()
+            if time.monotonic() - start > 3:
+                warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
 
         return self._rays[item]
 

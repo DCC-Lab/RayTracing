@@ -3,11 +3,9 @@ from typing import Any, Union
 from .matrixgroup import *
 
 from .ray import *
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.path as mpath
-import matplotlib.transforms as transforms
+from .figure import Figure
 import sys
+import warnings
 
 
 class ImagingPath(MatrixGroup):
@@ -33,7 +31,7 @@ class ImagingPath(MatrixGroup):
     objectPosition : float
         This attribute defines the position of the object which must be defined zero for now. (default=0)
     fanAngle : float
-        this value indicates full fan angle in radians for rays (max? min?) (default=0.1)
+        This value indicates full fan angle in radians for rays (default=0.1)
     fanNumber : int
         This value indicates the number of ray(s) in fan (default=9)
     precision : float
@@ -93,6 +91,8 @@ class ImagingPath(MatrixGroup):
         self.maxHeight = 10000.0
 
         # Display properties
+        self.figure = Figure(opticalPath=self)
+        self.design = self.figure.design
         self.showObject = True
         self.showImages = True
         self.showEntrancePupil = False
@@ -115,9 +115,10 @@ class ImagingPath(MatrixGroup):
         if objectHeight < 0:
             raise ValueError("The object height can't be negative.")
         self._objectHeight = objectHeight
+        self.figure.designParams['limitObjectToFieldOfView'] = False
 
     def chiefRay(self, y=None):
-        """This function returns the chief ray for a height y at object.
+        r"""This function returns the chief ray for a height y at object.
         The chief ray for height y is the ray that goes
         through the center of the aperture stop.
 
@@ -179,21 +180,21 @@ class ImagingPath(MatrixGroup):
             return None
 
         if y is None:
-            y = self.fieldOfView()
+            y = self.fieldOfView()/2
             if abs(y) == float("+inf"):
-                raise ValueError("Must provide y when the filed of view is infinite")
+                raise ValueError("Must provide y when the field of view is infinite")
 
         return Ray(y=y, theta=-A * y / B)
 
     def principalRay(self):
-        """This function returns the chief ray for the height y at the edge 
-        of the field of view. The chief ray for height y is the ray that goes
-        through the center of the aperture stop.
+        """This function returns the principal ray, which is the chief ray 
+        for the height y at the edge of the field of view. The chief ray
+        is the ray that goes through the center of the aperture stop.
 
         Returns
         -------
         principalRay : object of Ray class
-            The properties (i.e. height and the angle of the marginal ray).
+            The properties (i.e. height and the angle of the principal ray).
 
         See Also
         --------
@@ -202,10 +203,17 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
 
         """
-        return self.chiefRay(y=None)
+
+        objectEdge = self.fieldOfView()/2
+        if objectEdge == float("+inf"):
+            return None
+
+        principalRay = self.chiefRay(y=objectEdge)
+        principalRay.y -= 0.001 #FIXME: be more intelligent than this.
+        return principalRay
 
     def marginalRays(self, y=0):
-        """This function calculates the marginal rays for a height y at object.
+        r"""This function calculates the marginal rays for a height y at object.
         The marginal rays for height y are the rays that hit the upper and lower
         edges of the aperture stop. There are always two marginal rays for any
         point on the object.  They are symmetric on either side of the optic axis
@@ -305,7 +313,8 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.chiefRay
         raytracing.ImagingPath.principalRay
         """
-        return self.marginalRays()
+        rayUp, rayDown = self.marginalRays()
+        return rayUp
 
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
@@ -421,7 +430,7 @@ class ImagingPath(MatrixGroup):
                 return None, None
             else:
                 (Mt, Ma) = matrixToPupil.magnification()
-                return (-pupilPosition, stopDiameter / Mt)
+                return (-pupilPosition, stopDiameter / abs(Mt))
         else:
             return (None, None)
 
@@ -677,178 +686,40 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def displayRange(self, axes=None):
-        """ We return the largest object in the ImagingPath for display purposes.
-        The object is considered only "half" because it starts on axis and goes up.
-
-        Returns
-        -------
-        displayRange : float
-            The maximum height of the objects in an imaging path
-
-        Examples
-        --------
-        In the following example, we have defined three elements in an imaging path:
-        An object (height=3), a first lens (height=5) and a second lens (height=7).
-        The height of the second lens is returned as the display range.
-
-        >>> from raytracing import *
-        >>> path = ImagingPath() # define an imaging path
-        >>> # use append() to add elements to the imaging path
-        >>> path.objectHeight=3
-        >>> path.append(Space(d=10))
-        >>> path.append(Lens(f=10,diameter=5,label="f=10"))
-        >>> path.append(Space(d=30))
-        >>> path.append(Lens(f=20,diameter=7,label="f=20"))
-        >>> path.append(Space(d=20))
-        >>> print('display range :', path.displayRange())
-        display range : 7
-
-        """
-
-        displayRange = self.largestDiameter
-
-        if displayRange == float('+Inf') or displayRange <= 2 * self._objectHeight:
-            displayRange = 2 * self._objectHeight
-
-        conjugates = self.intermediateConjugates()
-        if len(conjugates) != 0:
-            for (planePosition, magnification) in conjugates:
-                magnification = abs(magnification)
-                if displayRange < self._objectHeight * magnification:
-                    displayRange = self._objectHeight * magnification
-
-        return displayRange
-
-    def createRayTracePlot(
-            self, axes,
-            limitObjectToFieldOfView=False,
-            onlyChiefAndMarginalRays=False,
-            removeBlockedRaysCompletely=False):  # pragma: no cover
-        """ This function creates a matplotlib plot to draw the rays and the elements.
-
-            Parameters
-            ----------
-            axes : object from matplotlib.pyplot.axes class
-                Add an axes to the current figure and make it the current axes.
-            limitObjectToFieldOfView : bool (Optional)
-                If True, the object will be limited to the field of view and
-                the calculated field of view will be used instead of the objectHeight(default=False)
-            onlyChiefAndMarginalRays : bool (Optional)
-                If True, only the principal rays will appear on the plot (default=False)
-            removeBlockedRaysCompletely : bool (Optional)
-                If True, the blocked rays are removed (default=False)
-
-         """
-
-        axes.set(xlabel='Distance', ylabel='Height', title=self.label)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
-
-        note1 = ""
-        note2 = ""
-        if limitObjectToFieldOfView:
-            fieldOfView = self.fieldOfView()
-            if fieldOfView != float('+Inf'):
-                self._objectHeight = fieldOfView
-                note1 = "FOV: {0:.2f}".format(self._objectHeight)
-            else:
-                raise ValueError(
-                    "Infinite field of view: cannot use\
-                    limitObjectToFieldOfView=True.")
-
-            imageSize = self.imageSize()
-            if imageSize != float('+Inf'):
-                note1 += " Image size: {0:.2f}".format(imageSize)
-            else:
-                raise ValueError(
-                    "Infinite image size: cannot use\
-                    limitObjectToFieldOfView=True.")
-
-        else:
-            note1 = "Object height: {0:.2f}".format(self._objectHeight)
-
-        if onlyChiefAndMarginalRays:
-            (stopPosition, stopDiameter) = self.apertureStop()
-            if stopPosition is None:
-                raise ValueError(
-                    "No aperture stop in system: cannot use\
-                    onlyChiefAndMarginalRays=True since they\
-                    are not defined.")
-            note2 = "Only chief and marginal rays shown"
-
-        axes.text(0.05, 0.15, note1 + "\n" + note2, transform=axes.transAxes,
-                  fontsize=12, verticalalignment='top', clip_box=axes.bbox, clip_on=True)
-
-        self.drawRayTraces(
-            axes,
-            onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        self.drawDisplayObjects(axes)
-
-        return axes
-
-    def updateDisplay(self, axes):
-        """ Callback function used to redraw the objects when zooming.
-
-        Parameters
-        ----------
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-        for artist in axes.artists:
-            artist.remove()
-        axes.artists = []
-        for patch in axes.patches:
-            patch.remove()
-        axes.patches = []
-        for text in axes.texts:
-            text.remove()
-        axes.texts = []
-
-        self.drawDisplayObjects(axes)
-
-    def display(self, limitObjectToFieldOfView=False,
-                onlyChiefAndMarginalRays=False, removeBlockedRaysCompletely=False, comments=None):  # pragma: no cover
+    def display(self, onlyPrincipalAndAxialRays=True,
+                removeBlockedRaysCompletely=False, comments=None,
+                limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
         """ Display the optical system and trace the rays.
 
         Parameters
         ----------
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
-        onlyChiefAndMarginalRays : bool (Optional)
-            If True, only the principal rays will appear on the plot (default=False)
+            the calculated field of view will be used instead of the objectHeight (default=True)
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal and axial rays will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
+        if onlyChiefAndMarginalRays is not None:
+            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
+                          "use onlyPrincipalAndAxialRays instead.")
+            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
 
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+        self.figure.createFigure(title=self.label, comments=comments)
 
-        axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
+        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
+                            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
-        self._showPlot()
-
-    def save(self, filepath,
-             limitObjectToFieldOfView=False,
-             onlyChiefAndMarginalRays=False,
-             removeBlockedRaysCompletely=False,
-             comments=None):
+    def saveFigure(self, filepath,
+                   onlyPrincipalAndAxialRays=True,
+                   removeBlockedRaysCompletely=False, comments=None,
+                   limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
         """
         The figure of the imaging path can be saved using this function.
 
@@ -860,283 +731,24 @@ class ImagingPath(MatrixGroup):
             ensure that the correct backend is used.
         limitObjectToFieldOfView : bool (Optional)
             If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=False)
-        onlyChiefAndMarginalRays : bool (Optional)
-            If True, only the principal rays will appear on the plot (default=False)
+            the calculated field of view will be used instead of the objectHeight(default=True)
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal rays will appear on the plot (default=True)
         removeBlockedRaysCompletely : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
-
         """
+        if onlyChiefAndMarginalRays is not None:
+            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
+                          "use onlyPrincipalAndAxialRays instead.")
+            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
 
-        if comments is not None:
-            fig, (axes, axesComments) = plt.subplots(2, 1, figsize=(10, 7))
-            axesComments.axis('off')
-            axesComments.text(0., 1.0, comments, transform=axesComments.transAxes,
-                              fontsize=10, verticalalignment='top')
-        else:
-            fig, axes = plt.subplots(figsize=(10, 7))
+        self.figure.createFigure(title=self.label, comments=comments)
 
-        self.createRayTracePlot(axes=axes,
-                                limitObjectToFieldOfView=limitObjectToFieldOfView,
-                                onlyChiefAndMarginalRays=onlyChiefAndMarginalRays,
-                                removeBlockedRaysCompletely=removeBlockedRaysCompletely)
-
-        axes.callbacks.connect('ylim_changed', self.updateDisplay)
-        axes.set_ylim([-self.displayRange(axes) / 2 * 1.5, self.displayRange(axes) / 2 * 1.5])
-
-        fig.savefig(filepath, dpi=600)
-
-    def drawRayTraces(self, axes, onlyChiefAndMarginalRays,
-                      removeBlockedRaysCompletely=True):  # pragma: no cover
-        """ Draw all ray traces corresponding to either
-        1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber)
-        2. the principal rays (chief and marginal)
-
-        Parameters
-        ----------
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-        onlyChiefAndMarginalRays : bool
-            If True, only the principal rays will appear on the plot
-        removeBlockedRaysCompletely : bool (Optional)
-            If True, the blocked rays are removed (default=False).
-
-        """
-
-        color = ['b', 'r', 'g']
-
-        if onlyChiefAndMarginalRays:
-            halfHeight = self._objectHeight / 2.0
-            chiefRay = self.chiefRay(y=halfHeight - 0.01)
-            (marginalUp, marginalDown) = self.marginalRays(y=0)
-            rayGroup = (chiefRay, marginalUp)
-            linewidth = 1.5
-        else:
-            halfAngle = self.fanAngle / 2.0
-            halfHeight = self._objectHeight / 2.0
-            rayGroup = Ray.fanGroup(
-                yMin=-halfHeight,
-                yMax=halfHeight,
-                M=self.rayNumber,
-                radianMin=-halfAngle,
-                radianMax=halfAngle,
-                N=self.fanNumber)
-            linewidth = 0.5
-
-        manyRayTraces = self.traceMany(rayGroup)
-
-        for rayTrace in manyRayTraces:
-            (x, y) = self.rearrangeRayTraceForPlotting(
-                rayTrace, removeBlockedRaysCompletely)
-            if len(y) == 0:
-                continue  # nothing to plot, ray was fully blocked
-
-            rayInitialHeight = y[0]
-            binSize = 2.0 * halfHeight / (len(color) - 1)
-            colorIndex = int(
-                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
-            axes.plot(x, y, color[colorIndex], linewidth=linewidth, label='ray')
-
-    def rearrangeRayTraceForPlotting(self, rayList,
-                                     removeBlockedRaysCompletely=True):
-        """
-        This function removes the rays that are blocked in the imaging path.
-
-        Parameters
-        ----------
-        rayList : List of Rays
-            an object from rays class or a list of rays
-        removeBlockedRaysCompletely : bool
-            If True, the blocked rays will be removed of the list (default=True)
-
-        """
-        x = []
-        y = []
-        for ray in rayList:
-            if not ray.isBlocked:
-                x.append(ray.z)
-                y.append(ray.y)
-            elif removeBlockedRaysCompletely:
-                x = []
-                y = []
-            # else: # ray will simply stop drawing from here
-        return (x, y)
-
-    def drawDisplayObjects(self, axes):  # pragma: no cover
-        """ Draw the object, images and all elements to the figure
-
-        Parameters
-        ----------
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-        if self.showObject:
-            self.drawObject(axes)
-
-        if self.showImages:
-            self.drawImages(axes)
-
-        if self.showEntrancePupil:
-            self.drawEntrancePupil(z=0, axes=axes)
-
-        self.drawAt(z=0, axes=axes, showLabels=self.showElementLabels)
-        if self.showPointsOfInterest:
-            self.drawPointsOfInterest(z=0, axes=axes)
-            self.drawStops(z=0, axes=axes)
-
-    def drawObject(self, axes):  # pragma: no cover
-        """Draw the object as defined by objectPosition, objectHeight
-
-        Parameters
-        ----------
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-
-        (xScaling, yScaling) = self.axesToDataScale(axes)
-
-        arrowHeadHeight = self._objectHeight * 0.1
-
-        heightFactor = self._objectHeight / yScaling
-        arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
-
-        axes.arrow(
-            self.objectPosition,
-            -self._objectHeight / 2,
-            0,
-            self._objectHeight,
-            width=arrowHeadWidth / 5,
-            fc='b',
-            ec='b',
-            head_length=arrowHeadHeight,
-            head_width=arrowHeadWidth,
-            length_includes_head=True)
-
-    def drawImages(self, axes):  # pragma: no cover
-        """ Draw all images (real and virtual) of the object defined by 
-        objectPosition, objectHeight
-
-        Parameters
-        ----------
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-
-        (xScaling, yScaling) = self.axesToDataScale(axes)
-        images = self.intermediateConjugates()
-
-        for (imagePosition, magnification) in images:
-            arrowHeight = abs(magnification * self._objectHeight)
-            arrowHeadHeight = arrowHeight * 0.1
-
-            heightFactor = arrowHeight / yScaling
-            arrowHeadWidth = xScaling * 0.01 * (heightFactor / 0.2) ** (3 / 4)
-
-            axes.arrow(
-                imagePosition,
-                -magnification * self._objectHeight / 2,
-                0,
-                magnification * self._objectHeight,
-                width=arrowHeadWidth / 5,
-                fc='r',
-                ec='r',
-                head_length=arrowHeadHeight,
-                head_width=arrowHeadWidth,
-                length_includes_head=True)
-
-    def drawStops(self, z, axes):  # pragma: no cover
-        """ AS and FS are drawn at 110% of the largest diameter
-
-        Parameters
-        ----------
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        """
-        halfHeight = self.largestDiameter / 2
-
-        (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
-        if apertureStopPosition is not None:
-            axes.annotate('AS',
-                          xy=(apertureStopPosition, 0.0),
-                          xytext=(apertureStopPosition, halfHeight * 1.1),
-                          fontsize=18,
-                          xycoords='data',
-                          ha='center',
-                          va='bottom')
-
-        (fieldStopPosition, fieldStopDiameter) = self.fieldStop()
-        if fieldStopPosition is not None:
-            axes.annotate('FS',
-                          xy=(fieldStopPosition,
-                              0.0),
-                          xytext=(fieldStopPosition,
-                                  halfHeight * 1.1),
-                          fontsize=18,
-                          xycoords='data',
-                          ha='center',
-                          va='bottom')
-
-    def drawEntrancePupil(self, z, axes):  # pragma: no cover
-        """
-        Draw the entrance pupil on an optical system using the position and diameter of the
-        entrance pupil.
-
-        Parameters
-        ----------
-        z : float
-            The position of the centre of the entrance pupil will shift by this number.
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        See Also
-        --------
-        raytracing.ImagingPath.entrancePupil
-
-        """
-
-        (pupilPosition, pupilDiameter) = self.entrancePupil()
-        if pupilPosition is not None:
-            halfHeight = pupilDiameter / 2.0
-            center = z + pupilPosition
-            (xScaling, yScaling) = self.axesToDataScale(axes)
-            heightFactor = halfHeight * 2 / yScaling
-            width = xScaling * 0.01 / 2 * (heightFactor / 0.2) ** (3 / 4)
-
-            axes.add_patch(patches.Polygon(
-                [[center - width, halfHeight],
-                 [center + width, halfHeight]],
-                linewidth=3,
-                closed=False,
-                color='r'))
-            axes.add_patch(patches.Polygon(
-                [[center - width, -halfHeight],
-                 [center + width, -halfHeight]],
-                linewidth=3,
-                closed=False,
-                color='r'))
-
-    def drawOpticalElements(self, z, axes):  # pragma: no cover
-        """ Deprecated. Use drawAt()
-
-        Parameters
-        ----------
-        z : float
-            The position of the optical element.
-        axes : object from matplotlib.pyplot.axes class
-            Add an axes to the current figure and make it the current axes.
-
-        See Also
-        --------
-        raytracing.ImagingPath.drawAt
-
-        """
-        msg = "drawOpticalElements() was renamed drawAt()"
-        warnings.warn(msg, DeprecationWarning)
-        self.drawAt(z, axes, showLabels=self.showElementLabels)
+        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
+                            removeBlockedRaysCompletely=removeBlockedRaysCompletely,
+                            filepath=filepath)

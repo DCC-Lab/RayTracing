@@ -17,6 +17,7 @@ of curvature q and the same matrices.
 The class hierarchy can be seen on http://webgraphviz.com with the
 following description:
 
+```
 digraph G {
    rankdir="LR";
 
@@ -31,22 +32,19 @@ digraph G {
         "ThickLens" -> "DielectricSlab"
 
         "MatrixGroup" -> "AchromaticDoubletLens"
-        "AchromaticDoubletLens" -> "thorlabs.part#"
-        "AchromaticDoubletLens" -> "eo.part#"
+        "AchromaticDoubletLens" -> "thorlabs.partNumber"
+        "AchromaticDoubletLens" -> "eo.partNumber"
         "MatrixGroup" -> "Objective"
-        "Objective" -> "olympus.part#"
+        "Objective" -> "olympus.partNumber"
     }
 
     subgraph mathview {
         "Matrix" -> "MatrixGroup"
         "MatrixGroup" -> ImagingPath
+        "MatrixGroup" -> LaserPath
     }
-
-    elements
-
-    mathview
-    
 }
+```
 """
 
 import math
@@ -71,6 +69,7 @@ from .imagingpath import *
 """ ABCD matrices for gaussian beams """
 from .gaussianbeam import *
 from .laserpath import *
+from .lasercavity import *
 
 """ Matrices for components: System4f (synonym: Telescope), System2f """
 from .components import *
@@ -92,6 +91,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.2.9"
+__version__ = "1.2.10"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 

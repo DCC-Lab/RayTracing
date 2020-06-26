@@ -21,37 +21,41 @@ paths containing different lens diameter.
 import envexamples
 from raytracing import *
 
-path = ImagingPath()
-path.label="(a) Vignetting with FS poorly placed because of second lens diameter"
-path.append(Space(d=50))
-path.append(Lens(f=50, diameter=15, label="First lens"))
-path.append(Space(d=100))
-path.append(Lens(f=50, diameter=15, label="Second lens"))
-path.append(Space(d=50))
-path.append(Aperture(diameter=10, label='Camera'))
-path.append(Space(d=50))
-path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
+# Defines the path. a and b are the diameter of the lenses.
+def imagingPath(a=10, b=10, title=""):
+    
+    path = ImagingPath()
+    path.label=title
+    path.append(System4f(f1=50, diameter1=a, f2=50, diameter2=b))
+    path.append(Aperture(diameter=10, label='Camera'))
+    
+    return path
 
 
-path = ImagingPath()
-path.label="(b) Suboptimal AS at second lens, but without vignetting"
-path.append(Space(d=50))
-path.append(Lens(f=50, diameter=40, label="First lens"))
-path.append(Space(d=100))
-path.append(Lens(f=50, diameter=15, label="Second lens"))
-path.append(Space(d=50))
-path.append(Aperture(diameter=10, label='Camera'))
-path.append(Space(d=50))
-path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
+# Input from the expected field of view
+nRays=1000000
+objectHalfHeight = 5
+inputRays = RandomUniformRays(yMax = objectHalfHeight, 
+                              yMin = -objectHalfHeight,
+                              thetaMin = -0.5,
+                              thetaMax = +0.5,
+                              maxCount=nRays)
 
+# Three paths with different sets of lens diameter. 
+path1 = imagingPath(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
+outputRays = path1.traceManyThroughInParallel(inputRays)
+efficiency = 100*outputRays.count/inputRays.count
+path1.display(limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=True)
+outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
 
-path = ImagingPath()
-path.label="(c) Optimal AS at first lens and FS at Camera"
-path.append(Space(d=50))
-path.append(Lens(f=50, diameter=25, label="First lens"))
-path.append(Space(d=100))
-path.append(Lens(f=50, diameter=25, label="Second lens"))
-path.append(Space(d=50))
-path.append(Aperture(diameter=10, label='Camera'))
-path.append(Space(d=50))
-path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True)
+path2 = imagingPath(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
+outputRays = path2.traceManyThroughInParallel(inputRays)
+efficiency = 100*outputRays.count/inputRays.count
+path2.display(limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=True)
+outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+
+path3 = imagingPath(a=25, b=50, title="Better AS at first lens and FS at Camera")
+outputRays = path3.traceManyThroughInParallel(inputRays)
+efficiency = 100*outputRays.count/inputRays.count
+path3.display(limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=True)
+outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
