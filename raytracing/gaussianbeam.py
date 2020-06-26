@@ -1,6 +1,6 @@
 import math
 import cmath
-
+from .utils import *
 
 class GaussianBeam(object):
     """A gaussian laser beam using the ABCD formalism for propagation of complex radius of curvature q.
@@ -44,7 +44,7 @@ class GaussianBeam(object):
             raise ValueError("Please specify 'q' or 'w'.")
 
         if q is not None and w is not None:
-            if not cmath.isclose(a=self.q, b=q, rel_tol=relTol):
+            if areNotEqual(self.q.real, q.real) or areNotEqual(self.q.imag, q.imag):
                 msg = f"Mismatch between the given q '{q}' and the computed q '{self.q}' ({relTol * 100}% tolerance)."
                 raise ValueError(msg)
 

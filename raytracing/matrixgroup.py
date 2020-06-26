@@ -402,7 +402,7 @@ class MatrixGroup(Matrix):
                 planePosition = transferMatrix.L + distance
                 if planePosition != 0 and conjugate is not None:
                     magnification = conjugate.A
-                    if any([isclose(pos, planePosition) and isclose(mag, magnification) for pos, mag in planes]):
+                    if any([areAlmostEqual(pos, planePosition) and areAlmostEqual(mag, magnification) for pos, mag in planes]):
                         continue
                     else:
                         planes.append([planePosition, magnification])

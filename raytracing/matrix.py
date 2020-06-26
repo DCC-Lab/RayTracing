@@ -137,8 +137,10 @@ class Matrix(object):
         self.label = label
         self.isFlipped = False
         super(Matrix, self).__init__()
-        if not isclose(self.determinant, self.frontIndex / self.backIndex, atol=self.__epsilon__):
-            raise ValueError("The matrix has inconsistent values")
+
+        if areNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
+            raise ValueError("The matrix has inconsistent values: \
+                determinant is incorrect considering front and back indices.")
 
     @property
     def isIdentity(self):
