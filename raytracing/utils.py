@@ -21,8 +21,8 @@ def areAlmostEqual(left, right, epsilon=1e-3):
 
 def areAlmostEqualRelative(left, right, epsilon=1e-3):
     absDiff = abs(left - right)
-    relTol1 = absDiff / left
-    relTol2 = absDiff / right
+    relTol1 = absDiff / abs(left)
+    relTol2 = absDiff / abs(right)
     return relTol1 < epsilon or relTol2 < epsilon
 
 
