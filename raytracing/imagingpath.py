@@ -4,7 +4,7 @@ from .matrixgroup import *
 from .figureManager import *
 
 from .ray import *
-from .figure import Figure
+from .figureManager import Figure
 import sys
 import warnings
 

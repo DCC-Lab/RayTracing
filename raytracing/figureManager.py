@@ -166,9 +166,9 @@ class Figure:
         from .laserpath import LaserPath   # Fixme: circular import fix
 
         if isinstance(self.path, LaserPath):
-            return self.laserDisplayRange()
+            return self.laserDisplayRange
         else:
-            return self.imagingDisplayRange()
+            return self.imagingDisplayRange
 
     @property
     def imagingDisplayRange(self):
