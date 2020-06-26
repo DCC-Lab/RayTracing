@@ -69,6 +69,7 @@ from .imagingpath import *
 """ ABCD matrices for gaussian beams """
 from .gaussianbeam import *
 from .laserpath import *
+from .lasercavity import *
 
 """ Matrices for components: System4f (synonym: Telescope), System2f """
 from .components import *
@@ -90,6 +91,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.2.9"
+__version__ = "1.2.10"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 

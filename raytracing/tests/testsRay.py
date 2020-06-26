@@ -1,10 +1,11 @@
-import unittest
 import envtest # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
-class TestRay(unittest.TestCase):
+
+class TestRay(envtest.RaytracingTestCase):
+
     def testRay(self):
         ray = Ray()
         self.assertIsNotNone(ray)
@@ -17,39 +18,39 @@ class TestRay(unittest.TestCase):
 
     def testFan(self):
         fan = Ray.fan(y=0, radianMin=-0.1, radianMax=0.1, N=5)
-        self.assertIsNotNone(fan)                
+        self.assertIsNotNone(fan)
         self.assertEqual(len(fan), 5)
-        self.assertEqual(min(map(lambda r: r.theta, fan)), -0.1)        
-        self.assertEqual(max(map(lambda r: r.theta, fan)), 0.1)        
-        self.assertEqual(min(map(lambda r: r.y, fan)), 0)        
-        self.assertEqual(max(map(lambda r: r.y, fan)), 0)        
+        self.assertEqual(min(map(lambda r: r.theta, fan)), -0.1)
+        self.assertEqual(max(map(lambda r: r.theta, fan)), 0.1)
+        self.assertEqual(min(map(lambda r: r.y, fan)), 0)
+        self.assertEqual(max(map(lambda r: r.y, fan)), 0)
 
     def testUnitFan(self):
         fan = Ray.fan(y=0, radianMin=-0.1, radianMax=0.1, N=1)
-        self.assertIsNotNone(fan)                
+        self.assertIsNotNone(fan)
         self.assertEqual(len(fan), 1)
-        self.assertEqual(min(map(lambda r: r.theta, fan)), -0.1)        
-        self.assertEqual(max(map(lambda r: r.theta, fan)), -0.1)        
-        self.assertEqual(min(map(lambda r: r.y, fan)), 0)        
-        self.assertEqual(max(map(lambda r: r.y, fan)), 0)        
-    
+        self.assertEqual(min(map(lambda r: r.theta, fan)), -0.1)
+        self.assertEqual(max(map(lambda r: r.theta, fan)), -0.1)
+        self.assertEqual(min(map(lambda r: r.y, fan)), 0)
+        self.assertEqual(max(map(lambda r: r.y, fan)), 0)
+
     def testFanGroup(self):
         fanGroup = Ray.fanGroup(yMin=0, yMax=1, M=10, radianMin=-0.1, radianMax=0.1, N=5)
-        self.assertIsNotNone(fanGroup)                
-        self.assertEqual(len(fanGroup), 10*5)
-        self.assertEqual(min(map(lambda r: r.theta, fanGroup)), -0.1)        
-        self.assertEqual(max(map(lambda r: r.theta, fanGroup)), 0.1)        
-        self.assertEqual(min(map(lambda r: r.y, fanGroup)), 0)        
-        self.assertEqual(max(map(lambda r: r.y, fanGroup)), 1)        
+        self.assertIsNotNone(fanGroup)
+        self.assertEqual(len(fanGroup), 10 * 5)
+        self.assertEqual(min(map(lambda r: r.theta, fanGroup)), -0.1)
+        self.assertEqual(max(map(lambda r: r.theta, fanGroup)), 0.1)
+        self.assertEqual(min(map(lambda r: r.y, fanGroup)), 0)
+        self.assertEqual(max(map(lambda r: r.y, fanGroup)), 1)
 
     def testUnitFanGroup(self):
         fanGroup = Ray.fanGroup(yMin=0, yMax=1, M=1, radianMin=-0.1, radianMax=0.1, N=1)
-        self.assertIsNotNone(fanGroup)                
+        self.assertIsNotNone(fanGroup)
         self.assertEqual(len(fanGroup), 1)
-        self.assertEqual(min(map(lambda r: r.theta, fanGroup)), -0.1)        
-        self.assertEqual(max(map(lambda r: r.theta, fanGroup)), -0.1)        
-        self.assertEqual(min(map(lambda r: r.y, fanGroup)), 0)        
-        self.assertEqual(max(map(lambda r: r.y, fanGroup)), 0)        
+        self.assertEqual(min(map(lambda r: r.theta, fanGroup)), -0.1)
+        self.assertEqual(max(map(lambda r: r.theta, fanGroup)), -0.1)
+        self.assertEqual(min(map(lambda r: r.y, fanGroup)), 0)
+        self.assertEqual(max(map(lambda r: r.y, fanGroup)), 0)
 
     def testNullFan(self):
         with self.assertRaises(Exception) as context:
@@ -65,35 +66,42 @@ class TestRay(unittest.TestCase):
     def testPrintString(self):
         ray = Ray()
         ray_desc = "{0}".format(ray)
-        self.assertIsNotNone(ray_desc)
         ray.isBlocked = True
         blockedray_desc = "{0}".format(ray)
+        self.assertIsNotNone(ray_desc)
         self.assertIsNotNone(blockedray_desc)
         self.assertNotEqual(ray_desc, blockedray_desc)
 
-
-    def testEqual(self):
+    def testEqualWithStr(self):
         ray = Ray(10, 10)
         other = "this is a ray"
         self.assertNotEqual(ray, other)
 
+    def testEqualWithNone(self):
+        ray = Ray(10, 10)
         other = None
         self.assertNotEqual(ray, other)
 
+    def testEqualWithMatrix(self):
+        ray = Ray(10, 10)
         other = Matrix()
         self.assertNotEqual(ray, other)
 
+    def testEqualWithDifferentRay(self):
+        ray = Ray(10, 10)
         other = Ray(0, 10)
         self.assertNotEqual(ray, other)
 
+    def testEqualWithDifferentRay2(self):
+        ray = Ray(10, 10)
         other = Ray(10, 0)
         self.assertNotEqual(ray, other)
 
-        other = Ray(10,10)
+    def testEqualWithSameRay(self):
+        ray = Ray(10, 10)
+        other = Ray(10, 10)
         self.assertEqual(ray, other)
 
 
-
-
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

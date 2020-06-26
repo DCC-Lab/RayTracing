@@ -1,11 +1,10 @@
-import unittest
 import envtest  # modifies path
 from raytracing import *
 
 inf = float("+inf")
 
 
-class TestBeam(unittest.TestCase):
+class TestBeam(envtest.RaytracingTestCase):
     def testBeam(self):
         beam = GaussianBeam(w=1)
         self.assertEqual(beam.w, 1)
@@ -42,6 +41,13 @@ class TestBeam(unittest.TestCase):
     def testInfiniteW(self):
         beam = GaussianBeam(w=inf, R=10)
         self.assertEqual(beam.w, inf)
+
+    def testNull(self):
+        beam = GaussianBeam(0)
+        self.assertFalse(beam.isFinite)
+        self.assertEqual(beam.w, float("+Inf"))
+        self.assertEqual(beam.R, float("+Inf"))
+        self.assertEqual(beam.wavelength, 0.0006328)
 
     def testZ0is0(self):
         beam = GaussianBeam(w=inf, R=1)
@@ -108,8 +114,9 @@ class TestBeam(unittest.TestCase):
 
     def testStrInvalidRadiusOfCurvature(self):
         beam = GaussianBeam(w=inf, R=1)
-        self.assertEqual(str(beam), "Not valid complex radius of curvature")
+        self.assertFalse(beam.isFinite)
+        self.assertEqual(str(beam), "Beam is not finite: q=(1+0j)")
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

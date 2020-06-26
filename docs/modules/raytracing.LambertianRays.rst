@@ -31,6 +31,7 @@ LambertianRays
 
     
       ~LambertianRays.count
+      ~LambertianRays.rays
       ~LambertianRays.thetaValues
       ~LambertianRays.yValues
 

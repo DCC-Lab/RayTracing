@@ -1,4 +1,3 @@
-import unittest
 import envtest  # modifies path
 
 from raytracing import *
@@ -8,7 +7,7 @@ inf = float("+inf")
 testSaveHugeFile = True
 
 
-class TestMatrixGroup(unittest.TestCase):
+class TestMatrixGroup(envtest.RaytracingTestCase):
 
     def testMatrixGroup(self):
         mg = MatrixGroup()
@@ -21,27 +20,25 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, 1)
         self.assertListEqual(mg.elements, [])
 
-    def testMatrixGroupAcceptsAnything(self):
+    def testMatrixGroupDoesNotAcceptRandomClass(self):
         class Toto:
             def __init__(self):
                 self.L = "Hello"
 
         with self.assertRaises(TypeError) as exception:
+            MatrixGroup([Toto(), Matrix()])
+        self.assertEqual(str(exception.exception), "'matrix' must be a Matrix instance.")
+
+    def testMatrixGroupDoesnNotAcceptStr(self):
+        with self.assertRaises(TypeError) as exception:
             MatrixGroup(["Matrix", Matrix()])
         self.assertEqual(str(exception.exception), "'matrix' must be a Matrix instance.")
 
-        with self.assertRaises(TypeError) as exception2:
-            MatrixGroup([Toto(), Matrix()])
-        self.assertEqual(str(exception2.exception), str(exception.exception))
-
+    def testMatrixGroupDoesNotAcceptNonIterable(self):
         with self.assertRaises(TypeError) as exception:
             MatrixGroup(123)
         self.assertEqual(str(exception.exception),
                          "'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
-
-        with self.assertRaises(TypeError) as exception2:
-            MatrixGroup(TypeError)
-        self.assertEqual(str(exception2.exception), str(exception.exception))
 
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
@@ -108,12 +105,10 @@ class TestMatrixGroup(unittest.TestCase):
 
         otherElement = Space(10)
         mg.append(otherElement)
-        self.assertEqual(len(mg.elements), 2)
-        msg = "If this fails, it is because the appended object is copied or it is not the right object: it is not" \
-              "the same instance. At the time this test was written, the original object is appended." \
-              "It is a short way to check if it is the right one at the end of the list."
-        self.assertIs(mg.elements[-1], otherElement, msg=msg)
         transferMat = otherElement * element
+        self.assertEqual(len(mg.elements), 2)
+        self.assertEqual(mg.elements[-1], otherElement)
+        self.assertEqual(mg.elements[-1], otherElement)
         self.assertEqual(mg.L, transferMat.L)
         self.assertEqual(mg.A, transferMat.A)
         self.assertEqual(mg.B, transferMat.B)
@@ -137,10 +132,8 @@ class TestMatrixGroup(unittest.TestCase):
         element = DielectricInterface(1, 1.33, 10)
         mg.append(element)
         otherElement = Space(10)
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            with self.assertRaises(UserWarning):
-                mg.append(otherElement)
+        with self.assertWarns(UserWarning):
+            mg.append(otherElement)
 
     def testAppendSpaceMustAdoptIndexOfRefraction(self):
         mEquivalent = MatrixGroup()
@@ -152,6 +145,11 @@ class TestMatrixGroup(unittest.TestCase):
         mEquivalent.append(d2)
         self.assertEqual(d1.backIndex, s.frontIndex)
         self.assertEqual(d2.frontIndex, s.backIndex)
+
+    def testAppendNotSpaceIndexOfRefractionMismatch(self):
+        mg = MatrixGroup([Space(10)])
+        with self.assertRaises(ValueError):
+            mg.append(DielectricInterface(1.33, 1.22))
 
     def testAppendNotCorrectType(self):
         mg = MatrixGroup()
@@ -174,8 +172,8 @@ class TestMatrixGroup(unittest.TestCase):
         elements.append(l2)
         elements.append(s4)
         mg = MatrixGroup(elements, label="Test")
-        self.assertEqual(len(mg.elements), len(elements))
         transferMat = s4 * l2 * s3 * s2 * l1 * s1
+        self.assertEqual(len(mg.elements), len(elements))
         self.assertEqual(mg.L, transferMat.L)
         self.assertAlmostEqual(mg.A, transferMat.A, places=10)
         self.assertAlmostEqual(mg.B, transferMat.B, places=10)
@@ -186,17 +184,16 @@ class TestMatrixGroup(unittest.TestCase):
         mg = MatrixGroup()
         self.assertListEqual(mg.transferMatrices(), [])
 
-    def testTransferMatrices(self):
-        msg = "The equality of matrices is based upon their id. It was sufficient when writing this test, because" \
-              "the matrix was not copied or changed: it was the 'whole' object that was appended (i.e. the original " \
-              "object and the appended object is the same object, same memory spot). If this fails, either" \
-              "they are not the same object anymore (but can still be 'equal') or they are purely different."
+    def testTransferMatricesOneElement(self):
         element1 = Space(10)
         mg = MatrixGroup([element1])
         transferMatrices = mg.transferMatrices()
         self.assertEqual(len(transferMatrices), 1)
-        self.assertListEqual(transferMatrices, [element1], msg=msg)
+        self.assertListEqual(transferMatrices, [element1])
 
+    def testTransferMatrixTwoElements(self):
+        element1 = Space(10)
+        mg = MatrixGroup([element1])
         element2 = Lens(2)
         mg.append(element2)
         transferMatrices = mg.transferMatrices()
@@ -224,11 +221,20 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertListEqual(mg._lastRayTrace, trace)
         self.assertEqual(mg._lastRayToBeTraced, trace[0])
 
-        mgTrace = mg.trace(ray)
+    def testTraceAlreadyTraced(self):
+        s = Space(2, diameter=5)
+        l = Lens(6, diameter=5)
+        ray = Ray(2, 2)
+        mg = MatrixGroup([s, l])
+        trace = [ray, ray, Ray(6, 2), Ray(6, 1)]
+        mgTrace1 = mg.trace(ray)
+
+        mgTrace2 = mg.trace(ray)  # Trace a 2nd time
         self.assertListEqual(mg._lastRayTrace, trace)
-        self.assertListEqual(mgTrace, trace)
+        self.assertListEqual(mgTrace2, trace)
+        self.assertListEqual(mgTrace1, mgTrace2)
         self.assertEqual(mg._lastRayToBeTraced, trace[0])
-        self.assertTrue(mgTrace[-1].isBlocked)
+        self.assertTrue(mgTrace2[-1].isBlocked)
 
     def testTraceIncorrectType(self):
         s = Space(2, diameter=5)
@@ -236,18 +242,6 @@ class TestMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([s, l])
         with self.assertRaises(TypeError):
             mg.trace("Ray")
-
-    @unittest.skip("Importation problem...")
-    def testImagingPath(self):
-        mg = MatrixGroup()
-        path = mg.ImagingPath()
-        self.assertIsNotNone(path)
-
-    @unittest.skip("Importation problem...")
-    def testLaserPath(self):
-        mg = MatrixGroup()
-        path = mg.LaserPath()
-        self.assertIsNotNone(path)
 
     def testIntermediateConjugatesEmptyGroup(self):
         mg = MatrixGroup()
@@ -258,7 +252,7 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertListEqual(mg.intermediateConjugates(), [])
 
     def testIntermediateConjugatesNoConjugate(self):
-        mg = MatrixGroup([Matrix(1, 1, 1, 0, 1)])
+        mg = MatrixGroup([Matrix(1, 1, -1, 0, 1)])
         self.assertListEqual(mg.intermediateConjugates(), [])
 
     def testIntermediateConjugates(self):
@@ -270,6 +264,12 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(len(intermediateConjugates[0]), 2)
         self.assertAlmostEqual(intermediateConjugates[0][0], results[0][0])
         self.assertAlmostEqual(intermediateConjugates[0][1], results[0][1])
+
+    def testIntermediateConjugatesDuplicates(self):
+        elements = [Space(10), Lens(10), Space(15), Lens(5), Space(5)]
+        mg = MatrixGroup(elements)
+        intermediateConj = mg.intermediateConjugates()
+        self.assertListEqual(intermediateConj, [[30.0, -0.5]])
 
     def testHasFiniteApertutreDiameter(self):
         space = Space(10, 1.2541255)
@@ -295,9 +295,9 @@ class TestMatrixGroup(unittest.TestCase):
 
     def testFlipOrientationEmptyGroup(self):
         mg = MatrixGroup()
-        self.assertIs(mg.flipOrientation(), mg)
+        self.assertEqual(mg.flipOrientation(), mg)
 
-    def testFlipOrientation(self):
+    def testFlipOrientation_1(self):
         space = Space(10)
         mg = MatrixGroup([space])
         mg.flipOrientation()
@@ -308,6 +308,7 @@ class TestMatrixGroup(unittest.TestCase):
         self.assertEqual(mg.D, space.D)
         self.assertEqual(mg.L, space.L)
 
+    def testFlipOrientation_2(self):
         space = Space(10)
         slab = DielectricSlab(1, 10)
         interface = DielectricInterface(1, 1.33)
@@ -326,24 +327,222 @@ class TestMatrixGroup(unittest.TestCase):
         mg2 = MatrixGroup(mg)
         self.assertListEqual(mg.elements, mg2.elements)
 
+    def testLenEmptyGroup(self):
+        mg = MatrixGroup()
+        self.assertEqual(len(mg), 0)
 
-class TestSaveAndLoadMatrixGroup(unittest.TestCase):
-    dirName = ""
+    def testLenNotEmpty(self):
+        nbElements = 10
+        mg = MatrixGroup([Lens(10) for _ in range(nbElements)])
+        self.assertEqual(len(mg), nbElements)
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.dirName = "tempDir"
-        os.mkdir(cls.dirName)
+    def testGetItemOutOfBoundsSingleIndex(self):
+        mg = MatrixGroup([Lens(10) for _ in range(10)])
+        index = len(mg)
+        with self.assertRaises(IndexError):
+            mg[index]
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        for file in os.listdir(cls.dirName):
-            os.remove(os.path.join(cls.dirName, file))
-        os.rmdir(cls.dirName)
+    def testGetItemOutOfBoundsEmpty(self):
+        mg = MatrixGroup()
+        with self.assertRaises(IndexError):
+            mg[0]
+
+    def testGetItem(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        for i in range(len(mg)):
+            self.assertIsInstance(mg[i], Matrix)
+            self.assertEqual(mg[i], listOfElements[i])
+
+    def testGetItemSlice(self):
+        space = Space(10)
+        lens = Lens(10)
+        listOfElements = [space, lens, space]
+        mg = MatrixGroup(listOfElements)
+        sliceMG = mg[:]
+        self.assertIsInstance(sliceMG, MatrixGroup)
+        self.assertListEqual(sliceMG.elements, mg.elements)
+
+    def testPopPositiveIndexOutOfBounds(self):
+        mg = MatrixGroup([Lens(5)])
+        with self.assertRaises(IndexError):
+            mg.pop(2)
+
+    def testPopNegativeIndexOutOfBounds(self):
+        mg = MatrixGroup([Lens(5)])
+        with self.assertRaises(IndexError):
+            mg.pop(-2)
+
+    def testPopFirstElement(self):
+        lens = Lens(10)
+        mg = MatrixGroup([lens])
+        poppedElement = mg.pop(0)
+        self.assertEqual(poppedElement, lens)
+        self.assertListEqual(mg.elements, [])
+
+    def testPopLastElement(self):
+        space = Space(10)
+        lens = Lens(10)
+        mg = MatrixGroup([space, lens, space])
+        poppedElement = mg.pop(2)
+        self.assertEqual(poppedElement, space)
+        self.assertListEqual(mg.elements, [space, lens])
+
+    def testPopElements(self):
+        space10 = Space(10)
+        lens10 = Lens(10)
+        space5 = Space(5)
+        lens5 = Lens(5)
+        mg = MatrixGroup([space5, lens5, space5, space10, lens10, space10])
+        pop3 = mg.pop(3)
+        popLast = mg.pop(-1)
+        self.assertEqual(pop3, popLast)
+        self.assertListEqual(mg.elements, [space5, lens5, space5, lens10])
+
+    def testInsertPositiveIndexOutOfBoundsNoError(self):
+        space = Space(10)
+        mg = MatrixGroup()
+        mg.insert(10, space)
+        self.assertListEqual(mg.elements, [space])
+
+    def testInsertNegativeIndexOutOfBoundsNoErrors(self):
+        space = Space(10)
+        mg = MatrixGroup()
+        mg.insert(-1000, space)
+        self.assertListEqual(mg.elements, [space])
+
+    def testInsertBeforeFirst(self):
+        space10 = Space(10)
+        lens10 = Lens(10)
+        space20 = Space(20)
+        lens20 = Lens(20)
+        space5 = Space(5)
+        lens5 = Lens(5)
+        space15 = Space(15)
+        lens15 = Lens(15)
+        mg = MatrixGroup([space10, lens10, space10, space20, lens20, space20, space5, lens5, space5])
+        mg.insert(0, [lens15, space15, lens15])
+        allElements = [lens15, space15, lens15, space10, lens10, space10, space20, lens20, space20, space5, lens5,
+                       space5]
+        self.assertListEqual(mg.elements, allElements)
+
+    def testInsertAfterLast(self):
+        space10 = Space(10)
+        lens10 = Lens(10)
+        space20 = Space(20)
+        lens20 = Lens(20)
+        space5 = Space(5)
+        lens5 = Lens(5)
+        space15 = Space(15)
+        lens15 = Lens(15)
+        mg = MatrixGroup([space10, lens10, space10, space20, lens20, space20, space5, lens5, space5])
+        mg.insert(10, [lens15, space15, lens15])
+        allElements = [space10, lens10, space10, space20, lens20, space20, space5, lens5,
+                       space5, lens15, space15, lens15]
+        self.assertListEqual(mg.elements, allElements)
+
+    def testInsertInMiddle(self):
+        space10 = Space(10)
+        lens10 = Lens(10)
+        mg = MatrixGroup([space10, space10])
+        mg.insert(1, lens10)
+        self.assertListEqual(mg.elements, [space10, lens10, space10])
+
+    def testSetItemSingleIndexOutOfBounds(self):
+        mg = MatrixGroup()
+        with self.assertRaises(IndexError):
+            mg[0] = Lens(100)
+
+    def testSetItemSliceIndexOutOfBounds(self):
+        lens = Lens(10)
+        space = Space(10)
+        mg = MatrixGroup()
+        mg[0:2] = [space, lens, space]
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testSetItemSliceWithStepWarning(self):
+        lens = Lens(10)
+        space = Space(10)
+        mg = MatrixGroup([space, lens, space, Space(20), Lens(20), Space(20)])
+        with self.assertWarns(UserWarning):
+            mg[3:len(mg):2] = [space, lens, space]
+        self.assertListEqual(mg.elements, [space, lens, space, space, lens, space])
+
+    def testSetItemSliceWithStepIsOne(self):
+        lens = Lens(10)
+        space = Space(10)
+        mg = MatrixGroup([space, lens, space, Space(20), Lens(20), Space(20)])
+        try:
+            with self.assertWarns(UserWarning):
+                mg[3:len(mg):1] = [space, lens, space]
+        except AssertionError:
+            self.assertListEqual(mg.elements, [space, lens, space, space, lens, space])
+        else:
+            self.fail("This should not print any warning!")
+
+    def testSetItemStartIndexIsNone(self):
+        lens = Lens(10)
+        space = Space(10)
+        mg = MatrixGroup([Space(20), Lens(20), space])
+        mg[:2] = [space, lens]
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testSetItemStopIndexIsNone(self):
+        lens = Lens(10)
+        space = Space(10)
+        mg = MatrixGroup([space, Lens(20), Space(20)])
+        mg[1:] = [lens, space]
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testSetItemAll(self):
+        lens = Lens(10)
+        space = Space(10)
+        mg = MatrixGroup([CurvedMirror(10), DielectricInterface(1, 1.33), Space(20, 1.33)])
+        mg[:] = [space, lens, space]
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testSetItemSingleIndex(self):
+        lens = Lens(10)
+        space = Space(10)
+        mg = MatrixGroup([CurvedMirror(10), lens, space])
+        mg[0] = space
+        self.assertListEqual(mg.elements, [space, lens, space])
+
+    def testEqualityDifferentClassInstance(self):
+        mg = MatrixGroup()
+        self.assertNotEqual(mg, Matrix())
+        self.assertNotEqual(mg, Ray())
+        self.assertNotEqual(mg, [Space(10), Lens(10), Space(10)])
+        self.assertNotEqual(mg, complex(10, 20.12))
+
+    def testEqualityDifferentListLength(self):
+        mg1 = MatrixGroup()
+        mg2 = MatrixGroup([Space(10)])
+        self.assertNotEqual(mg1, mg2)
+
+    def testEqualitySameLengthDifferentElements(self):
+        mg1 = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        mg2 = MatrixGroup([Space(20), Lens(20), Space(20), Space(20), Lens(20), Space(20)])
+        self.assertNotEqual(mg1, mg2)
+
+    def testEqualitySameGroup(self):
+        mg1 = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        mg2 = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        self.assertEqual(mg1, mg2)
+
+    def testEqualityGroupIs4f(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        system4f = System4f(10, 10)
+        self.assertEqual(mg, system4f)
+
+
+class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
 
     def setUp(self) -> None:
         self.testMG = MatrixGroup([Space(10), Lens(10), Space(10)])
-        self.fileName = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "testMG.pkl")
+        self.fileName = self.tempFilePath("testMG.pkl")
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testMG.elements)
         time.sleep(0.5)  # Make sure everything is ok
@@ -379,12 +578,12 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
             self.assertEqual(loadMatrixGroup.elements[i].backVertex, tempList[i].backVertex)
 
     def testSaveEmpty(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "emptyMG.pkl")
+        fname = self.tempFilePath("emptyMG.pkl")
         mg = MatrixGroup()
         self.assertSaveNotFailed(mg, fname)
 
     def testSaveNotEmpty(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "notEmptyMG.pkl")
+        fname = self.tempFilePath("notEmptyMG.pkl")
         mg = MatrixGroup([Space(10), Lens(10, 20), Space(20), Lens(10, 21), Space(10)])
         self.assertSaveNotFailed(mg, fname)
 
@@ -392,9 +591,9 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
         mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
         self.assertSaveNotFailed(mg, self.fileName)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveHugeFile(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
+        fname = self.tempFilePath("hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
         lenses = [Lens(10) for _ in range(500)]
         elements = spaces + lenses
@@ -425,7 +624,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
     def testLoadWrongObjectType(self):
         wrongObj = 7734
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, 'wrongObj.pkl')
+        fname = self.tempFilePath("wrongObj.pkl")
         with open(fname, 'wb') as file:
             pickle.Pickler(file).dump(wrongObj)
         time.sleep(0.5)  # Make sure everything is ok
@@ -437,7 +636,7 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
             self.fail(str(exception))
 
     def testLoadWrongIterType(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, 'wrongObj.pkl')
+        fname = self.tempFilePath("wrongObj.pkl")
         wrongIterType = [Lens(5), Lens(10), Ray()]
         with open(fname, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
@@ -449,16 +648,16 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
             self.fail(str(exception))
 
     def testSaveThenLoad(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "saveThenLoad.pkl")
+        fname = self.tempFilePath("saveThenLoad.pkl")
         mg1 = MatrixGroup([Space(10), Lens(10, 100), Space(10), Aperture(50)])
         mg2 = MatrixGroup()
         self.assertSaveNotFailed(mg1, fname)
         self.assertLoadNotFailed(mg2, fname)
         self.assertLoadEqualsMatrixGroup(mg2, mg1)
 
-    @unittest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
     def testSaveThenLoadHugeFile(self):
-        fname = os.path.join(TestSaveAndLoadMatrixGroup.dirName, "hugeFile.pkl")
+        fname = self.tempFilePath("hugeFile.pkl")
         spaces = [Space(10) for _ in range(500)]
         lenses = [Lens(10) for _ in range(500)]
         elements = spaces + lenses
@@ -470,4 +669,4 @@ class TestSaveAndLoadMatrixGroup(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    envtest.main()

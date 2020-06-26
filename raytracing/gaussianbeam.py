@@ -60,6 +60,9 @@ class GaussianBeam(object):
         """
         The radius of curvature (positive means diverging) extracted from q.
         """
+        if self.q == 0:
+            return float("+inf")
+
         invQReal = (1 / self.q).real
         if invQReal == 0:
             return float("+Inf")
@@ -75,6 +78,9 @@ class GaussianBeam(object):
         is not a finite and reasonable complex radius.  This is used for
         resonator and cavity calculations to discard unphysical solutions.
         """
+        if self.q == 0:
+            return False
+            
         return (-1 / self.q).imag > 0
 
     @property
@@ -82,11 +88,11 @@ class GaussianBeam(object):
         """
         The 1/e beam size in electric field extracted from q.
         """
-        qInv = (-1 / self.q).imag
-        if qInv > 0:
-            return math.sqrt(self.wavelength / self.n / (math.pi * qInv))
-        else:
+        if not self.isFinite:
             return float("+Inf")
+
+        qInv = (-1 / self.q).imag
+        return math.sqrt(self.wavelength / self.n / (math.pi * qInv))
 
     @property
     def wo(self):
@@ -138,10 +144,10 @@ class GaussianBeam(object):
             description += "w(z): {0:.3f}, ".format(self.w)
             description += "R(z): {0:.3f}, ".format(self.R)
             description += "z: {0:.3f}, ".format(self.z)
-            description += "λ: {0:.1f} nm\n".format(self.wavelength * 1e6)
+            description += "λ: {0:.1f} nm\n".format(self.wavelength)
             description += "zo: {0:.3f}, ".format(self.zo)
             description += "wo: {0:.3f}, ".format(self.wo)
             description += "wo position: {0:.3f} ".format(self.waistPosition)
             return description
         else:
-            return "Not valid complex radius of curvature"
+            return "Beam is not finite: q={0}".format(self.q)

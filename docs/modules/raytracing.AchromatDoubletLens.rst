@@ -19,8 +19,6 @@ AchromatDoubletLens
 
     
         ~AchromatDoubletLens.__init__
-        ~AchromatDoubletLens.drawAperture
-        ~AchromatDoubletLens.drawAt
         ~AchromatDoubletLens.pointsOfInterest
 
 
@@ -36,4 +34,5 @@ AchromatDoubletLens
       ~AchromatDoubletLens.determinant
       ~AchromatDoubletLens.hasPower
       ~AchromatDoubletLens.isImaging
+      ~AchromatDoubletLens.largestDiameter
 
