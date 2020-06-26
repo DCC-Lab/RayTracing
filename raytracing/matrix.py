@@ -869,7 +869,7 @@ class Matrix(object):
         And as usual, C = -1/f (always).
         """
 
-        return abs(self.B) < Matrix.__epsilon__
+        return isAlmostZero(self.B, self.__epsilon__)
 
     @property
     def hasPower(self):
@@ -889,7 +889,7 @@ class Matrix(object):
         >>> print('hasPower:' , M2.hasPower)
         hasPower: False
         """
-        return abs(self.C) > Matrix.__epsilon__
+        return isNotZero(self.C, self.__epsilon__)
 
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
