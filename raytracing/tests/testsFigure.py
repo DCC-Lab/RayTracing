@@ -5,29 +5,34 @@ from raytracing import *
 
 
 class TestFigure(unittest.TestCase):
-    def testDisplayRangeWithFiniteLens(self):
+    @patch('raytracing.Figure._showPlot')
+    def testDisplayRangeWithFiniteLens(self, mock):
         path = ImagingPath()  # default objectHeight is 10
         path.append(Space(d=10))
         path.append(Lens(f=5, diameter=20))
+        path.display()
 
         largestDiameter = 20
 
         self.assertEqual(path.figure.displayRange(), largestDiameter)
 
-    def testDisplayRangeImageOutOfView(self):
+    @patch('raytracing.Figure._showPlot')
+    def testDisplayRangeImageOutOfView(self, mock):
         path = ImagingPath()
         path.append(Space(2))
         path.append(CurvedMirror(-5, 10))
+        path.display()
 
-        self.assertAlmostEqual(path.figure.displayRange(), 20)
+        self.assertAlmostEqual(path.figure.displayRange(), 10)
 
         path.objectHeight = 1
+        path.display()
         self.assertEqual(path.figure.displayRange(), 10)
 
     def testDisplayRangeWithEmptyPath(self):
         path = ImagingPath()
 
-        largestDiameter = path.objectHeight * 2
+        largestDiameter = path.objectHeight
 
         self.assertEqual(path.figure.displayRange(), largestDiameter)
 
@@ -70,19 +75,8 @@ class TestFigureAxesToDataScale(unittest.TestCase):
 
         xScaling, yScaling = figure.axesToDataScale()
 
-        self.assertEqual(xScaling, 1)
-        self.assertEqual(yScaling, 1)
-
-    def testWithForcedScale(self):
-        figure = Figure(ImagingPath())
-        figure.createFigure()
-        figure.axes.set_xlim(-10, 10)
-        figure.axes.set_ylim(-5, 5)
-
-        xScaling, yScaling = figure.axesToDataScale()
-
-        self.assertEqual(xScaling, 20)
-        self.assertEqual(yScaling, 10)
+        self.assertEqual(xScaling, 0)
+        self.assertEqual(yScaling, 10 * 1.6)
 
     @unittest.skipIf(sys.platform == 'darwin',"FIXME: We hacked plt.show() on darwin to recover Ctrl-C")
     @patch('matplotlib.pyplot.show')
@@ -96,7 +90,7 @@ class TestFigureAxesToDataScale(unittest.TestCase):
 
         (xScaling, yScaling) = path.figure.axesToDataScale()
 
-        self.assertEqual(yScaling, path.figure.displayRange() * 1.5)
+        self.assertEqual(yScaling, path.figure.displayRange() * 1.6)
         self.assertEqual(xScaling, 20 * 1.1)
 
 

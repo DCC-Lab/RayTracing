@@ -114,7 +114,8 @@ class TestBeam(envtest.RaytracingTestCase):
 
     def testStrInvalidRadiusOfCurvature(self):
         beam = GaussianBeam(w=inf, R=1)
-        self.assertEqual(str(beam), "Not valid complex radius of curvature")
+        self.assertFalse(beam.isFinite)
+        self.assertEqual(str(beam), "Beam is not finite: q=(1+0j)")
 
 
 if __name__ == '__main__':

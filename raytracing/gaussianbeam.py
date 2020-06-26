@@ -144,10 +144,10 @@ class GaussianBeam(object):
             description += "w(z): {0:.3f}, ".format(self.w)
             description += "R(z): {0:.3f}, ".format(self.R)
             description += "z: {0:.3f}, ".format(self.z)
-            description += "λ: {0:.1f} nm\n".format(self.wavelength * 1e6)
+            description += "λ: {0:.1f} nm\n".format(self.wavelength)
             description += "zo: {0:.3f}, ".format(self.zo)
             description += "wo: {0:.3f}, ".format(self.wo)
             description += "wo position: {0:.3f} ".format(self.waistPosition)
             return description
         else:
-            return "Not valid complex radius of curvature"
+            return "Beam is not finite: q={0}".format(self.q)

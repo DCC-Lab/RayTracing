@@ -1,5 +1,6 @@
 from .imagingpath import *
 from .laserpath import *
+from .lasercavity import *
 
 from .specialtylenses import *
 from .axicon import *
@@ -392,7 +393,7 @@ if 18 in examples:
     path.append(Space(d=180))
     path.append(olympus.LUMPlanFL40X())
     path.append(Space(d=10))
-    path.display(inputBeam=GaussianBeam(w=0.001), comments="""
+    path.display(beams=[GaussianBeam(w=0.001)], comments="""
     path = LaserPath()
     path.label = "Demo #18: Laser beam and vendor lenses"
     path.append(Space(d=50))
@@ -408,21 +409,20 @@ if 18 in examples:
     path.append(Space(d=10))
     path.display()""")
 if 19 in examples:
-    cavity = LaserPath(label="Laser cavity: round trip\nCalculated laser modes")
-    cavity.isResonator = True
+    cavity = LaserCavity(label="Laser cavity: round trip\nCalculated laser modes")
     cavity.append(Space(d=160))
     cavity.append(DielectricSlab(thickness=100, n=1.8))
     cavity.append(Space(d=160))
-    cavity.append(CurvedMirror(R=400))
+    cavity.append(CurvedMirror(R=-400))
     cavity.append(Space(d=160))
     cavity.append(DielectricSlab(thickness=100, n=1.8))
     cavity.append(Space(d=160))
 
     # Calculate all self-replicating modes (i.e. eigenmodes)
     (q1, q2) = cavity.eigenModes()
-    print(q1, q2)
+    print(q1,q2)
 
-    # Obtain all physical (i.e. finite) self-replicating modes
+    # Obtain all physical modes (i.e. only finite eigenmodes)
     qs = cavity.laserModes()
     for q in qs:
         print(q)

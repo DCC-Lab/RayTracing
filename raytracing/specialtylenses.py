@@ -143,7 +143,6 @@ class AchromatDoubletLens(MatrixGroup):
         else:
             pass
 
-
 class SingletLens(MatrixGroup):
     """
     General singlet lens with an effective focal length of f, back focal

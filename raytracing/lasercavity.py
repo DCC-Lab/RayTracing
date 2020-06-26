@@ -48,19 +48,23 @@ class LaserCavity(LaserPath):
         round trip: you will need to duplicate elements in reverse
         and append them manually.
 
+        Knowing that q = (Aq + B)/(Cq + d), we get
+        Cq^2 + Dq = Aq + B, therefore:
+        Cq^2 + (D-A)q - B = 0
+
+        and q = - ((D-A) +- sqrt( (D-A)^2 - 4 C (-B)))/(2C)
+
         You will typically obtain two values, where only one is physical.
         There could be two modes in a laser with complex matrices (i.e.
         with gain), but this is not considered here.  See "Lasers" by Siegman.
         """
         if not self.hasPower:
             return None, None
-
         b = self.D - self.A
-        sqrtDelta = cmath.sqrt(b * b + 4.0 * self.B * self.C)
+        sqrtDelta = cmath.sqrt(b * b - 4.0 * self.C * (-self.B))
 
         q1 = (- b + sqrtDelta) / (2.0 * self.C)
         q2 = (- b - sqrtDelta) / (2.0 * self.C)
-
         return (GaussianBeam(q=q1), GaussianBeam(q=q2))
 
     def laserModes(self):
@@ -91,5 +95,8 @@ class LaserCavity(LaserPath):
             graph in the bottom half of the plot. (default=None)
 
         """
+        beams = self.laserModes()
+        if len(beams) == 0:
+            print("Cavity is not stable")
 
-        super(LaserCavity, self).display(inputBeams=self.laserModes())
+        super(LaserCavity, self).display(beams=beams)

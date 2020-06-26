@@ -1,3 +1,6 @@
+import warnings
+
+
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
 
@@ -83,12 +86,18 @@ class Ray:
         rays : list of ray
             The created list of rays that define this fan.
 
+        Notes
+        -----
+        This method is deprecated. The class Rays and its subclasses should be used to generate multiple Ray objects.
+
         See Also
         --------
         raytracing.Matrix.trace()
         raytracing.Matrix.traceMany().
 
         """
+        warnings.warn("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its"
+                      "subclasses is recommended.", DeprecationWarning)
 
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
@@ -131,13 +140,19 @@ class Ray:
         rays : list of ray
             The created list of rays that define these fan groups.
 
+        Notes
+        -----
+        This method is deprecated. The class Rays and its subclasses should be used to generate multiple Ray objects.
+
         See Also
         --------
         raytracing.Matrix.trace()
         raytracing.Matrix.traceMany().
 
         """
-        
+        warnings.warn("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its"
+                      "subclasses is recommended.", DeprecationWarning)
+
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
         elif N == 1:
