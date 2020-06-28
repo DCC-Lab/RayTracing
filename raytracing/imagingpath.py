@@ -1,12 +1,9 @@
 from typing import Any, Union, List
-
-from .matrixgroup import *
-from .figureManager import *
-
-from .ray import *
 from .figureManager import Figure
-import sys
+from .matrixgroup import *
+from .ray import *
 import warnings
+import sys
 
 
 class ImagingPath(MatrixGroup):
