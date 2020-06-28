@@ -87,7 +87,7 @@ class ImagingPath(MatrixGroup):
         self.rayNumber = 3  # number of points on object
 
         # Constants when calculating field stop
-        self.precision = 0.001
+        self.precision = 0.000001
         self.maxHeight = 10000.0
 
         # Display properties
@@ -209,7 +209,7 @@ class ImagingPath(MatrixGroup):
             return None
 
         principalRay = self.chiefRay(y=objectEdge)
-        principalRay.y -= 0.001 #FIXME: be more intelligent than this.
+        # principalRay.y -= 0.001 #FIXME: be more intelligent than this.
         return principalRay
 
     def marginalRays(self, y=0):
