@@ -94,7 +94,7 @@ class Ray:
         raytracing.Matrix.traceMany().
 
         """
-        warnings.warn("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its"
+        warnings.warn("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its "
                       "subclasses is recommended.", DeprecationWarning)
 
         if N >= 2:

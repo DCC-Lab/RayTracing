@@ -4,7 +4,7 @@ from raytracing import *
 
 inf = float("+inf")
 
-testSaveHugeFile = True
+testSaveHugeFiles = True
 
 
 class TestMatrixGroup(envtest.RaytracingTestCase):
@@ -591,11 +591,11 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
         mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
         self.assertSaveNotFailed(mg, self.fileName)
 
-    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFiles, "Don't test saving a lot of matrices")
     def testSaveHugeFile(self):
         fname = self.tempFilePath("hugeFile.pkl")
-        spaces = [Space(10) for _ in range(500)]
-        lenses = [Lens(10) for _ in range(500)]
+        spaces = [Space(10) for _ in range(200)]
+        lenses = [Lens(10) for _ in range(200)]
         elements = spaces + lenses
         mg = MatrixGroup(elements)
         self.assertSaveNotFailed(mg, fname)
@@ -655,11 +655,11 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
         self.assertLoadNotFailed(mg2, fname)
         self.assertLoadEqualsMatrixGroup(mg2, mg1)
 
-    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFiles, "Don't test saving a lot of matrices")
     def testSaveThenLoadHugeFile(self):
         fname = self.tempFilePath("hugeFile.pkl")
-        spaces = [Space(10) for _ in range(500)]
-        lenses = [Lens(10) for _ in range(500)]
+        spaces = [Space(10) for _ in range(125)]
+        lenses = [Lens(10) for _ in range(125)]
         elements = spaces + lenses
         mg1 = MatrixGroup(elements)
         mg2 = MatrixGroup()
