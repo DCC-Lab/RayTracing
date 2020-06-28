@@ -280,39 +280,23 @@ class Line:
         return plt.Line2D(self.xData, self.yData, color=self.color, linewidth=self.lineWidth, label=self.label)
 
 
-# TODO: create base Label, and maybe promote to MplLabel if necessary
-# class Label:
-#     pass
+class Label:
+    def __init__(self, text: str, x=0.0, y=0.0, fontsize=8, hasPoint=False):
+        self.text = text
+        self.x = x
+        self.y = y
+        self.fontsize = fontsize
 
-
-class MplLabel(mplText.Text):
-    def __init__(self, text: str, x=0.0, y=0.0, fontsize=8):
-        super(MplLabel, self).__init__(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
-
+        self.hasPoint = hasPoint
         self.offset = 0.0
 
     @property
     def position(self):
-        return self.get_position()
+        return self.x, self.y
 
     @position.setter
     def position(self, xy: tuple):
-        self.set_position(xy)
-
-    def isRenderedOn(self, figure: plt.Figure):
-        """Whether the label is rendered on the given figure (i.e. visible when displayed)."""
-        if self.get_tightbbox(figure.canvas.get_renderer()) is None:
-            return False
-        return True
-
-    def boundingBox(self, axes: plt.Axes, figure: plt.Figure, stretch=1.2) -> transforms.BboxBase:
-        """Bounding box of the label drawn on a figure.
-        Stretched in the x-axis to give more free space to the labels."""
-
-        displayBox = self.get_tightbbox(figure.canvas.get_renderer())
-        dataBox = displayBox.inverse_transformed(axes.transData)
-        dataBox = dataBox.expanded(sw=stretch, sh=1)
-        return dataBox
+        self.x, self.y = xy
 
     def translate(self, dx: float):
         """Translate the label in the x-axis by a small amount 'dx'.
@@ -322,12 +306,47 @@ class MplLabel(mplText.Text):
         """
         self.offset += dx
 
-        x, y = self.get_position()
-        self.set_position((x + dx, y))
+        x, y = self.position
+        self.position = (x + dx, y)
 
     def resetPosition(self):
         """Remove the effect of previous translations."""
-        x, y = self.get_position()
-        self.set_position((x - self.offset, y))
+        x, y = self.position
+        self.position = (x - self.offset, y)
 
         self.offset = 0.0
+
+    @property
+    def mplLabel(self) -> 'MplLabel':
+        # fixme? promoting to mplLabel for easier handling
+        return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPoint)
+
+
+class MplLabel(Label):
+    def __init__(self, text: str, x=0.0, y=0.0, fontsize=8, hasPoint=False):
+        super(MplLabel, self).__init__(text, x=0.0, y=0.0, fontsize=8, hasPoint=False)
+
+        self.patch = mplText.Text(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
+
+        self.offset = 0.0
+        self.hasPoint = hasPoint
+
+    @Label.position.setter
+    def position(self, xy: tuple):
+        self.x, self.y = xy
+        self.patch.set_position(xy)
+
+    def isRenderedOn(self, figure: plt.Figure):
+        """Whether the label is rendered on the given figure (i.e. visible when displayed)."""
+        if self.patch.get_tightbbox(figure.canvas.get_renderer()) is None:
+            return False
+        return True
+
+    def boundingBox(self, axes: plt.Axes, figure: plt.Figure, stretch=1.2) -> transforms.BboxBase:
+        """Bounding box of the label drawn on a figure.
+        Stretched in the x-axis to give more free space to the labels."""
+
+        displayBox = self.patch.get_tightbbox(figure.canvas.get_renderer())
+        dataBox = displayBox.inverse_transformed(axes.transData)
+        dataBox = dataBox.expanded(sw=stretch, sh=1)
+        return dataBox
