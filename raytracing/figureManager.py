@@ -335,15 +335,14 @@ class MplFigure(Figure):
 
     def draw(self):
         self.drawGraphics()
+        self.drawLabels()
 
         for line in self.lines:
             self.axes.add_line(line.patch)
 
-        for label in self.labels:
-            self.axes.add_artist(label)  # fixme with future Label: promote beforehand or call label.patch
-
         self.updateDisplayRange()
         self.updateGraphics()
+        self.updateLabels()
 
     def drawGraphics(self):
         for graphic in self.graphics:
@@ -353,7 +352,18 @@ class MplFigure(Figure):
                 self.axes.add_patch(component)
 
             if graphic.hasLabel:
-                self.axes.add_artist(graphic.label.artist)
+                self.labels.append(graphic.label)
+
+            for pointLabel in graphic.points:
+                self.labels.append(pointLabel)  # todo: create a point class of their own ?
+
+    def drawLabels(self):
+        self.labels = [label.mplLabel for label in self.labels]
+
+        for label in self.labels:
+            self.axes.add_artist(label.patch)
+            if label.hasPoint:
+                self.axes.plot([label.x], [0], 'ko', markersize=4, color='k', linewidth=0.4)
 
     def updateGraphics(self):
         for graphic in self.graphics:
@@ -368,6 +378,73 @@ class MplFigure(Figure):
             if graphic.hasLabel:
                 graphic.label.artist.set_transform(translation + self.axes.transData)
 
+    def updateLabels(self):
+        self.resetLabelOffsets()
+        self.fixLabelOverlaps()
+
+    def resetLabelOffsets(self):
+        """Reset previous offsets applied to the labels.
+
+        Used with a zoom callback to properly replace the labels.
+        """
+        for graphic in self.graphics:
+            if graphic.hasLabel:
+                graphic.label.resetPosition()
+
+        for label in self.labels:
+            label.resetPosition()
+
+    def getRenderedLabels(self) -> List[Label]:
+        """List of labels rendered inside the current display."""
+        labels = []
+        for graphic in self.graphics:
+            if graphic.hasLabel:
+                if graphic.label.isRenderedOn(self.figure):
+                    labels.append(graphic.label)
+
+        for label in self.labels:
+            if label.isRenderedOn(self.figure):
+                labels.append(label)
+
+        return labels
+
+    def fixLabelOverlaps(self, maxIteration: int = 5):
+        """Iteratively identify overlapping label pairs and move them apart in x-axis."""
+        labels = self.getRenderedLabels()
+        if len(labels) < 2:
+            return
+
+        i = 0
+        while i < maxIteration:
+            noOverlap = True
+            boxes = [label.boundingBox(self.axes, self.figure) for label in labels]
+            for (a, b) in itertools.combinations(range(len(labels)), 2):
+                boxA, boxB = boxes[a], boxes[b]
+
+                if boxA.overlaps(boxB):
+                    noOverlap = False
+                    if boxB.x1 > boxA.x1:
+                        requiredSpacing = boxA.x1 - boxB.x0
+                    else:
+                        requiredSpacing = boxA.x0 - boxB.x1
+
+                    self.translateLabel(labels[a], boxA, dx=-requiredSpacing/2)
+                    self.translateLabel(labels[b], boxB, dx=requiredSpacing/2)
+
+            i += 1
+            if noOverlap:
+                break
+
+    def translateLabel(self, label, bbox, dx):
+        """Internal method to translate a label and make sure it stays inside the display."""
+        label.translate(dx)
+
+        xMin, xMax = self.axes.get_xlim()
+        if bbox.x0 + dx < xMin:
+            label.translate(xMin - (bbox.x0 + dx))
+        elif bbox.x1 + dx > xMax:
+            label.translate(xMax - (bbox.x1 + dx))
+
     def updateDisplayRange(self):
         """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all graphics."""
         halfDisplayHeight = self.displayRange/2 * 1.5
@@ -376,6 +453,7 @@ class MplFigure(Figure):
 
     def onZoomCallback(self, axes):
         self.updateGraphics()
+        self.updateLabels()
 
     def scalingOfGraphic(self, graphic):
         if not graphic.useAutoScale:
