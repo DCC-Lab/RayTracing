@@ -831,10 +831,10 @@ class Matrix(object):
             processes = multiprocessing.cpu_count()
 
         theExplicitList = list(inputRays)
-        manyInputRays = [theExplicitList[i::processes] for i in range(processes)]
+        manyInputRays = [(theExplicitList[i::processes], progress) for i in range(processes)]
 
         with multiprocessing.Pool(processes=processes) as pool:
-            outputRays = pool.map(self.traceManyThrough, manyInputRays)
+            outputRays = pool.starmap(self.traceManyThrough, manyInputRays)
 
         outputRaysList = []
         for rays in outputRays:

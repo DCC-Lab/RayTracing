@@ -1,6 +1,5 @@
 import envtest  # modifies path
-import platform
-import sys
+from subprocess import check_output
 
 from raytracing import *
 
@@ -398,6 +397,20 @@ class TestMatrix(envtest.RaytracingTestCase):
                 self.assertIn(traceWithNumberProcesses[i], rays)
         except Exception as exception:
             self.fail(f"Exception raised:\n{exception}")
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallelNoOutput(self):
+        output = check_output(sys.executable + " traceManyThroughInParallelNoOutput.py", universal_newlines=True)
+        self.assertEqual(output, "")
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallelWithOutput(self):
+        output = check_output(sys.executable + " traceManyThroughInParallelWithOutput.py", universal_newlines=True)
+        self.assertEqual(output.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
     def testPointsOfInterest(self):
         m = Matrix()
