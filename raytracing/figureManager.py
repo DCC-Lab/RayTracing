@@ -58,8 +58,8 @@ class Figure:
                            'imageColor': imageColor, 'objectColor': objectColor}
         for key, value in newDesignParams.items():
             if value is not None:
-                if key is 'rayColors':
-                    assert len(value) is 3, \
+                if key == 'rayColors':
+                    assert len(value) == 3, \
                         "rayColors has to be a list with 3 elements."
                 self.designParams[key] = value
 
