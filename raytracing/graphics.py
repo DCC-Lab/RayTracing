@@ -14,24 +14,29 @@ class Graphic:
 
     """
 
-    def __init__(self, components, label: str = None,
+    def __init__(self, components=None, label: str = None,
                  x=0, y=0, fixedWidth=False):
-        self.components = components
+        self._components = components
         self.label = None
+        self.points = []
 
         self.x = x
         self.y = y
         self.useAutoScale = not fixedWidth
 
         if label is not None:
-            self.label = MplLabel(text=label, x=self.centroid[0], y=self.halfHeight * 1.2)
-        # fixme: label is still a matplotlib patch
+            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight * 1.2)
 
     @property
-    def hasLabel(self) -> bool:
+    def hasLabel(self):
         if self.label is None:
             return False
         return True
+
+    @property
+    def components(self):
+        """ Can be overwritten by other graphics """
+        return self._components
 
     @property
     def halfHeight(self) -> float:
@@ -90,41 +95,50 @@ class GraphicOf:
 
 
 class MatrixGraphic(Graphic):
-    # fixme: not sure this logistic is ideal...
-    #  maybe change components to _components property with default to None...
-    #  and move aperture component to MatrixGraphic or something...
-    def __init__(self, matrix):
+    def __init__(self, matrix, fixedWidth=False):
+        super(MatrixGraphic, self).__init__(fixedWidth=fixedWidth)
         self.matrix = matrix
-        super(MatrixGraphic, self).__init__(components=self.getComponents())
 
-    def getComponents(self):
-        components = []  # todo: black box (rectangle component)
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = self.mainComponents
+            self._components.extend(self.apertureComponents)
+
+            (f1, f2) = self.matrix.focusPositions(self.x)
+            if f1 is not None:
+                self.points.append(Label('', x=f1, hasPoint=True))
+            if f2 is not None:
+                self.points.append(Label('', x=f2, hasPoint=True))
+            # todo : maybe create a separate class for points
+
+            # self.drawLabels(z=0, axes=axes)
+            # self.drawCardinalPoints(z=0, axes=axes)
+            # if self.matrix.L != 0:
+            #     self.drawVertices(z=0, axes=axes)
+            # self.drawPointsOfInterest(z=0, axes=axes)
+            # self.drawPrincipalPlanes(z=0, axes=axes)
+        return self._components
+
+    @property
+    def mainComponents(self):
+        return []
+
+    @property
+    def apertureComponents(self):
+        # todo: make Aperture a single component with +- y
         if self.matrix.apertureDiameter != float('+Inf'):
             halfHeight = self.matrix.apertureDiameter / 2.0
-            components.append(Aperture(y=halfHeight, width=self.matrix.L))
-            components.append(Aperture(y=-halfHeight, width=self.matrix.L))
-        return components
+            return [Aperture(y=halfHeight, width=self.matrix.L),
+                    Aperture(y=-halfHeight, width=self.matrix.L)]
 
 
 class LensGraphic(MatrixGraphic):
-    def getComponents(self):
-        components = [DoubleThinArrow(self.matrix.displayHalfHeight()*2)]
-        if self.matrix.apertureDiameter != float('+Inf'):
-            halfHeight = self.matrix.apertureDiameter / 2.0
-            components.append(Aperture(y=halfHeight, width=self.matrix.L))
-            components.append(Aperture(y=-halfHeight, width=self.matrix.L))
-        return components
+    @property
+    def mainComponents(self):
+        return [DoubleThinArrow(self.matrix.displayHalfHeight()*2)]
 
 
 class ApertureGraphic(MatrixGraphic):
     def __init__(self, matrix):
-        super(ApertureGraphic, self).__init__(matrix=matrix)
-        super(MatrixGraphic, self).__init__(components=self.getComponents(), fixedWidth=True)
-
-    def getComponents(self):
-        components = []
-        if self.matrix.apertureDiameter != float('+Inf'):
-            halfHeight = self.matrix.apertureDiameter / 2.0
-            components.append(Aperture(y=halfHeight, width=self.matrix.L))
-            components.append(Aperture(y=-halfHeight, width=self.matrix.L))
-        return components
+        super().__init__(matrix, fixedWidth=True)
