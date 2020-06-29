@@ -118,6 +118,11 @@ class MatrixGraphic(Graphic):
                 points.append(Point(x=f))
         return points
 
+    @property
+    def verticesPoints(self) -> List[Point]:
+        return [Point(self.x + self.matrix.frontVertex, text='$V_f$', color='0.5'),
+                Point(self.x + self.matrix.backVertex, text='$V_b$', color='0.5')]
+
     def display(self):
         """ Display this component, without any ray tracing but with
         all of its cardinal points and planes.
@@ -144,6 +149,8 @@ class MatrixGraphic(Graphic):
         # todo: handle points outside components ?
         self.points = []
         self.points.extend(self.cardinalPoints)
+        if self.matrix.L != 0:
+            self.points.extend(self.verticesPoints)
 
         from .figureManager import MplFigure
         from .imagingpath import ImagingPath
