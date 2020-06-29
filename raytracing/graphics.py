@@ -178,11 +178,8 @@ class ApertureGraphic(MatrixGraphic):
 class SurfacesGraphic(MatrixGraphic):
     def __init__(self, matrix, x=0.0):
         super().__init__(matrix, x=x, fixedWidth=True)
-    @property
-    def components(self):
-        if self._components is None:
-            self._components = self.mainComponents
-        return self._components
+
+        self.corners = None
 
     @property
     def mainComponents(self):
@@ -196,9 +193,13 @@ class SurfacesGraphic(MatrixGraphic):
             z += surfaceA.L
             components.append(p)
 
-            # todo: might be required to get correct width depending on surface curvatures
-            outerWidth = p.corners[1] - p.corners[0]
-            components.append(Aperture(y=halfHeight, x=p.corners[0], width=outerWidth))
-            components.append(Aperture(y=-halfHeight, x=p.corners[0], width=outerWidth))
+        self.corners = [components[0].corners[0], components[-1].corners[1]]
+        return components
 
+    @property
+    def apertureComponents(self):
+        components = []
+        outerWidth = self.corners[1] - self.corners[0]
+        components.append(Aperture(y=self.halfHeight, x=self.corners[0], width=outerWidth))
+        components.append(Aperture(y=-self.halfHeight, x=self.corners[0], width=outerWidth))
         return components
