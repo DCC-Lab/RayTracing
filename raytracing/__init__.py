@@ -76,6 +76,8 @@ from . import thorlabs
 from . import eo
 from . import olympus
 
+from .utils import *
+
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)

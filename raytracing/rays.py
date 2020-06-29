@@ -1,5 +1,5 @@
 from .ray import *
-from numpy import *
+import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 import time
@@ -190,7 +190,7 @@ class Rays:
         if self._countHistogramParameters != (binCount, minValue, maxValue):
             self._countHistogramParameters = (binCount, minValue, maxValue)
 
-            (self._yHistogram, binEdges) = histogram(self.yValues,
+            (self._yHistogram, binEdges) = np.histogram(self.yValues,
                                                      bins=binCount,
                                                      range=(minValue, maxValue))
             self._yHistogram = list(self._yHistogram)
@@ -271,7 +271,7 @@ class Rays:
         if self._anglesHistogramParameters != (binCount, minValue, maxValue):
             self._anglesHistogramParameters = (binCount, minValue, maxValue)
 
-            (self._thetaHistogram, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
+            (self._thetaHistogram, binEdges) = np.histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
             self._thetaHistogram = list(self._thetaHistogram)
             xValues = []
             for i in range(len(binEdges) - 1):
@@ -336,7 +336,7 @@ class Rays:
             # axis2.set_title('Angle histogram')
             axis2.plot(x, y, 'k--', label="Orientation profile")
             axis2.set_ylim([0, max(y) * 1.1])
-            axis2.set_xlim([-pi / 2, pi / 2])
+            axis2.set_xlim([-np.pi / 2, np.pi / 2])
             axis2.set_xlabel("Angle of ray [rad]")
             axis2.set_ylabel("Ray count")
             axis2.legend(["Angle"])
@@ -510,7 +510,7 @@ class UniformRays(Rays):
 
     """
 
-    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, M=100, N=100):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=None, M=100, N=100):
         self.yMax = yMax
         self.yMin = yMin
         if self.yMin is None:
@@ -523,8 +523,8 @@ class UniformRays(Rays):
         self.M = M
         self.N = N
         rays = []
-        for y in linspace(self.yMin, self.yMax, self.M, endpoint=True):
-            for theta in linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
+        for y in np.linspace(self.yMin, self.yMax, self.M, endpoint=True):
+            for theta in np.linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
                 rays.append(Ray(y, theta))
         super(UniformRays, self).__init__(rays=rays)
 
@@ -574,15 +574,15 @@ class LambertianRays(Rays):
         if yMin is None:
             self.yMin = -yMax
 
-        self.thetaMin = -pi / 2
-        self.thetaMax = pi / 2
+        self.thetaMin = -np.pi / 2
+        self.thetaMax = np.pi / 2
         self.M = M
         self.N = N
         self.I = I
         rays = []
-        for theta in linspace(self.thetaMin, self.thetaMax, N, endpoint=True):
-            intensity = int(I * cos(theta))
-            for y in linspace(self.yMin, self.yMax, M, endpoint=True):
+        for theta in np.linspace(self.thetaMin, self.thetaMax, N, endpoint=True):
+            intensity = int(I * np.cos(theta))
+            for y in np.linspace(self.yMin, self.yMax, M, endpoint=True):
                 for k in range(intensity):
                     rays.append(Ray(y, theta))
         super(LambertianRays, self).__init__(rays=rays)
@@ -599,7 +599,7 @@ class RandomRays(Rays):
         Minimum height for the rays (default=None).
         If no value is assigned to this parameter it will be -yMax.
     thetaMax : float
-        Maximum angle for the rays (default=pi/2)
+        Maximum angle for the rays (default=np.pi/2)
     thetaMin : float
         Minimum angle for the rays (default=None)
         If no value is assigned to this parameter it will be -thetaMax
@@ -613,7 +613,7 @@ class RandomRays(Rays):
     raytracing.RandomUniformRays
 
     """
-    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=None, maxCount=100000):
         self.maxCount = maxCount
         self.yMax = yMax
         self.yMin = yMin
@@ -697,7 +697,7 @@ class RandomUniformRays(RandomRays):
 
         """
 
-    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=None, maxCount=100000):
         super(RandomUniformRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=thetaMax, thetaMin=thetaMin,
                                                 maxCount=maxCount)
 
@@ -705,8 +705,8 @@ class RandomUniformRays(RandomRays):
         if len(self._rays) == self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
-        theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
-        y = self.yMin + random.random() * (self.yMax - self.yMin)
+        theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
         ray = Ray(y=y, theta=theta)
         self.append(ray)
         return ray
@@ -749,7 +749,7 @@ class RandomLambertianRays(RandomRays):
     """
 
     def __init__(self, yMax=1.0, yMin=None, maxCount=10000):
-        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=pi / 2, thetaMin=-pi / 2,
+        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=np.pi / 2, thetaMin=-np.pi / 2,
                                                    maxCount=maxCount)
 
     def randomRay(self) -> Ray:
@@ -758,13 +758,13 @@ class RandomLambertianRays(RandomRays):
 
         theta = 0
         while (True):
-            theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
-            intensity = cos(theta)
-            seed = random.random()
+            theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+            intensity = np.cos(theta)
+            seed = np.random.random()
             if seed < intensity:
                 break
 
-        y = self.yMin + random.random() * (self.yMax - self.yMin)
+        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
         ray = Ray(y, theta)
         self.append(ray)
         return ray

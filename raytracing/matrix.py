@@ -755,7 +755,7 @@ class Matrix(object):
         >>> print('heights of the output rays:', Tr.yValues)
         heights of the output rays: [4.323870378874155, 2.794064779525441, 0.7087442942835853]
 
-        >>>> print('angles of the output rays:', Tr.thetaValues)
+        >>> print('angles of the output rays:', Tr.thetaValues)
         angles of the output rays: [-1.499826089814585, 0.7506850963379516, -0.44348989046728904]
 
         See Also

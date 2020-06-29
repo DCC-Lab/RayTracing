@@ -47,7 +47,7 @@ class TestMaterialSubclasses(envtest.RaytracingTestCase):
             name = material.__name__
             n = material.n(0.6)
 
-            if bool(isclose(n, refractiveIndices[name], 1e-4)) is False:
+            if areRelativelyNotEqual(n, refractiveIndices[name], 1e-4):
                 fails.append('Wrong value for subclass {}, {} not a valid n value.'.format(name, n))
         self.assertEqual([], fails)
 

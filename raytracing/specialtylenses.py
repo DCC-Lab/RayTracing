@@ -180,7 +180,7 @@ class SingletLens(MatrixGroup):
 
     """
 
-    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat1=None, wavelengthRef=None,
+    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat=None, wavelengthRef=None,
                  url=None, label=''):
         self.f = f
         self.fb = fb
