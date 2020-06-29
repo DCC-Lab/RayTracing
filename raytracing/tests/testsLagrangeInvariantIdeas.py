@@ -57,7 +57,7 @@ def rayTraceFromCalculation(ray, principalTrace, axialTrace):
 def reportEfficiency(path, objectDiameter=None, nRays=10000):
     principal = path.principalRay()
     axial = path.axialRay()
-    maxInvariant = abs(path.lagrangeInvariant(principal, axial))
+    maxInvariant = abs(path.lagrangeInvariant(principal, axial)) 
 
     maxAngle = np.pi/2
     if objectDiameter is not None:
@@ -75,7 +75,8 @@ def reportEfficiency(path, objectDiameter=None, nRays=10000):
     vignettedBlocked = []
     vignettePositions = []
     for ray in rays:
-        I31 = (path.lagrangeInvariant(ray, principal))
+        #fixme : I recall from the website that I12 is in fact I32. Confusing a bit. 
+        I31 = (path.lagrangeInvariant(ray, principal)) 
         I12 = (path.lagrangeInvariant(axial, ray))
         outputRay = path.traceThrough(ray)
 
@@ -105,6 +106,7 @@ def reportEfficiency(path, objectDiameter=None, nRays=10000):
     if len(vignettedBlocked) >= 2:
         (x,y) = list(zip(*vignettedBlocked))
         plt.scatter(x,y,marker='.')
+    # fixme : I32 replaced by I12 and I12 replaced by I32 ? 
     axis1.set_xlabel(r"${I_{31}}/{I_{32}}$")
     axis1.set_ylabel(r"${I_{12}}/{I_{32}}$")
     plt.show()
