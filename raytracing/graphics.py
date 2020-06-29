@@ -15,7 +15,7 @@ class Graphic:
     """
 
     def __init__(self, components=None, label: str = None,
-                 x=0, y=0, fixedWidth=False):
+                 x=0.0, y=0.0, fixedWidth=False):
         self._components = components
         self.label = None
         self.points = []
@@ -53,9 +53,8 @@ class Graphic:
     def centroid(self):
         xy = []
         for component in self.components:
-            xy.extend(component.get_xy())
-
-        return np.mean(xy, axis=0)
+            xy.extend(component.xy)
+        return np.mean(xy, axis=0) + self.x
 
     @property
     def patches2D(self):
@@ -67,37 +66,22 @@ class Graphic:
 
 
 class GraphicOf:
-    def __new__(cls, element) -> Union[Graphic, None]:
+    def __new__(cls, element, x=0.0) -> Union[Graphic, None]:
         instance = type(element).__name__
         if instance is 'Lens':
-            return LensGraphic(element)
+            return LensGraphic(element, x=x)
         if instance is 'Space':
             return None
         if instance is 'Aperture':
-            return ApertureGraphic(element)
+            return ApertureGraphic(element, x=x)
         else:
-            return cls.matrixGraphic(element)
-
-    @classmethod
-    def matrixGraphic(cls, element):
-        components = []  # todo: black box (rectangle component)
-        components.extend(cls.apertureComponents(element))
-        return Graphic(components)
-
-    @classmethod
-    def apertureComponents(cls, element):
-        components = []
-        if element.apertureDiameter != float('+Inf'):
-            halfHeight = element.apertureDiameter / 2.0
-            components.append(Aperture(y=halfHeight, width=element.L))
-            components.append(Aperture(y=-halfHeight, width=element.L))
-        return components
+            return MatrixGraphic(element, x=x)
 
 
 class MatrixGraphic(Graphic):
-    def __init__(self, matrix, fixedWidth=False):
-        super(MatrixGraphic, self).__init__(fixedWidth=fixedWidth)
+    def __init__(self, matrix, x=0.0, fixedWidth=False):
         self.matrix = matrix
+        super(MatrixGraphic, self).__init__(x=x, fixedWidth=fixedWidth, label=self.matrix.label)
 
     @property
     def components(self):
@@ -105,11 +89,7 @@ class MatrixGraphic(Graphic):
             self._components = self.mainComponents
             self._components.extend(self.apertureComponents)
 
-            (f1, f2) = self.matrix.focusPositions(self.x)
-            if f1 is not None:
-                self.points.append(Label(x=f1, hasPoint=True))
-            if f2 is not None:
-                self.points.append(Label(x=f2, hasPoint=True))
+            self.points.extend(self.cardinalPoints)
 
             # self.drawLabels(z=0, axes=axes)
             # self.drawCardinalPoints(z=0, axes=axes)
@@ -131,6 +111,14 @@ class MatrixGraphic(Graphic):
             return [Aperture(y=halfHeight, width=self.matrix.L),
                     Aperture(y=-halfHeight, width=self.matrix.L)]
 
+    @property
+    def cardinalPoints(self):
+        points = []
+        for f in self.matrix.focusPositions(self.x):
+            if f is not None:
+                points.append(Point(x=f))
+        return points
+
 
 class LensGraphic(MatrixGraphic):
     @property
@@ -139,5 +127,5 @@ class LensGraphic(MatrixGraphic):
 
 
 class ApertureGraphic(MatrixGraphic):
-    def __init__(self, matrix):
-        super().__init__(matrix, fixedWidth=True)
+    def __init__(self, matrix, x=0.0):
+        super().__init__(matrix, x=x, fixedWidth=True)

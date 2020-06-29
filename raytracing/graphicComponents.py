@@ -355,3 +355,8 @@ class MplLabel(Label):
         dataBox = displayBox.inverse_transformed(axes.transData)
         dataBox = dataBox.expanded(sw=stretch, sh=1)
         return dataBox
+
+
+class Point(Label):
+    def __init__(self, x=0.0, text=None, fontsize=8):
+        super().__init__(text=text, x=x, fontsize=fontsize, hasPoint=True)

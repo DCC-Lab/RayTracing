@@ -119,9 +119,8 @@ class Figure:
         graphics = []
         z = 0
         for element in self.path.elements:
-            graphic = GraphicOf(element)
+            graphic = GraphicOf(element, x=z)
             if graphic is not None:
-                graphic.x = z
                 graphics.append(graphic)
             z += element.L
         return graphics
@@ -342,7 +341,7 @@ class MplFigure(Figure):
 
         self.updateDisplayRange()
         self.updateGraphics()
-        self.updateLabels()
+        # self.updateLabels()
 
     def drawGraphics(self):
         for graphic in self.graphics:
@@ -352,12 +351,13 @@ class MplFigure(Figure):
                 self.axes.add_patch(component)
 
             if graphic.hasLabel:
+                # graphic.label = graphic.label.mplLabel
                 self.labels.append(graphic.label)
 
-            for pointLabel in graphic.points:
-                self.axes.plot([pointLabel.x], [0], 'ko', markersize=4, color='k', linewidth=0.4)
-                if pointLabel.text is not None:
-                    self.labels.append(pointLabel)
+            for point in graphic.points:
+                self.axes.plot([point.x], [0], 'ko', markersize=4, color='k', linewidth=0.4)
+                if point.text is not None:
+                    self.labels.append(point)
 
     def drawLabels(self):
         self.labels = [label.mplLabel for label in self.labels]
@@ -375,8 +375,8 @@ class MplFigure(Figure):
             for patch in graphic.patches2D:
                 patch.set_transform(scaling + translation + self.axes.transData)
 
-            if graphic.hasLabel:
-                graphic.label.artist.set_transform(translation + self.axes.transData)
+            # if graphic.hasLabel:  # todo ?
+            #     graphic.label.patch.set_transform(translation + self.axes.transData)
 
     def updateLabels(self):
         self.resetLabelOffsets()
@@ -387,9 +387,9 @@ class MplFigure(Figure):
 
         Used with a zoom callback to properly replace the labels.
         """
-        for graphic in self.graphics:
-            if graphic.hasLabel:
-                graphic.label.resetPosition()
+        # for graphic in self.graphics:  # todo-nada: removing graphic dependence from label
+        #     if graphic.hasLabel:
+        #         graphic.label.resetPosition()
 
         for label in self.labels:
             label.resetPosition()
@@ -397,10 +397,10 @@ class MplFigure(Figure):
     def getRenderedLabels(self) -> List[MplLabel]:
         """List of labels rendered inside the current display."""
         labels = []
-        for graphic in self.graphics:
-            if graphic.hasLabel:
-                if graphic.label.isRenderedOn(self.figure):
-                    labels.append(graphic.label)
+        # for graphic in self.graphics:
+        #     if graphic.hasLabel:
+        #         if graphic.label.isRenderedOn(self.figure):
+        #             labels.append(graphic.label)
 
         for label in self.labels:
             if label.isRenderedOn(self.figure):
@@ -453,7 +453,7 @@ class MplFigure(Figure):
 
     def onZoomCallback(self, axes):
         self.updateGraphics()
-        self.updateLabels()
+        # self.updateLabels()
 
     def scalingOfGraphic(self, graphic):
         if not graphic.useAutoScale:
