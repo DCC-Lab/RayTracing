@@ -764,7 +764,8 @@ class ImagingPath(MatrixGroup):
                 notBlocked.append((I31/maxInvariant,I12/maxInvariant))
 
         
-        print("Absolute efficiency: {0:.1f}% of ±π radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
+        print("Absolute invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f}".format(maxInvariant, principal.y, axial.theta))
+        print("Collection efficiency: {0:.1f}% of ±π radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
         stopPosition, stopDiameter = self.apertureStop()
         print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
         print("Relative efficiency: {0:.1f}% of maximal for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
