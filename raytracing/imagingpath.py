@@ -799,11 +799,11 @@ class ImagingPath(MatrixGroup):
             else:
                 notBlocked.append((I31/maxInvariant,I12/maxInvariant))
 
-        print("Absolute invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f}".format(maxInvariant, principal.y, axial.theta))
-        print("Collection efficiency: {0:.1f}% of ±π radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
+        print("Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ FOV ⨉ NA".format(maxInvariant, principal.y, axial.theta))
+        print("Collection efficiency: {0:.1f}% of ±π/2 radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
         stopPosition, stopDiameter = self.apertureStop()
         print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
-        print("  Detection NA is {0:.1f}, and f/# is {1} ".format(self.NA(), self.fNumber()))
+        print("  Detection NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
         print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
         if len(vignettedBlocked) >= 2:
             print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
