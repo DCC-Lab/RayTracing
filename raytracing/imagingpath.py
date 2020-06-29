@@ -816,19 +816,19 @@ class ImagingPath(MatrixGroup):
         axis1.add_patch(p.Rectangle((-1,-1),2, 2, color=(0, 1.0, 0, 0.5), lw=3, fill=False,
                               transform=axis1.transData, clip_on=True))
 
-        (x,y) = list(zip(*expectedBlocked))
-        plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
         (x,y) = list(zip(*notBlocked))
         plt.scatter(x,y, color=(0,1,0), marker='.',label="Transmitted")
         if len(vignettedBlocked) >= 2:
             (x,y) = list(zip(*vignettedBlocked))
             plt.scatter(x,y, color=(1,0,0), marker='.',label="Vignetted")
+        (x,y) = list(zip(*expectedBlocked))
+        plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
         axis1.set_xlabel("${I_{31}}/{I_{32}}$\n\nFigure: Each point is a ray emitted from the source.")
         axis1.set_ylabel("${I_{12}}/{I_{32}}$")
         axis1.set_xlim(-2,2)
         axis1.set_ylim(-2,2)
         axis1.set_aspect('equal')
-        axis1.legend(loc=(1.05, 0.5))
+        axis1.legend(loc="upper right")
         plt.show()
 
     def display(self, onlyPrincipalAndAxialRays=True,
