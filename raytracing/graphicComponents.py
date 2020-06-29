@@ -165,15 +165,17 @@ class SurfacePair(Component):
         self.x = x
         self.corners = None
 
+        self.pathSurfaceA = self.getPathA()
+        self.pathSurfaceB = self.getPathB()
+
     @property
     def bezierCurves(self) -> List[BezierCurve]:
         bezierCurves = []
-        bezierCurves.extend(self._pathSurfaceA)
-        bezierCurves.extend(self._pathSurfaceB)
+        bezierCurves.extend(self.pathSurfaceA)
+        bezierCurves.extend(self.pathSurfaceB)
         return bezierCurves
 
-    @property
-    def _pathSurfaceA(self) -> List[BezierCurve]:
+    def getPathA(self) -> List[BezierCurve]:
         h = self.halfHeight
         v1 = self.x
 
@@ -194,8 +196,7 @@ class SurfacePair(Component):
         return [BezierCurve([(corner1, -h), (v1, -ctl1), (v1, 0)]),
                 BezierCurve([(v1, 0), (v1, ctl1), (corner1, h)])]
 
-    @property
-    def _pathSurfaceB(self) -> List[BezierCurve]:
+    def getPathB(self) -> List[BezierCurve]:
         h = self.halfHeight
         v2 = self.x + self.surfaceA.L
 
@@ -211,7 +212,8 @@ class SurfacePair(Component):
         corner2 = v2 + delta2
         self.corners.append(corner2)
 
-        return [BezierCurve([(corner2, h), (v2, ctl2), (v2, 0)]),
+        return [BezierCurve([(self.corners[0], h), (corner2, h)]),
+                BezierCurve([(corner2, h), (v2, ctl2), (v2, 0)]),
                 BezierCurve([(v2, 0), (v2, -ctl2), (corner2, -h)]),
                 BezierCurve([(corner2, -h), (self.corners[0], -h)])]
 
