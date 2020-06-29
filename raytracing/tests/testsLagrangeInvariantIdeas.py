@@ -34,11 +34,9 @@ class TestLagrange(envtest.RaytracingTestCase):
         path.append(Aperture(diameter=10, label='Camera'))
         
         principal = path.principalRay()
-        # principal.y -= 0.1
         principalRayTrace = path.trace(principal)
 
         axial = path.axialRay()
-        # axial.theta -= 0.01
         axialRayTrace = path.trace(axial)
 
         maxInvariant = abs(path.lagrangeInvariant(principal, axial))
