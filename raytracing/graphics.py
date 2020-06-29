@@ -54,7 +54,7 @@ class Graphic:
         xy = []
         for component in self.components:
             xy.extend(component.xy)
-        return np.mean(xy, axis=0) + self.x
+        return np.mean(xy, axis=0)
 
     @property
     def patches2D(self):

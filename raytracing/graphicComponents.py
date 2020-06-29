@@ -327,7 +327,7 @@ class Label:
 
 class MplLabel(Label):
     def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=8, hasPoint=False):
-        super(MplLabel, self).__init__(text, x=0.0, y=0.0, fontsize=8, hasPoint=False)
+        super(MplLabel, self).__init__(text, x=x, y=y, fontsize=8, hasPoint=False)
 
         self.patch = None
         self.offset = 0.0
