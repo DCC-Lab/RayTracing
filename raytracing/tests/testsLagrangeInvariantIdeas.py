@@ -1,5 +1,33 @@
 import envtest  # modifies path
 from raytracing import *
+import numpy as np
+
+def distHist(rays):
+    localRays = list(rays)
+    lagrange = []
+    while len(localRays) >= 2:
+        ray1 = localRays.pop()
+        ray2 = localRays.pop()
+        lagrange.append(ray1.y*ray2.theta - ray1.theta*ray2.y)
+    showHistogram(lagrange)
+
+def histogramValues(values):
+    counts, binEdges = histogram(values, bins=40, density=True)
+    ys = list(counts)
+    xs = []
+    for i in range(len(binEdges) - 1):
+        xs.append((binEdges[i] + binEdges[i + 1]) / 2)
+    return xs, ys
+
+def showHistogram(values,title=""):
+    fig, axis1 = plt.subplots(1)
+    fig.tight_layout(pad=3.0)
+    xs, ys = histogramValues(values)
+    axis1.set_title(title)
+    axis1.plot(xs, (ys), 'ko')
+    axis1.set_xlabel("Values")
+    axis1.set_ylabel("Count")
+    plt.show()
 
 def printTrace(trace):
     for r in trace:
@@ -26,71 +54,70 @@ def rayTraceFromCalculation(ray, principalTrace, axialTrace):
 
     return trace
 
+def reportEfficiency(path, objectDiameter=None, nRays=10000):
+    principal = path.principalRay()
+    axial = path.axialRay()
+    maxInvariant = abs(path.lagrangeInvariant(principal, axial))
+
+    maxAngle = np.pi/2
+    if objectDiameter is not None:
+        maxHeight = objectDiameter/2
+    else:
+        maxHeight = principal.y
+
+    rays = RandomUniformRays(yMax=maxHeight, 
+                             yMin=-maxHeight,
+                             thetaMax=maxAngle,
+                             thetaMin=-maxAngle,
+                             maxCount=nRays)
+    expectedBlocked = []
+    notBlocked = []
+    vignettedBlocked = []
+    vignettePositions = []
+    for ray in rays:
+        I31 = (path.lagrangeInvariant(ray, principal))
+        I12 = (path.lagrangeInvariant(axial, ray))
+        outputRay = path.traceThrough(ray)
+
+        if abs(I31) > maxInvariant or abs(I12) > maxInvariant:
+            expectedBlocked.append((I31/maxInvariant,I12/maxInvariant))
+            continue
+
+        if outputRay.isBlocked:
+            vignettedBlocked.append((I31/maxInvariant,I12/maxInvariant))
+            vignettePositions.append(outputRay.z)
+        else:
+            notBlocked.append((I31/maxInvariant,I12/maxInvariant))
+
+    
+    print("Absolute efficiency: {0:.1f}% of ±π radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
+    stopPosition, stopDiameter = path.apertureStop()
+    print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
+    print("Relative efficiency: {0:.1f}% of maximal for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+    print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+    print("  Vignetting is due to blockers at positions: {0}".format(set(vignettePositions)))
+    fig, axis1 = plt.subplots(1)
+    fig.tight_layout(pad=3.0)
+    (x,y) = list(zip(*expectedBlocked))
+    plt.scatter(x,y,marker='.')
+    (x,y) = list(zip(*notBlocked))
+    plt.scatter(x,y,marker='.')
+    if len(vignettedBlocked) >= 2:
+        (x,y) = list(zip(*vignettedBlocked))
+        plt.scatter(x,y,marker='.')
+    axis1.set_xlabel(r"${I_{31}}/{I_{32}}$")
+    axis1.set_ylabel(r"${I_{12}}/{I_{32}}$")
+    plt.show()
+
 
 class TestLagrange(envtest.RaytracingTestCase):
     def testLagrange(self):
         path = ImagingPath()
         path.objectHeight = 50
-        path.append(System4f(f1=30, diameter1=25, f2=20, diameter2=30))
+        path.append(System4f(f1=30, diameter1=50, f2=40, diameter2=40))
         path.append(Aperture(diameter=10, label='Camera'))
         path.display()
-
-        principal = path.principalRay()
-        principalRayTrace = path.trace(principal)
-
-        axial = path.axialRay()
-        axialRayTrace = path.trace(axial)
-
-        maxInvariant = abs(path.lagrangeInvariant(principal, axial))
-
-        maxAngle = axial.theta*2
-        maxHeight = principal.y*1.2
-        rays = RandomUniformRays(yMax=maxHeight, yMin=-maxHeight, thetaMax=maxAngle, thetaMin=-maxAngle, maxCount=10000)
-        blocked = []
-        notBlocked = []
-        vignetted = []
-        for ray in rays:
-            rayTrace = path.trace(ray)
-            I31 = (path.lagrangeInvariant(ray, principal))
-            I12 = (path.lagrangeInvariant(axial, ray))
-
-            calculatedTrace = rayTraceFromCalculation(ray, principalRayTrace, axialRayTrace)
-
-            if abs(I31) > maxInvariant or abs(I12) > maxInvariant:
-                self.assertTrue(rayTrace[-1].isBlocked)
-                blocked.append((I31/maxInvariant,I12/maxInvariant))
-                continue
-
-            isBlocked = False
-            for i in range(len(rayTrace)):
-                #print("Max = {0:.2f} I31 = {1:.2f}, I12 = {2:.2f} SQR={3:.2f}".format(maxInvariant, I31, I12,sqrt(I31*I31+I12*I12)))
-                if rayTrace[i].z == calculatedTrace[i].z:
-                    self.assertAlmostEqual(rayTrace[i].y, calculatedTrace[i].y)
-                    self.assertAlmostEqual(rayTrace[i].theta, calculatedTrace[i].theta)
-                else:
-                    #print("Max = {0:.2f} I31 = {1:.2f}, I12 = {2:.2f} SQR={3:.2f}".format(maxInvariant, I31, I12,sqrt(I31*I31+I12*I12)))
-                    isBlocked = True
-                    break
-            if isBlocked:
-                vignetted.append((I31/maxInvariant,I12/maxInvariant))
-            else:
-                notBlocked.append((I31/maxInvariant,I12/maxInvariant))
-
-        
-        print("Absolute efficiency: {0:.1f}% of 2π".format(100*len(notBlocked)/rays.maxCount))
-        print("Relative efficiency: {0:.1f}% of maximal for this system".format(100*len(notBlocked)/(len(vignetted)+len(notBlocked))))
-        print("Loss to vignetting: {0:.1f}%".format(100*len(vignetted)/(len(vignetted)+len(notBlocked))))
-        fig, axis1 = plt.subplots(1)
-        fig.tight_layout(pad=3.0)
-        (x,y) = list(zip(*blocked))
-        plt.scatter(x,y,marker='.')
-        (x,y) = list(zip(*notBlocked))
-        plt.scatter(x,y,marker='.')
-        (x,y) = list(zip(*vignetted))
-        plt.scatter(x,y,marker='.')
-        axis1.set_xlabel(r"${I_{31}}/{I_{32}}$")
-        axis1.set_ylabel(r"${I_{12}}/{I_{32}}$")
-        plt.show()
+        path.reportEfficiency()
 
 if __name__ == '__main__':
     envtest.main()

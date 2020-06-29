@@ -6,7 +6,7 @@ from .ray import *
 from .figure import Figure
 import sys
 import warnings
-
+import numpy as np
 
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
@@ -727,6 +727,61 @@ class ImagingPath(MatrixGroup):
             ray2 = self.chiefRay()
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
+
+    def reportEfficiency(self, objectDiameter=None, nRays=10000):
+        principal = self.principalRay()
+        axial = self.axialRay()
+        maxInvariant = abs(self.lagrangeInvariant(principal, axial))
+
+        maxAngle = np.pi/2
+        if objectDiameter is not None:
+            maxHeight = objectDiameter/2
+        else:
+            maxHeight = principal.y
+
+        rays = RandomUniformRays(yMax=maxHeight, 
+                                 yMin=-maxHeight,
+                                 thetaMax=maxAngle,
+                                 thetaMin=-maxAngle,
+                                 maxCount=nRays)
+        expectedBlocked = []
+        notBlocked = []
+        vignettedBlocked = []
+        vignettePositions = []
+        for ray in rays:
+            I31 = (self.lagrangeInvariant(ray, principal))
+            I12 = (self.lagrangeInvariant(axial, ray))
+            outputRay = self.traceThrough(ray)
+
+            if abs(I31) > maxInvariant or abs(I12) > maxInvariant:
+                expectedBlocked.append((I31/maxInvariant,I12/maxInvariant))
+                continue
+
+            if outputRay.isBlocked:
+                vignettedBlocked.append((I31/maxInvariant,I12/maxInvariant))
+                vignettePositions.append(outputRay.z)
+            else:
+                notBlocked.append((I31/maxInvariant,I12/maxInvariant))
+
+        
+        print("Absolute efficiency: {0:.1f}% of ±π radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
+        stopPosition, stopDiameter = self.apertureStop()
+        print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
+        print("Relative efficiency: {0:.1f}% of maximal for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+        print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+        print("  Vignetting is due to blockers at positions: {0}".format(set(vignettePositions)))
+        fig, axis1 = plt.subplots(1)
+        fig.tight_layout(pad=3.0)
+        (x,y) = list(zip(*expectedBlocked))
+        plt.scatter(x,y,marker='.')
+        (x,y) = list(zip(*notBlocked))
+        plt.scatter(x,y,marker='.')
+        if len(vignettedBlocked) >= 2:
+            (x,y) = list(zip(*vignettedBlocked))
+            plt.scatter(x,y,marker='.')
+        axis1.set_xlabel(r"${I_{31}}/{I_{32}}$")
+        axis1.set_ylabel(r"${I_{12}}/{I_{32}}$")
+        plt.show()
 
     def display(self, onlyPrincipalAndAxialRays=True,
                 removeBlockedRaysCompletely=False, comments=None,
