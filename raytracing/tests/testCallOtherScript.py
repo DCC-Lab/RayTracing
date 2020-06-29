@@ -13,20 +13,24 @@ class TestCallScript(envtest.RaytracingTestCase):
         with open(self.printHelloWorld, "w") as helloWorld:
             helloWorld.write('''print("hello world")''')
 
+    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
     def testCallFileNotFound(self):
         file = " fileDoesNotExist.py"  # Leading space important
         sts = subprocess.call(self.exec + file)
         self.assertEqual(sts, 2)
 
+    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
     def testCallScript(self):
         sts = subprocess.call(self.exec + " " + self.emptyFile)
         self.assertEqual(sts, 0)
 
+    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
     def testGetWhatIsPrinted(self):
         printed = subprocess.check_output(self.exec + " " + self.printHelloWorld)
         printed = printed.decode(self.encoding)
         self.assertEqual(printed.strip(), "hello world")
 
+    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
     def testGetWhatIsPrintedWithChildProcesses(self):
         code = """
 import multiprocessing
