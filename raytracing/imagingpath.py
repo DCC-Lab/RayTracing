@@ -75,7 +75,7 @@ class ImagingPath(MatrixGroup):
                     :align: center
     """
 
-    def __init__(self, elements=None, label=""):
+    def __init__(self, elements: list = None, label=""):
 
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.

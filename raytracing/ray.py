@@ -41,7 +41,7 @@ class Ray:
 
         self.z = z
         self.isBlocked = isBlocked
-        self.apertureDiameter: float = float("+Inf")
+        self.apertureDiameter = float("+Inf")
 
     @property
     def isNotBlocked(self) -> bool:

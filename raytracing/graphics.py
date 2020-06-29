@@ -1,5 +1,6 @@
 from raytracing.graphicComponents import *
 import numpy as np
+import sys
 
 
 class Graphic:
@@ -89,8 +90,6 @@ class MatrixGraphic(Graphic):
             self._components = self.mainComponents
             self._components.extend(self.apertureComponents)
 
-            self.points.extend(self.cardinalPoints)
-
             # self.drawLabels(z=0, axes=axes)
             # self.drawCardinalPoints(z=0, axes=axes)
             # if self.matrix.L != 0:
@@ -119,8 +118,44 @@ class MatrixGraphic(Graphic):
                 points.append(Point(x=f))
         return points
 
+    def display(self):
+        """ Display this component, without any ray tracing but with
+        all of its cardinal points and planes.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> # Mat is an ABCD matrix of an object
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,
+        >>>            frontIndex=1.5,backIndex=1,label='Lens')
+        >>> Mat.display()
+
+        And the result is shown in the following figure:
+
+        .. image:: display.png
+            :width: 70%
+            :align: center
+
+
+        Notes
+        -----
+        If the component has no power (i.e. C == 0) this will fail.
+        """
+        # todo: handle points outside components ?
+        self.points = []
+        self.points.extend(self.cardinalPoints)
+
+        from .figureManager import MplFigure
+        from .imagingpath import ImagingPath
+        path = ImagingPath(elements=[self.matrix])
+        figure = MplFigure(path)
+        figure.graphics = [self]
+        figure.create(title="Element properties")
+        figure.display2D()
+
 
 class LensGraphic(MatrixGraphic):
+
     @property
     def mainComponents(self):
         return [DoubleThinArrow(self.matrix.displayHalfHeight()*2)]
