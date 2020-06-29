@@ -1,6 +1,7 @@
 import envtest
 import sys
 import subprocess
+import os
 
 
 class TestCallScript(envtest.RaytracingTestCase):
@@ -9,28 +10,27 @@ class TestCallScript(envtest.RaytracingTestCase):
         self.encoding = sys.stdout.encoding
         self.emptyFile = self.tempFilePath('script.py')
         open(self.emptyFile, "w").close()
+        self.assertTrue(os.path.exists(self.emptyFile))
+
         self.printHelloWorld = self.tempFilePath('helloWorld.py')
         with open(self.printHelloWorld, "w") as helloWorld:
             helloWorld.write('''print("hello world")''')
 
-    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
     def testCallFileNotFound(self):
         file = " fileDoesNotExist.py"  # Leading space important
-        sts = subprocess.call(self.exec + file)
-        self.assertEqual(sts, 2)
 
-    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
+        processReturn = subprocess.run([self.exec, file])
+        self.assertEqual(processReturn.returncode, 2)
+
     def testCallScript(self):
-        sts = subprocess.call(self.exec + " " + self.emptyFile)
-        self.assertEqual(sts, 0)
+        processReturn = subprocess.run([self.exec, self.emptyFile])
+        self.assertEqual(processReturn.returncode, 0)
 
-    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
     def testGetWhatIsPrinted(self):
-        printed = subprocess.check_output(self.exec + " " + self.printHelloWorld)
-        printed = printed.decode(self.encoding)
-        self.assertEqual(printed.strip(), "hello world")
+        processCompleted = subprocess.run([self.exec, self.printHelloWorld], capture_output=True)
+        printed = processCompleted.stdout.decode(self.encoding)
+        self.assertEqual(processCompleted.stdout.strip(), b"hello world")
 
-    @envtest.skipIf(sys.platform == 'darwin', "macOS 10.15 seems to have permission/sandbox issues")
     def testGetWhatIsPrintedWithChildProcesses(self):
         code = """
 import multiprocessing
@@ -46,8 +46,8 @@ if __name__ == "__main__":
 """.strip()
         with open(self.printHelloWorld, "w") as f:
             f.write(code)
-        printed = subprocess.check_output(self.exec + " " + self.printHelloWorld, universal_newlines=True)
-        self.assertEqual(printed.strip(), "Hello Toto\nHello Toto Jr.")
+        processCompleted = subprocess.run([self.exec, self.printHelloWorld], capture_output=True, universal_newlines=True)
+        self.assertEqual(processCompleted.stdout.strip(), "Hello Toto\nHello Toto Jr.")
 
 
 if __name__ == '__main__':
