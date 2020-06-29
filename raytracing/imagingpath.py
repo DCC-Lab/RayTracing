@@ -180,7 +180,7 @@ class ImagingPath(MatrixGroup):
             return None
 
         if y is None:
-            y = self.fieldOfView()/2
+            y = self.halfFieldOfView()
             if abs(y) == float("+inf"):
                 raise ValueError("Must provide y when the field of view is infinite")
 
@@ -196,6 +196,12 @@ class ImagingPath(MatrixGroup):
         principalRay : object of Ray class
             The properties (i.e. height and the angle of the principal ray).
 
+        Notes
+        -----
+        Because of round off errors, we need to double check that the ray 
+        really goes through. We lower the height until it does if it 
+        initially does not.
+
         See Also
         --------
         raytracing.ImagingPath.marginalRays
@@ -204,13 +210,11 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        objectEdge = self.fieldOfView()/2
+        objectEdge = self.halfFieldOfView()
         if objectEdge == float("+inf"):
             return None
-
-        principalRay = self.chiefRay(y=objectEdge)
-        # principalRay.y -= 0.001 #FIXME: be more intelligent than this.
-        return principalRay
+        
+        return self.chiefRay(y=objectEdge)
 
     def marginalRays(self, y=0):
         r"""This function calculates the marginal rays for a height y at object.
@@ -531,13 +535,51 @@ class ImagingPath(MatrixGroup):
         return (fieldStopPosition, fieldStopDiameter)
 
     def fieldOfView(self):
-        """The field of view is the maximum object height
-        visible until its chief ray is blocked by the field stop.
+        """The field of view is the length visible before the chief
+        rays on either side are blocked by the field stop.
 
         Returns
         -------
         fieldOfView : float
-            maximum object height that can be visible at the image plane
+            length of object that can be visible at the image plane.
+            It can be infinity if there is no field stop.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> path.objectHeight=6
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=5,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print('field of view :', path.fieldOfView())
+        field of view : 6.668181337416174
+
+        Notes
+        -----
+        Strategy: take ray at various heights from object and
+        aim at center of pupil (chief ray from that point)
+        until ray is blocked. It is possible to have finite
+        diameter elements but still an infinite field of view
+        and therefore no Field stop.
+
+        """
+
+        return 2*self.halfFieldOfView() 
+
+    def halfFieldOfView(self):
+        """The half field of view is the maximum height
+        visible before its chief ray is blocked by the field stop.
+        A ray at that height is the principal ray, of "highest chief ray".
+
+        Returns
+        -------
+        halfFieldOfView : float
+            maximum ray height that can still be visible at the image plane.
+            It can be infinity if there is no field stop.
 
         Examples
         --------
@@ -573,7 +615,7 @@ class ImagingPath(MatrixGroup):
         y = 0.0
         chiefRay = Ray(y=0, theta=0)
         wasBlocked = False
-        while abs(dy) > self.precision or not wasBlocked:
+        while abs(dy) > self.precision or wasBlocked:
             chiefRay = self.chiefRay(y=y)
             chiefRayTrace = self.trace(chiefRay)
             outputChiefRay = chiefRayTrace[-1]
@@ -588,7 +630,7 @@ class ImagingPath(MatrixGroup):
             if abs(y) > self.maxHeight and not wasBlocked:
                 return float("+Inf")
 
-        return chiefRay.y * 2.0
+        return chiefRay.y
 
     def imageSize(self):
         """The image size is the object field of view multiplied by magnification.
