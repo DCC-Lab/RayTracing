@@ -75,6 +75,8 @@ class GraphicOf:
             return None
         if instance is 'Aperture':
             return ApertureGraphic(element, x=x)
+        if element.surfaces:
+            return SurfacesGraphic(element, x=x)
         else:
             return MatrixGraphic(element, x=x)
 
@@ -171,3 +173,32 @@ class LensGraphic(MatrixGraphic):
 class ApertureGraphic(MatrixGraphic):
     def __init__(self, matrix, x=0.0):
         super().__init__(matrix, x=x, fixedWidth=True)
+
+
+class SurfacesGraphic(MatrixGraphic):
+    def __init__(self, matrix, x=0.0):
+        super().__init__(matrix, x=x, fixedWidth=True)
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = self.mainComponents
+        return self._components
+
+    @property
+    def mainComponents(self):
+        components = []
+        halfHeight = self.matrix.displayHalfHeight()
+
+        z = 0
+        for i, surfaceA in enumerate(self.matrix.surfaces[:-1]):
+            surfaceB = self.matrix.surfaces[i+1]
+            p = SurfacePair(surfaceA, surfaceB, x=z, halfHeight=halfHeight)
+            z += surfaceA.L
+            components.append(p)
+
+            # todo: might be required to get correct width depending on surface curvatures
+            outerWidth = p.corners[1] - p.corners[0]
+            components.append(Aperture(y=halfHeight, x=p.corners[0], width=outerWidth))
+            components.append(Aperture(y=-halfHeight, x=p.corners[0], width=outerWidth))
+
+        return components
