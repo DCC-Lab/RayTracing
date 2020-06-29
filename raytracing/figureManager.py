@@ -355,7 +355,7 @@ class MplFigure(Figure):
                 self.axes.add_artist(graphic.label.patch)
 
             for point in graphic.points:
-                self.axes.plot([point.x], [0], 'ko', markersize=4, color='k', linewidth=0.4)
+                self.axes.plot([point.x], [0], 'ko', markersize=4, color=point.color, linewidth=0.4)
                 if point.text is not None:
                     self.labels.append(point)
 

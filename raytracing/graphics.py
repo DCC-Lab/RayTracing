@@ -111,7 +111,7 @@ class MatrixGraphic(Graphic):
                     Aperture(y=-halfHeight, width=self.matrix.L)]
 
     @property
-    def cardinalPoints(self):
+    def cardinalPoints(self) -> List[Point]:
         points = []
         for f in self.matrix.focusPositions(self.x):
             if f is not None:

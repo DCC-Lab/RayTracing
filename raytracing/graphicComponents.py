@@ -284,7 +284,7 @@ class Label:
     """ Label base class. Promoted to MplLabel by the Figure Manager if using a matplotlib backend.
     A label can have a text and a point, independently, but the point will always sit on the optical axis at y=0.
     """
-    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=8, hasPoint=False):
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=8, hasPoint=False, color='k'):
         self.text = text
         self.x = x
         self.y = y
@@ -292,6 +292,7 @@ class Label:
 
         self.offset = 0.0
         self.hasPoint = hasPoint
+        self.color = color
 
     @property
     def position(self):
@@ -326,13 +327,10 @@ class Label:
 
 
 class MplLabel(Label):
-    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=8, hasPoint=False):
-        super(MplLabel, self).__init__(text, x=x, y=y, fontsize=8, hasPoint=False)
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=8, hasPoint=False, color='k'):
+        super(MplLabel, self).__init__(text, x=x, y=y, fontsize=fontsize, hasPoint=hasPoint, color=color)
 
         self.patch = None
-        self.offset = 0.0
-        self.hasPoint = hasPoint
-
         if text is not None:
             self.patch = mplText.Text(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
 
@@ -358,5 +356,5 @@ class MplLabel(Label):
 
 
 class Point(Label):
-    def __init__(self, x=0.0, text=None, fontsize=8):
-        super().__init__(text=text, x=x, fontsize=fontsize, hasPoint=True)
+    def __init__(self, x=0.0, text=None, fontsize=8, color='k'):
+        super().__init__(text=text, x=x, fontsize=fontsize, hasPoint=True, color=color)
