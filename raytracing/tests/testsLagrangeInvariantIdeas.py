@@ -58,7 +58,7 @@ class TestLagrange(envtest.RaytracingTestCase):
     def testLagrange(self):
         path = ImagingPath()
         path.objectHeight = 50
-        path.append(System4f(f1=30, diameter1=25, f2=40, diameter2=20))
+        path.append(System4f(f1=30, diameter1=25, f2=40, diameter2=50))
         path.append(Aperture(diameter=10, label='Camera'))
         # path.display()
         path.reportEfficiency(objectDiameter=10, nRays=10000)

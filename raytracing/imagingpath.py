@@ -805,8 +805,12 @@ class ImagingPath(MatrixGroup):
         print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
         print("  Detection NA is {0:.1f}, and f/# is {1} ".format(self.NA(), self.fNumber()))
         print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
-        print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
-        print("  Vignetting is due to blockers at positions: {0}".format(set(vignettePositions)))
+        if len(vignettedBlocked) >= 2:
+            print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+            print("  Vignetting is due to blockers at positions: {0}".format(set(vignettePositions)))
+        else:
+            print("  No losses to vignetting")
+
         fig, axis1 = plt.subplots(1)
         fig.tight_layout(pad=4.0)
         axis1.add_patch(p.Rectangle((-1,-1),2, 2, color=(0, 1.0, 0, 0.5), lw=3, fill=False,
