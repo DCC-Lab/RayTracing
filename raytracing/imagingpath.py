@@ -320,6 +320,38 @@ class ImagingPath(MatrixGroup):
         rayUp, rayDown = self.marginalRays()
         return rayUp
 
+    def fNumber(self):
+        """This function returns the f-number of the imaging system.
+
+        Returns
+        -------
+        fNumber : float
+            
+
+        See Also
+        --------
+        raytracing.ImagingPath.axialRay
+        raytracing.ImagingPath.NA
+        """
+        NA = self.NA()
+        return 0.5/NA
+
+    def NA(self):
+        """This function returns the numerical aperture of the imaging system.
+
+        Returns
+        -------
+        NA : float
+            
+
+        See Also
+        --------
+        raytracing.ImagingPath.axialRay
+        raytracing.ImagingPath.fNumber
+        """
+        axialRay = self.axialRay()
+        return axialRay.theta
+
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
         the cone of angles originating from zero height at the object plane.
@@ -729,11 +761,15 @@ class ImagingPath(MatrixGroup):
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
     def reportEfficiency(self, objectDiameter=None, nRays=10000):
+        import matplotlib.patches as p
+
         principal = self.principalRay()
         axial = self.axialRay()
         maxInvariant = abs(self.lagrangeInvariant(principal, axial))
 
+        # We assume isotropic emission
         maxAngle = np.pi/2
+        # We use the provided objectDiameter if there is one
         if objectDiameter is not None:
             maxHeight = objectDiameter/2
         else:
@@ -749,8 +785,8 @@ class ImagingPath(MatrixGroup):
         vignettedBlocked = []
         vignettePositions = []
         for ray in rays:
-            I31 = (self.lagrangeInvariant(ray, principal))
-            I12 = (self.lagrangeInvariant(axial, ray))
+            I31 = self.lagrangeInvariant(ray, principal)
+            I12 = self.lagrangeInvariant(axial, ray)
             outputRay = self.traceThrough(ray)
 
             if abs(I31) > maxInvariant or abs(I12) > maxInvariant:
@@ -763,25 +799,32 @@ class ImagingPath(MatrixGroup):
             else:
                 notBlocked.append((I31/maxInvariant,I12/maxInvariant))
 
-        
         print("Absolute invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f}".format(maxInvariant, principal.y, axial.theta))
         print("Collection efficiency: {0:.1f}% of ±π radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
         stopPosition, stopDiameter = self.apertureStop()
         print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
-        print("Relative efficiency: {0:.1f}% of maximal for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+        print("  Detection NA is {0:.1f}, and f/# is {1} ".format(self.NA(), self.fNumber()))
+        print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
         print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
         print("  Vignetting is due to blockers at positions: {0}".format(set(vignettePositions)))
         fig, axis1 = plt.subplots(1)
-        fig.tight_layout(pad=3.0)
+        fig.tight_layout(pad=4.0)
+        axis1.add_patch(p.Rectangle((-1,-1),2, 2, color=(0, 1.0, 0, 0.5), lw=3, fill=False,
+                              transform=axis1.transData, clip_on=True))
+
         (x,y) = list(zip(*expectedBlocked))
-        plt.scatter(x,y,marker='.')
+        plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
         (x,y) = list(zip(*notBlocked))
-        plt.scatter(x,y,marker='.')
+        plt.scatter(x,y, color=(0,1,0), marker='.',label="Transmitted")
         if len(vignettedBlocked) >= 2:
             (x,y) = list(zip(*vignettedBlocked))
-            plt.scatter(x,y,marker='.')
-        axis1.set_xlabel(r"${I_{31}}/{I_{32}}$")
-        axis1.set_ylabel(r"${I_{12}}/{I_{32}}$")
+            plt.scatter(x,y, color=(1,0,0), marker='.',label="Vignetted")
+        axis1.set_xlabel("${I_{31}}/{I_{32}}$\n\nFigure: Each point is a ray emitted from the source.")
+        axis1.set_ylabel("${I_{12}}/{I_{32}}$")
+        axis1.set_xlim(-2,2)
+        axis1.set_ylim(-2,2)
+        axis1.set_aspect('equal')
+        axis1.legend(loc=(1.05, 0.5))
         plt.show()
 
     def display(self, onlyPrincipalAndAxialRays=True,
