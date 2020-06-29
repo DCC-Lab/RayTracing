@@ -507,48 +507,56 @@ class Matrix(object):
 
         return [self]
 
-    def lagrangeInvariant(self, ray1, ray2, z=0):
-        """ The Lagrange invariant is a quantity that is conserved
-        for any two rays in the system. It is often seen with the
-        chief ray and marginal ray in an imaging system, but it is
-        actually very general and any two rays can be used.
-        In ImagingPath(), if no rays are provided, the chief and
-        marginal rays are used.
+    def opticalInvariant(self, ray1, ray2, z=0):
+        """
+        The optical invariant is a quantity that is conserved
+        for any two rays in the system. It is very general and
+        any two rays can be used. It is often seen with the
+        chief ray and marginal ray in an imaging system, in which
+        case it is called the Lagrange invariant. 
+        In ImagingPath(), the principal and axial rays can be used,
+        in which case the optical invariant is called the Lagrange Invariant,
+        and is the maximal optical invariant between two rays that guarantees 
+        neither one will be blocked.
 
         Parameters
         ----------
         ray1 : object of Ray class
-            A ray at height y1 and angle theta1
+            A ray at height y1 and angle theta1 (default=None)
         ray2 : object of Ray class
-            A ray at height y2 and angle theta2
+            A ray at height y2 and angle theta2 (default=None)
         z : float
-            A distance that shows propagation length
+            A distance that shows propagation length (default=0)
 
         Returns
         -------
-        lagrangeInvariant : float
-            The value of the lagrange invariant constant for ray1 and ray2
+        opticalInvariant : float
+            The value of the optical invariant constant for ray1 and ray2
 
         Examples
         --------
+        Since there is no input for the function, the optical invariant value is
+        calculated for chief and marginal rays.
+
         >>> from raytracing import *
-        >>> # M is an ABCD matrix of a lens (f=10)
-        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,label='Lens')
-        >>> # R1 and R2 are two rays
-        >>> R1=Ray(y=5,theta=20)
-        >>> R2=Ray(y=2,theta=10)
-        >>> LagrangeInv=M.lagrangeInvariant(R1,R2)
-        >>> print('The lagrange invariant value for R1 and R2 is:', LagrangeInv)
-        The lagrange invariant value for R1 and R2 is: -10.0
+        >>> path = ImagingPath() # define an imaging path
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=10))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=20,diameter=15,label="f=20"))
+        >>> path.append(Space(d=20))
+        >>> print('optical invariant :', path.opticalInvariant())
+        optical invariant : 2.5004713529837317
 
         See Also
         --------
-        raytracing.Matrix.transferMatrices
         raytracing.ImagingPath.lagrangeInvariant
 
         Notes
         -----
-        To use this function, the physicalLength of the system should be zero.
+        This quantity is L = n (y1 theta2 - y2 theta1)
+
         """
 
         matrix = self.transferMatrix(upTo=z)

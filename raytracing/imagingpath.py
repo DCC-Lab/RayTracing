@@ -284,14 +284,14 @@ class ImagingPath(MatrixGroup):
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         if stopPosition is None:
-            return None  # No aperture stop -> no marginal rays
+            return None, None  # No aperture stop -> no marginal rays
 
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
         if transferMatrixToApertureStop.isImaging:
-            return None
+            return None, None
 
         thetaUp = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
@@ -695,77 +695,48 @@ class ImagingPath(MatrixGroup):
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
 
-    def lagrangeInvariant(self, ray1=None, ray2=None, z=0):
+    def lagrangeInvariant(self):
         """
-        The Lagrange invariant is a quantity that is conserved
-        for any two rays in the system. It is often seen with the
-        chief ray and marginal ray in an imaging system, but it is
-        actually very general and any two rays can be used.
-        In ImagingPath(), if no rays are provided, the chief and
-        marginal rays are used.
-
-        Parameters
-        ----------
-        ray1 : object of Ray class
-            A ray at height y1 and angle theta1 (default=None)
-        ray2 : object of Ray class
-            A ray at height y2 and angle theta2 (default=None)
-        z : float
-            A distance that shows propagation length (default=0)
+        The lagrange invariant is the optical invariant calculated
+        with the principal and axial rays. It represents the maximum
+        optical invariant for which both rays can propagate unimpeded.
 
         Returns
         -------
         lagrangeInvariant : float
-            The value of the lagrange invariant constant for ray1 and ray2
-
-        Examples
-        --------
-        Since there is no input for the function, the lagrange invariant value is
-        calculated for chief and marginal rays.
-
-        >>> from raytracing import *
-        >>> path = ImagingPath() # define an imaging path
-        >>> # use append() to add elements to the imaging path
-        >>> path.append(Space(d=10))
-        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
-        >>> path.append(Space(d=30))
-        >>> path.append(Lens(f=20,diameter=15,label="f=20"))
-        >>> path.append(Space(d=20))
-        >>> print('lagrange invariant :', path.lagrangeInvariant())
-        lagrange invariant : 2.5004713529837317
-
-        See Also
-        --------
-        raytracing.Matrix.lagrangeInvariant
-
-        Notes
-        -----
-        This quantity is L = n (y1 theta2 - y2 theta1)
+            The value of the lagrange invariant for the system
 
         """
 
-        if ray1 is None:
-            (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
-            if apertureStopPosition is None:
-                raise ValueError("There is no aperture stop in this ImagingPath and therefore no marginal ray")
+        ray1 = self.axialRay()
+        ray2 = self.principalRay()
 
-            (ray1, dummy) = self.marginalRays()
+        if ray1 is None or ray2 is None:
+            return float("+inf")
 
-        if ray2 is None:
-            (fieldStopPosition, fieldStopDiameter) = self.fieldStop()
-            if fieldStopPosition is None:
-                raise ValueError("There is no field stop in this ImagingPath and therefore no chief ray")
-
-            ray2 = self.chiefRay()
-
-        return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
+        return self.opticalInvariant(ray1, ray2)
 
     def reportEfficiency(self, objectDiameter=None, nRays=10000):
+        """
+        The collection efficiency of the optical system is computed and a report is printed.
+        By default, it is computed across the field of view, but a specific object diameter 
+        can be provided. The analysis is based on representing each ray as a linear combination
+        of the principal and axial rays. If the coefficients are more than 1.0, the rays will
+        be blocked.  If they are both less than 1.0, they should propagated unblocked to the 
+        image unless there is vignetting.
+
+        Parameters
+        ----------
+        objectDiameter : float
+            The size of the object for the efficiency reference. Default: field of view
+        nRays : int
+            Number of rays simulated to calculate efficiency.  Default: 10000
+        """
         import matplotlib.patches as p
 
         principal = self.principalRay()
         axial = self.axialRay()
-        maxInvariant = abs(self.lagrangeInvariant(principal, axial))
+        maxInvariant = abs(self.lagrangeInvariant())
 
         # We assume isotropic emission
         maxAngle = np.pi/2
@@ -785,8 +756,8 @@ class ImagingPath(MatrixGroup):
         vignettedBlocked = []
         vignettePositions = []
         for ray in rays:
-            I31 = self.lagrangeInvariant(ray, principal)
-            I12 = self.lagrangeInvariant(axial, ray)
+            I31 = self.opticalInvariant(ray, principal)
+            I12 = self.opticalInvariant(axial, ray)
             outputRay = self.traceThrough(ray)
 
             if abs(I31) > maxInvariant or abs(I12) > maxInvariant:
@@ -800,7 +771,7 @@ class ImagingPath(MatrixGroup):
                 notBlocked.append((I31/maxInvariant,I12/maxInvariant))
 
         print("Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ FOV ⨉ NA".format(maxInvariant, principal.y, axial.theta))
-        print("Collection efficiency: {0:.1f}% of ±π/2 radian, over field of view of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
+        print("Collection efficiency: {0:.1f}% of ±π/2 radian, over field diameter of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
         stopPosition, stopDiameter = self.apertureStop()
         print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
         print("  Detection NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))

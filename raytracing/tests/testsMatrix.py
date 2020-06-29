@@ -424,11 +424,11 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix(A=1, B=1, C=3, D=4)
         self.assertFalse(m.isImaging)
 
-    def testLagrangeInvariantSpace(self):
+    def testOpticalInvariantSpace(self):
         m = Space(d=10)
         self.assertIsNotNone(m)
-        before = m.lagrangeInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
-        after = m.lagrangeInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        before = m.opticalInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        after = m.opticalInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
         self.assertAlmostEqual(before, after)
 
     def testHasNoPower(self):
