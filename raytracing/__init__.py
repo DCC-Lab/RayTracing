@@ -49,12 +49,6 @@ digraph G {
 
 import math
 
-""" Two constants: deg and rad to quickly convert to degrees
-or radians with angle*degPerRad or angle*radPerDeg """
-
-degPerRad = 180.0/math.pi
-radPerDeg = math.pi/180.0
-
 """ We import almost everything by default, in the general namespace because it is simpler for everyone """
 
 """ General matrices and groups for tracing rays and gaussian beams"""
@@ -82,7 +76,6 @@ from . import thorlabs
 from . import eo
 from . import olympus
 
-
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)
@@ -91,6 +84,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.2.10"
+__version__ = "1.2.11"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 

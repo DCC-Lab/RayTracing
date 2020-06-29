@@ -1,5 +1,6 @@
 import math
 import cmath
+from .utils import *
 
 
 class GaussianBeam(object):
@@ -44,7 +45,7 @@ class GaussianBeam(object):
             raise ValueError("Please specify 'q' or 'w'.")
 
         if q is not None and w is not None:
-            if not cmath.isclose(a=self.q, b=q, rel_tol=relTol):
+            if areRelativelyNotEqual(self.q, q, relTol):
                 msg = f"Mismatch between the given q '{q}' and the computed q '{self.q}' ({relTol * 100}% tolerance)."
                 raise ValueError(msg)
 
@@ -80,7 +81,7 @@ class GaussianBeam(object):
         """
         if self.q == 0:
             return False
-            
+
         return (-1 / self.q).imag > 0
 
     @property
