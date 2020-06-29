@@ -91,13 +91,6 @@ class MatrixGraphic(Graphic):
         if self._components is None:
             self._components = self.mainComponents
             self._components.extend(self.apertureComponents)
-
-            # self.drawLabels(z=0, axes=axes)
-            # self.drawCardinalPoints(z=0, axes=axes)
-            # if self.matrix.L != 0:
-            #     self.drawVertices(z=0, axes=axes)
-            # self.drawPointsOfInterest(z=0, axes=axes)
-            # self.drawPrincipalPlanes(z=0, axes=axes)
         return self._components
 
     @property
@@ -122,8 +115,24 @@ class MatrixGraphic(Graphic):
 
     @property
     def verticesPoints(self) -> List[Point]:
-        return [Point(self.x + self.matrix.frontVertex, text='$V_f$', color='0.5'),
-                Point(self.x + self.matrix.backVertex, text='$V_b$', color='0.5')]
+        return [Point(self.x + self.matrix.frontVertex, y=self.halfHeight * 0.1, text='$V_f$', color='0.5'),
+                Point(self.x + self.matrix.backVertex, y=self.halfHeight * 0.1, text='$V_b$', color='0.5')]
+
+    @property
+    def pointsOfInterest(self):
+        labels = {}  # Gather labels at same z
+        for pointOfInterest in self.matrix.pointsOfInterest(self.x):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        points = []
+        for zStr, label in labels.items():
+            points.append(Point(text=label, x=float(zStr), y=-self.halfHeight * 0.5))
+        return points
 
     def display(self):
         """ Display this component, without any ray tracing but with
@@ -153,6 +162,8 @@ class MatrixGraphic(Graphic):
         self.points.extend(self.cardinalPoints)
         if self.matrix.L != 0:
             self.points.extend(self.verticesPoints)
+        self.points.extend(self.pointsOfInterest)
+        # self.drawPrincipalPlanes(z=0, axes=axes)
 
         from .figureManager import MplFigure
         from .imagingpath import ImagingPath
