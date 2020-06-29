@@ -355,15 +355,15 @@ class MplFigure(Figure):
                 self.labels.append(graphic.label)
 
             for pointLabel in graphic.points:
-                self.labels.append(pointLabel)  # todo: create a point class of their own ?
+                self.axes.plot([pointLabel.x], [0], 'ko', markersize=4, color='k', linewidth=0.4)
+                if pointLabel.text is not None:
+                    self.labels.append(pointLabel)
 
     def drawLabels(self):
         self.labels = [label.mplLabel for label in self.labels]
 
         for label in self.labels:
             self.axes.add_artist(label.patch)
-            if label.hasPoint:
-                self.axes.plot([label.x], [0], 'ko', markersize=4, color='k', linewidth=0.4)
 
     def updateGraphics(self):
         for graphic in self.graphics:
@@ -394,7 +394,7 @@ class MplFigure(Figure):
         for label in self.labels:
             label.resetPosition()
 
-    def getRenderedLabels(self) -> List[Label]:
+    def getRenderedLabels(self) -> List[MplLabel]:
         """List of labels rendered inside the current display."""
         labels = []
         for graphic in self.graphics:

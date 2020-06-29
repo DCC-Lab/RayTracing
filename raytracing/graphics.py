@@ -107,10 +107,9 @@ class MatrixGraphic(Graphic):
 
             (f1, f2) = self.matrix.focusPositions(self.x)
             if f1 is not None:
-                self.points.append(Label('', x=f1, hasPoint=True))
+                self.points.append(Label(x=f1, hasPoint=True))
             if f2 is not None:
-                self.points.append(Label('', x=f2, hasPoint=True))
-            # todo : maybe create a separate class for points
+                self.points.append(Label(x=f2, hasPoint=True))
 
             # self.drawLabels(z=0, axes=axes)
             # self.drawCardinalPoints(z=0, axes=axes)

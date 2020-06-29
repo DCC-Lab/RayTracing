@@ -281,14 +281,17 @@ class Line:
 
 
 class Label:
-    def __init__(self, text: str, x=0.0, y=0.0, fontsize=8, hasPoint=False):
+    """ Label base class. Promoted to MplLabel by the Figure Manager if using a matplotlib backend.
+    A label can have a text and a point, independently, but the point will always sit on the optical axis at y=0.
+    """
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=8, hasPoint=False):
         self.text = text
         self.x = x
         self.y = y
         self.fontsize = fontsize
 
-        self.hasPoint = hasPoint
         self.offset = 0.0
+        self.hasPoint = hasPoint
 
     @property
     def position(self):
@@ -318,18 +321,20 @@ class Label:
 
     @property
     def mplLabel(self) -> 'MplLabel':
-        # fixme? promoting to mplLabel for easier handling
+        # fixme? promoting to mplLabel to help the figure manager
         return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPoint)
 
 
 class MplLabel(Label):
-    def __init__(self, text: str, x=0.0, y=0.0, fontsize=8, hasPoint=False):
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=8, hasPoint=False):
         super(MplLabel, self).__init__(text, x=0.0, y=0.0, fontsize=8, hasPoint=False)
 
-        self.patch = mplText.Text(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
-
+        self.patch = None
         self.offset = 0.0
         self.hasPoint = hasPoint
+
+        if text is not None:
+            self.patch = mplText.Text(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
 
     @Label.position.setter
     def position(self, xy: tuple):
