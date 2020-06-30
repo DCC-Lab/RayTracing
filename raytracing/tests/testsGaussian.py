@@ -14,10 +14,7 @@ class TestBeam(envtest.RaytracingTestCase):
     def testBeamWAndQGiven(self):
         w = 1
         q = 4.96459e3 * 1j
-        try:
-            GaussianBeam(q, w)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(GaussianBeam, ValueError, q=q, w=w)
 
     def testBeamWAndQGivenMismatch(self):
         w = 1
@@ -123,6 +120,7 @@ class TestBeam(envtest.RaytracingTestCase):
         beamIn = GaussianBeam(w=0.01, R=1, n=1.5, wavelength=0.400e-3)
 
         path.trace(beamIn)
-        
+
+
 if __name__ == '__main__':
     envtest.main()
