@@ -154,15 +154,6 @@ class Matrix(object):
         B is never really infinity, but C can be precisely zero (especially
         in free space), then B*C is zero in that particular case.
 
-        Examples
-        --------
-        >>> from raytracing import *
-
-        >>> # M is an ABCD matrix of a lens (f=3)
-        >>> M= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
-        >>> print('the determinant of matrix is equal to :' , M.determinant())
-        the determinant of matrix is equal to : 1.0
-
         """
 
         if self.C == 0:
@@ -181,10 +172,16 @@ class Matrix(object):
         Examples
         --------
         >>> from raytracing import *
-
         >>> M1= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
         >>> M2= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
         >>> print('product M2*M1 :' , M2*M1)
+        product M2*M1 :
+         /             \
+        |  1.000    0.000 |
+        |               |
+        | -0.667    1.000 |
+         \             /
+        f=1.500
 
         """
         if isinstance(rightSide, Matrix):
@@ -396,11 +393,11 @@ class Matrix(object):
         >>> # M1 is an ABCD matrix of a lens (f=10)
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
         >>> # B is a Gaussian Beam
-        >>> B=GaussianBeam(q=complex(1,1),w=1,R=5,n=1)
+        >>> B=GaussianBeam(q=complex(4.999994928425984,0.0050356572916806525),w=1,R=5,n=1)
         >>> print('The output properties of are:' , M1.mul_beam(B))
-        The output ray of Lens M1 : Complex radius: (0.976+1.22j)
-        w(z): 0.020, R(z): 2.500, z: 5.000, λ: 632.8 nm
-        zo: 1.220, wo: 0.016, wo position: -0.976
+        The output properties of are: Complex radius: (10+0.0201j)
+        w(z): 1.000, R(z): 10.000, z: 5.000, λ: 0.0 nm
+        zo: 0.020, wo: 0.002, wo position: -10.000
 
         See Also
         --------
@@ -546,8 +543,9 @@ class Matrix(object):
         >>> path.append(Space(d=30))
         >>> path.append(Lens(f=20,diameter=15,label="f=20"))
         >>> path.append(Space(d=20))
-        >>> print('optical invariant :', path.opticalInvariant())
-        optical invariant : 2.5004713529837317
+        >>> ray1, ray2 = Ray(0.5,0.05) , Ray(3,0.25)
+        >>> print('optical invariant :', path.opticalInvariant(ray1,ray2))
+        optical invariant : 0.025000000000000022
 
         See Also
         --------
@@ -704,9 +702,10 @@ class Matrix(object):
          /       \
         |  0.000  |
         |         |
-        |  1.113  |
+        | -1.461  |
          \       /
         z = 0.000
+
 
         >>> #index[1] of the first object in the list is the first output
         >>> print('The properties of the first output ray:', Tr[0][1])
@@ -753,6 +752,8 @@ class Matrix(object):
 
         Examples
         --------
+        Since the input of this example is random, we should not expect to get the same results every time.
+
         >>> from raytracing import *
         >>> # M is an ABCD matrix of a lens (f=10)
         >>> M= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
@@ -1183,21 +1184,19 @@ class Matrix(object):
         --------
         >>> from raytracing import *
         >>> # M1 is an ABCD matrix of an object
-        >>> M1= Matrix(A=1,B=-2,C=3,D=1,physicalLength=0,label='Lens')
+        >>> M1= Matrix(A=3,B=1,C=5,D=2,physicalLength=0,label='Lens')
         >>> Image=M1.forwardConjugate()
         >>> print('The position of the image:' , Image[0])
-        The position of the image: 2.0
-
-        And to see the conjugate matrix you can call index 1 of the output.
+        The position of the image: -0.5
 
         >>> print('conjugate matrix:' , Image[1])
         conjugate matrix:
-         /               \
-        |  7.000    0.000 |
-        |                 |
-        |  3.000    1.000 |
-         \               /
-        f=-0.333
+         /             \
+        |  0.500    0.000 |
+        |               |
+        |  5.000    2.000 |
+         \             /
+        f=-0.200
 
         See Also
         --------
@@ -1237,21 +1236,19 @@ class Matrix(object):
         --------
         >>> from raytracing import *
         >>> # M1 is an ABCD matrix of an object
-        >>> M1= Matrix(A=1,B=-3,C=1,D=1,physicalLength=0,label='Lens')
+        >>> M1= Matrix(A=2,B=1,C=5,D=3,physicalLength=2,label='Lens')
         >>> Image=M1.backwardConjugate()
         >>> print('The position of the image:' , Image[0])
-        The position of the image: 3.0
-
-        And to see the conjugate matrix you can call index 1 of the output.
+        The position of the image: -0.5
 
         >>> print('conjugate matrix:' , Image[1])
         conjugate matrix:
-         /               \
-        |  1.000    0.000 |
-        |                 |
-        |  1.000    4.000 |
-         \               /
-        f=-1.000
+         /             \
+        |  2.000    0.000 |
+        |               |
+        |  5.000    0.500 |
+         \             /
+        f=-0.200
 
 
         See Also
@@ -1282,10 +1279,10 @@ class Matrix(object):
         --------
         >>> from raytracing import *
         >>> # M1 is an ABCD matrix of an object
-        >>> Mat= Matrix(A=2,B=0,C=1,D=3,physicalLength=0,label='Lens')
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=0,label='Lens')
         >>> M=Mat.magnification()
         >>> print('(A , D): (',M[0],',',M[1],')')
-        (A , D): ( 2.0 , 3.0 )
+        (A , D): ( 1.0 , 1.0 )
 
 
         See Also
@@ -1483,9 +1480,9 @@ class CurvedMirror(Matrix):
      /             \
     |  1.000    0.000 |
     |               |
-    | -0.400    1.000 |
+    |  0.400    1.000 |
      \             /
-    f=2.500
+    f=-2.500
 
 
     Notes
@@ -1812,13 +1809,14 @@ class DielectricSlab(ThickLens):
     >>> #define a dielectric with refraction index of 1.5
     >>> D=DielectricSlab(n=1.5,thickness=5,diameter=20,label='Dielectric')
     >>> print('The transfer matrix of dielectric slab :' ,D)
-    The transfer matrix of dielectric slab :
-     /                \
+        The transfer matrix of dielectric slab :
+     /             \
     |  1.000    3.333 |
-    |                 |
+    |               |
     | -0.000    1.000 |
-     \               /
+     \             /
     f = +inf (afocal)
+
     """
 
     def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
@@ -1867,12 +1865,13 @@ class Aperture(Matrix):
     >>> A=Aperture(diameter=10,label='aperture')
     >>> print('The transfer matrix of aperture :' ,A)
     The transfer matrix of aperture :
-     /                \
+     /             \
     |  1.000    0.000 |
-    |                 |
+    |               |
     |  0.000    1.000 |
-     \               /
+     \             /
     f = +inf (afocal)
+
 
     Notes
     -----
