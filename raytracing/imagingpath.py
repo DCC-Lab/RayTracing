@@ -720,7 +720,8 @@ class ImagingPath(MatrixGroup):
         """
         The collection efficiency of the optical system is computed and a report is printed.
         By default, it is computed across the field of view, but a specific object diameter 
-        can be provided. The analysis is based on representing each ray as a linear combination
+        can be provided as welll as an emission half angle.
+        The analysis is based on representing each ray as a linear combination
         of the principal and axial rays. If the coefficients are more than 1.0, the rays will
         be blocked.  If they are both less than 1.0, they should propagated unblocked to the 
         image unless there is vignetting.
@@ -736,58 +737,59 @@ class ImagingPath(MatrixGroup):
 
         principal = self.principalRay()
         axial = self.axialRay()
-        maxInvariant = abs(self.lagrangeInvariant())
+        Iap = abs(self.lagrangeInvariant())
 
-        # We use the emission half angle if provided, isotropic emission otherwise
         if emissionHalfAngle is not None:
             maxAngle = emissionHalfAngle
         else:
             maxAngle = np.pi/2
 
-        # We use the provided objectDiameter if there is one
         if objectDiameter is not None:
             maxHeight = objectDiameter/2
         else:
             maxHeight = principal.y
-        sourceInvariant = maxHeight * maxAngle
-        rays = RandomUniformRays(yMax=maxHeight, 
+
+        sourceRays = RandomUniformRays(yMax=maxHeight, 
                                  yMin=-maxHeight,
                                  thetaMax=maxAngle,
                                  thetaMin=-maxAngle,
                                  maxCount=nRays)
+        Is = maxHeight * maxAngle
+
         expectedBlocked = []
         notBlocked = []
         vignettedBlocked = []
         vignettePositions = []
-        for ray in rays:
-            I31 = self.opticalInvariant(ray, principal)
-            I12 = self.opticalInvariant(axial, ray)
+        for ray in sourceRays:
+            Irp = self.opticalInvariant(ray, principal)
+            Iar = self.opticalInvariant(axial, ray)
             outputRay = self.traceThrough(ray)
 
-            if abs(I31) > maxInvariant or abs(I12) > maxInvariant:
-                expectedBlocked.append((I31/maxInvariant,I12/maxInvariant))
+            if abs(Irp) > Iap or abs(Iar) > Iap:
+                expectedBlocked.append((Irp/Iap, Iar/Iap))
                 continue
 
             if outputRay.isBlocked:
-                vignettedBlocked.append((I31/maxInvariant,I12/maxInvariant))
+                vignettedBlocked.append((Irp/Iap, Iar/Iap))
                 vignettePositions.append(outputRay.z)
             else:
-                notBlocked.append((I31/maxInvariant,I12/maxInvariant))
+                notBlocked.append((Irp/Iap, Iar/Iap))
 
         print("Optical System Properties")
         print("-------------------------")
-        print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(maxInvariant, principal.y, axial.theta))
+        print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(Iap, principal.y, axial.theta))
         print(" Object-side NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
         print(" Field of view is {0:.2f} mm".format(self.fieldOfView()))        
         print("\nSource Properties")
         print("-------------------")
-        print(" Object/source equivalent invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ height ⨉ half-angle".format(sourceInvariant, maxHeight, maxAngle))
+        print(" Object/source equivalent invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ height ⨉ half-angle".format(Is, maxHeight, maxAngle))
         print("\nEfficiency")
         print("----------")
-        print(" Collection efficiency: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight, maxAngle))
+        print(" Collection efficiency from Monte Carlo: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight, maxAngle))
+        print(" Collection efficiency from ratio of system to source invariants: {0:.1f}%".format(Iap/Is*100))
         stopPosition, stopDiameter = self.apertureStop()
         print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
-        print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(sourceInvariant/maxInvariant))
+        print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(Is/Iap))
         print("\nVignetting")
         print("----------")
         print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
@@ -809,8 +811,8 @@ class ImagingPath(MatrixGroup):
             plt.scatter(x,y, color=(1,0,0), marker='.',label="Vignetted")
         (x,y) = list(zip(*expectedBlocked))
         plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
-        axis1.set_xlabel("${I_{31}}/{I_{32}}$\n\nFigure: Each point is a ray emitted from the source.")
-        axis1.set_ylabel("${I_{12}}/{I_{32}}$")
+        axis1.set_xlabel("${I_{rp}}/{I_{ap}}$\n\nFigure: Each point is a ray emitted from the source.")
+        axis1.set_ylabel("${I_{ar}}/{I_{ap}}$")
         axis1.set_xlim(-2,2)
         axis1.set_ylim(-2,2)
         axis1.set_aspect('equal')
