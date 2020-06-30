@@ -134,7 +134,8 @@ class Figure:
         for rays in raysList:
             rayTrace = self.rayTraceLines(rays=rays, removeBlocked=removeBlocked)     
             self.drawLines(rayTrace)
-            self.drawDisplayObjects()
+
+        self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
         self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
