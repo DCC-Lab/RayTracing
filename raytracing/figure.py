@@ -548,28 +548,10 @@ class Figure:
         2. the principal and axial rays.
         """
 
-        color = self.designParams['rayColors']
+        colors = self.designParams['rayColors']
 
-        # if self.designParams['onlyPrincipalAndAxialRays']:
-        #     halfHeight = self.path.objectHeight / 2.0
-        #     principalRay = self.path.principalRay()
-        #     axialRay = self.path.axialRay()
-        #     rayGroup = (principalRay, axialRay)
-        #     linewidth = 1.5
-        # else:
-        #     halfAngle = self.path.fanAngle / 2.0
-        #     halfHeight = self.path.objectHeight / 2.0
-        #     rayGroup = Ray.fanGroup(
-        #         yMin=-halfHeight,
-        #         yMax=halfHeight,
-        #         M=self.path.rayNumber,
-        #         radianMin=-halfAngle,
-        #         radianMax=halfAngle,
-        #         N=self.path.fanNumber)
-        #     linewidth = 0.5
         halfHeight = 25
         linewidth = 0.5
-        halfAngle = 0.3
         manyRayTraces = self.path.traceMany(rays)
 
         lines = []
@@ -583,15 +565,14 @@ class Figure:
             # FIXME: We must take the maximum y in the starting point of manyRayTraces,
             # not halfHeight
             maxStartingHeight = halfHeight # FIXME
-            binSize = 2.0 * maxStartingHeight / (len(color) - 1)
+            binSize = 2.0 * maxStartingHeight
             colorIndex = int(
                 (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
             if colorIndex < 0:
                 colorIndex = 0
-            elif colorIndex >= len(color):
-                colorIndex = len(color) - 1
+            colorIndex = colorIndex % len(colors)
 
-            line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
+            line = plt.Line2D(x, y, color=colors[colorIndex], linewidth=linewidth, label='ray')
             lines.append(line)
 
         return lines
