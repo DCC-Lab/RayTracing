@@ -137,10 +137,12 @@ class TestEnvtestClass(unittest.TestCase):
 class TestEnvtestClassSelfMethod(envtest.RaytracingTestCase):
 
     def testAssertDoesNotRaiseSpecificException(self):
-        self.assertDoesNotRaise(lambda x: 2 / x, ZeroDivisionError, x=1e-7)
+        val = self.assertDoesNotRaise(lambda x: 2 / x, ZeroDivisionError, x=1e-7)
+        self.assertEqual(val, 20e6)
 
     def testAssertDoesNotRaiseGeneralException(self):
-        self.assertDoesNotRaise(lambda x: 2 / x, None, x=1e-7)
+        val = self.assertDoesNotRaise(lambda x: 2 / x, None, x=1e-7)
+        self.assertEqual(val, 20e6)
 
     def testAssertDoesNotRaiseFails(self):
         with self.assertRaises(AssertionError) as assertError:
