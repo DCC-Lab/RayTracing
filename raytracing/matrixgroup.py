@@ -435,7 +435,7 @@ class MatrixGroup(Matrix):
 
         """
         if not isinstance(inputRay, (Ray, GaussianBeam)):
-            raise TypeError("'inputRay' must be a Ray or a GaussianBeam.")
+            raise TypeError("'inputRay' must be a Ray or a GaussianBeam {0}".format(inputRay))
         ray = inputRay
         if ray != self._lastRayToBeTraced:
             rayTrace = [ray]

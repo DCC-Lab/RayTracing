@@ -686,40 +686,26 @@ class ImagingPath(MatrixGroup):
 
         return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
 
-    def display(self, onlyPrincipalAndAxialRays=True,
-                removeBlockedRaysCompletely=False, comments=None,
-                limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
+    def display(self, rays=None, raysList=None, removeBlocked=True, comments=None, onlyPrincipalAndAxialRays=None):
         """ Display the optical system and trace the rays.
 
         Parameters
         ----------
-        limitObjectToFieldOfView : bool (Optional)
-            If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight (default=True)
-        onlyPrincipalAndAxialRays : bool (Optional)
-            If True, only the principal and axial rays will appear on the plot (default=True)
-        removeBlockedRaysCompletely : bool (Optional)
+        rays : `Rays` instance
+
+        raysList : list of `Rays` or list of list of `Ray`
+
+        removeBlocked : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
-        if onlyChiefAndMarginalRays is not None:
-            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
-                          "use onlyPrincipalAndAxialRays instead.")
-            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
-        if limitObjectToFieldOfView is not None:
-            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
-
         self.figure.createFigure(title=self.label, comments=comments)
 
-        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
-                            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+        self.figure.display(raysList=raysList, removeBlocked=removeBlocked)
 
-    def saveFigure(self, filepath,
-                   onlyPrincipalAndAxialRays=True,
-                   removeBlockedRaysCompletely=False, comments=None,
-                   limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
+    def saveFigure(self, rays=None, raysList=None, removeBlocked=True, comments=None, onlyPrincipalAndAxialRays=None, filePath=None):
         """
         The figure of the imaging path can be saved using this function.
 
@@ -740,15 +726,6 @@ class ImagingPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
-        if onlyChiefAndMarginalRays is not None:
-            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
-                          "use onlyPrincipalAndAxialRays instead.")
-            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
-        if limitObjectToFieldOfView is not None:
-            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
-
         self.figure.createFigure(title=self.label, comments=comments)
 
-        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
-                            removeBlockedRaysCompletely=removeBlockedRaysCompletely,
-                            filepath=filepath)
+        self.figure.display(raysList=raysList, removeBlocked=removeBlocked, filePath=filePath)
