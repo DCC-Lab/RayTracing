@@ -376,13 +376,10 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
-        try:
-            trace = m.traceManyThroughInParallel(rays)
-            for i in range(len(rays)):
-                # Order is not kept, we have to check if the ray traced is in the original list
-                self.assertTrue(trace[i] in rays)
-        except:
-            pass
+        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(trace[i], rays)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
@@ -390,13 +387,10 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
-        try:
-            traceWithNumberProcesses = m.traceManyThroughInParallel(rays, processes=2)
-            for i in range(len(rays)):
-                # Order is not kept, we have to check if the ray traced is in the original list
-                self.assertIn(traceWithNumberProcesses[i], rays)
-        except Exception as exception:
-            self.fail(f"Exception raised:\n{exception}")
+        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(trace[i], rays)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")

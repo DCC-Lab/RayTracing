@@ -96,10 +96,7 @@ class TestRandomRays(envtest.RaytracingTestCase):
         rays = RandomRays()
         # Test purpose only:
         rays._rays = [Ray()]
-        try:
-            ray = rays[0]
-        except Exception:
-            self.fail("This should not raise any exception.")
+        ray = self.assertDoesNotRaise(rays.__getitem__, None, 0)
         self.assertEqual(ray, Ray())
 
     def testRandomRaysGetWarnsWhenGeneratingRaysOnlyForLongTimes(self):

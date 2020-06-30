@@ -287,10 +287,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
     def assertLoadNotFailed(self, rays: Rays, name: str = None, append: bool = False):
         if name is None:
             name = self.fileName
-        try:
-            rays.load(name, append)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(rays.load, None, name, append)
 
     def testLoadNoInitialArgs(self):
         rays = Rays()
@@ -336,10 +333,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
             Rays().load(fileName)
 
     def assertSaveNotFailed(self, rays: Rays, name: str):
-        try:
-            rays.save(name)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(rays.save, None, name)
 
     def testSaveInEmptyFile(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])
