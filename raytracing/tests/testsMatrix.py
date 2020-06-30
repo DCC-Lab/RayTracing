@@ -339,28 +339,14 @@ class TestMatrix(envtest.RaytracingTestCase):
             m.traceManyThrough(self.assertIs)
 
     def testTraceManyThroughOutput(self):
-        import io
-        from contextlib import redirect_stdout
-
-        f = io.StringIO()
-        with redirect_stdout(f):
-            rays = [Ray(y, y) for y in range(10_000)]
-            m = Matrix(physicalLength=1)
-            m.traceManyThrough(rays, True)
-        out = f.getvalue()
-        self.assertEqual(out.strip(), "Progress 10000/10000 (100%)")
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "Progress 10000/10000 (100%)", inputRays=rays, progress=True)
 
     def testTraceManyThroughNoOutput(self):
-        import io
-        from contextlib import redirect_stdout
-
-        f = io.StringIO()
-        with redirect_stdout(f):
-            rays = [Ray(y, y) for y in range(10_000)]
-            m = Matrix(physicalLength=1)
-            m.traceManyThrough(rays, False)
-        out = f.getvalue()
-        self.assertEqual(out.strip(), "")
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "", inputRays=rays, progress=False)
 
     def testTraceManyThroughLastRayBlocked(self):
         m = Matrix()
