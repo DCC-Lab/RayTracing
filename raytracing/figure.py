@@ -631,8 +631,8 @@ class Figure:
         yScale : float
             The scale of y axes
         """
-        xScale = self.path.L * 1.1
-        yScale = self.displayRange() * 1.6
+
+        xScale, yScale = self.axes.viewLim.bounds[2:]
 
         return xScale, yScale
 
