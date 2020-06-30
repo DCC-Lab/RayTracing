@@ -11,13 +11,15 @@ class RaytracingTestCase(unittest.TestCase):
         super(RaytracingTestCase, self).__init__(tests)
 
     def assertDoesNotRaise(self, func, exceptionType=None, *funcArgs, **funcKwargs):
+        returnValue = None
         if exceptionType is None:
             exceptionType = Exception
         try:
-            func(*funcArgs, **funcKwargs)
+            returnValue = func(*funcArgs, **funcKwargs)
         except exceptionType as e:
             self.fail(f"An exception was raised:\n{e}")
         # Don't handle exceptions not in exceptionType
+        return returnValue
 
     @classmethod
     def createTempDirectory(cls):
