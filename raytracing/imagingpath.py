@@ -745,7 +745,7 @@ class ImagingPath(MatrixGroup):
             maxHeight = objectDiameter/2
         else:
             maxHeight = principal.y
-
+        sourceInvariant = maxHeight * maxAngle
         rays = RandomUniformRays(yMax=maxHeight, 
                                  yMin=-maxHeight,
                                  thetaMax=maxAngle,
@@ -770,11 +770,23 @@ class ImagingPath(MatrixGroup):
             else:
                 notBlocked.append((I31/maxInvariant,I12/maxInvariant))
 
-        print("Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ FOV ⨉ NA".format(maxInvariant, principal.y, axial.theta))
-        print("Collection efficiency: {0:.1f}% of ±π/2 radian, over field diameter of {1:.1f}".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
+        print("Optical System Properties")
+        print("-------------------------")
+        print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(maxInvariant, principal.y, axial.theta))
+        print(" Detection NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
+        print(" Field of view is {0:.2f} mm".format(self.fieldOfView()))        
+        print("\nSource Properties")
+        print("-------------------")
+        print(" Object/source equivalent invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ height ⨉ half-angle".format(sourceInvariant, maxHeight, maxAngle))
+
+        print("\nEfficiency")
+        print("----------")
+        print(" Collection efficiency: {0:.1f}% of ±π/2 radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
         stopPosition, stopDiameter = self.apertureStop()
-        print("  Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
-        print("  Detection NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
+        print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
+        print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(sourceInvariant/maxInvariant))
+        print("\nVignetting")
+        print("----------")
         print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
         if len(vignettedBlocked) >= 2:
             print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
