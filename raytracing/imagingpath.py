@@ -716,10 +716,10 @@ class ImagingPath(MatrixGroup):
         self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                             removeBlockedRaysCompletely=removeBlockedRaysCompletely)
 
-    def save(self, filepath,
-             onlyPrincipalAndAxialRays=True,
-             removeBlockedRaysCompletely=False, comments=None,
-             limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
+    def saveFigure(self, filepath,
+                   onlyPrincipalAndAxialRays=True,
+                   removeBlockedRaysCompletely=False, comments=None,
+                   limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
         """
         The figure of the imaging path can be saved using this function.
 

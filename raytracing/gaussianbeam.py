@@ -1,5 +1,6 @@
 import math
 import cmath
+from .utils import *
 
 
 class GaussianBeam(object):
@@ -44,7 +45,7 @@ class GaussianBeam(object):
             raise ValueError("Please specify 'q' or 'w'.")
 
         if q is not None and w is not None:
-            if not cmath.isclose(a=self.q, b=q, rel_tol=relTol):
+            if areRelativelyNotEqual(self.q, q, relTol):
                 msg = f"Mismatch between the given q '{q}' and the computed q '{self.q}' ({relTol * 100}% tolerance)."
                 raise ValueError(msg)
 
@@ -80,7 +81,7 @@ class GaussianBeam(object):
         """
         if self.q == 0:
             return False
-            
+
         return (-1 / self.q).imag > 0
 
     @property
@@ -144,10 +145,10 @@ class GaussianBeam(object):
             description += "w(z): {0:.3f}, ".format(self.w)
             description += "R(z): {0:.3f}, ".format(self.R)
             description += "z: {0:.3f}, ".format(self.z)
-            description += "λ: {0:.1f} nm\n".format(self.wavelength * 1e6)
+            description += "λ: {0:.1f} nm\n".format(self.wavelength)
             description += "zo: {0:.3f}, ".format(self.zo)
             description += "wo: {0:.3f}, ".format(self.wo)
             description += "wo position: {0:.3f} ".format(self.waistPosition)
             return description
         else:
-            return "Not valid complex radius of curvature"
+            return "Beam is not finite: q={0}".format(self.q)

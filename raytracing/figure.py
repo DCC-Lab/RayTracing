@@ -14,6 +14,7 @@ class Figure:
         self.figure = None
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
+        self.elementGraphics = []
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
@@ -64,7 +65,7 @@ class Figure:
 
         if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
-            if stopPosition is None:
+            if stopPosition is None or self.path.principalRay() is None:
                 warnings.warn("No aperture stop in system: cannot use onlyPrincipalAndAxialRays=True since they are "
                               "not defined.")
                 self.designParams['onlyPrincipalAndAxialRays'] = False
@@ -111,8 +112,8 @@ class Figure:
                            'imageColor': imageColor, 'objectColor': objectColor}
         for key, value in newDesignParams.items():
             if value is not None:
-                if key is 'rayColors':
-                    assert len(value) is 3, \
+                if key == 'rayColors':
+                    assert len(value) == 3, \
                         "rayColors has to be a list with 3 elements."
                 self.designParams[key] = value
 
@@ -136,14 +137,15 @@ class Figure:
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
-        self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
+        self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
+        self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
         if filepath is not None:
             self.figure.savefig(filepath, dpi=600)
         else:
             self._showPlot()
 
-    def displayGaussianBeam(self, inputBeams=None, filepath=None):
+    def displayGaussianBeam(self, beams=None, filepath=None):
         """ Display the optical system and trace the laser beam.
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -154,11 +156,14 @@ class Figure:
             A list of Gaussian beams
         """
 
-        self.drawBeamTraces(beams=inputBeams)
+        if len(beams) != 0:
+            self.drawBeamTraces(beams=beams)
+
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
-        self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
+        self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
+        self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
         if filepath is not None:
             self.figure.savefig(filepath, dpi=600)
@@ -272,10 +277,13 @@ class Figure:
             return self.imagingDisplayRange()
 
     def imagingDisplayRange(self):
-        displayRange = self.path.largestDiameter
+        displayRange = 0
+        for graphic in self.elementGraphics:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
 
-        if displayRange == float('+Inf') or displayRange <= 2 * self.path._objectHeight:
-            displayRange = 2 * self.path._objectHeight
+        if displayRange == float('+Inf') or displayRange <= self.path._objectHeight:
+            displayRange = self.path._objectHeight
 
         conjugates = self.path.intermediateConjugates()
         if len(conjugates) != 0:
@@ -289,9 +297,16 @@ class Figure:
         return displayRange
 
     def laserDisplayRange(self):
-        displayRange = self.path.largestDiameter
-        if displayRange == float('+Inf'):
-            displayRange = self.path.inputBeam.w * 3
+        displayRange = 0
+        for graphic in self.elementGraphics:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
+
+        if displayRange == float('+Inf') or displayRange == 0:
+            if self.path.inputBeam is not None:
+                displayRange = self.path.inputBeam.w * 3
+            else:
+                displayRange = 100
 
         return displayRange
 
@@ -515,6 +530,7 @@ class Figure:
                 color='r'))
 
     def drawElements(self, elements):
+        self.elementGraphics = []
         z = 0
         for element in elements:
             graphic = Graphic(element)
@@ -524,6 +540,7 @@ class Figure:
             if self.path.showElementLabels:
                 graphic.drawLabels(z, self.axes)
             z += graphic.L
+            self.elementGraphics.append(graphic)
 
     def rayTraceLines(self, removeBlockedRaysCompletely=True):
         """ A list of all ray trace line objects corresponding to either
@@ -613,8 +630,8 @@ class Figure:
         yScale : float
             The scale of y axes
         """
-
-        xScale, yScale = self.axes.viewLim.bounds[2:]
+        xScale = self.path.L * 1.1
+        yScale = self.displayRange() * 1.6
 
         return xScale, yScale
 
@@ -638,10 +655,17 @@ class Figure:
 class MatrixGraphic:
     def __init__(self, matrix: Matrix):
         self.matrix = matrix
+        self._halfHeight = None
 
     @property
     def L(self):
         return self.matrix.L
+
+    @property
+    def halfHeight(self):
+        if self._halfHeight is None:
+            self._halfHeight = self.displayHalfHeight()
+        return self._halfHeight
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
@@ -972,22 +996,26 @@ class LensGraphic(MatrixGraphic):
                 if max(line._y) > maxRayHeight:
                     maxRayHeight = max(line._y)
 
-        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
+        self._halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
-        arrowHeadHeight = 2 * halfHeight * 0.08
+        arrowHeadHeight = 2 * self._halfHeight * 0.08
 
-        heightFactor = halfHeight * 2 / yScaling
+        heightFactor = self._halfHeight * 2 / yScaling
         arrowHeadWidth = xScaling * 0.008 * (heightFactor / 0.2) ** (3 / 4)
 
-        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
+        axes.arrow(z, 0, 0, self._halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
+        axes.arrow(z, 0, 0, -self._halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
 
 class SpaceGraphic(MatrixGraphic):
+    def __init__(self, matrix):
+        super(SpaceGraphic, self).__init__(matrix)
+        self._halfHeight = 0
+
     def drawAt(self, z, axes, showLabels=False):
         """This function draws nothing because free space is not visible. """
         return
@@ -1168,6 +1196,7 @@ class ApertureGraphic(MatrixGraphic):
 class MatrixGroupGraphic(MatrixGraphic):
     def __init__(self, matrixGroup: MatrixGroup):
         self.matrixGroup = matrixGroup
+        self._halfHeight = None
         super().__init__(matrixGroup)
 
     @property
@@ -1176,6 +1205,12 @@ class MatrixGroupGraphic(MatrixGraphic):
         for element in self.matrixGroup.elements:
             L += element.L
         return L
+
+    @property
+    def halfHeight(self):
+        if self._halfHeight is None:
+            self._halfHeight = self.displayHalfHeight()
+        return self._halfHeight
 
     def drawAt(self, z, axes, showLabels=True):
         """ Draw each element of this group """
@@ -1220,12 +1255,40 @@ class MatrixGroupGraphic(MatrixGraphic):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = self.matrixGroup.largestDiameter() / 2
+        halfHeight = self.matrixGroup.largestDiameter / 2
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
                           xycoords='data', fontsize=12,
                           ha='center', va='bottom')
+
+    def display(self):
+        fig, axes = plt.subplots(figsize=(10, 7))
+        self.drawAt(0, axes, showLabels=True)
+        self.drawAperture(0, axes)
+        self.drawPointsOfInterest(0, axes)
+        self.drawVertices(0, axes)
+        self.drawCardinalPoints(0, axes)
+        self.drawPrincipalPlanes(0, axes)
+        axes.set_ylim(-self.halfHeight * 1.6, self.halfHeight * 1.6)
+        self._showPlot()
+
+    def _showPlot(self):  # pragma: no cover
+        # internal, do not use
+        try:
+            plt.plot()
+            if sys.platform.startswith('win'):
+                plt.show()
+            else:
+                plt.draw()
+                while True:
+                    if plt.get_fignums():
+                        plt.pause(0.001)
+                    else:
+                        break
+
+        except KeyboardInterrupt:
+            plt.close()
 
 
 class AchromatDoubletLensGraphic(MatrixGroupGraphic):
@@ -1465,17 +1528,19 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 
 class Graphic:
     def __new__(cls, element):
-        if type(element) is AchromatDoubletLens:
+        if type(element) is AchromatDoubletLens or issubclass(type(element), AchromatDoubletLens):
             return AchromatDoubletLensGraphic(element)
-        if type(element) is SingletLens:
+        if type(element) is SingletLens or issubclass(type(element), SingletLens):
             return SingletLensGraphic(element)
-        if issubclass(type(element), Objective):
+        if issubclass(type(element), Objective) or issubclass(type(element), Objective):
             return ObjectiveGraphic(element)
         if issubclass(type(element), MatrixGroup):
             return MatrixGroupGraphic(element)
 
         if type(element) is Lens:
             return LensGraphic(element)
+        if type(element) is ThickLens:
+            return ThickLensGraphic(element)
         if type(element) is Space:
             return SpaceGraphic(element)
         if type(element) is DielectricInterface:
