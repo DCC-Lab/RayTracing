@@ -55,6 +55,7 @@ def rayTraceFromCalculation(ray, principalTrace, axialTrace):
     return trace
 
 class TestLagrange(envtest.RaytracingTestCase):
+    @envtest.skip
     def testLagrange(self):
         path = ImagingPath()
         path.objectHeight = 50
@@ -62,6 +63,19 @@ class TestLagrange(envtest.RaytracingTestCase):
         path.append(Aperture(diameter=10, label='Camera'))
         # path.display()
         path.reportEfficiency(nRays=10000)
+
+    def testObjective(self):
+        path = ImagingPath()
+        path.append(Aperture(diameter=22.5))
+        path.append(Space(d=180))
+        path.append(Lens(f=180, diameter=50, label='Tube lens'))
+        path.append(Space(d=180))
+        path.append(olympus.XLUMPlanFLN20X())
+        path.flipOrientation()
+        self.assertAlmostEqual( abs(path.magnification()[0]), 20)
+        self.assertAlmostEqual( path.imageSize(), 22.5,3)
+        path.reportEfficiency(nRays=10000)
+        path.display()
 
 if __name__ == '__main__':
     envtest.main()

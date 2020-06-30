@@ -28,6 +28,8 @@ class LUMPlanFL40X(Objective):
                                          focusToFocusLength=40,
                                          backAperture=7,
                                          workingDistance=2,
+                                         magnification=40,
+                                         fieldNumber=26.5,
                                          label='LUMPlanFL40X',
                                          url="https://www.edmundoptics.com/p/olympus-lumplfln-40xw-objective/3901/")
 
@@ -57,6 +59,8 @@ class XLUMPlanFLN20X(Objective):
                                          focusToFocusLength=80,
                                          backAperture=22,
                                          workingDistance=2,
+                                         magnification=20,
+                                         fieldNumber=22,
                                          label='XLUMPlanFLN20X',
                                          url="https://www.olympus-lifescience.com/en/objectives/xlumplfln-w/")
 
@@ -86,6 +90,8 @@ class MVPlapo2XC(Objective):
                                          focusToFocusLength=137,
                                          backAperture=45,
                                          workingDistance=20,
+                                         magnification=2,
+                                         fieldNumber=17.6,
                                          label='MVPlapo2XC',
                                          url="")
 
@@ -116,6 +122,8 @@ class UMPLFN20XW(Objective):
                                          focusToFocusLength=45,
                                          backAperture=9,
                                          workingDistance=3.5,
+                                         magnification=20,
+                                         fieldNumber=26.5,
                                          label='UMPLFN20XW',
                                          url="https://www.olympus-lifescience.com/en/objectives/lumplfln-w/#!cms[tab]=%"
                                                  "2Fobjectives%2Flumplfln-w%2F20xw")
@@ -147,5 +155,7 @@ class XLPLN25X(Objective):
                                          focusToFocusLength=75,
                                          backAperture=18,
                                          workingDistance=2,
+                                         magnification=25,
+                                         fieldNumber=18,
                                          label='XLPLN25X',
                                          url="https://www.olympus-lifescience.com/en/objectives/multiphoton/")

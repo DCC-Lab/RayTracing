@@ -716,7 +716,7 @@ class ImagingPath(MatrixGroup):
 
         return self.opticalInvariant(ray1, ray2)
 
-    def reportEfficiency(self, objectDiameter=None, nRays=10000):
+    def reportEfficiency(self, objectDiameter=None, emissionHalfAngle=None, nRays=10000):
         """
         The collection efficiency of the optical system is computed and a report is printed.
         By default, it is computed across the field of view, but a specific object diameter 
@@ -738,8 +738,12 @@ class ImagingPath(MatrixGroup):
         axial = self.axialRay()
         maxInvariant = abs(self.lagrangeInvariant())
 
-        # We assume isotropic emission
-        maxAngle = np.pi/2
+        # We use the emission half angle if provided, isotropic emission otherwise
+        if emissionHalfAngle is not None:
+            maxAngle = emissionHalfAngle
+        else:
+            maxAngle = np.pi/2
+
         # We use the provided objectDiameter if there is one
         if objectDiameter is not None:
             maxHeight = objectDiameter/2
@@ -780,7 +784,7 @@ class ImagingPath(MatrixGroup):
         print(" Object/source equivalent invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ height ⨉ half-angle".format(sourceInvariant, maxHeight, maxAngle))
         print("\nEfficiency")
         print("----------")
-        print(" Collection efficiency: {0:.1f}% of ±π/2 radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight))
+        print(" Collection efficiency: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight, maxAngle))
         stopPosition, stopDiameter = self.apertureStop()
         print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
         print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(sourceInvariant/maxInvariant))
