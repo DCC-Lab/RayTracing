@@ -134,5 +134,25 @@ class TestEnvtestClass(unittest.TestCase):
         self.assertFalse(os.path.exists(self.tempDir))
 
 
+class TestEnvtestClassSelfMethod(envtest.RaytracingTestCase):
+
+    def testAssertDoesNotRaiseSpecificException(self):
+        self.assertDoesNotRaise(lambda x: 2 / x, ZeroDivisionError, x=1e-7)
+
+    def testAssertDoesNotRaiseGeneralException(self):
+        self.assertDoesNotRaise(lambda x: 2 / x, None, x=1e-7)
+
+    def testAssertDoesNotRaiseFails(self):
+        with self.assertRaises(AssertionError) as assertError:
+            self.assertDoesNotRaise(lambda x: x / 0, x=2)
+        otherValue = f"An exception was raised:\ndivision by zero"
+        self.assertEqual(str(assertError.exception), otherValue)
+
+    def testAssertDoesNotRaiseLetExceptionPass(self):
+        with self.assertRaises(ZeroDivisionError):
+            with self.assertRaises(AssertionError):
+                self.assertDoesNotRaise(lambda x: x / 0, IOError, x=2)
+
+
 if __name__ == '__main__':
     unittest.main()
