@@ -158,21 +158,21 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertAlmostEqual(path.imageSize(), imgSize, 2)
 
     def testSave(self):
-        filename = self.tempFilePath("test.png")
+        filePath = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.saveFigure(filename, comments=comments)
-        if not os.path.exists(filename):
+        path.saveFigure(filePath=filePath, comments=comments)
+        if not os.path.exists(filePath):
             self.fail("No file saved (with comments)")
-        os.remove(filename)
+        os.remove(filePath)
 
     def testSaveWithoutComments(self):
-        filename = self.tempFilePath("test.png")
+        filePath = self.tempFilePath("test.png")
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.saveFigure(filename)
-        if not os.path.exists(filename):
+        path.saveFigure(filePath=filePath)
+        if not os.path.exists(filePath):
             self.fail("No file saved (without comments)")
-        os.remove(filename)
+        os.remove(filePath)
 
     def testChiefRayNoApertureStop(self):
         path = ImagingPath(System2f(10))

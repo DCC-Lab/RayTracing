@@ -701,6 +701,22 @@ class ImagingPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
+        if raysList is None:
+            raysList = []
+        if rays is not None:
+            raysList.append(rays)
+
+        if len(raysList) == 0:
+            rays = []
+            principalRay = self.principalRay()
+            axialRay = self.axialRay()
+            if principalRay is not None:
+                rays.append(principalRay) 
+            if axialRay is not None:
+                rays.append(axialRay)
+
+            raysList.append(rays)
+
         self.figure.createFigure(title=self.label, comments=comments)
 
         self.figure.display(raysList=raysList, removeBlocked=removeBlocked)
@@ -726,6 +742,22 @@ class ImagingPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
+        if raysList is None:
+            raysList = []
+        if rays is not None:
+            raysList.append(rays)
+
+        if len(raysList) == 0:
+            rays = []
+            principalRay = self.principalRay()
+            axialRay = self.axialRay()
+            if principalRay is not None:
+                rays.append(principalRay) 
+            if axialRay is not None:
+                rays.append(axialRay)
+
+            raysList.append(rays)
+
         self.figure.createFigure(title=self.label, comments=comments)
 
         self.figure.display(raysList=raysList, removeBlocked=removeBlocked, filePath=filePath)

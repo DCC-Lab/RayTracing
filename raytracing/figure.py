@@ -117,7 +117,7 @@ class Figure:
                         "rayColors has to be a list with 3 elements."
                 self.designParams[key] = value
 
-    def display(self, raysList=None, removeBlocked = True, filePath = None):
+    def display(self, raysList, removeBlocked = True, filePath = None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -128,17 +128,6 @@ class Figure:
             If True, the blocked rays are removed (default=True)
 
         """
-
-        if raysList is None:
-            rays = []
-            principalRay = self.path.principalRay()
-            axialRay = self.path.axialRay()
-            if principalRay is not None:
-                rays.append(principalRay) 
-            if axialRay is not None:
-                rays.append(axialRay)
-
-            raysList = [rays]
 
         self.initializeDisplay()
 
