@@ -145,7 +145,7 @@ class Figure:
         else:
             self._showPlot()
 
-    def displayGaussianBeam(self, beams=None, filepath=None):
+    def displayGaussianBeam(self, beams=None, filePath=None):
         """ Display the optical system and trace the laser beam.
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -165,8 +165,8 @@ class Figure:
         self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
         self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
-        if filepath is not None:
-            self.figure.savefig(filepath, dpi=600)
+        if filePath is not None:
+            self.figure.savefig(filePath, dpi=600)
         else:
             self._showPlot()
 
