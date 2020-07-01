@@ -669,7 +669,7 @@ class Matrix(object):
 
         Parameters
         ----------
-        inputRays : object of Ray class
+        inputRays : list of object of Ray class
             A List of rays, each object includes two ray. The fisr is the properties
             of the input ray and the second is the properties of the output ray.
 
@@ -841,6 +841,35 @@ class Matrix(object):
             outputRaysList += rays.rays
 
         return Rays(rays=outputRaysList)
+
+    def traceProfiles(self, rays, z=float("+inf")):
+        rayTraces = self.traceMany(rays)
+
+        outputRays = Rays()
+        for rayTrace in rayTraces:
+            for ray in rayTrace:
+                closestRay = rayTrace[0]
+
+                for ray in rayTrace:
+                    if closestRay.isBlocked:
+                        break
+
+                    if ray.z == z:
+                        if ray.isNotBlocked:
+                            outputRays.append(ray)
+                        break
+
+                    if ray.z > z:
+                        slopeY = (ray.y-closestRay.y)/(ray.z-closestRay.z)
+                        slopeTheta = (ray.theta-closestRay.theta)/(ray.z-closestRay.z)
+                        dz = (z-closestRay.z)
+                        closestRay.y += dz * slopeY
+                        closestRay.theta += dz * slopeTheta
+                        outputRays.append(closestRay)
+                        break
+                    closestRay = ray
+
+        return outputRays
 
     @property
     def isImaging(self):
