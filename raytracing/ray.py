@@ -175,44 +175,34 @@ class Ray:
         return rays
 
     @staticmethod
-    def along(ray1, ray2, z):
-        """This function returns a ray at position z using the line defined
-        by ray1 and ray2.  y and theta are linearly interpolated.
+    def along(ray, z):
+        """This function returns a ray at position z parallel to the provided ray
 
         Parameters
         ----------
-        ray1 : Ray
-            First ray
-        ray2 : Ray
-            Second ray
+        ray : Ray
+            The ray to which the output ray is parallel
         z : float
             Position in z where we want the output ray
 
         Returns
         -------
         ray : an interpolated Ray 
-            A Ray at position z, with y and theta interpolated from ray1 and ray2
+            A Ray at position z, with y interpolated and theta unchanged
 
         Notes
         -----
-        If the first ray is blocked, then None is returned
+        If ray is blocked, then the output Ray will be blocked too
 
         See Also
         --------
         raytracing.Ray.alongTrace()
 
         """
-        distance = ray2.z-ray1.z
-        if ray1.isBlocked:
-            return None
-
-        if distance > 0:
-            slopeY = (ray2.y-ray1.y)/distance
-            slopeTheta = (ray2.theta-ray1.theta)/distance
-            dz = (z-ray1.z)
-            return Ray(y=ray1.y + dz * slopeY, theta=ray1.theta + dz * slopeTheta, z=z)
-        else:
-            return ray1
+        outputRay = Ray(y=ray.y + (z-ray.z) * ray.theta, theta=ray.theta, z=z)
+        if ray.isBlocked:
+            outputRay.isBlocked = True
+        return outputRay
 
     @staticmethod
     def alongTrace(rayTrace, z):
@@ -233,7 +223,7 @@ class Ray:
 
         Notes
         -----
-        If the ray at an earlier z is blocked, then None is returned
+        If the ray at an earlier z is blocked, then the Ray will be blocked too
 
         See Also
         --------
@@ -242,17 +232,15 @@ class Ray:
         """
         closestRay = rayTrace[0]
         for ray in rayTrace:
-            if closestRay.isBlocked:
-                return None
-
             if ray.z == z:
-                if ray.isNotBlocked:
-                    return ray
+                return ray
 
             if ray.z > z:
-                return Ray.along(ray1=closestRay,ray2=ray, z=z)
+                return Ray.along(ray=closestRay, z=z)
+
             closestRay = ray
 
+        return rayTrace[-1]
 
     def __str__(self):
         """String description that allows the use of print(Ray())."""

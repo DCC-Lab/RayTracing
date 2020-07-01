@@ -842,32 +842,12 @@ class Matrix(object):
 
         return Rays(rays=outputRaysList)
 
-    def traceProfiles(self, rays, z=float("+inf")):
-        rayTraces = self.traceMany(rays)
-
+    def profileFromRayTraces(self, rayTraces, z=float("+inf")):
         outputRays = Rays()
         for rayTrace in rayTraces:
-            for ray in rayTrace:
-                closestRay = rayTrace[0]
-
-                for ray in rayTrace:
-                    if closestRay.isBlocked:
-                        break
-
-                    if ray.z == z:
-                        if ray.isNotBlocked:
-                            outputRays.append(ray)
-                        break
-
-                    if ray.z > z:
-                        slopeY = (ray.y-closestRay.y)/(ray.z-closestRay.z)
-                        slopeTheta = (ray.theta-closestRay.theta)/(ray.z-closestRay.z)
-                        dz = (z-closestRay.z)
-                        closestRay.y += dz * slopeY
-                        closestRay.theta += dz * slopeTheta
-                        outputRays.append(closestRay)
-                        break
-                    closestRay = ray
+            ray = Ray.alongTrace(rayTrace, z=z)
+            if ray.isNotBlocked:
+                outputRays.append(ray)
 
         return outputRays
 
