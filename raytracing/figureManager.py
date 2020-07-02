@@ -345,19 +345,26 @@ class MplFigure(Figure):
 
     def drawGraphics(self):
         for graphic in self.graphics:
-            components = graphic.patches2D
+            componentPatches = graphic.patches2D
 
-            for component in components:
-                self.axes.add_patch(component)
+            for patch in componentPatches:
+                self.axes.add_patch(patch)
 
             if graphic.hasLabel:
                 graphic.label = graphic.label.mplLabel
                 self.axes.add_artist(graphic.label.patch)
 
             for point in graphic.points:
-                self.axes.plot([point.x], [0], 'ko', markersize=4, color=point.color, linewidth=0.4)
+                if point.hasPointMarker:
+                    self.axes.plot([point.x], [0], 'ko', markersize=4, color=point.color, linewidth=0.4)
                 if point.text is not None:
                     self.labels.append(point)
+
+            for line in graphic.lines:
+                self.axes.add_line(line.patch)
+
+            for annotation in graphic.annotations:
+                self.axes.add_patch(annotation.patch)
 
     def drawLabels(self):
         self.labels = [label.mplLabel for label in self.labels]
