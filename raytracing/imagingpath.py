@@ -785,7 +785,7 @@ class ImagingPath(MatrixGroup):
         print(" Object/source equivalent invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ height ⨉ half-angle".format(Is, maxHeight, maxAngle))
         print("\nEfficiency")
         print("----------")
-        print(" Collection efficiency from Monte Carlo: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight, maxAngle))
+        print(" Collection efficiency from Monte Carlo: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/sourceRays.maxCount, 2*maxHeight, maxAngle))
         print(" Collection efficiency from ratio of system to source invariants: {0:.1f}%".format(Iap/Is*100))
         stopPosition, stopDiameter = self.apertureStop()
         print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
