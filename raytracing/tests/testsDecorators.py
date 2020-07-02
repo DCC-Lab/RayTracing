@@ -1,4 +1,5 @@
 import envtest
+from raytracing.utils import deprecated
 
 
 def simpleDecoratorReturnsTuple(func):
@@ -33,3 +34,19 @@ class TestDecorators(envtest.RaytracingTestCase):
             return a, b, c
 
         self.assertTupleEqual(toto(1, 2, 3), (0, (1, 2, 3)))
+
+
+class TestDeprecatedDecorator(envtest.RaytracingTestCase):
+
+    def testDeprecated(self):
+        reason = "This is deprecated because it is a test."
+
+        @deprecated(reason)
+        def deprecatedFunction():
+            return "This is deprecated"
+
+        with self.assertWarns(DeprecationWarning) as deprec:
+            retVal = deprecatedFunction()
+
+        self.assertEqual(retVal, "This is deprecated")
+        self.assertEqual(str(deprec.warning), reason)
