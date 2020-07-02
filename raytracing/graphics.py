@@ -68,10 +68,10 @@ class Graphic:
 
 
 class GraphicOf:
-    def __new__(cls, element, x=0.0) -> Union[Graphic, None]:
+    def __new__(cls, element, x=0.0, minSize=0) -> Union[Graphic, None]:
         instance = type(element).__name__
         if instance is 'Lens':
-            return LensGraphic(element, x=x)
+            return LensGraphic(element, x=x, minSize=minSize)
         if instance is 'Space':
             return None
         if instance is 'Aperture':
@@ -105,6 +105,8 @@ class MatrixGraphic(Graphic):
             halfHeight = self.matrix.apertureDiameter / 2.0
             return [Aperture(y=halfHeight, width=self.matrix.L),
                     Aperture(y=-halfHeight, width=self.matrix.L)]
+        else:
+            return []
 
     @property
     def cardinalPoints(self) -> List[Point]:
@@ -215,9 +217,13 @@ class MatrixGraphic(Graphic):
 
 
 class LensGraphic(MatrixGraphic):
+    def __init__(self, matrix, x=0.0, fixedWidth=False, minSize=0):
+        self.minSize = minSize
+        super(LensGraphic, self).__init__(matrix, x=x, fixedWidth=fixedWidth)
+
     @property
     def mainComponents(self):
-        return [DoubleThinArrow(self.matrix.displayHalfHeight()*2)]
+        return [DoubleThinArrow(self.matrix.displayHalfHeight(minSize=self.minSize)*2)]
 
 
 class ApertureGraphic(MatrixGraphic):
@@ -227,9 +233,10 @@ class ApertureGraphic(MatrixGraphic):
 
 class SurfacesGraphic(MatrixGraphic):
     def __init__(self, matrix, x=0.0):
-        super().__init__(matrix, x=x, fixedWidth=True)
-        self.surfaces = self.matrix.surfaces
+        self.surfaces = matrix.surfaces
         self.corners = None
+
+        super().__init__(matrix, x=x, fixedWidth=True)
 
     @property
     def mainComponents(self):
@@ -263,8 +270,8 @@ class SurfacesGraphic(MatrixGraphic):
 
 class MatrixGroupGraphic(MatrixGraphic):
     def __init__(self, matrixGroup):
+        self.matrixGroup = matrixGroup
         super().__init__(matrixGroup)
-        self.matrixGroup = self.matrix
 
     @property
     def L(self):

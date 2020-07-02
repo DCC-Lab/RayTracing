@@ -112,10 +112,16 @@ class Figure:
 
     @property
     def graphicsOfElements(self) -> List[Graphic]:
+        maxRayHeight = 0
+        for line in self.lines:
+            if line.label == 'ray':  # FIXME: need a more robust reference to rayTraces
+                if max(line.yData) > maxRayHeight:
+                    maxRayHeight = max(line.yData)
+
         graphics = []
         z = 0
         for element in self.path.elements:
-            graphic = GraphicOf(element, x=z)
+            graphic = GraphicOf(element, x=z, minSize=maxRayHeight)
             if graphic is not None:
                 graphics.append(graphic)
             z += element.L
