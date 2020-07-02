@@ -1,6 +1,8 @@
 import doctest
 import raytracing
 
+## if a new python file is added to the module, please add it in a new line
+
 doctest.testmod(m=raytracing.axicon,verbose=True)
 doctest.testmod(m=raytracing.components,verbose=True)
 doctest.testmod(m=raytracing.eo,verbose=True)
@@ -16,5 +18,6 @@ doctest.testmod(m=raytracing.ray,verbose=True)
 doctest.testmod(m=raytracing.rays,verbose=True)
 doctest.testmod(m=raytracing.specialtylenses,verbose=True)
 doctest.testmod(m=raytracing.utils,verbose=True)
+
 
 
