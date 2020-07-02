@@ -20,13 +20,15 @@ class Graphic:
         self._components = components
         self.label = None
         self.points = []
+        self.lines = []
+        self.annotations = []
 
         self.x = x
         self.y = y
         self.useAutoScale = not fixedWidth
 
         if label is not None:
-            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight * 1.2)
+            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight * 1.25)
 
     @property
     def hasLabel(self):
@@ -131,8 +133,47 @@ class MatrixGraphic(Graphic):
 
         points = []
         for zStr, label in labels.items():
-            points.append(Point(text=label, x=float(zStr), y=-self.halfHeight * 0.5))
+            points.append(Point(text=label, x=float(zStr), y=-self.halfHeight * 0.2))
         return points
+
+    def addPrincipalPlanes(self):
+        halfHeight = self.halfHeight
+        (p1, p2) = self.matrix.principalPlanePositions(z=self.x)
+
+        if p1 is None or p2 is None:
+            return
+
+        self.lines.append(Line([p1, p1], [-halfHeight, halfHeight], lineStyle='--'))
+        self.lines.append(Line([p2, p2], [-halfHeight, halfHeight], lineStyle='--'))
+
+        self.points.append(Point(p1, halfHeight * 1.1, '$P_f$'))
+        self.points.append(Point(p2, halfHeight * 1.1, '$P_b$'))
+
+        (f1, f2) = self.matrix.effectiveFocalLengths()
+        FFL = self.matrix.frontFocalLength()
+        BFL = self.matrix.backFocalLength()
+        (F1, F2) = self.matrix.focusPositions(z=self.x)
+
+        h = halfHeight * 0.4
+
+        # Front principal plane to front focal spot (effective focal length)
+        self.annotations.append(ArrowAnnotation(A=(p1, h), B=(F1, h)))
+        self.points.append(Point(p1 - f1 / 2, h*1.1, 'EFL = {0:0.1f}'.format(f1), hasMarker=False))
+
+        # Back principal plane to back focal spot (effective focal length)
+        self.annotations.append(ArrowAnnotation(A=(p2, -h), B=(F2, -h)))
+        self.points.append(Point(p2 + f2 / 2, -h*0.9, 'EFL = {0:0.1f}'.format(f2), hasMarker=False))
+
+        # Front vertex to front focal spot (front focal length or FFL)
+        h = halfHeight * 0.7
+        self.annotations.append(ArrowAnnotation(A=(self.matrix.frontVertex, h), B=(F1, h)))
+        self.points.append(Point((self.matrix.frontVertex + F1) / 2, h*1.06, 'FFL = {0:0.1f}'.format(FFL),
+                                 hasMarker=False))
+
+        # Back vertex to back focal spot (back focal length or BFL)
+        self.annotations.append(ArrowAnnotation(A=(self.matrix.backVertex, -h), B=(F2, -h)))
+        self.points.append(Point((self.matrix.backVertex + F2) / 2, -0.94*h, 'BFL = {0:0.1f}'.format(BFL),
+                                 hasMarker=False))
 
     def display(self):
         """ Display this component, without any ray tracing but with
@@ -163,7 +204,10 @@ class MatrixGraphic(Graphic):
         if self.matrix.L != 0:
             self.points.extend(self.verticesPoints)
         self.points.extend(self.pointsOfInterest)
+
+        self.addPrincipalPlanes()
         # self.drawPrincipalPlanes(z=0, axes=axes)
+        # and measurements ?
 
         from .figureManager import MplFigure
         from .imagingpath import ImagingPath
@@ -175,7 +219,6 @@ class MatrixGraphic(Graphic):
 
 
 class LensGraphic(MatrixGraphic):
-
     @property
     def mainComponents(self):
         return [DoubleThinArrow(self.matrix.displayHalfHeight()*2)]
