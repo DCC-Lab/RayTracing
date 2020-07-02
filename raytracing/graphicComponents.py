@@ -268,32 +268,18 @@ class Aperture(Component):
         return [BezierCurve(coords)]
 
 
-class Line:
-    """ A 2D data line object """
-    def __init__(self, xData, yData, color: Union[tuple, str] = 'k', lineWidth=1, label=None):
-        self.xData = xData
-        self.yData = yData
-        self.color = color
-        self.lineWidth = lineWidth
-        self.label = label  # fixme: temporary for infinite lens minsize ray check
-
-    @property
-    def patch(self):
-        return plt.Line2D(self.xData, self.yData, color=self.color, linewidth=self.lineWidth, label=self.label)
-
-
 class Label:
     """ Label base class. Promoted to MplLabel by the Figure Manager if using a matplotlib backend.
     A label can have a text and a point, independently, but the point will always sit on the optical axis at y=0.
     """
-    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPoint=False, color='k'):
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPointMarker=False, color='k'):
         self.text = text
         self.x = x
         self.y = y
         self.fontsize = fontsize
 
         self.offset = 0.0
-        self.hasPoint = hasPoint
+        self.hasPointMarker = hasPointMarker
         self.color = color
 
     @property
@@ -325,12 +311,12 @@ class Label:
     @property
     def mplLabel(self) -> 'MplLabel':
         # fixme? promoting to mplLabel to help the figure manager
-        return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPoint)
+        return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPointMarker)
 
 
 class MplLabel(Label):
-    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPoint=False, color='k'):
-        super(MplLabel, self).__init__(text, x=x, y=y, fontsize=fontsize, hasPoint=hasPoint, color=color)
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPointMarker=False, color='k'):
+        super(MplLabel, self).__init__(text, x=x, y=y, fontsize=fontsize, hasPointMarker=hasPointMarker, color=color)
 
         self.patch = None
         if text is not None:
@@ -358,5 +344,34 @@ class MplLabel(Label):
 
 
 class Point(Label):
-    def __init__(self, x=0.0, y=0.0, text=None, fontsize=12, color='k'):
-        super().__init__(text=text, x=x, y=y, fontsize=fontsize, hasPoint=True, color=color)
+    # Todo: remove removeMarker if not used
+    def __init__(self, x=0.0, y=0.0, text=None, fontsize=12, color='k', hasMarker=True):
+        super().__init__(text=text, x=x, y=y, fontsize=fontsize, hasPointMarker=hasMarker, color=color)
+
+
+class Line:
+    """ A 2D data line object """
+    def __init__(self, xData, yData, color: Union[tuple, str] = 'k', lineWidth=1, lineStyle='-', label=None):
+        super().__init__()
+        self.xData = xData
+        self.yData = yData
+        self.color = color
+        self.lineWidth = lineWidth
+        self.lineStyle = lineStyle
+        self.label = label  # fixme: temporary for infinite lens minsize ray check
+
+    @property
+    def patch(self):
+        return plt.Line2D(self.xData, self.yData, color=self.color, label=self.label,
+                          linewidth=self.lineWidth, linestyle=self.lineStyle)
+
+
+class ArrowAnnotation:
+    def __init__(self, A: tuple, B: tuple):
+        self.A = A
+        self.B = B
+
+    @property
+    def patch(self):
+        return patches.FancyArrowPatch(posA=self.A, posB=self.B, arrowstyle='<->', mutation_scale=20)
+
