@@ -133,43 +133,22 @@ class TestRays(envtest.RaytracingTestCase):
         self.assertListEqual(r.thetaValues, thetaValues)
 
     def testDisplayProgress(self):
-        import io
-        from contextlib import redirect_stdout
-
-        f = io.StringIO()
-        with redirect_stdout(f):
-            rays = [Ray(0, 0)]
-            rays = Rays(rays)
-            rays.progressLog = 1
-            rays.displayProgress()
-        out = f.getvalue()
-        self.assertEqual(out.strip(), "Progress 0/1 (0%)")
+        rays = [Ray(0, 0)]
+        rays = Rays(rays)
+        rays.progressLog = 1
+        self.assertPrints(rays.displayProgress, "Progress 0/1 (0%)")
 
     def testDisplayProgressSmallerProgressLog(self):
-        import io
-        from contextlib import redirect_stdout
-
-        f = io.StringIO()
-        with redirect_stdout(f):
-            rays = [Ray(), Ray(2, 0), Ray(1, 0), Ray(-1, 0)]
-            rays = Rays(rays)
-            rays.progressLog = 1
-            rays.displayProgress()
-        out = f.getvalue()
-        self.assertEqual(out.strip(), "Progress 0/4 (0%)")
+        rays = [Ray(), Ray(2, 0), Ray(1, 0), Ray(-1, 0)]
+        rays = Rays(rays)
+        rays.progressLog = 1
+        self.assertPrints(rays.displayProgress, "Progress 0/4 (0%)")
 
     def testDisplayProgressNothing(self):
-        import io
-        from contextlib import redirect_stdout
-
-        f = io.StringIO()
-        with redirect_stdout(f):
-            rays = [Ray(0, 0)]
-            rays = Rays(rays)
-            rays.iteration = 1
-            rays.displayProgress()
-        out = f.getvalue()
-        self.assertEqual(out.strip(), "")
+        rays = [Ray(0, 0)]
+        rays = Rays(rays)
+        rays.iteration = 1
+        self.assertEqual(rays.displayProgress, "")
 
     def testRayCountHistogramBinCountSpecified(self):
         r = [Ray(a, a) for a in range(6)]
@@ -287,10 +266,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
     def assertLoadNotFailed(self, rays: Rays, name: str = None, append: bool = False):
         if name is None:
             name = self.fileName
-        try:
-            rays.load(name, append)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(rays.load, None, name, append)
 
     def testLoadNoInitialArgs(self):
         rays = Rays()
@@ -336,10 +312,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
             Rays().load(fileName)
 
     def assertSaveNotFailed(self, rays: Rays, name: str):
-        try:
-            rays.save(name)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(rays.save, None, name)
 
     def testSaveInEmptyFile(self):
         rays = Rays([Ray(), Ray(1, 1), Ray(-1, 1)])

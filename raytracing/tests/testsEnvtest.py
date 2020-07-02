@@ -133,6 +133,83 @@ class TestEnvtestClass(unittest.TestCase):
             self.fail(f"An exception was raised!\n{exception}")
         self.assertFalse(os.path.exists(self.tempDir))
 
+    def testRedirectStdOutDecoratorNoFileSpecifiedReturnOnlyValue(self):
+        @envtest.redirectStdOutToFile
+        def printHelloWorld():
+            print("Hello world")
+
+        value = printHelloWorld()
+        self.assertEqual(value.strip(), "Hello world")
+
+    def testRedirectStdOutDecoratorNoFileSpecifiedReturnFile(self):
+        @envtest.redirectStdOutToFile(returnOnlyValue=False)
+        def printHelloWorld():
+            print("Hello world")
+
+        value = printHelloWorld()
+        value = value.getvalue()
+        self.assertEqual(value.strip(), "Hello world")
+
+    def testRedirectStdOutDecoratorFileSpecified(self):
+        import io
+
+        file = io.StringIO()
+
+        @envtest.redirectStdOutToFile(file=file)
+        def printHelloWorld():
+            print("Hello world")
+
+        printHelloWorld()
+        self.assertEqual(file.getvalue().strip(), "Hello world")
+
+
+class TestEnvtestClassSelfMethod(envtest.RaytracingTestCase):
+
+    def testAssertDoesNotRaiseSpecificException(self):
+        val = self.assertDoesNotRaise(lambda x: 2 / x, ZeroDivisionError, x=1e-7)
+        self.assertEqual(val, 20e6)
+
+    def testAssertDoesNotRaiseGeneralException(self):
+        val = self.assertDoesNotRaise(lambda x: f"x = {x}", None, x=1e-7)
+        self.assertEqual(val, f"x = {1e-7}")
+
+    def testAssertDoesNotRaiseReturnNone(self):
+        def toto(x1, x2):
+            x1 + x2
+
+        val = self.assertDoesNotRaise(toto, x1=1, x2=1)
+        self.assertIsNone(val)
+
+    def testAssertDoesNotRaiseFails(self):
+        with self.assertRaises(AssertionError) as assertError:
+            self.assertDoesNotRaise(lambda x: x / 0, x=2)
+        otherValue = f"An exception was raised:\ndivision by zero"
+        self.assertEqual(str(assertError.exception), otherValue)
+
+    def testAssertDoesNotRaiseLetExceptionPass(self):
+        with self.assertRaises(ZeroDivisionError):
+            with self.assertRaises(AssertionError):
+                self.assertDoesNotRaise(lambda x: x / 0, IOError, x=2)
+
+    def testAssertPrintsStripOutput(self):
+        def toto():
+            print("Hello world")
+
+        self.assertPrints(toto, "Hello world")
+
+    def testAssertPrintsNoStrip(self):
+        def toto():
+            print("Hello world")
+
+        self.assertPrints(toto, "Hello world\n", False)
+
+    def testAssertPrintsFails(self):
+        def toto():
+            return "Nothing is printed"
+
+        with self.assertRaises(AssertionError):
+            self.assertPrints(toto, "Nothing is printed")
+
 
 if __name__ == '__main__':
     unittest.main()
