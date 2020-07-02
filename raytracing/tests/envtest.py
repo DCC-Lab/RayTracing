@@ -2,12 +2,22 @@ import sys
 import os
 import unittest
 import tempfile
+import matplotlib.pyplot as plt
 
 class RaytracingTestCase(unittest.TestCase):
     tempDir = os.path.join(tempfile.gettempdir(), "tempDir")
 
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
+
+    def tearDown(self) -> None:
+        self.clearMatplotlibPlots()
+
+    @classmethod
+    def clearMatplotlibPlots(cls):
+        plt.clf()
+        plt.cla()
+        plt.close()
 
     @classmethod
     def createTempDirectory(cls):
