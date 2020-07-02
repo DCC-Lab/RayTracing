@@ -299,11 +299,14 @@ class Label:
     """ Label base class. Promoted to MplLabel by the Figure Manager if using a matplotlib backend.
     A label can have a text and a point, independently, but the point will always sit on the optical axis at y=0.
     """
-    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPointMarker=False, color='k'):
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPointMarker=False, color='k',
+                 useDataUnits=True, alignment='center'):
         self.text = text
         self.x = x
         self.y = y
         self.fontsize = fontsize
+        self.useDataUnits = useDataUnits
+        self.alignment = alignment
 
         self.offset = 0.0
         self.hasPointMarker = hasPointMarker
@@ -338,16 +341,18 @@ class Label:
     @property
     def mplLabel(self) -> 'MplLabel':
         # fixme? promoting to mplLabel to help the figure manager
-        return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPointMarker)
+        return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPointMarker, self.color, self.useDataUnits, self.alignment)
 
 
 class MplLabel(Label):
-    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPointMarker=False, color='k'):
-        super(MplLabel, self).__init__(text, x=x, y=y, fontsize=fontsize, hasPointMarker=hasPointMarker, color=color)
+    def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPointMarker=False, color='k',
+                 useDataUnits=True, alignment='center'):
+        super(MplLabel, self).__init__(text, x=x, y=y, fontsize=fontsize, hasPointMarker=hasPointMarker,
+                                       color=color, useDataUnits=useDataUnits, alignment=alignment)
 
         self.patch = None
         if text is not None:
-            self.patch = mplText.Text(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment='center')
+            self.patch = mplText.Text(x=x, y=y, text=text, fontsize=fontsize, horizontalalignment=self.alignment)
 
     @Label.position.setter
     def position(self, xy: tuple):

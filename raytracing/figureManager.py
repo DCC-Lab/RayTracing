@@ -96,12 +96,8 @@ class Figure:
             else:
                 note2 = "Only chief and marginal rays shown"
 
-        # TODO, fixme, everything, toaster: implement Label and Label.patch with MPL figure
-        label = MplLabel(x=0.05, y=0.15, text=note1 + "\n" + note2, fontsize=12)  # todo: , useDataUnits=False)
+        label = Label(x=0.05, y=0.05, text=note1 + "\n" + note2, fontsize=12, useDataUnits=False, alignment='left')
         self.labels.append(label)
-
-        # self.axes.text(0.05, 0.15, text, transform=self.axes.transAxes,
-        #                fontsize=12, verticalalignment='top', clip_box=self.axes.bbox, clip_on=True)
 
     def setGraphicsFromPath(self):
         self.lines = self.rayTraceLines()
@@ -218,7 +214,7 @@ class Figure:
             principalRay = self.path.principalRay()
             axialRay = self.path.axialRay()
             rayGroup = (principalRay, axialRay)
-            lineWidth = 1.5
+            linewidth = 1.5
         else:
             halfAngle = self.path.fanAngle / 2.0
             halfHeight = self.path.objectHeight / 2.0
@@ -229,21 +225,20 @@ class Figure:
                 radianMin=-halfAngle,
                 radianMax=halfAngle,
                 N=self.path.fanNumber)
-            lineWidth = 0.5
+            linewidth = 0.5
 
         manyRayTraces = self.path.traceMany(rayGroup)
 
         lines = []
         for rayTrace in manyRayTraces:
-            (x, y) = self.rearrangeRayTraceForPlotting(
-                rayTrace)
+            (x, y) = self.rearrangeRayTraceForPlotting(rayTrace)
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
 
             rayInitialHeight = y[0]
             # FIXME: We must take the maximum y in the starting point of manyRayTraces,
-            #  not halfHeight
-            maxStartingHeight = halfHeight
+            # not halfHeight
+            maxStartingHeight = halfHeight # FIXME
             binSize = 2.0 * maxStartingHeight / (len(color) - 1)
             colorIndex = int(
                 (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
@@ -252,7 +247,7 @@ class Figure:
             elif colorIndex >= len(color):
                 colorIndex = len(color) - 1
 
-            line = Line(x, y, color=color[colorIndex], lineWidth=lineWidth, label='ray')
+            line = Line(x, y, color=color[colorIndex], lineWidth=linewidth, label='ray')
             lines.append(line)
 
         return lines
@@ -286,6 +281,7 @@ class Figure:
         return figure
 
     def display(self, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
+        self.initializeDisplay()
         self.setGraphicsFromPath()
 
         if backend is 'matplotlib':
@@ -370,7 +366,10 @@ class MplFigure(Figure):
         self.labels = [label.mplLabel for label in self.labels]
 
         for label in self.labels:
-            self.axes.add_artist(label.patch)
+            artist = label.patch
+            if not label.useDataUnits:
+                artist.set_transform(self.axes.transAxes)
+            self.axes.add_artist(artist)
 
     def updateGraphics(self):
         for graphic in self.graphics:
