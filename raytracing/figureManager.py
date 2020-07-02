@@ -103,12 +103,19 @@ class Figure:
         self.lines = self.rayTraceLines()
 
         self.graphics = self.graphicsOfElements
-        self.graphics.append(self.graphicOfObject)
-        self.graphics.extend(self.graphicsOfImages)
+        if self.path.showObject:
+            self.graphics.append(self.graphicOfObject)
+        if self.path.showImages:
+            self.graphics.extend(self.graphicsOfImages)
 
-        (pupilPosition, pupilDiameter) = self.path.entrancePupil()
-        if pupilPosition is not None:
-            self.graphics.append(self.graphicOfEntrancePupil)
+        if self.path.showEntrancePupil:
+            (pupilPosition, pupilDiameter) = self.path.entrancePupil()
+            if pupilPosition is not None:
+                self.graphics.append(self.graphicOfEntrancePupil)
+
+        # if self.path.showPointsOfInterest:  # todo:
+        #     self.drawPointsOfInterest(z=0)
+        #     self.drawStops(z=0)
 
     @property
     def graphicsOfElements(self) -> List[Graphic]:

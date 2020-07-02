@@ -236,7 +236,7 @@ class SurfacesGraphic(MatrixGraphic):
         self.surfaces = matrix.surfaces
         self.corners = None
 
-        super().__init__(matrix, x=x, fixedWidth=True)
+        super(SurfacesGraphic, self).__init__(matrix, x=x, fixedWidth=True)
 
     @property
     def mainComponents(self):
@@ -258,13 +258,15 @@ class SurfacesGraphic(MatrixGraphic):
 
     @property
     def apertureComponents(self):
+        halfHeight = self.matrix.displayHalfHeight()
+
         if len(self.surfaces) == 1:
             return []
 
         components = []
         outerWidth = self.corners[1] - self.corners[0]
-        components.append(Aperture(y=self.halfHeight, x=self.corners[0], width=outerWidth))
-        components.append(Aperture(y=-self.halfHeight, x=self.corners[0], width=outerWidth))
+        components.append(Aperture(y=halfHeight, x=self.corners[0], width=outerWidth))
+        components.append(Aperture(y=-halfHeight, x=self.corners[0], width=outerWidth))
         return components
 
 
@@ -343,5 +345,6 @@ class MatrixGroupGraphic(MatrixGraphic):
             points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5))
         return points
 
-# todo: complete all graphics & PR
-# todo: object/image/ray/lamp graphics
+# todo: complete all graphics (test demos and examples) & PR
+# todo: object/image/ray/lamp graphics ? later with other PR
+# todo: add POI and stops to Path graphics
