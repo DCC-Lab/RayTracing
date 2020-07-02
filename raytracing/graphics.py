@@ -1,6 +1,5 @@
 from raytracing.graphicComponents import *
 import numpy as np
-import sys
 
 
 class Graphic:
@@ -198,7 +197,6 @@ class MatrixGraphic(Graphic):
         -----
         If the component has no power (i.e. C == 0) this will fail.
         """
-        # todo: handle points outside components ?
         self.points = []
         self.points.extend(self.cardinalPoints)
         if self.matrix.L != 0:
@@ -206,8 +204,6 @@ class MatrixGraphic(Graphic):
         self.points.extend(self.pointsOfInterest)
 
         self.addPrincipalPlanes()
-        # self.drawPrincipalPlanes(z=0, axes=axes)
-        # and measurements ?
 
         from .figureManager import MplFigure
         from .imagingpath import ImagingPath
@@ -232,17 +228,20 @@ class ApertureGraphic(MatrixGraphic):
 class SurfacesGraphic(MatrixGraphic):
     def __init__(self, matrix, x=0.0):
         super().__init__(matrix, x=x, fixedWidth=True)
-
+        self.surfaces = self.matrix.surfaces
         self.corners = None
 
     @property
     def mainComponents(self):
-        components = []
         halfHeight = self.matrix.displayHalfHeight()
 
+        if len(self.surfaces) == 1:
+            return [Surface(self.surfaces[0], halfHeight)]
+
         z = 0
-        for i, surfaceA in enumerate(self.matrix.surfaces[:-1]):
-            surfaceB = self.matrix.surfaces[i+1]
+        components = []
+        for i, surfaceA in enumerate(self.surfaces[:-1]):
+            surfaceB = self.surfaces[i+1]
             p = SurfacePair(surfaceA, surfaceB, x=z, halfHeight=halfHeight)
             z += surfaceA.L
             components.append(p)
@@ -252,8 +251,90 @@ class SurfacesGraphic(MatrixGraphic):
 
     @property
     def apertureComponents(self):
+        if len(self.surfaces) == 1:
+            return []
+
         components = []
         outerWidth = self.corners[1] - self.corners[0]
         components.append(Aperture(y=self.halfHeight, x=self.corners[0], width=outerWidth))
         components.append(Aperture(y=-self.halfHeight, x=self.corners[0], width=outerWidth))
         return components
+
+
+class MatrixGroupGraphic(MatrixGraphic):
+    def __init__(self, matrixGroup):
+        super().__init__(matrixGroup)
+        self.matrixGroup = self.matrix
+
+    @property
+    def L(self):
+        L = 0
+        for element in self.matrixGroup.elements:
+            L += element.L
+        return L
+
+    @property
+    def mainComponents(self):
+        components = []
+        z = 0
+        for element in self.matrixGroup:
+            graphic = Graphic(element, x=z)
+            components.append(graphic.components)
+            z += element.L
+        return components
+
+    # def drawAt(self, showLabels=True):
+    #     """ Draw each element of this group """
+    #     z = 0
+    #     for element in self.matrixGroup:
+    #         graphic = Graphic(element)
+    #         graphic.drawAt(z, axes)
+    #         graphic.drawAperture(z, axes)
+    #
+    #         if showLabels:
+    #             graphic.drawLabels(z, axes)
+    #         z += graphic.L
+
+    @property
+    def pointsOfInterest(self):
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+
+        AS and FS are drawn at 110% of the largest diameter
+        """
+        labels = {}  # Gather labels at same z
+
+        # For the group as a whole, then each element
+        print("Fixme: MG POI at 0 or graphic.x ?")  # fixme: 0 or x ?
+        for pointOfInterest in self.matrixGroup.pointsOfInterest(z=self.x):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        zElement = 0
+        # Points of interest for each element
+        for element in self.matrixGroup.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                label = pointOfInterest['label']
+                if zStr in labels:
+                    labels[zStr] = labels[zStr] + ", " + label
+                else:
+                    labels[zStr] = label
+            zElement += element.L
+
+        halfHeight = self.matrixGroup.largestDiameter / 2
+
+        points = []
+        for zStr, label in labels.items():
+            points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5))
+        return points
+
+# todo: complete all graphics & PR
+# todo: object/image/ray/lamp graphics
