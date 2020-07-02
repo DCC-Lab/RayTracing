@@ -156,12 +156,39 @@ class Arrow(Component):
         return 0
 
 
+class Surface(Component):
+    def __init__(self, surface, halfHeight, x=0.0):
+        super().__init__()
+        self.surface = surface
+        self.halfHeight = halfHeight
+        self.x = x
+        self.fill = False
+
+    @property
+    def bezierCurves(self) -> List[BezierCurve]:
+        h = self.halfHeight
+        v1 = self.x
+
+        if self.surface.R == float("+inf"):
+            return [BezierCurve([(v1, -h), (v1, h)])]
+
+        R1 = self.surface.R
+        phi1 = math.asin(h / abs(R1))
+        delta1 = R1 * (1.0 - math.cos(phi1))
+        ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
+        corner1 = v1 + delta1
+
+        return [BezierCurve([(corner1, -h), (v1, -ctl1), (v1, 0)]),
+                BezierCurve([(v1, 0), (v1, ctl1), (corner1, h)])]
+
+
 class SurfacePair(Component):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
         super().__init__()
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
         self.halfHeight = halfHeight
+        # todo: use surfaceA.n to pick color
         self.x = x
         self.corners = None
 
