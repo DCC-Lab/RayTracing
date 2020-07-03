@@ -178,11 +178,12 @@ class Rectangle(Component):
 
 
 class Surface(Component):
-    def __init__(self, surface, halfHeight, x=0.0):
+    def __init__(self, surface, halfHeight, x=0.0, color='k'):
         super().__init__()
         self.surface = surface
         self.halfHeight = halfHeight
         self.x = x
+        self.color = color
         self.fill = False
 
     @property
@@ -295,7 +296,7 @@ class DoubleThinArrow(Component):
         return bezierCurves
 
 
-class Aperture(Component):
+class ApertureBars(Component):
     """Define an aperture graphic component with default RayTracing style used to draw the apertures. """
     def __init__(self, y: float, x=0.0, width=0.01, color='0.7'):
         super().__init__()
@@ -309,12 +310,15 @@ class Aperture(Component):
 
     @property
     def bezierCurves(self) -> List[BezierCurve]:
-        """ An aperture is defined as a straight line. """
+        """ An aperture component is defined as a straight line at 'y' and '-y'. """
         if self.width <= 0.01:
-            coords = [(self.x - 0.005, self.y), (self.x + 0.005, self.y)]
+            coordsTop = [(self.x - 0.005, self.y), (self.x + 0.005, self.y)]
+            coordsBottom = [(self.x - 0.005, -self.y), (self.x + 0.005, -self.y)]
         else:
-            coords = [(self.x, self.y), (self.x + self.width, self.y)]
-        return [BezierCurve(coords)]
+            coordsTop = [(self.x, self.y), (self.x + self.width, self.y)]
+            coordsBottom = [(self.x, -self.y), (self.x + self.width, -self.y)]
+
+        return [BezierCurve(coordsTop), BezierCurve(coordsBottom)]
 
 
 class Label:

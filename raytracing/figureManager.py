@@ -164,11 +164,7 @@ class Figure:
         if pupilPosition is not None:
             halfHeight = pupilDiameter / 2.0
 
-            c1 = Aperture(y=halfHeight)
-            c2 = Aperture(y=-halfHeight)
-
-            apertureGraphic = Graphic([c1, c2], x=pupilPosition)
-            return apertureGraphic
+            return Graphic([ApertureBars(halfHeight)], x=pupilPosition)
 
     @property
     def pointsOfInterest(self) -> List[Point]:

@@ -97,11 +97,9 @@ class MatrixGraphic(Graphic):
 
     @property
     def apertureComponents(self):
-        # todo: make Aperture a single component with +- y
         if self.matrix.apertureDiameter != float('+Inf'):
             halfHeight = self.matrix.apertureDiameter / 2.0
-            return [Aperture(y=halfHeight, width=self.matrix.L),
-                    Aperture(y=-halfHeight, width=self.matrix.L)]
+            return [ApertureBars(y=halfHeight, width=self.matrix.L)]
         else:
             return []
 
@@ -266,17 +264,14 @@ class SurfacesGraphic(MatrixGraphic):
         if len(self.surfaces) == 1:
             return []
 
-        components = []
         outerWidth = self.corners[1] - self.corners[0]
-        components.append(Aperture(y=halfHeight, x=self.corners[0], width=outerWidth))
-        components.append(Aperture(y=-halfHeight, x=self.corners[0], width=outerWidth))
-        return components
+        return [ApertureBars(y=halfHeight, x=self.corners[0], width=outerWidth)]
 
 
 class MatrixGroupGraphic(MatrixGraphic):
-    def __init__(self, matrixGroup):
+    def __init__(self, matrixGroup, x=0.0):
         self.matrixGroup = matrixGroup
-        super().__init__(matrixGroup)
+        super().__init__(matrixGroup, x=x)
 
     @property
     def L(self):
@@ -341,7 +336,6 @@ class MatrixGroupGraphic(MatrixGraphic):
 class GraphicOf:
     def __new__(cls, element, x=0.0, minSize=0) -> Union[Graphic, None]:
         instance = type(element).__name__
-        print(instance)
         if instance is 'Lens':
             return LensGraphic(element, x=x, minSize=minSize)
         if instance is 'Space':
@@ -351,8 +345,6 @@ class GraphicOf:
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         else:
-            print("Graphic of {} not implemented.".format(instance))
-
             return MatrixGraphic(element, x=x)
 
 
@@ -361,3 +353,4 @@ class GraphicOf:
 # todo: surfaces graphic color function of refractive index
 # todo: Tag lens POI if multiple lenses. superscript? to know which lens they refer to (see issue #)
 # todo: check to link with other issues
+# todo: maybe do not overlap labels with graphics ? (object and images)
