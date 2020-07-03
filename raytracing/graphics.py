@@ -67,23 +67,6 @@ class Graphic:
         return np.sum([c.length for c in self.components])
 
 
-class GraphicOf:
-    def __new__(cls, element, x=0.0, minSize=0) -> Union[Graphic, None]:
-        instance = type(element).__name__
-        if instance is 'Lens':
-            return LensGraphic(element, x=x, minSize=minSize)
-        if instance is 'Space':
-            return None
-        if instance is 'Aperture':
-            return ApertureGraphic(element, x=x)
-        if element.surfaces:
-            return SurfacesGraphic(element, x=x)
-        else:
-            print("Graphic of {} not implemented.".format(instance))
-
-            return MatrixGraphic(element, x=x)
-
-
 class MatrixGraphic(Graphic):
     def __init__(self, matrix, x=0.0, fixedWidth=False):
         self.matrix = matrix
@@ -354,7 +337,27 @@ class MatrixGroupGraphic(MatrixGraphic):
             points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5))
         return points
 
+
+class GraphicOf:
+    def __new__(cls, element, x=0.0, minSize=0) -> Union[Graphic, None]:
+        instance = type(element).__name__
+        print(instance)
+        if instance is 'Lens':
+            return LensGraphic(element, x=x, minSize=minSize)
+        if instance is 'Space':
+            return None
+        if instance is 'Aperture':
+            return ApertureGraphic(element, x=x)
+        if element.surfaces:
+            return SurfacesGraphic(element, x=x)
+        else:
+            print("Graphic of {} not implemented.".format(instance))
+
+            return MatrixGraphic(element, x=x)
+
+
 # todo: complete all graphics (test demos and examples) & PR
 # todo: object/image/ray/lamp graphics ? later with other PR
+# todo: surfaces graphic color function of refractive index
 # todo: Tag lens POI if multiple lenses. superscript? to know which lens they refer to (see issue #)
 # todo: check to link with other issues

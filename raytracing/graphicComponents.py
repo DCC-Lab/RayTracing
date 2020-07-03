@@ -250,7 +250,8 @@ class SurfacePair(Component):
 
         if self.surfaceB.R == float("+inf"):
             self.corners.append(v2)
-            return [BezierCurve([(v2, h), (v2, -h)]),
+            return [BezierCurve([(self.corners[0], h), (v2, h)]),
+                    BezierCurve([(v2, h), (v2, -h)]),
                     BezierCurve([(v2, -h), (self.corners[0], -h)])]
 
         R2 = self.surfaceB.R
