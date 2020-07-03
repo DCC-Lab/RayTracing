@@ -1353,7 +1353,7 @@ class Matrix(object):
 
         return self
 
-    def displayHalfHeight(self, minSize=0):
+    def displayHalfHeight(self):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
         If the element is infinite, the half-height is currently
@@ -1369,9 +1369,6 @@ class Matrix(object):
             The half height of the optical element
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
-        if minSize is not None:
-            if minSize > halfHeight:
-                halfHeight = minSize
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
