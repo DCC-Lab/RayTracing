@@ -97,7 +97,7 @@ class Figure:
             else:
                 note2 = "Only chief and marginal rays shown"
 
-        label = Label(x=0.05, y=0.05, text=note1 + "\n" + note2, fontsize=12, useDataUnits=False, alignment='left')
+        label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
         self.labels.append(label)
 
     def setGraphicsFromPath(self):

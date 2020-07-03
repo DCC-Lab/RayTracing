@@ -247,7 +247,7 @@ class SurfacePair(Component):
 
 class DoubleThinArrow(Component):
     """ A thin arrow centered on y-axis with an arrow head on both ends. """
-    def __init__(self, height: float, color='k', headWidth=0.01, headLengthRatio=0.1):
+    def __init__(self, height: float, color='k', headWidth=0.01, headLengthRatio=0.12):
         super().__init__()
         self.dy = height / 2
         self.color = color

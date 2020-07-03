@@ -79,6 +79,8 @@ class GraphicOf:
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         else:
+            print("Graphic of {} not implemented.".format(instance))
+
             return MatrixGraphic(element, x=x)
 
 
@@ -96,6 +98,7 @@ class MatrixGraphic(Graphic):
 
     @property
     def mainComponents(self):
+        # todo: default to black square ?
         return []
 
     @property
@@ -294,18 +297,6 @@ class MatrixGroupGraphic(MatrixGraphic):
             z += element.L
         return components
 
-    # def drawAt(self, showLabels=True):
-    #     """ Draw each element of this group """
-    #     z = 0
-    #     for element in self.matrixGroup:
-    #         graphic = Graphic(element)
-    #         graphic.drawAt(z, axes)
-    #         graphic.drawAperture(z, axes)
-    #
-    #         if showLabels:
-    #             graphic.drawLabels(z, axes)
-    #         z += graphic.L
-
     @property
     def pointsOfInterest(self):
         """
@@ -319,7 +310,6 @@ class MatrixGroupGraphic(MatrixGraphic):
         labels = {}  # Gather labels at same z
 
         # For the group as a whole, then each element
-        print("Fixme: MG POI at 0 or graphic.x ?")  # fixme: 0 or x ?
         for pointOfInterest in self.matrixGroup.pointsOfInterest(z=self.x):
             zStr = "{0:3.3f}".format(pointOfInterest['z'])
             label = pointOfInterest['label']
@@ -351,5 +341,5 @@ class MatrixGroupGraphic(MatrixGraphic):
 
 # todo: complete all graphics (test demos and examples) & PR
 # todo: object/image/ray/lamp graphics ? later with other PR
-# todo: lens POI superscript labels to know which lens they refer to (see issue #)
+# todo: Tag lens POI if multiple lenses. superscript? to know which lens they refer to (see issue #)
 # todo: check to link with other issues
