@@ -1,4 +1,5 @@
 import warnings
+from .utils import deprecated
 
 
 class Ray:
@@ -63,6 +64,8 @@ class Ray:
         return not self.isBlocked
 
     @staticmethod
+    @deprecated("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its "
+                "subclasses is recommended.")
     def fan(y: float, radianMin: float, radianMax: float, N: int):
         """This function generates a list of rays spanning from radianMin to radianMax.
         This is usually used with Matrix.trace() or Matrix.traceMany() to trace the rays
@@ -94,8 +97,6 @@ class Ray:
         raytracing.Matrix.traceMany().
 
         """
-        warnings.warn("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its "
-                      "subclasses is recommended.", DeprecationWarning)
 
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
@@ -112,6 +113,8 @@ class Ray:
         return rays
 
     @staticmethod
+    @deprecated("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its "
+                "subclasses is recommended.")
     def fanGroup(yMin: float, yMax: float, M: int, radianMin: float, radianMax: float, N: int):
         """This function creates a list of rays spanning from yMin to yMax and radianMin to radianMax.
         This is usually used with Matrix.trace() or Matrix.traceMany() to trace the rays
@@ -148,8 +151,6 @@ class Ray:
         raytracing.Matrix.traceMany().
 
         """
-        warnings.warn("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its"
-                      "subclasses is recommended.", DeprecationWarning)
 
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
