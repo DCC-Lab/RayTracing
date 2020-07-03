@@ -38,10 +38,12 @@ class BezierCurve:
 
 class Component:
     """ The base class for all graphic components. Defined from bezier curves. """
-    def __init__(self):
-        self.color = [0.85, 0.95, 0.95]
-        self.fill = True
-        self.lineWidth = 1
+    def __init__(self, color=(0.85, 0.95, 0.95), fill=True, lineWidth=1.0, lineStyle='-'):
+        self.color = color
+        self.fill = fill
+        self.lineWidth = lineWidth
+        self.lineStyle = lineStyle
+
         self._patch = None
 
     @property
@@ -88,9 +90,8 @@ class Component:
 
                 codes.extend(newCodes)
                 coords.extend(newCoords)
-
             self._patch = patches.PathPatch(mpath.Path(coords, codes), color=self.color, fill=self.fill,
-                                            linewidth=self.lineWidth)
+                                            linewidth=self.lineWidth, linestyle=self.lineStyle)
         return self._patch
 
     @staticmethod
@@ -319,6 +320,16 @@ class ApertureBars(Component):
             coordsBottom = [(self.x, -self.y), (self.x + self.width, -self.y)]
 
         return [BezierCurve(coordsTop), BezierCurve(coordsBottom)]
+
+
+class Polygon(Component):
+    def __init__(self, points: List[tuple], lineWidth=1.0, color='k', fill=False, lineStyle='-'):
+        self.points = points
+        super(Polygon, self).__init__(color=color, fill=fill, lineWidth=lineWidth, lineStyle=lineStyle)
+
+    @property
+    def bezierCurves(self) -> List[BezierCurve]:
+        return self.linearBezierCurvesFrom(self.points)
 
 
 class Label:
