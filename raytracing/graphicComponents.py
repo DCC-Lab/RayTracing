@@ -38,11 +38,13 @@ class BezierCurve:
 
 class Component:
     """ The base class for all graphic components. Defined from bezier curves. """
-    def __init__(self, color=(0.85, 0.95, 0.95), fill=True, lineWidth=1.0, lineStyle='-'):
+    def __init__(self, color=(0.85, 0.95, 0.95), fill=True, lineWidth=1.0, lineStyle='-', hasFixedWidth=True):
+
         self.color = color
         self.fill = fill
         self.lineWidth = lineWidth
         self.lineStyle = lineStyle
+        self.hasFixedWidth = hasFixedWidth
 
         self._patch = None
 

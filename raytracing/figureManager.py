@@ -446,10 +446,14 @@ class MplFigure(Figure):
             xScaling, yScaling = self.scalingOfGraphic(graphic)
 
             translation = transforms.Affine2D().translate(graphic.x, graphic.y)
+            noScale = transforms.Affine2D().scale(1, 1)
             scaling = transforms.Affine2D().scale(xScaling, yScaling)
 
-            for patch in graphic.patches2D:
-                patch.set_transform(scaling + translation + self.axes.transData)
+            for component in graphic.components:
+                if component.hasFixedWidth:
+                    component.patch.set_transform(noScale + translation + self.axes.transData)
+                else:
+                    component.patch.set_transform(scaling + translation + self.axes.transData)
 
             if graphic.hasLabel:
                 graphic.label.patch.set_transform(translation + self.axes.transData)
@@ -532,9 +536,6 @@ class MplFigure(Figure):
         self.updateLabels()
 
     def scalingOfGraphic(self, graphic):
-        if not graphic.useAutoScale:
-            return 1, 1
-
         xScale, yScale = self.axesToDataScale()
 
         heightFactor = graphic.halfHeight * 2 / yScale
