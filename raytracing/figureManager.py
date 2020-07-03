@@ -388,6 +388,7 @@ class MplFigure(Figure):
         self.draw()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+        plt.connect('resize_event', self.onZoomCallback)
 
         if filepath is not None:
             self.figure.savefig(filepath, dpi=600)
