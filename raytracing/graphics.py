@@ -1,4 +1,6 @@
 from raytracing.graphicComponents import *
+from .specialtylenses import Objective, AchromatDoubletLens, SingletLens
+from .matrixgroup import MatrixGroup
 import numpy as np
 
 
@@ -286,6 +288,8 @@ class MatrixGroupGraphic(MatrixGraphic):
         z = 0
         for element in self.matrixGroup.elements:
             graphic = GraphicOf(element, x=z)
+            # fixme: all components are defined at z=0 anyways,
+            #  should take a group of graphics instead ?
             if graphic is not None:
                 components.extend(graphic.components)
             z += element.L
@@ -385,14 +389,18 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 class GraphicOf:
     def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None]:
         instance = type(element).__name__
+        # Todo: define surfaces for AchromatDoubletLens and SingletLens
+        if type(element) is Objective or issubclass(type(element), Objective):
+            return ObjectiveGraphic(element, x=x)
+        if issubclass(type(element), MatrixGroup):
+            return MatrixGroupGraphic(element, x=x)
+
         if instance is 'Lens':
             return LensGraphic(element, x=x, minSize=minSize)
         if instance is 'Space':
             return None
         if instance is 'Aperture':
             return ApertureGraphic(element, x=x)
-        if instance is 'Objective':
-            return ObjectiveGraphic(element, x=x)
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         else:
