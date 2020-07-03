@@ -244,7 +244,11 @@ class LensGraphic(MatrixGraphic):
 
 class ApertureGraphic(MatrixGraphic):
     def __init__(self, matrix, x=0.0):
-        super().__init__(matrix, x=x, fixedWidth=True)
+        super().__init__(matrix, x=x)
+
+    @property
+    def mainComponents(self):
+        return []
 
 
 class SurfacesGraphic(MatrixGraphic):
