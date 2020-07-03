@@ -775,8 +775,8 @@ class ImagingPath(MatrixGroup):
             else:
                 notBlocked.append((Irp/Iap, Iar/Iap))
 
-        print("Optical System Properties")
-        print("-------------------------")
+        print("Optical System Properties for {0}".format(self.label))
+        print("---------------------------------------------------")
         print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(Iap, principal.y, axial.theta))
         print(" Object-side NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
         print(" Field of view is {0:.2f} mm".format(self.fieldOfView()))        
