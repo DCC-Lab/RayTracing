@@ -211,7 +211,7 @@ class Figure:
     def stopsLabels(self) -> List[Label]:
         """ AS and FS are drawn at 110% of the largest diameter. """
         labels = []
-        halfHeight = self.path.largestDiameter / 2
+        halfHeight = self.displayRange / 2
 
         (apertureStopPosition, apertureStopDiameter) = self.path.apertureStop()
         if apertureStopPosition is not None:

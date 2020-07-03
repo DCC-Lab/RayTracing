@@ -27,7 +27,7 @@ class Graphic:
         self.useAutoScale = not fixedWidth
 
         if label is not None:
-            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight * 1.25)
+            self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight * 1.3)
 
     @property
     def hasLabel(self):
