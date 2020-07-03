@@ -1884,7 +1884,7 @@ class DielectricSlab(ThickLens):
                                              label=label)
 
     @property
-    def surfaces(self):
+    def surfaces(self) -> List[Interface]:
         """ A list of surfaces that represents the element for drawing purposes. """
         return [FlatInterface(L=self.L, n=self.n), FlatInterface()]
 

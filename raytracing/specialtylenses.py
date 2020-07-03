@@ -137,6 +137,10 @@ class AchromatDoubletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    @property
+    def surfaces(self) -> List[Interface]:
+        return  # todo (copy figure.AchromatGraphic.drawAt)
+
 
 class SingletLens(MatrixGroup):
     """
@@ -240,6 +244,10 @@ class SingletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    @property
+    def surfaces(self) -> List[Interface]:
+        return  # todo
+
 
 class Objective(MatrixGroup):
 
@@ -340,3 +348,7 @@ reproduce the objective."
             return [{'z': z + self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
         else:
             return [{'z': z, 'label': '$F_b$'}, {'z': z + self.focusToFocusLength, 'label': '$F_f$'}]
+
+    @property
+    def surfaces(self) -> List[Interface]:
+        return  # todo
