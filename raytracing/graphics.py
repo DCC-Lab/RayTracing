@@ -281,12 +281,13 @@ class MatrixGroupGraphic(MatrixGraphic):
         return L
 
     @property
-    def mainComponents(self):
+    def components(self):
         components = []
         z = 0
-        for element in self.matrixGroup:
-            graphic = Graphic(element, x=z)
-            components.append(graphic.components)
+        for element in self.matrixGroup.elements:
+            graphic = GraphicOf(element, x=z)
+            if graphic is not None:
+                components.extend(graphic.components)
             z += element.L
         return components
 
@@ -342,6 +343,8 @@ class GraphicOf:
             return None
         if instance is 'Aperture':
             return ApertureGraphic(element, x=x)
+        if instance is 'Objective':
+            return MatrixGroupGraphic(element, x=x)
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         else:
