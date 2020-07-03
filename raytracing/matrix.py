@@ -1435,6 +1435,7 @@ class Lens(Matrix):
                                    frontVertex=0,
                                    backVertex=0,
                                    label=label)
+        self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
 
     @property
     def surfaces(self):
@@ -1469,6 +1470,34 @@ class Lens(Matrix):
             pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
 
         return pointsOfInterest
+
+    def displayHalfHeight(self):
+        """ A reasonable height for display purposes for
+        an element, whether it is infinite or not.
+        If the element is infinite, the half-height is currently
+        set to '4' or to the specified minimum half height.
+        If not, it is the apertureDiameter/2.
+
+        Returns
+        -------
+        halfHeight : float
+            The half height of the optical element
+        """
+        if self.apertureDiameter != float('+Inf'):
+            self._physicalHalfHeight = self.apertureDiameter / 2.0  # real half height
+        return self._physicalHalfHeight
+
+    @property
+    def largestDiameter(self):
+        """ Largest diameter for a group of elements
+
+        Returns
+        -------
+        LargestDiameter : float
+            Largest diameter of the element or group of elements. For a `Matrix`
+            this will simply be the aperture diameter of this element.
+        """
+        return self._physicalHalfHeight
 
 
 class CurvedMirror(Matrix):
