@@ -334,8 +334,56 @@ class MatrixGroupGraphic(MatrixGraphic):
         return points
 
 
+class ObjectiveGraphic(MatrixGroupGraphic):
+    def __init__(self, objective, x=0.0):
+        self.matrixGroup = objective
+        super().__init__(objective, x=x)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = self.mainComponents
+        return self._components
+
+    @property
+    def mainComponents(self):
+        self.useAutoScale = False
+
+        L = self.matrixGroup.focusToFocusLength
+        wd = self.matrixGroup.workingDistance
+        halfHeight = self.matrixGroup.backAperture / 2
+        shoulder = halfHeight / self.matrixGroup.NA
+
+        points = [(0, halfHeight),
+                  ((L - shoulder), halfHeight),
+                  ((L - wd), self.matrixGroup.frontAperture / 2),
+                  ((L - wd), -self.matrixGroup.frontAperture / 2),
+                  ((L - shoulder), -halfHeight),
+                  (0, -halfHeight),
+                  (0, halfHeight)]
+
+        if self.matrixGroup.isFlipped:
+            print("Flipped matrix graphic not implemented.")
+        #     trans = transforms.Affine2D().scale(-1).translate(tx=z + L, ty=0) + axes.transData
+        # else:
+        #     trans = transforms.Affine2D().translate(tx=z, ty=0) + axes.transData
+
+        components = [Polygon(points, lineStyle='--')]
+
+        z = self.x
+        for element in self.matrixGroup.elements:
+            graphic = GraphicOf(element, x=z)
+            if graphic is not None:
+                components.extend(graphic.apertureComponents)
+            z += element.L
+
+        self.points = self.cardinalPoints
+
+        return components
+
+
 class GraphicOf:
-    def __new__(cls, element, x=0.0, minSize=0) -> Union[Graphic, None]:
+    def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None]:
         instance = type(element).__name__
         if instance is 'Lens':
             return LensGraphic(element, x=x, minSize=minSize)
@@ -344,7 +392,7 @@ class GraphicOf:
         if instance is 'Aperture':
             return ApertureGraphic(element, x=x)
         if instance is 'Objective':
-            return MatrixGroupGraphic(element, x=x)
+            return ObjectiveGraphic(element, x=x)
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         else:
