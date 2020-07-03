@@ -16,6 +16,7 @@ class Figure:
         self.graphics = []
         self.lines = []
         self.labels = []
+        self.points = []
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
@@ -103,6 +104,7 @@ class Figure:
         self.lines = self.rayTraceLines()
 
         self.graphics = self.graphicsOfElements
+
         if self.path.showObject:
             self.graphics.append(self.graphicOfObject)
         if self.path.showImages:
@@ -113,9 +115,9 @@ class Figure:
             if pupilPosition is not None:
                 self.graphics.append(self.graphicOfEntrancePupil)
 
-        # if self.path.showPointsOfInterest:  # todo:
-        #     self.drawPointsOfInterest(z=0)
-        #     self.drawStops(z=0)
+        if self.path.showPointsOfInterest:
+            self.points.extend(self.pointsOfInterest)
+            self.labels.extend(self.stopsLabels)
 
     @property
     def graphicsOfElements(self) -> List[Graphic]:
@@ -167,6 +169,59 @@ class Figure:
 
             apertureGraphic = Graphic([c1, c2], x=pupilPosition)
             return apertureGraphic
+
+    @property
+    def pointsOfInterest(self) -> List[Point]:
+        """
+        Labels of general points of interest are drawn below the
+        axis, at 25% of the largest diameter.
+        """
+        labels = {}  # Gather labels at same z
+
+        # For the group as a whole, then each element
+        for pointOfInterest in self.path.pointsOfInterest(z=0):
+            zStr = "{0:3.3f}".format(pointOfInterest['z'])
+            label = pointOfInterest['label']
+            if zStr in labels:
+                labels[zStr] = labels[zStr] + ", " + label
+            else:
+                labels[zStr] = label
+
+        # Points of interest for each element
+        zElement = 0
+        for element in self.path.elements:
+            pointsOfInterest = element.pointsOfInterest(zElement)
+
+            for pointOfInterest in pointsOfInterest:
+                zStr = "{0:3.3f}".format(pointOfInterest['z'])
+                label = pointOfInterest['label']
+                if zStr in labels:
+                    labels[zStr] = labels[zStr] + ", " + label
+                else:
+                    labels[zStr] = label
+            zElement += element.L
+
+        points = []
+        halfHeight = self.path.largestDiameter / 2
+        for zStr, label in labels.items():
+            points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5))
+        return points
+
+    @property
+    def stopsLabels(self) -> List[Label]:
+        """ AS and FS are drawn at 110% of the largest diameter. """
+        labels = []
+        halfHeight = self.path.largestDiameter / 2
+
+        (apertureStopPosition, apertureStopDiameter) = self.path.apertureStop()
+        if apertureStopPosition is not None:
+            labels.append(Label('AS', apertureStopPosition, halfHeight * 1.1, fontsize=18))
+
+        (fieldStopPosition, fieldStopDiameter) = self.path.fieldStop()
+        if fieldStopPosition is not None:
+            labels.append(Label('FS', fieldStopPosition, halfHeight * 1.1, fontsize=18))
+
+        return labels
 
     @property
     def displayRange(self):
@@ -290,6 +345,7 @@ class Figure:
         figure.graphics = self.graphics
         figure.lines = self.lines
         figure.labels = self.labels
+        figure.points = self.points
         figure.designParams = self.designParams
         return figure
 
@@ -343,6 +399,7 @@ class MplFigure(Figure):
 
     def draw(self):
         self.drawGraphics()
+        self.drawPoints()
         self.drawLabels()
 
         for line in self.lines:
@@ -363,17 +420,20 @@ class MplFigure(Figure):
                 graphic.label = graphic.label.mplLabel
                 self.axes.add_artist(graphic.label.patch)
 
-            for point in graphic.points:
-                if point.hasPointMarker:
-                    self.axes.plot([point.x], [0], 'ko', markersize=4, color=point.color, linewidth=0.4)
-                if point.text is not None:
-                    self.labels.append(point)
+            self.points.extend(graphic.points)
 
             for line in graphic.lines:
                 self.axes.add_line(line.patch)
 
             for annotation in graphic.annotations:
                 self.axes.add_patch(annotation.patch)
+
+    def drawPoints(self):
+        for point in self.points:
+            if point.hasPointMarker:
+                self.axes.plot([point.x], [0], 'ko', markersize=4, color=point.color, linewidth=0.4)
+            if point.text is not None:
+                self.labels.append(point)
 
     def drawLabels(self):
         self.labels = [label.mplLabel for label in self.labels]

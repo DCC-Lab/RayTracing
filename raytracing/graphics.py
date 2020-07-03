@@ -312,6 +312,8 @@ class MatrixGroupGraphic(MatrixGraphic):
 
         AS and FS are drawn at 110% of the largest diameter
         """
+        # todo: clean duplicate code: MatrixGroupGraphic.pointsOfInterest and Figure.pointsOfInterest
+
         labels = {}  # Gather labels at same z
 
         # For the group as a whole, then each element

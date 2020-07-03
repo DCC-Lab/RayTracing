@@ -399,11 +399,12 @@ class Line:
 
 
 class ArrowAnnotation:
-    def __init__(self, A: tuple, B: tuple):
+    def __init__(self, A: tuple, B: tuple, arrowStyle='<->'):
         self.A = A
         self.B = B
+        self.arrowStyle = arrowStyle
 
     @property
     def patch(self):
-        return patches.FancyArrowPatch(posA=self.A, posB=self.B, arrowstyle='<->', mutation_scale=20)
+        return patches.FancyArrowPatch(posA=self.A, posB=self.B, arrowstyle=self.arrowStyle, mutation_scale=20)
 
