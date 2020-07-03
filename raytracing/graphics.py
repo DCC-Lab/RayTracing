@@ -370,11 +370,11 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 
         components = [Polygon(points, lineStyle='--')]
 
-        z = self.x
+        z = 0
         for element in self.matrixGroup.elements:
-            graphic = GraphicOf(element, x=z)
-            if graphic is not None:
-                components.extend(graphic.apertureComponents)
+            if element.apertureDiameter != float('+Inf'):
+                halfHeight = self.matrix.apertureDiameter / 2.0
+                components.append(ApertureBars(x=z, y=halfHeight, width=element.L))
             z += element.L
 
         self.points = self.cardinalPoints

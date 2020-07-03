@@ -127,11 +127,10 @@ class Arrow(Component):
         Starting point in y-axis where the base of the arrow sits. Defaults to 0.
     """
     def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
-        super().__init__()
+        super(Arrow, self).__init__(color=color, hasFixedWidth=False)
         self.dy = dy
         self.y = y
         self.width = width
-        self.color = color
 
         self.headWidth = width * 5
         self.headLength = dy * headLengthRatio
@@ -160,15 +159,12 @@ class Arrow(Component):
 
 
 class Rectangle(Component):
-    def __init__(self, xy: tuple, width: float, height:float, color='k', fill=False, lineWidth=1):
-        super().__init__()
+    def __init__(self, xy: tuple, width: float, height: float, color='k', fill=False, lineWidth=1, lineStyle='-'):
+        super(Rectangle, self).__init__(color=color, fill=fill, lineWidth=lineWidth, lineStyle=lineStyle)
 
         self.x, self.y = xy
         self.width = width
         self.height = height
-        self.color = color
-        self.fill = fill
-        self.lineWidth = lineWidth
 
     @property
     def bezierCurves(self):
@@ -182,12 +178,10 @@ class Rectangle(Component):
 
 class Surface(Component):
     def __init__(self, surface, halfHeight, x=0.0, color='k'):
-        super().__init__()
+        super(Surface, self).__init__(color=color, fill=False)
         self.surface = surface
         self.halfHeight = halfHeight
         self.x = x
-        self.color = color
-        self.fill = False
 
     @property
     def bezierCurves(self) -> List[BezierCurve]:
@@ -209,11 +203,12 @@ class Surface(Component):
 
 class SurfacePair(Component):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
-        super().__init__()
+        # todo: use surfaceA.n to pick color
+
+        super(SurfacePair, self).__init__()
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
         self.halfHeight = halfHeight
-        # todo: use surfaceA.n to pick color
         self.x = x
         self.corners = None
 
@@ -274,12 +269,9 @@ class SurfacePair(Component):
 class DoubleThinArrow(Component):
     """ A thin arrow centered on y-axis with an arrow head on both ends. """
     def __init__(self, height: float, color='k', headWidth=0.01, headLengthRatio=0.12):
-        super().__init__()
-        self.dy = height / 2
-        self.color = color
-        self.fill = False
-        self.lineWidth = 1.5
+        super(DoubleThinArrow, self).__init__(color=color, lineWidth=1.5, fill=False, hasFixedWidth=False)
 
+        self.dy = height / 2
         self.headWidth = headWidth
         self.headLength = self.dy * headLengthRatio
 
@@ -301,15 +293,15 @@ class DoubleThinArrow(Component):
 
 class ApertureBars(Component):
     """Define an aperture graphic component with default RayTracing style used to draw the apertures. """
-    def __init__(self, y: float, x=0.0, width=0.01, color='0.7'):
-        super().__init__()
-        self.color = color
+    def __init__(self, y: float, x=0.0, width=0.0, color='0.7'):
+        super().__init__(color=color, fill=False, lineWidth=3)
+        if width == 0.0:
+            width = 0.01
+            self.hasFixedWidth = False
+
         self.width = width
         self.y = y
         self.x = x
-
-        self.fill = False
-        self.lineWidth = 3
 
     @property
     def bezierCurves(self) -> List[BezierCurve]:
@@ -326,8 +318,8 @@ class ApertureBars(Component):
 
 class Polygon(Component):
     def __init__(self, points: List[tuple], lineWidth=1.0, color='k', fill=False, lineStyle='-'):
-        self.points = points
         super(Polygon, self).__init__(color=color, fill=fill, lineWidth=lineWidth, lineStyle=lineStyle)
+        self.points = points
 
     @property
     def bezierCurves(self) -> List[BezierCurve]:
@@ -415,7 +407,6 @@ class MplLabel(Label):
 
 
 class Point(Label):
-    # Todo: remove removeMarker if not used
     def __init__(self, x=0.0, y=0.0, text=None, fontsize=12, color='k', hasMarker=True):
         super().__init__(text=text, x=x, y=y, fontsize=fontsize, hasPointMarker=hasMarker, color=color)
 
