@@ -249,6 +249,27 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertEqual(ray.y, 0)
         self.assertEqual(ray.theta, 5)
 
+    def testNA(self):
+        path = ImagingPath(System2f(f=1000, diameter=20))
+        self.assertAlmostEqual(path.NA(), 0.01,4)
+
+    def testLargeNA(self):
+        path = ImagingPath(System2f(f=10, diameter=200))
+        self.assertTrue(path.NA() <= 1.0)
+
+    def test4fNA(self):
+        path = ImagingPath(System4f(f1=100, diameter1=20, f2=40, diameter2=20))
+        self.assertAlmostEqual(path.NA(), 0.1, 3)
+
+    def testfNumber(self):
+        path = ImagingPath(System2f(f=10, diameter=10))
+        self.assertAlmostEqual(path.fNumber(), 1, 4)
+
+    def testSmallfNumber(self):
+        path = ImagingPath(System2f(f=10, diameter=2))
+        print(path.axialRay())
+        self.assertAlmostEqual(path.fNumber(), 1, 4)
+
     def testLagrangeImagingPathNoApertureIsInfinite(self):
         path = ImagingPath()
         path.append(Space(d=50))

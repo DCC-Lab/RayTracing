@@ -321,7 +321,9 @@ class ImagingPath(MatrixGroup):
         return rayUp
 
     def fNumber(self):
-        """This function returns the f-number of the imaging system.
+        """This function returns the f-number of the imaging system
+        by dividing the diameter of the entrance pupil by the effective
+        focal length of the system.
 
         Returns
         -------
@@ -330,14 +332,18 @@ class ImagingPath(MatrixGroup):
 
         See Also
         --------
-        raytracing.ImagingPath.axialRay
         raytracing.ImagingPath.NA
         """
-        NA = self.NA()
-        return 0.5/NA
+        (position, pupilDiameter) = self.entrancePupil()
+        (focalFront, focalBack) = self.effectiveFocalLengths()
+        if pupilDiameter is None:
+            return None
+
+        return focalFront/pupilDiameter
 
     def NA(self):
         """This function returns the numerical aperture of the imaging system.
+        It currently assumes the system is in air, so the NA is limited to 1.0
 
         Returns
         -------
@@ -350,7 +356,7 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.fNumber
         """
         axialRay = self.axialRay()
-        return axialRay.theta
+        return np.sin(axialRay.theta)
 
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
@@ -716,7 +722,7 @@ class ImagingPath(MatrixGroup):
 
         return self.opticalInvariant(ray1, ray2)
 
-    def reportEfficiency(self, objectDiameter=None, emissionHalfAngle=None, nRays=10000):
+    def reportEfficiency(self, objectDiameter=None, emissionHalfAngle=None, nRays=10000): #pragma: no cover
         """
         The collection efficiency of the optical system is computed and a report is printed.
         By default, it is computed across the field of view, but a specific object diameter 
