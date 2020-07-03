@@ -98,8 +98,19 @@ class MatrixGraphic(Graphic):
 
     @property
     def mainComponents(self):
-        # todo: default to black square ?
-        return []
+        """ Main graphic components of the element.
+
+        Notes
+        -----
+        Default is a black box of appropriate length.
+        """
+        self.useAutoScale = False
+
+        halfHeight = self.matrix.largestDiameter / 2
+        if halfHeight == float("+Inf"):
+            halfHeight = self.matrix.displayHalfHeight()
+
+        return [Rectangle(xy=(self.x, -halfHeight), width=self.matrix.L, height=2*halfHeight)]
 
     @property
     def apertureComponents(self):

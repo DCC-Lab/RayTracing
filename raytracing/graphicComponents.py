@@ -156,6 +156,27 @@ class Arrow(Component):
         return 0
 
 
+class Rectangle(Component):
+    def __init__(self, xy: tuple, width: float, height:float, color='k', fill=False, lineWidth=1):
+        super().__init__()
+
+        self.x, self.y = xy
+        self.width = width
+        self.height = height
+        self.color = color
+        self.fill = fill
+        self.lineWidth = lineWidth
+
+    @property
+    def bezierCurves(self):
+        p0 = (self.x, self.y)
+        p1 = (self.x, self.y + self.height)
+        p2 = (self.x + self.width, self.y + self.height)
+        p3 = (self.x + self.width, self.y)
+
+        return self.linearBezierCurvesFrom([p0, p1, p2, p3, p0])
+
+
 class Surface(Component):
     def __init__(self, surface, halfHeight, x=0.0):
         super().__init__()
