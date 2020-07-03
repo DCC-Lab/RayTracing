@@ -202,7 +202,7 @@ class Figure:
             zElement += element.L
 
         points = []
-        halfHeight = self.path.largestDiameter / 2
+        halfHeight = self.displayRange / 2
         for zStr, label in labels.items():
             points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5))
         return points

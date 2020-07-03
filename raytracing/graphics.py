@@ -218,12 +218,14 @@ class MatrixGraphic(Graphic):
 
 class LensGraphic(MatrixGraphic):
     def __init__(self, matrix, x=0.0, fixedWidth=False, minSize=0):
-        self.minSize = minSize
+        if matrix.apertureDiameter == float('+Inf') and minSize > matrix._physicalHalfHeight:
+            matrix._physicalHalfHeight = minSize
+
         super(LensGraphic, self).__init__(matrix, x=x, fixedWidth=fixedWidth)
 
     @property
     def mainComponents(self):
-        return [DoubleThinArrow(self.matrix.displayHalfHeight(minSize=self.minSize)*2)]
+        return [DoubleThinArrow(self.matrix.displayHalfHeight()*2)]
 
 
 class ApertureGraphic(MatrixGraphic):
@@ -349,4 +351,5 @@ class MatrixGroupGraphic(MatrixGraphic):
 
 # todo: complete all graphics (test demos and examples) & PR
 # todo: object/image/ray/lamp graphics ? later with other PR
-# todo: add POI and stops to Path graphics
+# todo: lens POI superscript labels to know which lens they refer to (see issue #)
+# todo: check to link with other issues
