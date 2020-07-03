@@ -1885,9 +1885,8 @@ class DielectricSlab(ThickLens):
 
     @property
     def surfaces(self):
-        """ A list of surfaces that represents the element for drawing purposes 
-        """
-        return [FlatInterface(), FlatInterface(L=self.L)]
+        """ A list of surfaces that represents the element for drawing purposes. """
+        return [FlatInterface(L=self.L, n=self.n), FlatInterface()]
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
