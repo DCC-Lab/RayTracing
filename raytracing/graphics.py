@@ -389,11 +389,11 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 class GraphicOf:
     def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None]:
         instance = type(element).__name__
+        # if type(element) is SingletLens or issubclass(type(element), SingletLens):
+        #     return SingletLensGraphic(element)
         # Todo: define surfaces for AchromatDoubletLens and SingletLens
         if type(element) is Objective or issubclass(type(element), Objective):
             return ObjectiveGraphic(element, x=x)
-        if issubclass(type(element), MatrixGroup):
-            return MatrixGroupGraphic(element, x=x)
 
         if instance is 'Lens':
             return LensGraphic(element, x=x, minSize=minSize)
@@ -403,6 +403,8 @@ class GraphicOf:
             return ApertureGraphic(element, x=x)
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
+        if issubclass(type(element), MatrixGroup):
+            return MatrixGroupGraphic(element, x=x)
         else:
             return MatrixGraphic(element, x=x)
 

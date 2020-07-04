@@ -139,7 +139,10 @@ class AchromatDoubletLens(MatrixGroup):
 
     @property
     def surfaces(self) -> List[Interface]:
-        return  # todo (copy figure.AchromatGraphic.drawAt)
+        print(self.n1, self.n2)
+        return [SphericalInterface(R=self.R1, L=self.tc1, n=self.n1),
+                SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
+                SphericalInterface(R=self.R3)]
 
 
 class SingletLens(MatrixGroup):
@@ -246,7 +249,8 @@ class SingletLens(MatrixGroup):
 
     @property
     def surfaces(self) -> List[Interface]:
-        return  # todo
+        return [SphericalInterface(R=self.R1, L=self.tc, n=self.n),
+                SphericalInterface(R=self.R2)]
 
 
 class Objective(MatrixGroup):
@@ -348,7 +352,3 @@ reproduce the objective."
             return [{'z': z + self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
         else:
             return [{'z': z, 'label': '$F_b$'}, {'z': z + self.focusToFocusLength, 'label': '$F_f$'}]
-
-    @property
-    def surfaces(self) -> List[Interface]:
-        return  # todo
