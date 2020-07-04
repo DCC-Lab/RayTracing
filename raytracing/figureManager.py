@@ -428,7 +428,7 @@ class MplFigure(Figure):
     def drawPoints(self):
         for point in self.points:
             if point.hasPointMarker:
-                self.axes.plot([point.x], [0], 'ko', markersize=4, color=point.color, linewidth=0.4)
+                self.axes.plot([point.x], [0], 'ko', markersize=3, color=point.color, linewidth=0.4)
             if point.text is not None:
                 self.labels.append(point)
 

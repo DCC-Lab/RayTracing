@@ -139,7 +139,6 @@ class AchromatDoubletLens(MatrixGroup):
 
     @property
     def surfaces(self) -> List[Interface]:
-        print(self.n1, self.n2)
         return [SphericalInterface(R=self.R1, L=self.tc1, n=self.n1),
                 SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
                 SphericalInterface(R=self.R3)]
