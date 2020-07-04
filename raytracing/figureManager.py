@@ -185,12 +185,20 @@ class Figure:
 
         # Points of interest for each element
         zElement = 0
+        groupIndex = 0
+        physicalElements = [element for element in self.path.elements if type(element).__name__ != 'Space']
+
         for element in self.path.elements:
             pointsOfInterest = element.pointsOfInterest(zElement)
+            if pointsOfInterest:
+                groupIndex += 1
 
             for pointOfInterest in pointsOfInterest:
                 zStr = "{0:3.3f}".format(pointOfInterest['z'])
                 label = pointOfInterest['label']
+                if len(physicalElements) > 1:
+                    label = '{' + label.strip('$') + '}'
+                    label = '${}_{}$'.format(label, groupIndex)
                 if zStr in labels:
                     labels[zStr] = labels[zStr] + ", " + label
                 else:

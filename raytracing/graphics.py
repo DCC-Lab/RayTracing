@@ -389,9 +389,6 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 class GraphicOf:
     def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None]:
         instance = type(element).__name__
-        # if type(element) is SingletLens or issubclass(type(element), SingletLens):
-        #     return SingletLensGraphic(element)
-        # Todo: define surfaces for AchromatDoubletLens and SingletLens
         if type(element) is Objective or issubclass(type(element), Objective):
             return ObjectiveGraphic(element, x=x)
 
@@ -407,11 +404,3 @@ class GraphicOf:
             return MatrixGroupGraphic(element, x=x)
         else:
             return MatrixGraphic(element, x=x)
-
-
-# todo: complete all graphics (test demos and examples) & PR
-# todo: object/image/ray/lamp graphics ? later with other PR
-# todo: surfaces graphic color function of refractive index
-# todo: Tag lens POI if multiple lenses. superscript? to know which lens they refer to (see issue #)
-# todo: check to link with other issues
-# todo: maybe do not overlap labels with graphics ? (object and images)
