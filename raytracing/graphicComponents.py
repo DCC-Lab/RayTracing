@@ -203,9 +203,10 @@ class Surface(Component):
 
 class SurfacePair(Component):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
-        # todo: use surfaceA.n to pick color
+        colorValue = 1.0 - np.min([(surfaceA.n - 1)**2 / 2, 0.5])
+        color = (colorValue - 0.1, colorValue, 0.95)
+        super(SurfacePair, self).__init__(color=color)
 
-        super(SurfacePair, self).__init__()
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
         self.halfHeight = halfHeight
