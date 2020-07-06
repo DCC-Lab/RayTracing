@@ -321,9 +321,20 @@ class ImagingPath(MatrixGroup):
         return rayUp
 
     def fNumber(self):
-        """This function returns the f-number of the imaging system
+        """This function returns the f-number of the component or system
         by dividing the diameter of the entrance pupil by the effective
         focal length of the system.
+
+        It is not always appreciated that the f-number of *an optical system*
+        is meaningful mostly in "infinite conjugate" situations, that is, 
+        when either the object or the image is at infinity. In practice, this means
+        with photography and telescopes for example. On the other hand, 
+        finite conjugate systems are better described by their NA.
+        For elements, we calculate the f-number of lenses by assuming they
+        are used with an object at infinity. A system is designed as either a finite-conjugate 
+        system or an infinite-conjugate: this is a design decision.
+        See Smith "Modern Optical Engineering" Section 6.7 Apertures 
+        and Image Illumination.
 
         Returns
         -------
@@ -342,8 +353,20 @@ class ImagingPath(MatrixGroup):
         return focalFront/pupilDiameter
 
     def NA(self):
-        """This function returns the numerical aperture of the imaging system.
-        It currently assumes the system is in air, so the NA is limited to 1.0
+        """This function returns the numerical aperture of the component
+        or imaging system, which is the sin of the axial ray angle, times 
+        the index of refraction.
+
+        It is not always appreciated that the NA of an *optical system*
+        is meaningful mostly in "finite conjugate" situations, that is, 
+        when either the object and the image are at small, finite distances.
+        In practice, this means microscope objectives and 4f relays for example.
+        On the other hand, infinite conjugate systems are better described
+        by their f-number. A system is designed as either a finite-conjugate 
+        system or an infinite-conjugate: this is a design decision.
+        See Smith "Modern Optical Engineering" Section 6.7 Apertures 
+        and Image Illumination.
+
 
         Returns
         -------
@@ -356,7 +379,7 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.fNumber
         """
         axialRay = self.axialRay()
-        return np.sin(axialRay.theta)
+        return self.frontIndex * np.sin(axialRay.theta)
 
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
@@ -400,9 +423,9 @@ class ImagingPath(MatrixGroup):
 
         See Also
         --------
-        rayreacing.ImagingPath.apertureStopPosition
+        raytracing.ImagingPath.apertureStopPosition
         raytracing.ImagingPath.apertureStopDiameter
-        rayreacing.ImagingPath.fieldStop
+        raytracing.ImagingPath.fieldStop
 
         Notes
         -----
@@ -472,7 +495,10 @@ class ImagingPath(MatrixGroup):
                 return None, None
             else:
                 (Mt, Ma) = matrixToPupil.magnification()
-                return (-pupilPosition, stopDiameter / abs(Mt))
+                if Mt != 0:
+                    return (-pupilPosition, stopDiameter / abs(Mt))
+                else:
+                    return (-pupilPosition, float("+inf"))
         else:
             return (None, None)
 
