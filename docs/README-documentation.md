@@ -4,7 +4,7 @@ This document describes where the documentation is, how to write or update docum
 
 ## Reading documentation
 
-If you are a user of the raytracing package, you probably want to read the documentation online at https://raytracing.readthedocs.io/ 
+If you are a user of the raytracing package, you probably want to read the documentation online at https://raytracing.readthedocs.io/. There are useful information about the required python version, installation, description of the functions in the module, and several examples to show how this module is used.
 
 ## Writing documentation
 
@@ -89,7 +89,7 @@ pip install sphinx
 pip install recommonmark
 pip install sphinx_rtd_theme
 ```
-The package `recommonmark` adds Markdown support.
+Note that the package `recommonmark` adds Markdown support.
 
 ### Files controlling the format
 |File|Usage|
@@ -101,8 +101,23 @@ The package `recommonmark` adds Markdown support.
 
 *[FIXME: Information here on key files and their role in the Sphynx documentation system]*
 
+Defined pages in the website are the content of the following files:
+
+1. raytracing (`raytracing.rst`) : Simple introdution to the module and its classes.
+2. gettingStarted (`gettingStarted.md`) : Description about the installation and updating the module.
+3. reference (`reference.rst`) : Documentation of the module ( description of classes and functions)
+4. examples (`raytracing.rst`) : Examples for introducing how to start using the module. 
+5. contribute (`raytracing.rst`) : How to report issues and bugs.
+6. FAQ (`raytracing.rst`)
+
+
+
 ### Build online
 The online documentation can be updated directly from the [RayTracing project](https://readthedocs.org/projects/raytracing/) on ReadTheDocs by the project administrators (currently dccote, jlbegin and elaheparham) to match the release from PyPI. The build is currently set on the master branch.
+To build a released version, an admistrator must go to the [Build](https://readthedocs.org/projects/raytracing/builds/) on ReadTheDocs, select the version and push Build Version. 
+
+Remember before bulding online the new documentation version, you should check if all the documentations and examples are working properly. So, run `.../raytracing/tests/TestModule.py` and if there are no errors, the documentation is working properly. 
+If there is an error you should go to the line that raises the error and fix it before publishing the new version.
 
 ### Build local
 

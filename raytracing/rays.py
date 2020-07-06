@@ -235,8 +235,7 @@ class Rays:
         >>> maxTheta=0.5
         >>> nBin=20
         >>> # define a list of random rays with uniform distribution
-        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
-        >>>                               thetaMax=maxTheta, maxCount=nRays)
+        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, maxCount=nRays)
         >>> [xVal,yVal]=inputRays.rayAnglesHistogram(binCount=nBin)
 
         And to plot the hitogram we can use xVal and yVal of the theta as the following:
@@ -300,8 +299,7 @@ class Rays:
         >>> maxTheta=0.5
         >>> nBin=20
         >>> # define a list of random rays with uniform distribution
-        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
-        >>>                               thetaMax=maxTheta, maxCount=nRays)
+        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, maxCount=nRays)
         >>> inputRays.display()
 
         .. image:: displayRays.png
@@ -495,8 +493,7 @@ class UniformRays(Rays):
     >>> minTheta=0
     >>> maxTheta=0.5
     >>> # define a list of rays with uniform distribution
-    >>> inputRays = UniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
-    >>>                               thetaMax=maxTheta, N=nRays, M=10)
+    >>> inputRays = UniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, N=nRays, M=10)
     >>> inputRays.display()
 
     .. image:: UniformRays.png

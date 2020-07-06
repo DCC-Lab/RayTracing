@@ -268,7 +268,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
     def testSmallfNumber(self):
         path = ImagingPath(System2f(f=10, diameter=2))
         self.assertAlmostEqual(path.fNumber(), 1, 4)
-
     def testLagrangeImagingPathNoApertureIsInfinite(self):
         path = ImagingPath()
         path.append(Space(d=50))

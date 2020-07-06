@@ -72,8 +72,6 @@ class TestLagrange(envtest.RaytracingTestCase):
         path.append(Space(d=180))
         path.append(olympus.XLUMPlanFLN20X())
         path.flipOrientation()
-        print(path.NA())
-        print(path.fNumber())
         self.assertAlmostEqual( abs(path.magnification()[0]), 20)
         self.assertAlmostEqual( path.imageSize(), 22.5,3)
         path.reportEfficiency(nRays=10000)
