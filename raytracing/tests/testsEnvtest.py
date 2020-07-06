@@ -133,6 +133,14 @@ class TestEnvtestClass(unittest.TestCase):
             self.fail(f"An exception was raised!\n{exception}")
         self.assertFalse(os.path.exists(self.tempDir))
 
+
+    def testClearMatplotlibPlots(self):
+        import matplotlib.pyplot as plt
+        fig, _ = plt.subplots(2, 1, figsize=(10, 7))
+        figNum = fig.number
+        envtest.RaytracingTestCase.clearMatplotlibPlots()
+        self.assertFalse(plt.fignum_exists(figNum))
+
     def testRedirectStdOutDecoratorNoFileSpecifiedReturnOnlyValue(self):
         @envtest.redirectStdOutToFile
         def printHelloWorld():
@@ -209,6 +217,7 @@ class TestEnvtestClassSelfMethod(envtest.RaytracingTestCase):
 
         with self.assertRaises(AssertionError):
             self.assertPrints(toto, "Nothing is printed")
+
 
 
 if __name__ == '__main__':

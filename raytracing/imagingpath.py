@@ -321,7 +321,9 @@ class ImagingPath(MatrixGroup):
         return rayUp
 
     def fNumber(self):
-        """This function returns the f-number of the imaging system.
+        """This function returns the f-number of the imaging system
+        by dividing the diameter of the entrance pupil by the effective
+        focal length of the system.
 
         Returns
         -------
@@ -333,11 +335,16 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.axialRay
         raytracing.ImagingPath.NA
         """
-        NA = self.NA()
-        return 0.5/NA
+        (position, pupilDiameter) = self.entrancePupil()
+        (focalFront, focalBack) = self.effectiveFocalLengths()
+        if pupilDiameter is None:
+            return None
+
+        return focalFront/pupilDiameter
 
     def NA(self):
         """This function returns the numerical aperture of the imaging system.
+        It currently assumes the system is in air, so the NA is limited to 1.0
 
         Returns
         -------
@@ -350,7 +357,7 @@ class ImagingPath(MatrixGroup):
         raytracing.ImagingPath.fNumber
         """
         axialRay = self.axialRay()
-        return axialRay.theta
+        return np.sin(axialRay.theta)
 
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
@@ -718,7 +725,7 @@ class ImagingPath(MatrixGroup):
 
         return self.opticalInvariant(ray1, ray2)
 
-    def reportEfficiency(self, objectDiameter=None, emissionHalfAngle=None, nRays=10000):
+    def reportEfficiency(self, objectDiameter=None, emissionHalfAngle=None, nRays=10000): #pragma: no cover
         """
         The collection efficiency of the optical system is computed and a report is printed.
         By default, it is computed across the field of view, but a specific object diameter 
@@ -777,8 +784,8 @@ class ImagingPath(MatrixGroup):
             else:
                 notBlocked.append((Irp/Iap, Iar/Iap))
 
-        print("Optical System Properties")
-        print("-------------------------")
+        print("Optical System Properties for {0}".format(self.label))
+        print("---------------------------------------------------")
         print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(Iap, principal.y, axial.theta))
         print(" Object-side NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
         print(" Field of view is {0:.2f} mm".format(self.fieldOfView()))        
@@ -787,7 +794,7 @@ class ImagingPath(MatrixGroup):
         print(" Object/source equivalent invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ height ⨉ half-angle".format(Is, maxHeight, maxAngle))
         print("\nEfficiency")
         print("----------")
-        print(" Collection efficiency from Monte Carlo: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/rays.maxCount, 2*maxHeight, maxAngle))
+        print(" Collection efficiency from Monte Carlo: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/sourceRays.maxCount, 2*maxHeight, maxAngle))
         print(" Collection efficiency from ratio of system to source invariants: {0:.1f}%".format(Iap/Is*100))
         stopPosition, stopDiameter = self.apertureStop()
         print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))

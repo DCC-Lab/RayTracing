@@ -57,7 +57,7 @@ def rayTraceFromCalculation(ray, principalTrace, axialTrace):
 class TestLagrange(envtest.RaytracingTestCase):
     @envtest.skip
     def testLagrange(self):
-        path = ImagingPath()
+        path = ImagingPath(label="4f system")
         path.objectHeight = 50
         path.append(System4f(f1=30, diameter1=60, f2=40, diameter2=100))
         path.append(Aperture(diameter=10, label='Camera'))
@@ -65,7 +65,7 @@ class TestLagrange(envtest.RaytracingTestCase):
         path.reportEfficiency(nRays=10000)
 
     def testObjective(self):
-        path = ImagingPath()
+        path = ImagingPath(label="Objective")
         path.append(Aperture(diameter=22.5))
         path.append(Space(d=180))
         path.append(Lens(f=180, diameter=50, label='Tube lens'))
