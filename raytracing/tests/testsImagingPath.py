@@ -75,7 +75,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         space2 = Space(10, diameter=50)
         elements = [space, lens, space2]
         path = ImagingPath(elements)
-        self.assertTupleEqual(path.entrancePupil(), (None, None))
+        self.assertTupleEqual(path.entrancePupil(), (float("-inf"), float("+inf")))
 
     def testEntrancePupil(self):
         space = Space(2)
@@ -267,7 +267,8 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
     def testSmallfNumber(self):
         path = ImagingPath(System2f(f=10, diameter=2))
-        self.assertAlmostEqual(path.fNumber(), 1, 4)
+        self.assertAlmostEqual(path.fNumber(), 5, 4)
+
     def testLagrangeImagingPathNoApertureIsInfinite(self):
         path = ImagingPath()
         path.append(Space(d=50))
