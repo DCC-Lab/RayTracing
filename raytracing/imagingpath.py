@@ -144,7 +144,7 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print(path.chiefRay())
-        /       \
+         /       \
         |  6.668  |
         |         |
         | -0.333  |
@@ -332,6 +332,7 @@ class ImagingPath(MatrixGroup):
 
         See Also
         --------
+        raytracing.ImagingPath.axialRay
         raytracing.ImagingPath.NA
         """
         (position, pupilDiameter) = self.entrancePupil()
@@ -383,8 +384,9 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('The position of aperture stop is:', path.apertureStop()[0])
-        >>> print('The diameter of aperture stop is:',path.apertureStop()[1])
         The position of aperture stop is: 20.0
+
+        >>> print('The diameter of aperture stop is:',path.apertureStop()[1])
         The diameter of aperture stop is: 5
 
         Also, as the following, you can use display() to follow the rays in the imaging path and view the
@@ -505,8 +507,9 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('The position of field stop is:', path.apertureStop()[0])
-        >>> print('The diameter of field stop is:',path.apertureStop()[1])
         The position of field stop is: 20.0
+
+        >>> print('The diameter of field stop is:',path.apertureStop()[1])
         The diameter of field stop is: 5
 
         Also, as the following, you can use display() to follow the rays in the imaging path and view the
