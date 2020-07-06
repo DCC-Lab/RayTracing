@@ -225,7 +225,7 @@ class Ray:
 
         See Also
         --------
-        raytracing.Ray.along()
+        raytracing.Ray.at()
 
         """
         closestRay = rayTrace[0]
