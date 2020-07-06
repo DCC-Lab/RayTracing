@@ -126,7 +126,7 @@ class Axicon(Matrix):
 
     def mul_beam(self, rightSideBeam):
         """This function calculates the multiplication of a coherent beam with complex radius
-        of curvature q by an ABCD matrix.
+        of curvature q by an ABCD matrix. However it will raise an error in case the input is an axicon
 
         Parameters
         ----------
@@ -138,18 +138,6 @@ class Axicon(Matrix):
         -------
         outputBeam : object from GaussianBeam class
             The properties of the beam at the output of the system with the defined ABCD matrix
-
-        Examples
-        --------
-        >>> from raytracing import *
-        >>> # M1 is an ABCD matrix of a lens (f=10)
-        >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
-        >>> # B is a Gaussian Beam
-        >>> B=GaussianBeam(q=complex(1,1),w=1,R=5,n=1)
-        >>> print('The output properties of are:' , M1.mul_beam(B))
-        The output ray of Lens M1 : Complex radius: (0.976+1.22j)
-        w(z): 0.020, R(z): 2.500, z: 5.000, λ: 632.8 nm
-        zo: 1.220, wo: 0.016, wo position: -0.976
 
         See Also
         --------

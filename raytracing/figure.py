@@ -265,8 +265,8 @@ class Figure:
         >>> path.append(Space(d=30))
         >>> path.append(Lens(f=20,diameter=7,label="f=20"))
         >>> path.append(Space(d=20))
-        >>> print('display range :', path.displayRange())
-        display range : 7
+        >>> print('display range :', path.figure.displayRange())
+        display range : 6.0
 
         """
         from .laserpath import LaserPath   # Fixme: circular import fix
@@ -925,8 +925,7 @@ class MatrixGraphic:
         --------
         >>> from raytracing import *
         >>> # Mat is an ABCD matrix of an object
-        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,
-        >>>            frontIndex=1.5,backIndex=1,label='Lens')
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-2,backVertex=4,frontIndex=1.5,backIndex=1.5,label='Lens')
         >>> Mat.display()
 
         And the result is shown in the following figure:

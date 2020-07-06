@@ -148,7 +148,7 @@ class TestSingletLensSubclasses(envtest.RaytracingTestCase):
 class TestObjectives(envtest.RaytracingTestCase):
     def testInit(self):
         objective = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
-                              label='TestInit Objective', url="https://www.test.com")
+                              magnification=40, fieldNumber=22, label='TestInit Objective', url="https://www.test.com")
         self.assertIsNotNone(objective)
 
     def testWarnNotFullyTested(self):
@@ -156,15 +156,15 @@ class TestObjectives(envtest.RaytracingTestCase):
 
         with self.assertWarns(FutureWarning):
             objective = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
-                                  label='TestWarn Objective', url="https://www.test.com")
+                                  magnification=40, fieldNumber=22, label='TestWarn Objective', url="https://www.test.com")
 
         self.assertTrue(Objective.warningDisplayed)
 
     def testFlipOrientation(self):
         original = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
-                              label='TestFlip Objective', url="https://www.test.com")
+                              magnification=40, fieldNumber=22, label='TestFlip Objective', url="https://www.test.com")
         flipped = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
-                              label='TestFlip Objective', url="https://www.test.com")
+                              magnification=40, fieldNumber=22, label='TestFlip Objective', url="https://www.test.com")
         flipped.flipOrientation()
 
         self.assertFalse(original.isFlipped)
@@ -175,7 +175,7 @@ class TestObjectives(envtest.RaytracingTestCase):
     def testPointsOfInterest(self):
         z = 10
         objective = Objective(f=180/40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
-                              label='TestPoI Objective', url="https://www.test.com")
+                              magnification=40, fieldNumber=22, label='TestPoI Objective', url="https://www.test.com")
         points = objective.pointsOfInterest(z)
         ff = z + objective.focusToFocusLength
         fb = z
@@ -186,7 +186,7 @@ class TestObjectives(envtest.RaytracingTestCase):
     def testPointsOfInterestFlipped(self):
         z = 10
         objective = Objective(f=180/40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
-                              label='TestPoI Objective', url="https://www.test.com")
+                              magnification=40, fieldNumber=22, label='TestPoI Objective', url="https://www.test.com")
         points = objective.pointsOfInterest(z)
         ff = z + objective.focusToFocusLength
         fb = z
