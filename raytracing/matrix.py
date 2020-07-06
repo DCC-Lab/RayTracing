@@ -675,7 +675,7 @@ class Matrix(object):
 
         Parameters
         ----------
-        inputRays : object of Ray class
+        inputRays : list of object of Ray class
             A List of rays, each object includes two ray. The fisr is the properties
             of the input ray and the second is the properties of the output ray.
 
@@ -850,6 +850,15 @@ class Matrix(object):
             outputRaysList += rays.rays
 
         return Rays(rays=outputRaysList)
+
+    def profileFromRayTraces(self, rayTraces, z=float("+inf")):
+        outputRays = Rays()
+        for rayTrace in rayTraces:
+            ray = Ray.along(rayTrace, z=z)
+            if ray.isNotBlocked:
+                outputRays.append(ray)
+
+        return outputRays
 
     @property
     def isImaging(self):

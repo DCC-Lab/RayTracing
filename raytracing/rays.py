@@ -525,7 +525,6 @@ class UniformRays(Rays):
                 rays.append(Ray(y, theta))
         super(UniformRays, self).__init__(rays=rays)
 
-
 class LambertianRays(Rays):
     """A list of rays with Lambertian distribution.
 
@@ -765,3 +764,13 @@ class RandomLambertianRays(RandomRays):
         ray = Ray(y, theta)
         self.append(ray)
         return ray
+
+class ObjectRays(UniformRays):
+    def __init__(self, diameter, halfAngle=1.0, H=3, T=3):
+        super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
+
+class LampRays(RandomUniformRays):
+    def __init__(self, diameter, NA=1.0, N=10000):
+        super(LampRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
+
+

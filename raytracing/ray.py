@@ -175,6 +175,72 @@ class Ray:
 
         return rays
 
+    def at(self, z):
+        """This function returns a ray at position z parallel to the current ray.
+        Z is not the distance, it is the position.  The distance is (z-self.z) 
+
+        Parameters
+        ----------
+        z : float
+            Position in z where we want the output ray
+
+        Returns
+        -------
+        ray : an interpolated Ray 
+            A Ray at position z, with y interpolated and theta unchanged
+
+        Notes
+        -----
+        If ray is blocked, then the output Ray will be blocked too
+
+        See Also
+        --------
+        raytracing.Ray.along()
+
+        """
+        outputRay = Ray(y=self.y + (z-self.z) * self.theta, theta=self.theta, z=z)
+        if self.isBlocked:
+            outputRay.isBlocked = True
+        return outputRay
+
+    @staticmethod
+    def along(rayTrace, z):
+        """This function returns a ray at position z along the ray trace. 
+        y and theta are linearly interpolated in between the two closest rays.
+
+        Parameters
+        ----------
+        rayTrace : list of Ray
+            The rayTrace
+        z : float
+            Position in z where we want the output ray
+
+        Returns
+        -------
+        ray : an interpolated Ray 
+            A Ray at position z, with y and theta interpolated from the ray trace
+
+        Notes
+        -----
+        If the ray at an earlier z is blocked, then the Ray will be blocked too
+
+        See Also
+        --------
+        raytracing.Ray.at()
+
+        """
+        closestRay = rayTrace[0]
+        for ray in rayTrace:
+            if ray.z == z:
+                return ray
+
+            if ray.z > z:
+                return closestRay.at(z=z)
+
+            closestRay = ray
+
+        return rayTrace[-1]
+
     def __str__(self):
         """String description that allows the use of print(Ray())."""
 

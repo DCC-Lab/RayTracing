@@ -117,35 +117,36 @@ class Figure:
                         "rayColors has to be a list with 3 elements."
                 self.designParams[key] = value
 
-    def display(self, onlyPrincipalAndAxialRays=True,
-                removeBlockedRaysCompletely=False, filepath=None):
+    def display(self, raysList, removeBlocked = True, filePath = None):
         """ Display the optical system and trace the rays.
 
         Parameters
         ----------
-        onlyPrincipalAndAxialRays : bool (Optional)
-            If True, only the principal ray and the axial ray will appear on the plot (default=True)
-        removeBlockedRaysCompletely : bool (Optional)
-            If True, the blocked rays are removed (default=False)
+        raysList : list of `Rays` or list of list of `Ray`
+            If None, only the principal ray and the axial ray will appear on the plot
+        removeBlocked : bool (Optional)
+            If True, the blocked rays are removed (default=True)
 
         """
 
-        self.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
         self.initializeDisplay()
 
-        self.drawLines(self.rayTraceLines(removeBlockedRaysCompletely=removeBlockedRaysCompletely))
+        for rays in raysList:
+            rayTrace = self.rayTraceLines(rays=rays, removeBlocked=removeBlocked)     
+            self.drawLines(rayTrace)
+
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
         self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
         self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
-        if filepath is not None:
-            self.figure.savefig(filepath, dpi=600)
+        if filePath is not None:
+            self.figure.savefig(filePath, dpi=600)
         else:
             self._showPlot()
 
-    def displayGaussianBeam(self, beams=None, filepath=None):
+    def displayGaussianBeam(self, beams=None, filePath=None):
         """ Display the optical system and trace the laser beam.
         If comments are included they will be displayed on a
         graph in the bottom half of the plot.
@@ -165,8 +166,8 @@ class Figure:
         self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
         self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
-        if filepath is not None:
-            self.figure.savefig(filepath, dpi=600)
+        if filePath is not None:
+            self.figure.savefig(filePath, dpi=600)
         else:
             self._showPlot()
 
@@ -542,38 +543,22 @@ class Figure:
             z += graphic.L
             self.elementGraphics.append(graphic)
 
-    def rayTraceLines(self, removeBlockedRaysCompletely=True):
+    def rayTraceLines(self, rays, removeBlocked=True):
         """ A list of all ray trace line objects corresponding to either
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber).
         2. the principal and axial rays.
         """
 
-        color = self.designParams['rayColors']
+        colors = self.designParams['rayColors']
 
-        if self.designParams['onlyPrincipalAndAxialRays']:
-            halfHeight = self.path.objectHeight / 2.0
-            principalRay = self.path.principalRay()
-            axialRay = self.path.axialRay()
-            rayGroup = (principalRay, axialRay)
-            linewidth = 1.5
-        else:
-            halfAngle = self.path.fanAngle / 2.0
-            halfHeight = self.path.objectHeight / 2.0
-            rayGroup = Ray.fanGroup(
-                yMin=-halfHeight,
-                yMax=halfHeight,
-                M=self.path.rayNumber,
-                radianMin=-halfAngle,
-                radianMax=halfAngle,
-                N=self.path.fanNumber)
-            linewidth = 0.5
-
-        manyRayTraces = self.path.traceMany(rayGroup)
+        halfHeight = 25
+        linewidth = 0.5
+        manyRayTraces = self.path.traceMany(rays)
 
         lines = []
         for rayTrace in manyRayTraces:
             (x, y) = self.rearrangeRayTraceForPlotting(
-                rayTrace, removeBlockedRaysCompletely)
+                rayTrace, removeBlocked)
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
 
@@ -581,21 +566,19 @@ class Figure:
             # FIXME: We must take the maximum y in the starting point of manyRayTraces,
             # not halfHeight
             maxStartingHeight = halfHeight # FIXME
-            binSize = 2.0 * maxStartingHeight / (len(color) - 1)
+            binSize = 2.0 * maxStartingHeight
             colorIndex = int(
                 (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
             if colorIndex < 0:
                 colorIndex = 0
-            elif colorIndex >= len(color):
-                colorIndex = len(color) - 1
+            colorIndex = colorIndex % len(colors)
 
-            line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
+            line = plt.Line2D(x, y, color=colors[colorIndex], linewidth=linewidth, label='ray')
             lines.append(line)
 
         return lines
 
-    def rearrangeRayTraceForPlotting(self, rayList: List[Ray],
-                                     removeBlockedRaysCompletely=True):
+    def rearrangeRayTraceForPlotting(self, rayList: List[Ray],removeBlocked=True):
         """
         This function removes the rays that are blocked in the imaging path.
 
@@ -603,7 +586,7 @@ class Figure:
         ----------
         rayList : List of Rays
             an object from rays class or a list of rays
-        removeBlockedRaysCompletely : bool
+        removeBlocked : bool
             If True, the blocked rays will be removed of the list (default=True)
 
         """
@@ -613,7 +596,7 @@ class Figure:
             if not ray.isBlocked:
                 x.append(ray.z)
                 y.append(ray.y)
-            elif removeBlockedRaysCompletely:
+            elif removeBlocked:
                 return [], []
             # else: # ray will simply stop drawing from here
         return x, y
@@ -630,8 +613,8 @@ class Figure:
         yScale : float
             The scale of y axes
         """
-        xScale = self.path.L * 1.1
-        yScale = self.displayRange() * 1.6
+
+        xScale, yScale = self.axes.viewLim.bounds[2:]
 
         return xScale, yScale
 
@@ -917,7 +900,7 @@ class MatrixGraphic:
             halfHeight = self.matrix.apertureDiameter / 2.0  # real half height
         return halfHeight
 
-    def display(self):  # pragma: no cover
+    def display(self, rays=None):  # pragma: no cover
         """ Display this component, without any ray tracing but with
         all of its cardinal points and planes.
 
