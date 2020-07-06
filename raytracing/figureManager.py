@@ -17,6 +17,7 @@ class Figure:
         self.lines = []
         self.labels = []
         self.points = []
+        self.annotations = []
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
@@ -355,6 +356,33 @@ class Figure:
 
         return lines
 
+    def beamWaistAnnotations(self, beam) -> List[ArrowAnnotation]:
+        """ Draws the expected waist (i.e. the focal spot or the spot where the
+        size is minimum) for all positions of the beam. This will show "waists" that
+        are virtual if there is an additional lens between the beam and the expected
+        waist.
+
+        It is easy to obtain the waist position from the complex radius of curvature
+        because it is the position where the complex radius is imaginary. The position
+        returned is relative to the position of the beam, which is why we add the actual
+        position of the beam to the relative position. """
+
+        annotations = []
+        arrowLength = self.laserDisplayRange * 0.1
+
+        beamTrace = self.path.trace(beam)
+        for beam in beamTrace:
+            relativePosition = beam.waistPosition
+            position = beam.z + relativePosition
+            size = beam.waist
+
+            annotations.append(ArrowAnnotation((position, size + arrowLength), (position, size),
+                                               color='g', arrowStyle='->'))
+            annotations.append(ArrowAnnotation((position, -size + -arrowLength), (position, -size),
+                                               color='g', arrowStyle='->'))
+
+        return annotations
+
     def rearrangeRayTraceForPlotting(self, rayList: List[Ray]):
         """
         This function removes the rays that are blocked in the imaging path.
@@ -390,6 +418,7 @@ class Figure:
         figure.lines = self.lines
         figure.labels = self.labels
         figure.points = self.points
+        figure.annotations = self.annotations
         figure.designParams = self.designParams
         return figure
 
@@ -412,6 +441,7 @@ class Figure:
         self.graphics = self.graphicsOfElements
         for beam in beams:
             self.lines.extend(self.beamTraceLines(beam))
+            self.annotations.extend(self.beamWaistAnnotations(beam))
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
@@ -465,6 +495,9 @@ class MplFigure(Figure):
 
         for line in self.lines:
             self.axes.add_line(line.patch)
+
+        for annotation in self.annotations:
+            self.axes.add_patch(annotation.patch)
 
         self.updateDisplayRange()
         self.updateGraphics()
