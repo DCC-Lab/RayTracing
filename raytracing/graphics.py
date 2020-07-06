@@ -1,5 +1,5 @@
 from raytracing.graphicComponents import *
-from .specialtylenses import Objective, AchromatDoubletLens, SingletLens
+from .specialtylenses import Objective
 from .matrixgroup import MatrixGroup
 import numpy as np
 

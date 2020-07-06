@@ -324,6 +324,37 @@ class Figure:
 
         return lines
 
+    def beamTraceLines(self, beam) -> List[Line]:
+        """ Draw beam trace corresponding to input beam
+        Because the laser beam diffracts through space, we cannot
+        simply propagate the beam over large distances and trace it
+        (as opposed to rays, where we can). We must split Space()
+        elements into sub elements to watch the beam size expand.
+
+        We arbitrarily split Space() elements into N sub elements
+        before plotting.
+        """
+        from .imagingpath import ImagingPath  # Fixme: circular import fix
+        from .matrix import Space
+
+        N = 100
+        highResolution = ImagingPath()
+        for element in self.path.elements:
+            if isinstance(element, Space):
+                for i in range(N):
+                    highResolution.append(Space(d=element.L / N,
+                                                n=element.frontIndex))
+            else:
+                highResolution.append(element)
+
+        beamTrace = highResolution.trace(beam)
+        x, y = self.rearrangeBeamTraceForPlotting(beamTrace)
+
+        lines = [Line(x, y, 'r'),
+                 Line(x, [-v for v in y], 'r')]
+
+        return lines
+
     def rearrangeRayTraceForPlotting(self, rayList: List[Ray]):
         """
         This function removes the rays that are blocked in the imaging path.
@@ -343,6 +374,15 @@ class Figure:
             # else: # ray will simply stop drawing from here
         return x, y
 
+    @staticmethod
+    def rearrangeBeamTraceForPlotting(rayList):
+        x = []
+        y = []
+        for ray in rayList:
+            x.append(ray.z)
+            y.append(ray.w)
+        return x, y
+
     @property
     def mplFigure(self) -> 'MplFigure':
         figure = MplFigure(opticalPath=self.path)
@@ -356,6 +396,22 @@ class Figure:
     def display(self, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
         self.initializeDisplay()
         self.setGraphicsFromPath()
+
+        if backend is 'matplotlib':
+            mplFigure = self.mplFigure
+            mplFigure.create(comments, title)
+            if display3D:
+                mplFigure.display3D(filepath=filepath)
+            else:
+                mplFigure.display2D(filepath=filepath)
+        else:
+            raise NotImplementedError("The only supported backend is matplotlib.")
+
+    def displayGaussianBeam(self, beams=None,
+                            title=None, comments=None, backend='matplotlib', display3D=False, filepath=None):
+        self.graphics = self.graphicsOfElements
+        for beam in beams:
+            self.lines.extend(self.beamTraceLines(beam))
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
