@@ -845,7 +845,7 @@ class Matrix(object):
     def profileFromRayTraces(self, rayTraces, z=float("+inf")):
         outputRays = Rays()
         for rayTrace in rayTraces:
-            ray = Ray.alongTrace(rayTrace, z=z)
+            ray = Ray.along(rayTrace, z=z)
             if ray.isNotBlocked:
                 outputRays.append(ray)
 

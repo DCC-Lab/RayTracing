@@ -174,14 +174,12 @@ class Ray:
 
         return rays
 
-    @staticmethod
-    def along(ray, z):
-        """This function returns a ray at position z parallel to the provided ray
+    def at(self, z):
+        """This function returns a ray at position z parallel to the current ray.
+        Z is not the distance, it is the position.  The distance is (z-self.z) 
 
         Parameters
         ----------
-        ray : Ray
-            The ray to which the output ray is parallel
         z : float
             Position in z where we want the output ray
 
@@ -196,16 +194,16 @@ class Ray:
 
         See Also
         --------
-        raytracing.Ray.alongTrace()
+        raytracing.Ray.along()
 
         """
-        outputRay = Ray(y=ray.y + (z-ray.z) * ray.theta, theta=ray.theta, z=z)
-        if ray.isBlocked:
+        outputRay = Ray(y=self.y + (z-self.z) * self.theta, theta=self.theta, z=z)
+        if self.isBlocked:
             outputRay.isBlocked = True
         return outputRay
 
     @staticmethod
-    def alongTrace(rayTrace, z):
+    def along(rayTrace, z):
         """This function returns a ray at position z along the ray trace. 
         y and theta are linearly interpolated in between the two closest rays.
 
@@ -236,7 +234,7 @@ class Ray:
                 return ray
 
             if ray.z > z:
-                return Ray.along(ray=closestRay, z=z)
+                return closestRay.at(z=z)
 
             closestRay = ray
 
