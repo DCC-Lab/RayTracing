@@ -375,6 +375,8 @@ class Figure:
             relativePosition = beam.waistPosition
             position = beam.z + relativePosition
             size = beam.waist
+            if not 0 <= position <= self.path.L:
+                continue
 
             annotations.append(ArrowAnnotation((position, size + arrowLength), (position, size),
                                                color='g', arrowStyle='->'))

@@ -439,4 +439,4 @@ class ArrowAnnotation:
     @property
     def patch(self):
         return patches.FancyArrowPatch(posA=self.A, posB=self.B,
-                                       arrowstyle=self.arrowStyle, color=self.color, mutation_scale=20,)
+                                       arrowstyle=self.arrowStyle, color=self.color, mutation_scale=10)
