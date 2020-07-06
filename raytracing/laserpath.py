@@ -1,5 +1,5 @@
 from .matrixgroup import MatrixGroup
-from .figureManager import Figure
+from .figure import Figure
 
 
 class LaserPath(MatrixGroup):

@@ -1,5 +1,5 @@
 from typing import Any, Union, List
-from .figureManager import Figure
+from .figure import Figure
 from .matrixgroup import *
 from .ray import *
 import warnings
