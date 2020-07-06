@@ -1263,10 +1263,14 @@ class Matrix(object):
         M2 = M1*Space(distance)
         M2.isImaging == True
         """
-        if self.A == 0:
-            return (float("+inf"), None)
-        distance = -self.B / self.A
+        if self.A != 0:
+            distance = -self.B / self.A
+        else:
+            distance = float("+inf")
         conjugateMatrix = self * Space(d=distance)
+        # This element is A*d + B, A is precisely 0, d is large, therefore B' == 0.
+        conjugateMatrix.B = 0 
+
         return (distance, conjugateMatrix)
 
     def magnification(self):
