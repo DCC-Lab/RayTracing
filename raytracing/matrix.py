@@ -1,7 +1,9 @@
 from .ray import *
 from .gaussianbeam import *
 from .rays import *
+from .interface import *
 
+from typing import List
 import multiprocessing
 import sys
 import math
@@ -161,6 +163,11 @@ class Matrix(object):
 
         return self.A * self.D - self.B * self.C
 
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes """
+        return []
+    
     def __mul__(self, rightSide):
         """Operator overloading allowing easy-to-read matrix multiplication
         with other `Matrix`, with a `Ray` or a `GaussianBeam`.
@@ -1364,7 +1371,7 @@ class Matrix(object):
 
         return self
 
-    def displayHalfHeight(self, minSize=0):
+    def displayHalfHeight(self):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
         If the element is infinite, the half-height is currently
@@ -1380,15 +1387,13 @@ class Matrix(object):
             The half height of the optical element
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
-        if minSize > halfHeight:
-            halfHeight = minSize
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
 
     def display(self):
-        from .figure import Graphic
-        return Graphic(self).display()
+        from .figure import GraphicOf
+        return GraphicOf(self).display()
 
     def __str__(self):
         """ String description that allows the use of print(Matrix())
@@ -1445,6 +1450,17 @@ class Lens(Matrix):
                                    frontVertex=0,
                                    backVertex=0,
                                    label=label)
+        self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+
+        For a thin lens, obviously the user does not worry about the details
+        of the lens, because they only provide the focal length. We compute a
+        reasonable radius of curvature and provide 
+        """
+        return [SphericalInterface(R=100), SphericalInterface(R=-100)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1469,6 +1485,34 @@ class Lens(Matrix):
             pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
 
         return pointsOfInterest
+
+    def displayHalfHeight(self):
+        """ A reasonable height for display purposes for
+        an element, whether it is infinite or not.
+        If the element is infinite, the half-height is currently
+        set to '4' or to the specified minimum half height.
+        If not, it is the apertureDiameter/2.
+
+        Returns
+        -------
+        halfHeight : float
+            The half height of the optical element
+        """
+        if self.apertureDiameter != float('+Inf'):
+            self._physicalHalfHeight = self.apertureDiameter / 2.0  # real half height
+        return self._physicalHalfHeight
+
+    @property
+    def largestDiameter(self):
+        """ Largest diameter for a group of elements
+
+        Returns
+        -------
+        LargestDiameter : float
+            Largest diameter of the element or group of elements. For a `Matrix`
+            this will simply be the aperture diameter of this element.
+        """
+        return self._physicalHalfHeight
 
 
 class CurvedMirror(Matrix):
@@ -1514,6 +1558,12 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
                                            frontVertex=0,
                                            backVertex=0,
                                            label=label)
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(R=2/self.C)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1654,6 +1704,12 @@ class DielectricInterface(Matrix):
                                                   backIndex=n2,
                                                   label=label)
 
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(R=self.R, n=self.n2)]
+
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
 
@@ -1731,6 +1787,13 @@ class ThickLens(Matrix):
                                         frontVertex=0,
                                         backVertex=thickness,
                                         label=label)
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(R=self.R1, n=self.n, L=self.L),
+                SphericalInterface(R=self.R2)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1838,6 +1901,11 @@ class DielectricSlab(ThickLens):
                                              thickness=thickness,
                                              diameter=diameter,
                                              label=label)
+
+    @property
+    def surfaces(self) -> List[Interface]:
+        """ A list of surfaces that represents the element for drawing purposes. """
+        return [FlatInterface(L=self.L, n=self.n), FlatInterface()]
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation

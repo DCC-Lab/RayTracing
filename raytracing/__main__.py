@@ -155,7 +155,7 @@ if 6 in examples:
     path.append(Space(d=4 + 18))
     path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
     path.append(Space(d=18))
-    path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True,
+    path.display(limitObjectToFieldOfView=True,
                  comments="""# Demo #6: Simple microscope system, only principal rays
     The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
     the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
@@ -255,7 +255,7 @@ if 11 in examples:
     path.append(Space(d=50))
     path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
     path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label + """\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #11: Thick diverging lens"
     path.objectHeight = 20
@@ -273,7 +273,7 @@ if 12 in examples:
     path.append(Space(d=10, diameter=25, label='Lens'))
     path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
     path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label + """\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #12: Thick diverging lens built from individual elements"
     path.objectHeight = 20
@@ -297,7 +297,8 @@ if 13 in examples:
     print(M3.backwardConjugate())
 if 14 in examples:
     # Demo #14: Generic objectives
-    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
+    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2,
+                    magnification=40, fieldNumber=1.4, label="Objective")
     print("Focal distances: ", obj.focalDistances())
     print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
     print("Focal spots positions: ", obj.focusPositions(z=0))

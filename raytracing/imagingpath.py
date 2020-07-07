@@ -1,12 +1,9 @@
-from typing import Any, Union
-
-from .matrixgroup import *
-
-from .ray import *
+from typing import Any, Union, List
 from .figure import Figure
-import sys
-import warnings
+from .matrixgroup import *
+from .ray import *
 import numpy as np
+
 
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
@@ -53,9 +50,8 @@ class ImagingPath(MatrixGroup):
     showPlanesAcrossPointsOfInterest : bool
         If True, the planes across the points of interests will be shown (default=True)
 
-
-        Examples
-        --------
+    Examples
+    --------
         >>> from raytracing import *
         >>> path = ImagingPath() # define an imaging path
         >>> #set the desire properties
@@ -78,7 +74,7 @@ class ImagingPath(MatrixGroup):
                     :align: center
     """
 
-    def __init__(self, elements=None, label=""):
+    def __init__(self, elements: list = None, label=""):
 
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
@@ -515,7 +511,7 @@ class ImagingPath(MatrixGroup):
         Returns
         -------
         fieldStop : (float,float)
-            the outpu is the (position, diameter) of the field stop.
+            the output is the (position, diameter) of the field stop.
             If there are no elements of finite diameter (i.e. all
             optical elements are infinite in diameters), then there
             is no field stop and no aperture stop in the system
@@ -599,7 +595,7 @@ class ImagingPath(MatrixGroup):
                     fieldStopDiameter = ray.apertureDiameter
                     break
 
-        return (fieldStopPosition, fieldStopDiameter)
+        return fieldStopPosition, fieldStopDiameter
 
     def fieldOfView(self):
         """The field of view is the length visible before the chief
@@ -854,15 +850,65 @@ class ImagingPath(MatrixGroup):
         axis1.legend(loc="upper right")
         plt.show()
 
-    def display(self, rays=None, raysList=None, removeBlocked=True, comments=None, onlyPrincipalAndAxialRays=None):
+    def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
         """ Display the optical system and trace the rays.
-
         Parameters
         ----------
         rays : `Rays` instance
 
         raysList : list of `Rays` or list of list of `Ray`
 
+        removeBlocked : bool (Optional)
+            If True, the blocked rays are removed (default=False)
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+        """
+        if raysList is None:
+            raysList = []
+        if rays is not None:
+            raysList.append(rays)
+
+        if len(raysList) == 0:
+            warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+
+            rays = []
+            principalRay = self.principalRay()
+            axialRay = self.axialRay()
+
+            if principalRay is not None:
+                rays.append(principalRay) 
+            if axialRay is not None:
+                rays.append(axialRay)
+
+            if len(rays) == 0:
+                warnings.warn('Principal and axial rays are not defined for this system. '
+                              'Using ObjectRays with a diameter of 10.')
+                rays = ObjectRays(10, halfAngle=0.1, T=5)
+
+            raysList.append(rays)
+
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
+        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
+
+        self.figure.display(raysList=raysList, comments=comments, title=self.label,
+                            backend='matplotlib', display3D=False)
+
+    def saveFigure(self, rays=None, raysList=None, removeBlocked=True, comments=None,
+                   onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
+        """
+        The figure of the imaging path can be saved using this function.
+
+        Parameters
+        ----------
+        filePath : str or PathLike or file-like object
+            A path, or a Python file-like object, or possibly some backend-dependent object.
+            If filepath is not a path or has no extension, remember to specify format to
+            ensure that the correct backend is used.
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal rays will appear on the plot (default=True)
         removeBlocked : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
@@ -885,47 +931,10 @@ class ImagingPath(MatrixGroup):
 
             raysList.append(rays)
 
-        self.figure.createFigure(title=self.label, comments=comments)
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
+        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
-        self.figure.display(raysList=raysList, removeBlocked=removeBlocked)
-
-    def saveFigure(self, rays=None, raysList=None, removeBlocked=True, comments=None, onlyPrincipalAndAxialRays=None, filePath=None):
-        """
-        The figure of the imaging path can be saved using this function.
-
-        Parameters
-        ----------
-        filepath : str or PathLike or file-like object
-            A path, or a Python file-like object, or possibly some backend-dependent object.
-            If filepath is not a path or has no extension, remember to specify format to
-            ensure that the correct backend is used.
-        limitObjectToFieldOfView : bool (Optional)
-            If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=True)
-        onlyPrincipalAndAxialRays : bool (Optional)
-            If True, only the principal rays will appear on the plot (default=True)
-        removeBlockedRaysCompletely : bool (Optional)
-            If True, the blocked rays are removed (default=False)
-        comments : string
-            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
-
-        """
-        if raysList is None:
-            raysList = []
-        if rays is not None:
-            raysList.append(rays)
-
-        if len(raysList) == 0:
-            rays = []
-            principalRay = self.principalRay()
-            axialRay = self.axialRay()
-            if principalRay is not None:
-                rays.append(principalRay) 
-            if axialRay is not None:
-                rays.append(axialRay)
-
-            raysList.append(rays)
-
-        self.figure.createFigure(title=self.label, comments=comments)
-
-        self.figure.display(raysList=raysList, removeBlocked=removeBlocked, filePath=filePath)
+        self.figure.display(raysList=raysList, comments=comments, title=self.label,
+                            backend='matplotlib', display3D=False, filepath=filePath)

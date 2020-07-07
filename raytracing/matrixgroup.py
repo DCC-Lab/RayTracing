@@ -35,6 +35,19 @@ class MatrixGroup(Matrix):
         self._lastRayToBeTraced = None
         self._lastRayTrace = None
 
+    @property
+    def surfaces(self):
+        """ A list of interfaces that represents the element for drawing purposes 
+
+        We combine all interfaces into a single list of interfaces
+        """
+
+        allSurfaces = []
+        for element in self.elements:
+            allSurfaces.extend(element.surfaces)
+
+        return allSurfaces
+
     def append(self, matrix):
         r"""This function adds an element at the end of the path.
 

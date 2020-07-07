@@ -572,13 +572,11 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testDisplayHalfHeight(self):
         m = Matrix(apertureDiameter=10)
-        minSize = 2
-        self.assertEqual(m.displayHalfHeight(minSize), m.apertureDiameter / 2)
+        self.assertEqual(m.displayHalfHeight(), m.apertureDiameter / 2)
 
     def testDisplayHalfHeightInfiniteDiameter(self):
         m = Matrix(apertureDiameter=inf)
         self.assertEqual(m.displayHalfHeight(), 4)
-        self.assertEqual(m.displayHalfHeight(6), 6)
 
     def testEqualityNotSameClassInstance(self):
         m = Matrix()
