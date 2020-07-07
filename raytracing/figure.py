@@ -286,6 +286,8 @@ class Figure:
         maxHeight = 0
         for rayTrace in manyRayTraces:
             (x, y) = self.rearrangeRayTraceForPlotting(rayTrace)
+            if len(y) == 0:
+                continue
             if abs(y[0]) > maxHeight:
                 maxHeight = abs(y[0])
 
