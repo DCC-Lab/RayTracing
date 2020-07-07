@@ -873,10 +873,16 @@ class ImagingPath(MatrixGroup):
             rays = []
             principalRay = self.principalRay()
             axialRay = self.axialRay()
+
             if principalRay is not None:
                 rays.append(principalRay) 
             if axialRay is not None:
                 rays.append(axialRay)
+
+            if len(rays) == 0:
+                warnings.warn('No rays given, and principal and axial rays are not defined for this system. '
+                              'Using objectRays with a diameter of 10.')
+                rays = ObjectRays(10, halfAngle=0.1, T=5)
 
             raysList.append(rays)
 
