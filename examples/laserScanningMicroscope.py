@@ -64,11 +64,9 @@ def illuminationPath():
 
     return illumination
 
-
-
+path = illuminationPath()
 for ray in inputRays:
-
-    rayInPath = illuminationPath().traceThrough(ray)
+    rayInPath = path.traceThrough(ray)
 
     if rayInPath.isNotBlocked:
         heights.append(rayInPath.y*0.000001)
@@ -80,8 +78,20 @@ plt.plot(heights, positions)
 plt.xlabel('Scanning positions of the focal spot (mm)')
 plt.show()
 
+thetas = []
+positions = []
 
+path = illuminationPath()
+scanRays = UniformRays(yMax=0, thetaMax=10*3.14/180, M=1, N=10)
+outputRays = path.traceManyThrough(scanRays)
+for i in range(len(outputRays)):
+    thetas.append(scanRays[i].theta*180/np.pi)
+    positions.append(outputRays[i].y*1000)
 
+plt.plot(thetas, positions)
+plt.ylabel('Scanning position of the focal spot (µm)')
+plt.xlabel('Scan angle (degrees)')
+plt.show()
 
 
 
