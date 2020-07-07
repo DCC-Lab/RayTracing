@@ -297,7 +297,8 @@ if 13 in examples:
     print(M3.backwardConjugate())
 if 14 in examples:
     # Demo #14: Generic objectives
-    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
+    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2,
+                    magnification=40, fieldNumber=1.4, label="Objective")
     print("Focal distances: ", obj.focalDistances())
     print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
     print("Focal spots positions: ", obj.focusPositions(z=0))
