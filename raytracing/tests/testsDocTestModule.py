@@ -1,3 +1,4 @@
+import envtests
 import doctest
 import raytracing
 
