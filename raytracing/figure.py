@@ -280,9 +280,14 @@ class Figure:
 
         colors = self.designParams['rayColors']
 
-        halfHeight = 25
         linewidth = 0.5
         manyRayTraces = self.path.traceMany(rays)
+
+        maxHeight = 0
+        for rayTrace in manyRayTraces:
+            (x, y) = self.rearrangeRayTraceForPlotting(rayTrace)
+            if abs(y[0]) > maxHeight:
+                maxHeight = abs(y[0])
 
         lines = []
         for rayTrace in manyRayTraces:
@@ -291,16 +296,12 @@ class Figure:
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
 
-            rayInitialHeight = y[0]
-            # FIXME: We must take the maximum y in the starting point of manyRayTraces,
-            # not halfHeight
-            maxStartingHeight = halfHeight # FIXME
-            binSize = 2.0 * maxStartingHeight
-            colorIndex = int(
-                (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
-            if colorIndex < 0:
-                colorIndex = 0
-            colorIndex = colorIndex % len(colors)
+            if maxHeight == 0:  # only axial ray
+                colorIndex = 1
+            else:
+                colorIndex = int(np.round(
+                    (y[0] + maxHeight) / (maxHeight * 2) * (len(colors) - 1)))
+                colorIndex = colorIndex % len(colors)
 
             line = Line(x, y, color=colors[colorIndex], lineWidth=linewidth, label='ray')
             lines.append(line)
