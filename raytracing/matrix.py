@@ -1392,7 +1392,7 @@ class Matrix(object):
         return halfHeight
 
     def display(self):
-        from .figureManager import GraphicOf
+        from .figure import GraphicOf
         return GraphicOf(self).display()
 
     def __str__(self):

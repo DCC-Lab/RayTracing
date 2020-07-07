@@ -204,7 +204,7 @@ class MatrixGraphic(Graphic):
 
         self.addPrincipalPlanes()
 
-        from .figureManager import MplFigure
+        from .figure import MplFigure
         from .imagingpath import ImagingPath
         path = ImagingPath(elements=[self.matrix])
         figure = MplFigure(path)
