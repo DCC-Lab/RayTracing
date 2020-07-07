@@ -4,6 +4,7 @@ import io
 from contextlib import redirect_stdout
 import unittest
 import tempfile
+import matplotlib.pyplot as plt
 
 
 class RaytracingTestCase(unittest.TestCase):
@@ -11,6 +12,15 @@ class RaytracingTestCase(unittest.TestCase):
 
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
+
+    def tearDown(self) -> None:
+        self.clearMatplotlibPlots()
+
+    @classmethod
+    def clearMatplotlibPlots(cls):
+        plt.clf()
+        plt.cla()
+        plt.close()
 
     def assertDoesNotRaise(self, func, exceptionType=None, *funcArgs, **funcKwargs):
         returnValue = None
@@ -32,6 +42,7 @@ class RaytracingTestCase(unittest.TestCase):
         if stripOutput:
             value = value.strip()
         self.assertEqual(value, out)
+
 
     @classmethod
     def createTempDirectory(cls):

@@ -47,15 +47,18 @@ outputRays = path1.traceManyThroughInParallel(inputRays)
 efficiency = 100*outputRays.count/inputRays.count
 path1.display(limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=True)
 outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
+path1.reportEfficiency()
 
 path2 = imagingPath(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
 outputRays = path2.traceManyThroughInParallel(inputRays)
 efficiency = 100*outputRays.count/inputRays.count
 path2.display(limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=True)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+path2.reportEfficiency()
 
 path3 = imagingPath(a=25, b=50, title="Better AS at first lens and FS at Camera")
 outputRays = path3.traceManyThroughInParallel(inputRays)
 efficiency = 100*outputRays.count/inputRays.count
 path3.display(limitObjectToFieldOfView=False, onlyChiefAndMarginalRays=True)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+path3.reportEfficiency()

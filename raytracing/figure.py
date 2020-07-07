@@ -101,9 +101,7 @@ class Figure:
         label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
         self.labels.append(label)
 
-    def setGraphicsFromPath(self):
-        self.lines = self.rayTraceLines()
-
+    def setGraphicsFromPath(self, raysList):
         self.graphics = self.graphicsOfElements
 
         if self.path.showObject:
@@ -274,37 +272,22 @@ class Figure:
 
         return displayRange
 
-    def rayTraceLines(self) -> List[Line]:
+    def rayTraceLines(self, rays) -> List[Line]:
         """ A list of all ray trace line objects corresponding to either
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber).
         2. the principal and axial rays.
         """
 
-        color = self.designParams['rayColors']
+        colors = self.designParams['rayColors']
 
-        if self.designParams['onlyPrincipalAndAxialRays']:
-            halfHeight = self.path.objectHeight / 2.0
-            principalRay = self.path.principalRay()
-            axialRay = self.path.axialRay()
-            rayGroup = (principalRay, axialRay)
-            linewidth = 1.5
-        else:
-            halfAngle = self.path.fanAngle / 2.0
-            halfHeight = self.path.objectHeight / 2.0
-            rayGroup = Ray.fanGroup(
-                yMin=-halfHeight,
-                yMax=halfHeight,
-                M=self.path.rayNumber,
-                radianMin=-halfAngle,
-                radianMax=halfAngle,
-                N=self.path.fanNumber)
-            linewidth = 0.5
-
-        manyRayTraces = self.path.traceMany(rayGroup)
+        halfHeight = 25
+        linewidth = 0.5
+        manyRayTraces = self.path.traceMany(rays)
 
         lines = []
         for rayTrace in manyRayTraces:
             (x, y) = self.rearrangeRayTraceForPlotting(rayTrace)
+
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
 
@@ -312,15 +295,14 @@ class Figure:
             # FIXME: We must take the maximum y in the starting point of manyRayTraces,
             # not halfHeight
             maxStartingHeight = halfHeight # FIXME
-            binSize = 2.0 * maxStartingHeight / (len(color) - 1)
+            binSize = 2.0 * maxStartingHeight
             colorIndex = int(
                 (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
             if colorIndex < 0:
                 colorIndex = 0
-            elif colorIndex >= len(color):
-                colorIndex = len(color) - 1
+            colorIndex = colorIndex % len(colors)
 
-            line = Line(x, y, color=color[colorIndex], lineWidth=linewidth, label='ray')
+            line = Line(x, y, color=colors[colorIndex], lineWidth=linewidth, label='ray')
             lines.append(line)
 
         return lines
@@ -424,9 +406,15 @@ class Figure:
         figure.designParams = self.designParams
         return figure
 
-    def display(self, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
+    def display(self, raysList, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
         self.initializeDisplay()
-        self.setGraphicsFromPath()
+
+        self.lines = []
+        for rays in raysList:
+            rayTrace = self.rayTraceLines(rays=rays)
+            self.lines.extend(rayTrace)
+        
+        self.setGraphicsFromPath(raysList)
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
@@ -440,6 +428,7 @@ class Figure:
 
     def displayGaussianBeam(self, beams=None,
                             title=None, comments=None, backend='matplotlib', display3D=False, filepath=None):
+        self.lines = []
         self.graphics = self.graphicsOfElements
         for beam in beams:
             self.lines.extend(self.beamTraceLines(beam))

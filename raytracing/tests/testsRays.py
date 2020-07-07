@@ -29,7 +29,7 @@ class TestRays(envtest.RaytracingTestCase):
     def testRaysInitDifferentIterInputs(self):
         listOfRays = [Ray(), Ray(1, 1), Ray(1, -2), Ray(0, -1)]
         tupleOfRays = tuple(listOfRays)
-        npArrayOfRays = array(listOfRays)
+        npArrayOfRays = np.array(listOfRays)
         raysFromList = Rays(listOfRays)
         raysFromTuple = Rays(tupleOfRays)
         raysFromArray = Rays(npArrayOfRays)
@@ -120,7 +120,7 @@ class TestRays(envtest.RaytracingTestCase):
         self.assertListEqual(r.thetaValues, [])
 
     def testThetaValues(self):
-        thetaValues = list(linspace(-pi / 2, pi / 2, 10))
+        thetaValues = list(np.linspace(-pi / 2, pi / 2, 10))
         listOfRays = [Ray(theta=theta) for theta in thetaValues]
         r = Rays(listOfRays)
         self.assertListEqual(r.thetaValues, thetaValues)
