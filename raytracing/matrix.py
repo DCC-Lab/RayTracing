@@ -137,8 +137,10 @@ class Matrix(object):
         self.label = label
         self.isFlipped = False
         super(Matrix, self).__init__()
-        if not isclose(self.determinant, self.frontIndex / self.backIndex, atol=self.__epsilon__):
-            raise ValueError("The matrix has inconsistent values")
+
+        if areAbsolutelyNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
+            raise ValueError("The matrix has inconsistent values: \
+                determinant is incorrect considering front and back indices.")
 
     @property
     def isIdentity(self):
@@ -829,10 +831,10 @@ class Matrix(object):
             processes = multiprocessing.cpu_count()
 
         theExplicitList = list(inputRays)
-        manyInputRays = [theExplicitList[i::processes] for i in range(processes)]
+        manyInputRays = [(theExplicitList[i::processes], progress) for i in range(processes)]
 
         with multiprocessing.Pool(processes=processes) as pool:
-            outputRays = pool.map(self.traceManyThrough, manyInputRays)
+            outputRays = pool.starmap(self.traceManyThrough, manyInputRays)
 
         outputRaysList = []
         for rays in outputRays:
@@ -867,7 +869,7 @@ class Matrix(object):
         And as usual, C = -1/f (always).
         """
 
-        return abs(self.B) < Matrix.__epsilon__
+        return isAlmostZero(self.B, self.__epsilon__)
 
     @property
     def hasPower(self):
@@ -887,7 +889,7 @@ class Matrix(object):
         >>> print('hasPower:' , M2.hasPower)
         hasPower: False
         """
-        return abs(self.C) > Matrix.__epsilon__
+        return isNotZero(self.C, self.__epsilon__)
 
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
