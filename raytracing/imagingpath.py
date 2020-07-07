@@ -870,6 +870,8 @@ class ImagingPath(MatrixGroup):
             raysList.append(rays)
 
         if len(raysList) == 0:
+            warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+
             rays = []
             principalRay = self.principalRay()
             axialRay = self.axialRay()
@@ -880,8 +882,8 @@ class ImagingPath(MatrixGroup):
                 rays.append(axialRay)
 
             if len(rays) == 0:
-                warnings.warn('No rays given, and principal and axial rays are not defined for this system. '
-                              'Using objectRays with a diameter of 10.')
+                warnings.warn('Principal and axial rays are not defined for this system. '
+                              'Using ObjectRays with a diameter of 10.')
                 rays = ObjectRays(10, halfAngle=0.1, T=5)
 
             raysList.append(rays)
