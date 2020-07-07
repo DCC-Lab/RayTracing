@@ -74,7 +74,7 @@ class AchromatDoubletLens(MatrixGroup):
     """
 
     def __init__(self, fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None,
-                 url=None, label=''):
+                 url=None, label='', wavelength=None):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -90,13 +90,24 @@ class AchromatDoubletLens(MatrixGroup):
         self.url = url
 
         elements = []
-        elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
-        elements.append(Space(d=tc1, n=n1))
-        elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
-        elements.append(Space(d=tc2, n=n2))
-        elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
+        elements.append(DielectricInterface(n1=1, n2=self.n1, R=R1, diameter=diameter))
+        elements.append(Space(d=tc1, n=self.n1))
+        elements.append(DielectricInterface(n1=self.n1, n2=self.n2, R=R2, diameter=diameter))
+        elements.append(Space(d=tc2, n=self.n2))
+        elements.append(DielectricInterface(n1=self.n2, n2=1, R=R3, diameter=diameter))
         super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
+
+        if mat1 is not None and mat2 is not None :
+            if wavelength is not None:
+                self.n1=mat1.n(wavelength)
+                self.n2=mat2.n(wavelength)
+            elif wavelengthRef is not None:
+                self.n1=mat1.n(wavelengthRef)
+                self.n2=mat2.n(wavelengthRef)
+
+
+
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
             msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1 + self.tc2, self.L)

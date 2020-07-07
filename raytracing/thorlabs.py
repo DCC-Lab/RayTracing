@@ -25,11 +25,11 @@ class ACN254_100_A(AchromatDoubletLens):
     -----
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(ACN254_100_A,self).__init__(fa=-100.0,fb=-103.6, R1=-52.0, R2=49.9, R3=600.0, 
-                                    tc1=2.0, tc2=4.0, te=7.7, n1=N_BAK4.n(0.5876), n2=SF5.n(0.5876), diameter=25.4,
+                                    tc1=2.0, tc2=4.0, te=7.7, n1=None, mat1=N_BAK4, n2=None, mat2=SF5, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="ACN254-100-A")
+                                    label="ACN254-100-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class ACN254_075_A(AchromatDoubletLens):
     """ ACN254-075-A
