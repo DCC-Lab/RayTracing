@@ -1,3 +1,7 @@
+import warnings
+from .utils import deprecated
+
+
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
 
@@ -13,9 +17,9 @@ class Ray:
     Parameters
     ----------
     y : float
-        Initial height of the ray. Defaults to 0.
+        Initial height of the ray. (Default=0)
     theta : float
-        Initial angle of the ray. Defaults to 0.
+        Initial angle of the ray. (Default=0)
 
     Attributes
     ----------
@@ -32,7 +36,7 @@ class Ray:
 
     """
 
-    def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked:bool = False):
+    def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked: bool = False):
         self.y = y
         self.theta = theta
 
@@ -60,6 +64,8 @@ class Ray:
         return not self.isBlocked
 
     @staticmethod
+    @deprecated("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its "
+                "subclasses is recommended.")
     def fan(y: float, radianMin: float, radianMax: float, N: int):
         """This function generates a list of rays spanning from radianMin to radianMax.
         This is usually used with Matrix.trace() or Matrix.traceMany() to trace the rays
@@ -80,6 +86,10 @@ class Ray:
         -------
         rays : list of ray
             The created list of rays that define this fan.
+
+        Notes
+        -----
+        This method is deprecated. The class Rays and its subclasses should be used to generate multiple Ray objects.
 
         See Also
         --------
@@ -103,6 +113,8 @@ class Ray:
         return rays
 
     @staticmethod
+    @deprecated("The creation of a group of rays with this method is deprecated. Usage of the class Rays and its "
+                "subclasses is recommended.")
     def fanGroup(yMin: float, yMax: float, M: int, radianMin: float, radianMax: float, N: int):
         """This function creates a list of rays spanning from yMin to yMax and radianMin to radianMax.
         This is usually used with Matrix.trace() or Matrix.traceMany() to trace the rays
@@ -129,13 +141,17 @@ class Ray:
         rays : list of ray
             The created list of rays that define these fan groups.
 
+        Notes
+        -----
+        This method is deprecated. The class Rays and its subclasses should be used to generate multiple Ray objects.
+
         See Also
         --------
         raytracing.Matrix.trace()
         raytracing.Matrix.traceMany().
 
         """
-        
+
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
         elif N == 1:
@@ -158,6 +174,72 @@ class Ray:
                 rays.append(Ray(y, theta))
 
         return rays
+
+    def at(self, z):
+        """This function returns a ray at position z parallel to the current ray.
+        Z is not the distance, it is the position.  The distance is (z-self.z) 
+
+        Parameters
+        ----------
+        z : float
+            Position in z where we want the output ray
+
+        Returns
+        -------
+        ray : an interpolated Ray 
+            A Ray at position z, with y interpolated and theta unchanged
+
+        Notes
+        -----
+        If ray is blocked, then the output Ray will be blocked too
+
+        See Also
+        --------
+        raytracing.Ray.along()
+
+        """
+        outputRay = Ray(y=self.y + (z-self.z) * self.theta, theta=self.theta, z=z)
+        if self.isBlocked:
+            outputRay.isBlocked = True
+        return outputRay
+
+    @staticmethod
+    def along(rayTrace, z):
+        """This function returns a ray at position z along the ray trace. 
+        y and theta are linearly interpolated in between the two closest rays.
+
+        Parameters
+        ----------
+        rayTrace : list of Ray
+            The rayTrace
+        z : float
+            Position in z where we want the output ray
+
+        Returns
+        -------
+        ray : an interpolated Ray 
+            A Ray at position z, with y and theta interpolated from the ray trace
+
+        Notes
+        -----
+        If the ray at an earlier z is blocked, then the Ray will be blocked too
+
+        See Also
+        --------
+        raytracing.Ray.at()
+
+        """
+        closestRay = rayTrace[0]
+        for ray in rayTrace:
+            if ray.z == z:
+                return ray
+
+            if ray.z > z:
+                return closestRay.at(z=z)
+
+            closestRay = ray
+
+        return rayTrace[-1]
 
     def __str__(self):
         """String description that allows the use of print(Ray())."""

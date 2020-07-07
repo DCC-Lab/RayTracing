@@ -33,4 +33,5 @@ System4f
       ~System4f.determinant
       ~System4f.hasPower
       ~System4f.isImaging
+      ~System4f.largestDiameter
 

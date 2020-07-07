@@ -14,10 +14,12 @@ class Figure:
         self.figure = None
         self.axes = None  # Where the optical system is
         self.axesComments = None  # Where the comments are (for teaching)
+        self.elementGraphics = []
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
-                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True}
+                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
+                                  'limitObjectToFieldOfView': True}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
 
@@ -37,41 +39,33 @@ class Figure:
 
         self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
-    def initializeDisplay(self, limitObjectToFieldOfView=True):
-        """
-        Configure the imaging path and the figure according to the display conditions.
-
-        Other parameters
-        ----------------
-        limitObjectToFieldOfView: bool
-            Use the calculated field of view instead of the objectHeight. Default to True.
-
-        """
+    def initializeDisplay(self):
+        """ Configure the imaging path and the figure according to the display conditions. """
 
         note1 = ""
         note2 = ""
-        if limitObjectToFieldOfView:
+        if self.designParams['limitObjectToFieldOfView']:
             fieldOfView = self.path.fieldOfView()
             if fieldOfView != float('+Inf'):
                 self.path.objectHeight = fieldOfView
                 note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
             else:
                 warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True.")
-                limitObjectToFieldOfView = False
+                self.designParams['limitObjectToFieldOfView'] = False
 
             imageSize = self.path.imageSize()
             if imageSize != float('+Inf'):
                 note1 += " Image size: {0:.2f}".format(imageSize)
             else:
                 warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
-                limitObjectToFieldOfView = False
+                self.designParams['limitObjectToFieldOfView'] = False
 
-        if not limitObjectToFieldOfView:
+        if not self.designParams['limitObjectToFieldOfView']:
             note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
 
         if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
-            if stopPosition is None:
+            if stopPosition is None or self.path.principalRay() is None:
                 warnings.warn("No aperture stop in system: cannot use onlyPrincipalAndAxialRays=True since they are "
                               "not defined.")
                 self.designParams['onlyPrincipalAndAxialRays'] = False
@@ -118,40 +112,135 @@ class Figure:
                            'imageColor': imageColor, 'objectColor': objectColor}
         for key, value in newDesignParams.items():
             if value is not None:
-                if key is 'rayColors':
-                    assert len(value) is 3, \
+                if key == 'rayColors':
+                    assert len(value) == 3, \
                         "rayColors has to be a list with 3 elements."
                 self.designParams[key] = value
 
-    def display(self, limitObjectToFieldOfView=True, onlyPrincipalAndAxialRays=True,
-                removeBlockedRaysCompletely=False, filepath=None):
+    def display(self, raysList, removeBlocked = True, filePath = None):
         """ Display the optical system and trace the rays.
 
         Parameters
         ----------
-        limitObjectToFieldOfView : bool (Optional)
-            If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=True)
-        onlyPrincipalAndAxialRays : bool (Optional)
-            If True, only the principal ray and the axial ray will appear on the plot (default=True)
-        removeBlockedRaysCompletely : bool (Optional)
-            If True, the blocked rays are removed (default=False)
+        raysList : list of `Rays` or list of list of `Ray`
+            If None, only the principal ray and the axial ray will appear on the plot
+        removeBlocked : bool (Optional)
+            If True, the blocked rays are removed (default=True)
 
         """
 
-        self.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
-        self.initializeDisplay(limitObjectToFieldOfView=limitObjectToFieldOfView)
+        self.initializeDisplay()
 
-        self.drawLines(self.rayTraceLines(removeBlockedRaysCompletely=removeBlockedRaysCompletely))
+        for rays in raysList:
+            rayTrace = self.rayTraceLines(rays=rays, removeBlocked=removeBlocked)     
+            self.drawLines(rayTrace)
+
         self.drawDisplayObjects()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
-        self.axes.set_ylim([-self.displayRange() / 2 * 1.5, self.displayRange() / 2 * 1.5])
+        self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
+        self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
 
-        if filepath is not None:
-            self.figure.savefig(filepath, dpi=600)
+        if filePath is not None:
+            self.figure.savefig(filePath, dpi=600)
         else:
             self._showPlot()
+
+    def displayGaussianBeam(self, beams=None, filePath=None):
+        """ Display the optical system and trace the laser beam.
+        If comments are included they will be displayed on a
+        graph in the bottom half of the plot.
+
+        Parameters
+        ----------
+        inputBeams : list of object of GaussianBeam class
+            A list of Gaussian beams
+        """
+
+        if len(beams) != 0:
+            self.drawBeamTraces(beams=beams)
+
+        self.drawDisplayObjects()
+
+        self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
+        self.axes.set_xlim(0 - self.path.L * 0.05, self.path.L + self.path.L * 0.05)
+        self.axes.set_ylim([-self.displayRange() / 2 * 1.6, self.displayRange() / 2 * 1.6])
+
+        if filePath is not None:
+            self.figure.savefig(filePath, dpi=600)
+        else:
+            self._showPlot()
+
+    def drawBeamTraces(self, beams):
+        for beam in beams:
+            self.drawBeamTrace(beam)
+            self.drawWaists(beam)
+
+    def rearrangeBeamTraceForPlotting(self, rayList):
+        x = []
+        y = []
+        for ray in rayList:
+            x.append(ray.z)
+            y.append(ray.w)
+        return (x, y)
+
+    def drawBeamTrace(self, beam):
+        """ Draw beam trace corresponding to input beam 
+        Because the laser beam diffracts through space, we cannot
+        simply propagate the beam over large distances and trace it
+        (as opposed to rays, where we can). We must split Space() 
+        elements into sub elements to watch the beam size expand.
+        
+        We arbitrarily split Space() elements into N sub elements
+        before plotting.
+        """
+        from .imagingpath import ImagingPath  # Fixme: circular import fix
+
+        N = 100
+        highResolution = ImagingPath()
+        for element in self.path.elements:
+            if isinstance(element, Space):
+                for i in range(N):
+                    highResolution.append(Space(d=element.L / N,
+                                                n=element.frontIndex))
+            else:
+                highResolution.append(element)
+
+        beamTrace = highResolution.trace(beam)
+        (x, y) = self.rearrangeBeamTraceForPlotting(beamTrace)
+        self.axes.plot(x, y, 'r', linewidth=1)
+        self.axes.plot(x, [-v for v in y], 'r', linewidth=1)
+
+    def drawWaists(self, beam):
+        """ Draws the expected waist (i.e. the focal spot or the spot where the
+        size is minimum) for all positions of the beam. This will show "waists" that
+        are virtual if there is an additional lens between the beam and the expceted
+        waist.
+
+        It is easy to obtain the waist position from the complex radius of curvature
+        because it is the position where the complex radius is imaginary. The position
+        returned is relative to the position of the beam, which is why we add the actual
+        position of the beam to the relative position. """
+
+        (xScaling, yScaling) = self.axesToDataScale()
+        arrowWidth = xScaling * 0.01
+        arrowHeight = yScaling * 0.03
+        arrowSize = arrowHeight * 3
+
+        beamTrace = self.path.trace(beam)
+        for beam in beamTrace:
+            relativePosition = beam.waistPosition
+            position = beam.z + relativePosition
+            size = beam.waist
+
+            self.axes.arrow(position, size + arrowSize, 0, -arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
+            self.axes.arrow(position, -size - arrowSize, 0, arrowSize,
+                       width=0.1, fc='g', ec='g',
+                       head_length=arrowHeight, head_width=arrowWidth,
+                       length_includes_head=True)
 
     def displayRange(self):
         """ We return the largest object in the ImagingPath for display purposes.
@@ -177,22 +266,48 @@ class Figure:
         >>> path.append(Space(d=30))
         >>> path.append(Lens(f=20,diameter=7,label="f=20"))
         >>> path.append(Space(d=20))
-        >>> print('display range :', path.displayRange())
-        display range : 7
+        >>> print('display range :', path.figure.displayRange())
+        display range : 6.0
 
         """
+        from .laserpath import LaserPath   # Fixme: circular import fix
 
-        displayRange = self.path.largestDiameter
+        if isinstance(self.path, LaserPath):
+            return self.laserDisplayRange()
+        else:
+            return self.imagingDisplayRange()
 
-        if displayRange == float('+Inf') or displayRange <= 2 * self.path._objectHeight:
-            displayRange = 2 * self.path._objectHeight
+    def imagingDisplayRange(self):
+        displayRange = 0
+        for graphic in self.elementGraphics:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
+
+        if displayRange == float('+Inf') or displayRange <= self.path._objectHeight:
+            displayRange = self.path._objectHeight
 
         conjugates = self.path.intermediateConjugates()
         if len(conjugates) != 0:
             for (planePosition, magnification) in conjugates:
+                if not 0 <= planePosition <= self.path.L:
+                    continue
                 magnification = abs(magnification)
                 if displayRange < self.path._objectHeight * magnification:
                     displayRange = self.path._objectHeight * magnification
+
+        return displayRange
+
+    def laserDisplayRange(self):
+        displayRange = 0
+        for graphic in self.elementGraphics:
+            if graphic.halfHeight * 2 > displayRange:
+                displayRange = graphic.halfHeight * 2
+
+        if displayRange == float('+Inf') or displayRange == 0:
+            if self.path.inputBeam is not None:
+                displayRange = self.path.inputBeam.w * 3
+            else:
+                displayRange = 100
 
         return displayRange
 
@@ -202,6 +317,10 @@ class Figure:
 
     def drawDisplayObjects(self):
         """ Draw the object, images and all elements to the figure. """
+        from .laserpath import LaserPath  # Fixme: circular import fix
+        if isinstance(self.path, LaserPath):
+            return self.drawElements(self.path.elements)
+
         if self.path.showObject:
             self.drawObject()
 
@@ -412,6 +531,7 @@ class Figure:
                 color='r'))
 
     def drawElements(self, elements):
+        self.elementGraphics = []
         z = 0
         for element in elements:
             graphic = Graphic(element)
@@ -421,54 +541,44 @@ class Figure:
             if self.path.showElementLabels:
                 graphic.drawLabels(z, self.axes)
             z += graphic.L
+            self.elementGraphics.append(graphic)
 
-    def rayTraceLines(self, removeBlockedRaysCompletely=True):
+    def rayTraceLines(self, rays, removeBlocked=True):
         """ A list of all ray trace line objects corresponding to either
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber).
         2. the principal and axial rays.
         """
 
-        color = self.designParams['rayColors']
+        colors = self.designParams['rayColors']
 
-        if self.designParams['onlyPrincipalAndAxialRays']:
-            halfHeight = self.path.objectHeight / 2.0
-            chiefRay = self.path.chiefRay(y=halfHeight - 0.01)  # fixme: refactor required for the renaming of rays
-            (marginalUp, marginalDown) = self.path.marginalRays(y=0)
-            rayGroup = (chiefRay, marginalUp)
-            linewidth = 1.5
-        else:
-            halfAngle = self.path.fanAngle / 2.0
-            halfHeight = self.path.objectHeight / 2.0
-            rayGroup = Ray.fanGroup(
-                yMin=-halfHeight,
-                yMax=halfHeight,
-                M=self.path.rayNumber,
-                radianMin=-halfAngle,
-                radianMax=halfAngle,
-                N=self.path.fanNumber)
-            linewidth = 0.5
-
-        manyRayTraces = self.path.traceMany(rayGroup)
+        halfHeight = 25
+        linewidth = 0.5
+        manyRayTraces = self.path.traceMany(rays)
 
         lines = []
         for rayTrace in manyRayTraces:
             (x, y) = self.rearrangeRayTraceForPlotting(
-                rayTrace, removeBlockedRaysCompletely)
+                rayTrace, removeBlocked)
             if len(y) == 0:
                 continue  # nothing to plot, ray was fully blocked
 
             rayInitialHeight = y[0]
-            binSize = 2.0 * halfHeight / (len(color) - 1)
+            # FIXME: We must take the maximum y in the starting point of manyRayTraces,
+            # not halfHeight
+            maxStartingHeight = halfHeight # FIXME
+            binSize = 2.0 * maxStartingHeight
             colorIndex = int(
-                (rayInitialHeight - (-halfHeight - binSize / 2)) / binSize)
+                (rayInitialHeight - (-maxStartingHeight - binSize / 2)) / binSize)
+            if colorIndex < 0:
+                colorIndex = 0
+            colorIndex = colorIndex % len(colors)
 
-            line = plt.Line2D(x, y, color=color[colorIndex], linewidth=linewidth, label='ray')
+            line = plt.Line2D(x, y, color=colors[colorIndex], linewidth=linewidth, label='ray')
             lines.append(line)
 
         return lines
 
-    def rearrangeRayTraceForPlotting(self, rayList: List[Ray],
-                                     removeBlockedRaysCompletely=True):
+    def rearrangeRayTraceForPlotting(self, rayList: List[Ray],removeBlocked=True):
         """
         This function removes the rays that are blocked in the imaging path.
 
@@ -476,7 +586,7 @@ class Figure:
         ----------
         rayList : List of Rays
             an object from rays class or a list of rays
-        removeBlockedRaysCompletely : bool
+        removeBlocked : bool
             If True, the blocked rays will be removed of the list (default=True)
 
         """
@@ -486,7 +596,7 @@ class Figure:
             if not ray.isBlocked:
                 x.append(ray.z)
                 y.append(ray.y)
-            elif removeBlockedRaysCompletely:
+            elif removeBlocked:
                 return [], []
             # else: # ray will simply stop drawing from here
         return x, y
@@ -528,10 +638,17 @@ class Figure:
 class MatrixGraphic:
     def __init__(self, matrix: Matrix):
         self.matrix = matrix
+        self._halfHeight = None
 
     @property
     def L(self):
         return self.matrix.L
+
+    @property
+    def halfHeight(self):
+        if self._halfHeight is None:
+            self._halfHeight = self.displayHalfHeight()
+        return self._halfHeight
 
     def drawAt(self, z, axes, showLabels=False):  # pragma: no cover
         """ Draw element on plot with starting edge at 'z'.
@@ -783,7 +900,7 @@ class MatrixGraphic:
             halfHeight = self.matrix.apertureDiameter / 2.0  # real half height
         return halfHeight
 
-    def display(self):  # pragma: no cover
+    def display(self, rays=None):  # pragma: no cover
         """ Display this component, without any ray tracing but with
         all of its cardinal points and planes.
 
@@ -791,8 +908,7 @@ class MatrixGraphic:
         --------
         >>> from raytracing import *
         >>> # Mat is an ABCD matrix of an object
-        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-1,backVertex=2,
-        >>>            frontIndex=1.5,backIndex=1,label='Lens')
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=2,frontVertex=-2,backVertex=4,frontIndex=1.5,backIndex=1.5,label='Lens')
         >>> Mat.display()
 
         And the result is shown in the following figure:
@@ -862,22 +978,26 @@ class LensGraphic(MatrixGraphic):
                 if max(line._y) > maxRayHeight:
                     maxRayHeight = max(line._y)
 
-        halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
+        self._halfHeight = self.displayHalfHeight(minSize=maxRayHeight)  # real units, i.e. data
 
         (xScaling, yScaling) = self.axesToDataScale(axes)
-        arrowHeadHeight = 2 * halfHeight * 0.08
+        arrowHeadHeight = 2 * self._halfHeight * 0.08
 
-        heightFactor = halfHeight * 2 / yScaling
+        heightFactor = self._halfHeight * 2 / yScaling
         arrowHeadWidth = xScaling * 0.008 * (heightFactor / 0.2) ** (3 / 4)
 
-        axes.arrow(z, 0, 0, halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
+        axes.arrow(z, 0, 0, self._halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
-        axes.arrow(z, 0, 0, -halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
+        axes.arrow(z, 0, 0, -self._halfHeight, width=arrowHeadWidth / 10, fc='k', ec='k',
                    head_length=arrowHeadHeight, head_width=arrowHeadWidth, length_includes_head=True)
         self.drawCardinalPoints(z, axes)
 
 
 class SpaceGraphic(MatrixGraphic):
+    def __init__(self, matrix):
+        super(SpaceGraphic, self).__init__(matrix)
+        self._halfHeight = 0
+
     def drawAt(self, z, axes, showLabels=False):
         """This function draws nothing because free space is not visible. """
         return
@@ -1058,6 +1178,7 @@ class ApertureGraphic(MatrixGraphic):
 class MatrixGroupGraphic(MatrixGraphic):
     def __init__(self, matrixGroup: MatrixGroup):
         self.matrixGroup = matrixGroup
+        self._halfHeight = None
         super().__init__(matrixGroup)
 
     @property
@@ -1066,6 +1187,12 @@ class MatrixGroupGraphic(MatrixGraphic):
         for element in self.matrixGroup.elements:
             L += element.L
         return L
+
+    @property
+    def halfHeight(self):
+        if self._halfHeight is None:
+            self._halfHeight = self.displayHalfHeight()
+        return self._halfHeight
 
     def drawAt(self, z, axes, showLabels=True):
         """ Draw each element of this group """
@@ -1110,12 +1237,40 @@ class MatrixGroupGraphic(MatrixGraphic):
                     labels[zStr] = label
             zElement += element.L
 
-        halfHeight = self.matrixGroup.largestDiameter() / 2
+        halfHeight = self.matrixGroup.largestDiameter / 2
         for zStr, label in labels.items():
             z = float(zStr)
             axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
                           xycoords='data', fontsize=12,
                           ha='center', va='bottom')
+
+    def display(self):
+        fig, axes = plt.subplots(figsize=(10, 7))
+        self.drawAt(0, axes, showLabels=True)
+        self.drawAperture(0, axes)
+        self.drawPointsOfInterest(0, axes)
+        self.drawVertices(0, axes)
+        self.drawCardinalPoints(0, axes)
+        self.drawPrincipalPlanes(0, axes)
+        axes.set_ylim(-self.halfHeight * 1.6, self.halfHeight * 1.6)
+        self._showPlot()
+
+    def _showPlot(self):  # pragma: no cover
+        # internal, do not use
+        try:
+            plt.plot()
+            if sys.platform.startswith('win'):
+                plt.show()
+            else:
+                plt.draw()
+                while True:
+                    if plt.get_fignums():
+                        plt.pause(0.001)
+                    else:
+                        break
+
+        except KeyboardInterrupt:
+            plt.close()
 
 
 class AchromatDoubletLensGraphic(MatrixGroupGraphic):
@@ -1355,17 +1510,19 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 
 class Graphic:
     def __new__(cls, element):
-        if type(element) is AchromatDoubletLens:
+        if type(element) is AchromatDoubletLens or issubclass(type(element), AchromatDoubletLens):
             return AchromatDoubletLensGraphic(element)
-        if type(element) is SingletLens:
+        if type(element) is SingletLens or issubclass(type(element), SingletLens):
             return SingletLensGraphic(element)
-        if issubclass(type(element), Objective):
+        if issubclass(type(element), Objective) or issubclass(type(element), Objective):
             return ObjectiveGraphic(element)
         if issubclass(type(element), MatrixGroup):
             return MatrixGroupGraphic(element)
 
         if type(element) is Lens:
             return LensGraphic(element)
+        if type(element) is ThickLens:
+            return ThickLensGraphic(element)
         if type(element) is Space:
             return SpaceGraphic(element)
         if type(element) is DielectricInterface:

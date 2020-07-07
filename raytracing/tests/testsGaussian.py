@@ -14,10 +14,7 @@ class TestBeam(envtest.RaytracingTestCase):
     def testBeamWAndQGiven(self):
         w = 1
         q = 4.96459e3 * 1j
-        try:
-            GaussianBeam(q, w)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(GaussianBeam, ValueError, q=q, w=w)
 
     def testBeamWAndQGivenMismatch(self):
         w = 1
@@ -41,6 +38,13 @@ class TestBeam(envtest.RaytracingTestCase):
     def testInfiniteW(self):
         beam = GaussianBeam(w=inf, R=10)
         self.assertEqual(beam.w, inf)
+
+    def testNull(self):
+        beam = GaussianBeam(0)
+        self.assertFalse(beam.isFinite)
+        self.assertEqual(beam.w, float("+Inf"))
+        self.assertEqual(beam.R, float("+Inf"))
+        self.assertEqual(beam.wavelength, 0.0006328)
 
     def testZ0is0(self):
         beam = GaussianBeam(w=inf, R=1)
@@ -107,7 +111,15 @@ class TestBeam(envtest.RaytracingTestCase):
 
     def testStrInvalidRadiusOfCurvature(self):
         beam = GaussianBeam(w=inf, R=1)
-        self.assertEqual(str(beam), "Not valid complex radius of curvature")
+        self.assertFalse(beam.isFinite)
+        self.assertEqual(str(beam), "Beam is not finite: q=(1+0j)")
+
+    def testPerformance(self):
+        path = LaserPath()
+        path.append(Space(100))
+        beamIn = GaussianBeam(w=0.01, R=1, n=1.5, wavelength=0.400e-3)
+
+        path.trace(beamIn)
 
 
 if __name__ == '__main__':
