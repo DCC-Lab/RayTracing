@@ -101,7 +101,7 @@ class Figure:
         label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
         self.labels.append(label)
 
-    def setGraphicsFromPath(self, raysList):
+    def setGraphicsFromPath(self):
         self.graphics = self.graphicsOfElements
 
         if self.path.showObject:
@@ -413,8 +413,8 @@ class Figure:
         for rays in raysList:
             rayTrace = self.rayTraceLines(rays=rays)
             self.lines.extend(rayTrace)
-        
-        self.setGraphicsFromPath(raysList)
+
+        self.setGraphicsFromPath()
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure

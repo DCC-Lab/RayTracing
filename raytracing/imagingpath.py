@@ -851,7 +851,7 @@ class ImagingPath(MatrixGroup):
         plt.show()
 
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                onlyPrincipalAndAxialRays=None):
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
         """ Display the optical system and trace the rays.
         Parameters
         ----------
@@ -880,6 +880,8 @@ class ImagingPath(MatrixGroup):
 
             raysList.append(rays)
 
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
         self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
         self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
@@ -887,7 +889,7 @@ class ImagingPath(MatrixGroup):
                             backend='matplotlib', display3D=False)
 
     def saveFigure(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                   onlyPrincipalAndAxialRays=None, filePath=None):
+                   onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
         """
         The figure of the imaging path can be saved using this function.
 
@@ -921,6 +923,8 @@ class ImagingPath(MatrixGroup):
 
             raysList.append(rays)
 
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
         self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
         self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
