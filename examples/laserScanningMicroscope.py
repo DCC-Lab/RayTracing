@@ -88,9 +88,9 @@ for i in range(len(outputRays)):
     thetas.append(scanRays[i].theta*180/np.pi)
     positions.append(outputRays[i].y*1000)
 
-plt.plot(thetas, positions)
-plt.ylabel('Scanning position of the focal spot (µm)')
-plt.xlabel('Scan angle (degrees)')
+plt.plot(positions, thetas)
+plt.ylabel('Scan angle (degrees)')
+plt.xlabel('Scanning position of the focal spot (µm)')
 plt.show()
 
 
