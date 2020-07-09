@@ -98,13 +98,13 @@ class AchromatDoubletLens(MatrixGroup):
         super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
-        if mat1 is not None and mat2 is not None :
+        if self.mat1 is not None and self.mat2 is not None :
             if wavelength is not None:
-                self.n1=mat1.n(wavelength)
-                self.n2=mat2.n(wavelength)
+                self.n1=self.mat1.n(wavelength)
+                self.n2=self.mat2.n(wavelength)
             elif wavelengthRef is not None:
-                self.n1=mat1.n(wavelengthRef)
-                self.n2=mat2.n(wavelengthRef)
+                self.n1=self.mat1.n(wavelengthRef)
+                self.n2=self.mat2.n(wavelengthRef)
 
 
 
@@ -197,8 +197,8 @@ class SingletLens(MatrixGroup):
 
     """
 
-    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat1=None, wavelengthRef=None,
-                 url=None, label=''):
+    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat=None, wavelengthRef=None,
+                 url=None, label='', wavelength=None):
         self.f = f
         self.fb = fb
         self.R1 = R1
@@ -210,11 +210,19 @@ class SingletLens(MatrixGroup):
         self.url = url
 
         elements = []
-        elements.append(DielectricInterface(n1=1, n2=n, R=R1, diameter=diameter))
+        elements.append(DielectricInterface(n1=1, n2=self.n, R=R1, diameter=diameter))
         elements.append(Space(d=tc, n=n))
         elements.append(DielectricInterface(n1=n, n2=1, R=R2, diameter=diameter))
         super(SingletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
+
+
+        if self.mat is not None:
+            if wavelength is not None:
+                self.n=self.mat.n(wavelength)
+            elif wavelengthRef is not None:
+                self.n=self.mat.n(wavelengthRef)
+
 
         if abs(self.tc - self.L) / self.L > 0.02:
             msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1, self.L)
