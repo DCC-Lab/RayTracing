@@ -412,11 +412,11 @@ class AC254_100_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_100_A,self).__init__(fa=100.1,fb=97.1, R1=62.8,R2=-45.7, R3=-128.2, 
-                                    tc1=4.0, tc2=2.5, te=4.7, n1=N_BK7.n(0.5876), n2=SF5.n(0.5876), diameter=25.4,
+                                    tc1=4.0, tc2=2.5, te=4.7, n1=None, mt1=N_BK7, n2=None, mt2=SF5, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-100-A")
+                                    label="AC254-100-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_125_A(AchromatDoubletLens):
     """ AC254_125_A
@@ -443,7 +443,7 @@ class AC254_125_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength= None):
         """
         Notes
         -----
@@ -453,9 +453,9 @@ class AC254_125_A(AchromatDoubletLens):
         https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
         """
         super(AC254_125_A,self).__init__(fa=125.0,fb=122.0, R1=77.6,R2=-55.9, R3=-160.8, 
-                                    tc1=4.0, tc2=2.8, te=5.0, n1=N_BK7.n(0.5876), n2=N_SF5.n(0.5876), diameter=25.4,
+                                    tc1=4.0, tc2=2.8, te=5.0, n1=None, mt1=N_BK7, n2=None, mt2=N_SF5, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-125-A")
+                                    label="AC254-125-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_150_A(AchromatDoubletLens):
     """ AC254_150_A
@@ -482,11 +482,11 @@ class AC254_150_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_150_A,self).__init__(fa=150,fb=146.1, R1=91.6,R2=-66.7, R3=-197.7,
-                                    tc1=5.7, tc2=2.2, te=6.6, n1=N_BK7.n(0.5876), n2=SF5.n(0.5876), diameter=25.4,
+                                    tc1=5.7, tc2=2.2, te=6.6, n1=None, mt1=N_BK7, n2=None, mt2=SF5, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-150-A")
+                                    label="AC254-150-A", wavelength=wavelength, wavelengthRef=5876)
 
 class AC254_200_A(AchromatDoubletLens):
     """ AC254_200_A
@@ -513,11 +513,11 @@ class AC254_200_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_200_A,self).__init__(fa=200.2,fb=194.0, R1=77.4,R2=-87.6, R3=291.1, 
-                                    tc1=4.0, tc2=2.5, te=5.7, n1=N_SSK5.n(0.5876), n2=LAFN7.n(0.5876), diameter=25.4,
+                                    tc1=4.0, tc2=2.5, te=5.7, n1=None, mt1=N_SSK5, n2=None, mt2=LAFN7, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-200-A")
+                                    label="AC254-200-A", wavelength=wavelength, wavelengthRef= 0.5876)
 
 class AC254_250_A(AchromatDoubletLens):
     """ AC254_250_A
@@ -544,11 +544,11 @@ class AC254_250_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_250_A,self).__init__(fa=250,fb=246.7, R1=137.1,R2=-111.5, R3=-459.2, 
-                                    tc1=4.0, tc2=2.0, te=5.2, n1=N_BK7.n(0.5876), n2=SF2.n(0.5876), diameter=25.4,
+                                    tc1=4.0, tc2=2.0, te=5.2, n1=None, mt1=N_BK7, n2=None, mt2=SF2, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-250-A")
+                                    label="AC254-250-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_300_A(AchromatDoubletLens):
     """ AC254_300_A
@@ -575,11 +575,11 @@ class AC254_300_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_300_A,self).__init__(fa=300.2,fb=297.0, R1=165.2,R2=-137.1, R3=-557.4, 
-                                    tc1=4.0, tc2=2.0, te=5.4, n1=N_BK7.n(0.5876), n2=SF2.n(0.5876), diameter=25.4,
+                                    tc1=4.0, tc2=2.0, te=5.4, n1=None, mt1=N_BK7, n2=None, mt2=SF2, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-300-A")
+                                    label="AC254-300-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_400_A(AchromatDoubletLens):
     """ AC254_400_A
@@ -606,11 +606,11 @@ class AC254_400_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_400_A,self).__init__(fa=399.3,fb=396.0, R1=219.8,R2=-181.6, R3=-738.5, 
-                                    tc1=4.0, tc2=2.0, te=5.5, n1=N_BK7.n(0.5876), n2=SF2.n(0.5876), diameter=25.4,
+                                    tc1=4.0, tc2=2.0, te=5.5, n1=None, mt1=N_BK7, n2=None, mt2=SF2, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-400-A")
+                                    label="AC254-400-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_500_A(AchromatDoubletLens):
     """ AC254_500_A
@@ -637,11 +637,11 @@ class AC254_500_A(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_500_A,self).__init__(fa=502.5,fb=499.9, R1=337.3,R2=-186.8, R3=-557.4, 
-                                    tc1=4.0, tc2=2.0, te=5.6, n1=N_BK7.n(0.5876), n2=SF2.n(0.5876), diameter=25.4,
+                                    tc1=4.0, tc2=2.0, te=5.6, n1=None, mt1=N_BK7, n2=None, mt2=SF2, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
-                                    label="AC254-500-A")
+                                    label="AC254-500-A", wavelength=wavelength, wavelengthRef= 0.5876)
 
 class AC254_050_B(AchromatDoubletLens):
     """ AC254_050_B
@@ -668,11 +668,11 @@ class AC254_050_B(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC254_050_B,self).__init__(fa=50.0,fb=45.0, R1=33.55,R2=-27.05, R3=-125.60, 
-                                    tc1=7.5, tc2=1.8, te=6.2, n1=N_LAK22.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
+                                    tc1=7.5, tc2=1.8, te=6.2, n1=None, mt1=N_LAK22, n2=None, mt2=N_SF6HT, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
-                                    label="AC254-050-B")
+                                    label="AC254-050-B", wavelength=wavelength, wavelengthRef=0.5876)
 
 
 class AC508_075_B(AchromatDoubletLens):
@@ -700,11 +700,11 @@ class AC508_075_B(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC508_075_B,self).__init__(fa=75.0,fb=65.7, R1=51.8,R2=-93.11, R3=-291.07, 
-                                    tc1=12.0, tc2=5.0, te=9.2, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    tc1=12.0, tc2=5.0, te=9.2, n1=None, mt1=N_LAK22, n2=None, mt2=N_SF6HT, diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
-                                    label="AC508-075-B")
+                                    label="AC508-075-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_080_B(AchromatDoubletLens):
     """ AC508_080_B
@@ -731,11 +731,11 @@ class AC508_080_B(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC508_080_B,self).__init__(fa=80.0,fb=69.5, R1=51.8,R2=-44.6, R3=-312.6, 
-                                    tc1=16.0, tc2=2.0, te=10.3, n1=N_BAF10.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
+                                    tc1=16.0, tc2=2.0, te=10.3, n1=None, mt1=N_BAF10, n2=None, mt2=N_SF6HT, diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
-                                    label="AC508-080-B")
+                                    label="AC508-080-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_100_B(AchromatDoubletLens):
     """ AC508_100_B
@@ -763,10 +763,10 @@ class AC508_100_B(AchromatDoubletLens):
     """
 
     def __init__(self):
-        super(AC508_100_B, self).__init__(fa=100.0,fb=91.5, R1=65.8,R2=-56.0, R3=-280.6,
+        super(AC508_100_B,self).__init__(fa=100.0,fb=91.5, R1=65.8,R2=-56.0, R3=-280.6, 
                                     tc1=13.0, tc2=2.0, te=8.7, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
-                                    label="AC508-100-B")
+                                    label="AC508-100-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_150_B(AchromatDoubletLens):
     """ AC508_150_B
@@ -794,10 +794,10 @@ class AC508_150_B(AchromatDoubletLens):
     """
 
     def __init__(self):
-        super(AC508_150_B, self).__init__(fa=150.0,fb=145.3, R1=112.2,R2=-95.9, R3=-325.1,
+        super(AC508_150_B,self).__init__(fa=150.0,fb=145.3, R1=112.2,R2=-95.9, R3=-325.1, 
                                     tc1=8.2, tc2=5.0, te=9.3, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
-                                    label="AC508-150-B")
+                                    label="AC508-150-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_200_B(AchromatDoubletLens):
     """ AC508_200_B
@@ -824,9 +824,9 @@ class AC508_200_B(AchromatDoubletLens):
     More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259
     """
 
-    def __init__(self):
+    def __init__(self, wavelength=None):
         super(AC508_200_B,self).__init__(fa=200.0,fb=193.2, R1=134.0,R2=-109.2, R3=-515.2, 
-                                    tc1=8.2, tc2=5.0, te=10.1, n1=None, mat1=N_LAK22, n2=None, mat2=N_SF6HT, diameter=50.8,
+                                    tc1=8.2, tc2=5.0, te=10.1, n1=N_LAK22.n(0.855), n2=N_SF6HT.n(0.855), diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-200-B", wavelength=wavelength, wavelengthRef=0.855)
 
