@@ -864,34 +864,39 @@ class ImagingPath(MatrixGroup):
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
         """
+
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
+        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
+
         if raysList is None:
             raysList = []
         if rays is not None:
             raysList.append(rays)
 
         if len(raysList) == 0:
-            warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
+                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
 
-            rays = []
-            principalRay = self.principalRay()
-            axialRay = self.axialRay()
+            else:
+                warnings.warn('No rays were provided for the display. Using principal and axial rays.')
 
-            if principalRay is not None:
-                rays.append(principalRay) 
-            if axialRay is not None:
-                rays.append(axialRay)
+                rays = []
+                principalRay = self.principalRay()
+                axialRay = self.axialRay()
 
-            if len(rays) == 0:
-                warnings.warn('Principal and axial rays are not defined for this system. '
-                              'Using ObjectRays with a diameter of 10.')
-                rays = ObjectRays(10, halfAngle=0.1, T=5)
+                if principalRay is not None:
+                    rays.append(principalRay)
+                if axialRay is not None:
+                    rays.append(axialRay)
+
+                if len(rays) == 0:
+                    warnings.warn('Principal and axial rays are not defined for this system. '
+                                  'Using default ObjectRays.')
+                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
 
             raysList.append(rays)
-
-        if limitObjectToFieldOfView is not None:
-            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
-        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
-        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
                             backend='matplotlib', display3D=False)
@@ -915,26 +920,39 @@ class ImagingPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
+
+        if limitObjectToFieldOfView is not None:
+            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
+        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
+
         if raysList is None:
             raysList = []
         if rays is not None:
             raysList.append(rays)
 
         if len(raysList) == 0:
-            rays = []
-            principalRay = self.principalRay()
-            axialRay = self.axialRay()
-            if principalRay is not None:
-                rays.append(principalRay) 
-            if axialRay is not None:
-                rays.append(axialRay)
+            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
+                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+                warnings.warn('No rays were provided for the display. Using a default ObjectRays.')
+            else:
+                warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+
+                rays = []
+                principalRay = self.principalRay()
+                axialRay = self.axialRay()
+
+                if principalRay is not None:
+                    rays.append(principalRay)
+                if axialRay is not None:
+                    rays.append(axialRay)
+
+                if len(rays) == 0:
+                    warnings.warn('Principal and axial rays are not defined for this system. '
+                                  'Using default ObjectRays.')
+                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
 
             raysList.append(rays)
-
-        if limitObjectToFieldOfView is not None:
-            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
-        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
-        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
                             backend='matplotlib', display3D=False, filepath=filePath)
