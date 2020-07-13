@@ -44,7 +44,7 @@ maxHeight=0.5
 inputRays = RandomLambertianRays(yMax=maxHeight, yMin=minHeight, maxCount=nRays)
 path3 = ImagingPath()
 path3.append(System4f(f1=50, diameter1=30, f2=50, diameter2=50))
-path3.append(Aperture(diameter=10, label='Camera'))
+path3.append(Aperture(diameter=20, label='Camera'))
 outputRays = path3.traceManyThrough(inputRays, progress=False)
 efficiency = 100*outputRays.count/inputRays.count
 path3.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
