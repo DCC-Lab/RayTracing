@@ -929,3 +929,22 @@ class ImagingPath(MatrixGroup):
                      onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
                      filePath=filePath)
+
+    def displayWithObject(self, diameter, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+        """ Display the optical system and trace the rays.
+
+        Parameters
+        ----------
+        diameter : float
+            Diameter of the object.
+        removeBlocked : bool (Optional)
+            If True, the blocked rays are removed (default=False)
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+        """
+
+        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber)
+
+        self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
+                     onlyPrincipalAndAxialRays=False,
+                     limitObjectToFieldOfView=False)
