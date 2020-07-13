@@ -867,7 +867,8 @@ class ImagingPath(MatrixGroup):
 
         if limitObjectToFieldOfView is not None:
             self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
-        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        if onlyPrincipalAndAxialRays is not None:
+            self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
         self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
         if raysList is None:
@@ -923,7 +924,8 @@ class ImagingPath(MatrixGroup):
 
         if limitObjectToFieldOfView is not None:
             self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
-        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        if onlyPrincipalAndAxialRays is not None:
+            self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
         self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
         if raysList is None:
