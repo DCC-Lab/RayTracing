@@ -97,6 +97,9 @@ class AchromatDoubletLens(MatrixGroup):
                 self.n1=self.mat1.n(wavelengthRef)
                 self.n2=self.mat2.n(wavelengthRef)
 
+        if self.n1 is None or self.n2 is None:
+            raise ValueError("n1 or n2 not set")
+
         elements = []
         elements.append(DielectricInterface(n1=1, n2=self.n1, R=R1, diameter=diameter))
         elements.append(Space(d=tc1, n=self.n1))
