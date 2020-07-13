@@ -20,8 +20,8 @@ path1.append(Aperture(diameter=10, label='Camera'))
 outputRays = path1.traceManyThrough(inputRays, progress=False)
 efficiency = 100*outputRays.count/inputRays.count
 path1.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
-path1.reportEfficiency()
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+path1.reportEfficiency()
 
 ###
 nRays = 100000
