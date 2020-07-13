@@ -768,7 +768,7 @@ class ImagingPath(MatrixGroup):
 
         principal = self.principalRay()
         axial = self.axialRay()
-        Iap = abs(self.lagrangeInvariant())
+        Zhe = abs(self.lagrangeInvariant())
 
         if emissionHalfAngle is not None:
             maxAngle = emissionHalfAngle
@@ -796,19 +796,19 @@ class ImagingPath(MatrixGroup):
             Iar = self.opticalInvariant(axial, ray)
             outputRay = self.traceThrough(ray)
 
-            if abs(Irp) > Iap or abs(Iar) > Iap:
-                expectedBlocked.append((Irp/Iap, Iar/Iap))
+            if abs(Irp) > Zhe or abs(Iar) > Zhe:
+                expectedBlocked.append((Irp/Zhe, Iar/Zhe))
                 continue
 
             if outputRay.isBlocked:
-                vignettedBlocked.append((Irp/Iap, Iar/Iap))
+                vignettedBlocked.append((Irp/Zhe, Iar/Zhe))
                 vignettePositions.append(outputRay.z)
             else:
-                notBlocked.append((Irp/Iap, Iar/Iap))
+                notBlocked.append((Irp/Zhe, Iar/Zhe))
 
         print("Optical System Properties for {0}".format(self.label))
         print("---------------------------------------------------")
-        print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(Iap, principal.y, axial.theta))
+        print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(Zhe, principal.y, axial.theta))
         print(" Object-side NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
         print(" Field of view is {0:.2f} mm".format(self.fieldOfView()))        
         print("\nSource Properties")
@@ -817,10 +817,10 @@ class ImagingPath(MatrixGroup):
         print("\nEfficiency")
         print("----------")
         print(" Collection efficiency from Monte Carlo: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/sourceRays.maxCount, 2*maxHeight, maxAngle))
-        print(" Collection efficiency from ratio of system to source invariants: {0:.1f}%".format(Iap/Is*100))
+        print(" Collection efficiency from ratio of system to source invariants: {0:.1f}%".format(Zhe/Is*100))
         stopPosition, stopDiameter = self.apertureStop()
         print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
-        print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(Is/Iap))
+        print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(Is/Zhe))
         print("\nVignetting")
         print("----------")
         print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
