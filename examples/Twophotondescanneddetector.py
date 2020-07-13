@@ -10,12 +10,15 @@ Therefore,  it is of great importance to find a well-sized detector that fits in
 
 #How to optimize the detector size ?
 
+
+
+###
 nRays = 100000
 minHeight=-0.5
 maxHeight=0.5
 inputRays = RandomLambertianRays(yMax=maxHeight, yMin=minHeight, maxCount=nRays)
 path1 = ImagingPath()
-path1.append(System4f(f1=25, diameter1=25, f2=50, diameter2=50))
+path1.append(System4f(f1=75, diameter1=75, f2=100, diameter2=100))
 path1.append(Aperture(diameter=0.5, label='Camera'))
 outputRays = path1.traceManyThrough(inputRays, progress=False)
 efficiency = 100*outputRays.count/inputRays.count
@@ -29,7 +32,7 @@ minHeight=-0.5
 maxHeight=0.5
 inputRays = RandomLambertianRays(yMax=maxHeight, yMin=minHeight, maxCount=nRays)
 path2 = ImagingPath()
-path2.append(System4f(f1=75, diameter1=75, f2=100, diameter2=100))
+path2.append(System4f(f1=25, diameter1=25, f2=50, diameter2=50))
 path2.append(Aperture(diameter=0.5, label='Camera'))
 outputRays = path2.traceManyThrough(inputRays, progress=False)
 efficiency = 100*outputRays.count/inputRays.count
