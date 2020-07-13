@@ -1,4 +1,5 @@
 import math
+import warnings
 
 """ Two constants: deg and rad to quickly convert to degrees
 or radians with angle*degPerRad or angle*radPerDeg """
@@ -32,3 +33,14 @@ def areAbsolutelyNotEqual(left, right, epsilon=1e-3):
 
 def areRelativelyNotEqual(left, right, epsilon=1e-3):
     return not areRelativelyAlmostEqual(left, right, epsilon)
+
+
+def deprecated(reason: str):
+    def deprecatedFunc(func):
+        def wrapper(*args, **kwargs):
+            warnings.warn(reason, DeprecationWarning)
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return deprecatedFunc

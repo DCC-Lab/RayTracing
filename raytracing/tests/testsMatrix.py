@@ -1,5 +1,5 @@
 import envtest  # modifies path
-from subprocess import check_output
+import subprocess
 
 from raytracing import *
 
@@ -382,15 +382,15 @@ class TestMatrix(envtest.RaytracingTestCase):
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallelNoOutput(self):
-        output = check_output(sys.executable + " traceManyThroughInParallelNoOutput.py", universal_newlines=True)
-        self.assertEqual(output, "")
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True, universal_newlines=True)
+        self.assertEqual(processComplete.stdout, "")
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallelWithOutput(self):
-        output = check_output(sys.executable + " traceManyThroughInParallelWithOutput.py", universal_newlines=True)
-        self.assertEqual(output.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"], capture_output=True, universal_newlines=True)
+        self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
     def testPointsOfInterest(self):
         m = Matrix()
@@ -404,11 +404,11 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix(A=1, B=1, C=3, D=4)
         self.assertFalse(m.isImaging)
 
-    def testLagrangeInvariantSpace(self):
+    def testOpticalInvariantSpace(self):
         m = Space(d=10)
         self.assertIsNotNone(m)
-        before = m.lagrangeInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
-        after = m.lagrangeInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        before = m.opticalInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        after = m.opticalInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
         self.assertAlmostEqual(before, after)
 
     def testHasNoPower(self):
@@ -572,13 +572,11 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testDisplayHalfHeight(self):
         m = Matrix(apertureDiameter=10)
-        minSize = 2
-        self.assertEqual(m.displayHalfHeight(minSize), m.apertureDiameter / 2)
+        self.assertEqual(m.displayHalfHeight(), m.apertureDiameter / 2)
 
     def testDisplayHalfHeightInfiniteDiameter(self):
         m = Matrix(apertureDiameter=inf)
         self.assertEqual(m.displayHalfHeight(), 4)
-        self.assertEqual(m.displayHalfHeight(6), 6)
 
     def testEqualityNotSameClassInstance(self):
         m = Matrix()

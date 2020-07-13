@@ -51,6 +51,9 @@ class LaserPath(MatrixGroup):
         self.showPointsOfInterest = True
         self.showPointsOfInterestLabels = True
         self.showPlanesAcrossPointsOfInterest = True
+
+        self.figure = Figure(opticalPath=self)
+        self.design = self.figure.design
         super(LaserPath, self).__init__(elements=elements, label=label)
 
     def display(self, beams=None, comments=None):  # pragma: no cover
@@ -67,11 +70,8 @@ class LaserPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
-        if beams is None :
+        if beams is None:
             beams = [self.inputBeam]
 
-        figure = Figure(opticalPath=self)
-
-        figure.createFigure(title=self.label, comments=comments)
-
-        figure.displayGaussianBeam(beams=beams)
+        self.figure.displayGaussianBeam(beams=beams,
+                                        comments=comments, title=self.label, backend='matplotlib', display3D=False)

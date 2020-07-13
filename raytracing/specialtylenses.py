@@ -145,12 +145,13 @@ class AchromatDoubletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
-    # def effectiveFocalLengths(self, wavelength=None):
-    #     if wavelength is not None:
-    #         pass
-    #     else:
-    #         pass
+    @property
+    def surfaces(self) -> List[Interface]:
+        return [SphericalInterface(R=self.R1, L=self.tc1, n=self.n1),
+                SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
+                SphericalInterface(R=self.R3)]
 
+      
 class SingletLens(MatrixGroup):
     """
     General singlet lens with an effective focal length of f, back focal
@@ -196,6 +197,7 @@ class SingletLens(MatrixGroup):
 
     def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat=None, wavelengthRef=None,
                  url=None, label='', wavelength=None):
+
         self.f = f
         self.fb = fb
         self.R1 = R1
@@ -259,6 +261,11 @@ class SingletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    @property
+    def surfaces(self) -> List[Interface]:
+        return [SphericalInterface(R=self.R1, L=self.tc, n=self.n),
+                SphericalInterface(R=self.R2)]
+
 
 class Objective(MatrixGroup):
 
@@ -283,7 +290,7 @@ class Objective(MatrixGroup):
     """
     warningDisplayed = False
 
-    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification, fieldNumber, url=None, label=''):
         """ General microscope objective, approximately correct.
 
         We model the objective as an ideal lens with back focal point at the entrance
@@ -299,6 +306,8 @@ class Objective(MatrixGroup):
 
         self.f = f
         self.NA = NA
+        self.magnification = magnification
+        self.fieldNumber = fieldNumber
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
@@ -326,6 +335,9 @@ No guarantee that apertures and field of view will exactly \
 reproduce the objective."
             warnings.warn(msg, FutureWarning)
             Objective.warningDisplayed = True
+
+    def maximumOpticalInvariant(self):
+        return (self.fieldNumber/2)/self.magnification * self.NA
 
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
