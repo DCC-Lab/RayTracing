@@ -851,75 +851,20 @@ class ImagingPath(MatrixGroup):
         plt.show()
 
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
         """ Display the optical system and trace the rays.
+
         Parameters
         ----------
         rays : `Rays` instance
 
         raysList : list of `Rays` or list of list of `Ray`
-
-        removeBlocked : bool (Optional)
-            If True, the blocked rays are removed (default=False)
-        comments : string
-            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
-        """
-
-        if limitObjectToFieldOfView is not None:
-            self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
-        if onlyPrincipalAndAxialRays is not None:
-            self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
-        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
-
-        if raysList is None:
-            raysList = []
-        if rays is not None:
-            raysList.append(rays)
-
-        if len(raysList) == 0:
-            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
-                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
-
-            else:
-                warnings.warn('No rays were provided for the display. Using principal and axial rays.')
-
-                rays = []
-                principalRay = self.principalRay()
-                axialRay = self.axialRay()
-
-                if principalRay is not None:
-                    rays.append(principalRay)
-                if axialRay is not None:
-                    rays.append(axialRay)
-
-                if len(rays) == 0:
-                    warnings.warn('Principal and axial rays are not defined for this system. '
-                                  'Using default ObjectRays.')
-                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
-
-            raysList.append(rays)
-
-        self.figure.display(raysList=raysList, comments=comments, title=self.label,
-                            backend='matplotlib', display3D=False)
-
-    def saveFigure(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                   onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
-        """
-        The figure of the imaging path can be saved using this function.
-
-        Parameters
-        ----------
-        filePath : str or PathLike or file-like object
-            A path, or a Python file-like object, or possibly some backend-dependent object.
-            If filepath is not a path or has no extension, remember to specify format to
-            ensure that the correct backend is used.
         onlyPrincipalAndAxialRays : bool (Optional)
             If True, only the principal rays will appear on the plot (default=True)
         removeBlocked : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
-
         """
 
         if limitObjectToFieldOfView is not None:
@@ -936,7 +881,7 @@ class ImagingPath(MatrixGroup):
         if len(raysList) == 0:
             if not self.figure.designParams['onlyPrincipalAndAxialRays']:
                 rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
-                warnings.warn('No rays were provided for the display. Using a default ObjectRays.')
+
             else:
                 warnings.warn('No rays were provided for the display. Using principal and axial rays.')
 
@@ -958,3 +903,29 @@ class ImagingPath(MatrixGroup):
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
                             backend='matplotlib', display3D=False, filepath=filePath)
+
+    def saveFigure(self, filePath, rays=None, raysList=None, removeBlocked=True, comments=None,
+                   onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
+        """
+        The figure of the imaging path can be saved using this function.
+
+        Parameters
+        ----------
+        filePath : str or PathLike or file-like object
+            A path, or a Python file-like object, or possibly some backend-dependent object.
+            If filepath is not a path or has no extension, remember to specify format to
+            ensure that the correct backend is used.
+        rays : `Rays` instance
+        raysList : list of `Rays` or list of list of `Ray`
+        onlyPrincipalAndAxialRays : bool (Optional)
+            If True, only the principal rays will appear on the plot (default=True)
+        removeBlocked : bool (Optional)
+            If True, the blocked rays are removed (default=False)
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+        """
+
+        self.display(rays=rays, raysList=raysList, removeBlocked=removeBlocked, comments=comments,
+                     onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
+                     limitObjectToFieldOfView=limitObjectToFieldOfView,
+                     filePath=filePath)
