@@ -35,6 +35,19 @@ class MatrixGroup(Matrix):
         self._lastRayToBeTraced = None
         self._lastRayTrace = None
 
+    @property
+    def surfaces(self):
+        """ A list of interfaces that represents the element for drawing purposes 
+
+        We combine all interfaces into a single list of interfaces
+        """
+
+        allSurfaces = []
+        for element in self.elements:
+            allSurfaces.extend(element.surfaces)
+
+        return allSurfaces
+
     def append(self, matrix):
         r"""This function adds an element at the end of the path.
 
@@ -125,7 +138,6 @@ class MatrixGroup(Matrix):
         |               |
         |  0.000    1.000 |
          \             /
-
         f = +inf (afocal)
 
         It is possible to access a group with a slice key:
@@ -138,7 +150,6 @@ class MatrixGroup(Matrix):
         |               |
         | -0.100    0.000 |
          \             /
-
         f=10.000
 
         See Also
@@ -169,9 +180,10 @@ class MatrixGroup(Matrix):
         >>> from raytracing import *
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10), Aperture(100)])
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? True
+
         >>> aperture = system.pop(-1) # Removes the last element
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
-        Has finite diameter? True
         Has finite diameter? False
         """
         poppedElement = self.elements.pop(index)  # We pop the matrix in the list
@@ -198,18 +210,20 @@ class MatrixGroup(Matrix):
         >>> from raytracing import *
         >>> initialGroup = MatrixGroup([Space(10), Lens(10), Space(10)])
         >>> print(f"Initial 2f is imaging? {initialGroup.isImaging}")
+        Initial 2f is imaging? False
+
         >>> initialGroup.insert(0, MatrixGroup([Space(15), Lens(15), Space(15)]))
         >>> print(f"Final 4f is imaging? {initialGroup.isImaging}")
-        Initial 2f is imaging? False
         Final 4f is imaging? True
 
         Let's insert an aperture between two 2f systems with infinite diameters
         >>> from raytracing import *
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? False
+
         >>> system.insert(3, Aperture(50))
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
-        Has finite diameter? False
         Has finite diameter? True
 
         See Also
@@ -246,9 +260,10 @@ class MatrixGroup(Matrix):
         >>> from raytracing import *
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> print(f"Initial magnification: {system.magnification()}")
+        Initial magnification: (-1.0, -1.0)
+
         >>> system[3:] = MatrixGroup([Space(5), Lens(5), Space(5)])
         >>> print(f"Final magnification: {system.magnification()}")
-        Initial magnification: (-1.0, -1.0)
         Final magnification: (-0.5, -2.0)
 
         See Also
@@ -402,7 +417,7 @@ class MatrixGroup(Matrix):
                 planePosition = transferMatrix.L + distance
                 if planePosition != 0 and conjugate is not None:
                     magnification = conjugate.A
-                    if any([isclose(pos, planePosition) and isclose(mag, magnification) for pos, mag in planes]):
+                    if any([areAbsolutelyAlmostEqual(pos, planePosition) and areAbsolutelyAlmostEqual(mag, magnification) for pos, mag in planes]):
                         continue
                     else:
                         planes.append([planePosition, magnification])
@@ -435,7 +450,7 @@ class MatrixGroup(Matrix):
 
         """
         if not isinstance(inputRay, (Ray, GaussianBeam)):
-            raise TypeError("'inputRay' must be a Ray or a GaussianBeam.")
+            raise TypeError("'inputRay' must be a Ray or a GaussianBeam {0}".format(inputRay))
         ray = inputRay
         if ray != self._lastRayToBeTraced:
             rayTrace = [ray]
@@ -487,55 +502,6 @@ class MatrixGroup(Matrix):
             self.append(element)
 
         return self
-
-    def drawAt(self, z, axes, showLabels=True):  # pragma: no cover
-        """ Draw each element of this group """
-        for element in self.elements:
-            element.drawAt(z, axes)
-            element.drawAperture(z, axes)
-
-            if showLabels:
-                element.drawLabels(z, axes)
-            z += element.L
-
-    def drawPointsOfInterest(self, z, axes):  # pragma: no cover
-        """
-        Labels of general points of interest are drawn below the
-        axis, at 25% of the largest diameter.
-
-        AS and FS are drawn at 110% of the largest diameter
-        """
-        labels = {}  # Gather labels at same z
-
-        zElement = 0
-        # For the group as a whole, then each element
-        for pointOfInterest in self.pointsOfInterest(z=zElement):
-            zStr = "{0:3.3f}".format(pointOfInterest['z'])
-            label = pointOfInterest['label']
-            if zStr in labels:
-                labels[zStr] = labels[zStr] + ", " + label
-            else:
-                labels[zStr] = label
-
-        # Points of interest for each element
-        for element in self.elements:
-            pointsOfInterest = element.pointsOfInterest(zElement)
-
-            for pointOfInterest in pointsOfInterest:
-                zStr = "{0:3.3f}".format(pointOfInterest['z'])
-                label = pointOfInterest['label']
-                if zStr in labels:
-                    labels[zStr] = labels[zStr] + ", " + label
-                else:
-                    labels[zStr] = label
-            zElement += element.L
-
-        halfHeight = self.largestDiameter / 2
-        for zStr, label in labels.items():
-            z = float(zStr)
-            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                          xycoords='data', fontsize=12,
-                          ha='center', va='bottom')
 
     def __iter__(self):
         self.iteration = 0

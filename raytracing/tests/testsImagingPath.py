@@ -15,7 +15,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertEqual(path.fanAngle, 0.1)
         self.assertEqual(path.fanNumber, 9)
         self.assertEqual(path.rayNumber, 3)
-        self.assertEqual(path.precision, 0.001)
+        self.assertEqual(path.precision, 1e-6)
         self.assertEqual(path.maxHeight, 10000.0)
         self.assertTrue(path.showImages)
         self.assertTrue(path.showObject)
@@ -75,7 +75,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         space2 = Space(10, diameter=50)
         elements = [space, lens, space2]
         path = ImagingPath(elements)
-        self.assertTupleEqual(path.entrancePupil(), (None, None))
+        self.assertTupleEqual(path.entrancePupil(), (float("-inf"), float("+inf")))
 
     def testEntrancePupil(self):
         space = Space(2)
@@ -158,21 +158,21 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertAlmostEqual(path.imageSize(), imgSize, 2)
 
     def testSave(self):
-        filename = self.tempFilePath("test.png")
+        filePath = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.save(filename, comments=comments)
-        if not os.path.exists(filename):
+        path.saveFigure(filePath=filePath, comments=comments)
+        if not os.path.exists(filePath):
             self.fail("No file saved (with comments)")
-        os.remove(filename)
+        os.remove(filePath)
 
     def testSaveWithoutComments(self):
-        filename = self.tempFilePath("test.png")
+        filePath = self.tempFilePath("test.png")
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.save(filename)
-        if not os.path.exists(filename):
+        path.saveFigure(filePath=filePath)
+        if not os.path.exists(filePath):
             self.fail("No file saved (without comments)")
-        os.remove(filename)
+        os.remove(filePath)
 
     def testChiefRayNoApertureStop(self):
         path = ImagingPath(System2f(10))
@@ -209,12 +209,16 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
     def testMarginalRaysNoApertureStop(self):
         path = ImagingPath(System4f(10, 10))
-        self.assertIsNone(path.marginalRays())
+        ray1, ray2 = path.marginalRays()
+        self.assertIsNone(ray1)
+        self.assertIsNone(ray2)
 
     def testMarginalRaysIsImaging(self):
         path = ImagingPath(System4f(10, 10))
         path.append(Aperture(10))
-        self.assertIsNone(path.marginalRays())
+        ray1, ray2 = path.marginalRays()
+        self.assertIsNone(ray1)
+        self.assertIsNone(ray2)
 
     def testMarginalRays(self):
         path = ImagingPath(System2f(10, 10))
@@ -245,29 +249,49 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertEqual(ray.y, 0)
         self.assertEqual(ray.theta, 5)
 
-    def testLagrangeImagingPathNoAperture(self):
+    def testNA(self):
+        path = ImagingPath(System2f(f=1000, diameter=20))
+        self.assertAlmostEqual(path.NA(), 0.01,4)
+
+    def testLargeNA(self):
+        path = ImagingPath(System2f(f=10, diameter=200))
+        self.assertTrue(path.NA() <= 1.0)
+
+    def test4fNA(self):
+        path = ImagingPath(System4f(f1=100, diameter1=20, f2=40, diameter2=20))
+        self.assertAlmostEqual(path.NA(), 0.1, 3)
+
+    def testfNumber(self):
+        path = ImagingPath(System2f(f=10, diameter=10))
+        self.assertAlmostEqual(path.fNumber(), 1, 4)
+
+    def testSmallfNumber(self):
+        path = ImagingPath(System2f(f=10, diameter=2))
+        self.assertAlmostEqual(path.fNumber(), 5, 4)
+
+    def testLagrangeImagingPathNoApertureIsInfinite(self):
         path = ImagingPath()
         path.append(Space(d=50))
         path.append(Lens(f=50))
         path.append(Space(d=50))
-        with self.assertRaises(ValueError):
-            path.lagrangeInvariant(z=0)
+        self.assertEqual(path.lagrangeInvariant(), float("+inf"))
 
-    def testLagrangeImagingPathNoFieldStop(self):
+    def testLagrangeImagingPathNoFieldStopIsInfinite(self):
         path = ImagingPath()
         path.append(Space(d=50))
         path.append(Lens(f=50, diameter=50))
         path.append(Space(d=50))
-        with self.assertRaises(ValueError):
-            path.lagrangeInvariant(z=0)
+        self.assertEqual(path.lagrangeInvariant(), float("+inf"))
 
     def testLagrangeImagingPath(self):
         path = ImagingPath()
         path.append(Space(d=50))
         path.append(Lens(f=50, diameter=50))
         path.append(Space(d=50, diameter=40))
-        before = path.lagrangeInvariant(z=0)
-        after = path.lagrangeInvariant(z=150)
+        principalRay = path.principalRay()
+        axialRay = path.axialRay()
+        before = path.opticalInvariant(ray1=axialRay, ray2=principalRay, z=0)
+        after = path.opticalInvariant(ray1=axialRay, ray2=principalRay, z=150)
         self.assertAlmostEqual(before, after)
 
     def testLagrangeInvariantBothNotNone(self):
@@ -277,8 +301,8 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path.append(Space(d=50))
         path.append(Lens(f=50, diameter=50))
         path.append(Space(d=50, diameter=40))
-        before = path.lagrangeInvariant(ray1, ray2, 10)
-        after = path.lagrangeInvariant(ray1, ray2, 70)
+        before = path.opticalInvariant(ray1, ray2, 10)
+        after = path.opticalInvariant(ray1, ray2, 70)
         self.assertAlmostEqual(before, after)
 
     def testChiefRayInfiniteFOVNoY(self):

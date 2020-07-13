@@ -1,11 +1,8 @@
-from typing import Any, Union
-
-from .matrixgroup import *
-
-from .ray import *
+from typing import Any, Union, List
 from .figure import Figure
-import sys
-import warnings
+from .matrixgroup import *
+from .ray import *
+import numpy as np
 
 
 class ImagingPath(MatrixGroup):
@@ -53,9 +50,8 @@ class ImagingPath(MatrixGroup):
     showPlanesAcrossPointsOfInterest : bool
         If True, the planes across the points of interests will be shown (default=True)
 
-
-        Examples
-        --------
+    Examples
+    --------
         >>> from raytracing import *
         >>> path = ImagingPath() # define an imaging path
         >>> #set the desire properties
@@ -78,7 +74,7 @@ class ImagingPath(MatrixGroup):
                     :align: center
     """
 
-    def __init__(self, elements=None, label=""):
+    def __init__(self, elements: list = None, label=""):
 
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
@@ -87,7 +83,7 @@ class ImagingPath(MatrixGroup):
         self.rayNumber = 3  # number of points on object
 
         # Constants when calculating field stop
-        self.precision = 0.001
+        self.precision = 0.000001
         self.maxHeight = 10000.0
 
         # Display properties
@@ -144,7 +140,7 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print(path.chiefRay())
-        /       \
+         /       \
         |  6.668  |
         |         |
         | -0.333  |
@@ -180,7 +176,7 @@ class ImagingPath(MatrixGroup):
             return None
 
         if y is None:
-            y = self.fieldOfView()/2
+            y = self.halfFieldOfView()
             if abs(y) == float("+inf"):
                 raise ValueError("Must provide y when the field of view is infinite")
 
@@ -196,6 +192,12 @@ class ImagingPath(MatrixGroup):
         principalRay : object of Ray class
             The properties (i.e. height and the angle of the principal ray).
 
+        Notes
+        -----
+        Because of round off errors, we need to double check that the ray 
+        really goes through. We lower the height until it does if it 
+        initially does not.
+
         See Also
         --------
         raytracing.ImagingPath.marginalRays
@@ -204,13 +206,11 @@ class ImagingPath(MatrixGroup):
 
         """
 
-        objectEdge = self.fieldOfView()/2
+        objectEdge = self.halfFieldOfView()
         if objectEdge == float("+inf"):
             return None
-
-        principalRay = self.chiefRay(y=objectEdge)
-        principalRay.y -= 0.001 #FIXME: be more intelligent than this.
-        return principalRay
+        
+        return self.chiefRay(y=objectEdge)
 
     def marginalRays(self, y=0):
         r"""This function calculates the marginal rays for a height y at object.
@@ -280,14 +280,14 @@ class ImagingPath(MatrixGroup):
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         if stopPosition is None:
-            return None  # No aperture stop -> no marginal rays
+            return None, None  # No aperture stop -> no marginal rays
 
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
         if transferMatrixToApertureStop.isImaging:
-            return None
+            return None, None
 
         thetaUp = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
@@ -316,6 +316,68 @@ class ImagingPath(MatrixGroup):
         rayUp, rayDown = self.marginalRays()
         return rayUp
 
+    def fNumber(self):
+        """This function returns the f-number of the component or system
+        by dividing the diameter of the entrance pupil by the effective
+        focal length of the system.
+
+        It is not always appreciated that the f-number of *an optical system*
+        is meaningful mostly in "infinite conjugate" situations, that is, 
+        when either the object or the image is at infinity. In practice, this means
+        with photography and telescopes for example. On the other hand, 
+        finite conjugate systems are better described by their NA.
+        For elements, we calculate the f-number of lenses by assuming they
+        are used with an object at infinity. A system is designed as either a finite-conjugate 
+        system or an infinite-conjugate: this is a design decision.
+        See Smith "Modern Optical Engineering" Section 6.7 Apertures 
+        and Image Illumination.
+
+        Returns
+        -------
+        fNumber : float
+            
+
+        See Also
+        --------
+        raytracing.ImagingPath.axialRay
+        raytracing.ImagingPath.NA
+        """
+        (position, pupilDiameter) = self.entrancePupil()
+        (focalFront, focalBack) = self.effectiveFocalLengths()
+        if pupilDiameter is None:
+            return None
+
+        return focalFront/pupilDiameter
+
+    def NA(self):
+        """This function returns the numerical aperture of the component
+        or imaging system, which is the sin of the axial ray angle, times 
+        the index of refraction.
+
+        It is not always appreciated that the NA of an *optical system*
+        is meaningful mostly in "finite conjugate" situations, that is, 
+        when either the object and the image are at small, finite distances.
+        In practice, this means microscope objectives and 4f relays for example.
+        On the other hand, infinite conjugate systems are better described
+        by their f-number. A system is designed as either a finite-conjugate 
+        system or an infinite-conjugate: this is a design decision.
+        See Smith "Modern Optical Engineering" Section 6.7 Apertures 
+        and Image Illumination.
+
+
+        Returns
+        -------
+        NA : float
+            
+
+        See Also
+        --------
+        raytracing.ImagingPath.axialRay
+        raytracing.ImagingPath.fNumber
+        """
+        axialRay = self.axialRay()
+        return self.frontIndex * np.sin(axialRay.theta)
+
     def apertureStop(self):
         """The "aperture stop" is an aperture in the system that limits
         the cone of angles originating from zero height at the object plane.
@@ -341,8 +403,9 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('The position of aperture stop is:', path.apertureStop()[0])
-        >>> print('The diameter of aperture stop is:',path.apertureStop()[1])
         The position of aperture stop is: 20.0
+
+        >>> print('The diameter of aperture stop is:',path.apertureStop()[1])
         The diameter of aperture stop is: 5
 
         Also, as the following, you can use display() to follow the rays in the imaging path and view the
@@ -358,9 +421,9 @@ class ImagingPath(MatrixGroup):
 
         See Also
         --------
-        rayreacing.ImagingPath.apertureStopPosition
+        raytracing.ImagingPath.apertureStopPosition
         raytracing.ImagingPath.apertureStopDiameter
-        rayreacing.ImagingPath.fieldStop
+        raytracing.ImagingPath.fieldStop
 
         Notes
         -----
@@ -430,7 +493,10 @@ class ImagingPath(MatrixGroup):
                 return None, None
             else:
                 (Mt, Ma) = matrixToPupil.magnification()
-                return (-pupilPosition, stopDiameter / abs(Mt))
+                if Mt != 0:
+                    return (-pupilPosition, stopDiameter / abs(Mt))
+                else:
+                    return (-pupilPosition, float("+inf"))
         else:
             return (None, None)
 
@@ -445,7 +511,7 @@ class ImagingPath(MatrixGroup):
         Returns
         -------
         fieldStop : (float,float)
-            the outpu is the (position, diameter) of the field stop.
+            the output is the (position, diameter) of the field stop.
             If there are no elements of finite diameter (i.e. all
             optical elements are infinite in diameters), then there
             is no field stop and no aperture stop in the system
@@ -463,8 +529,9 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('The position of field stop is:', path.apertureStop()[0])
-        >>> print('The diameter of field stop is:',path.apertureStop()[1])
         The position of field stop is: 20.0
+
+        >>> print('The diameter of field stop is:',path.apertureStop()[1])
         The diameter of field stop is: 5
 
         Also, as the following, you can use display() to follow the rays in the imaging path and view the
@@ -528,16 +595,54 @@ class ImagingPath(MatrixGroup):
                     fieldStopDiameter = ray.apertureDiameter
                     break
 
-        return (fieldStopPosition, fieldStopDiameter)
+        return fieldStopPosition, fieldStopDiameter
 
     def fieldOfView(self):
-        """The field of view is the maximum object height
-        visible until its chief ray is blocked by the field stop.
+        """The field of view is the length visible before the chief
+        rays on either side are blocked by the field stop.
 
         Returns
         -------
         fieldOfView : float
-            maximum object height that can be visible at the image plane
+            length of object that can be visible at the image plane.
+            It can be infinity if there is no field stop.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> path = ImagingPath() # define an imaging path
+        >>> path.objectHeight=6
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=20))
+        >>> path.append(Lens(f=20,diameter=5,label="f=20"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=10))
+        >>> print('field of view :', path.fieldOfView())
+        field of view : 6.668181337416174
+
+        Notes
+        -----
+        Strategy: take ray at various heights from object and
+        aim at center of pupil (chief ray from that point)
+        until ray is blocked. It is possible to have finite
+        diameter elements but still an infinite field of view
+        and therefore no Field stop.
+
+        """
+
+        return 2*self.halfFieldOfView() 
+
+    def halfFieldOfView(self):
+        """The half field of view is the maximum height
+        visible before its chief ray is blocked by the field stop.
+        A ray at that height is the principal ray, of "highest chief ray".
+
+        Returns
+        -------
+        halfFieldOfView : float
+            maximum ray height that can still be visible at the image plane.
+            It can be infinity if there is no field stop.
 
         Examples
         --------
@@ -573,7 +678,7 @@ class ImagingPath(MatrixGroup):
         y = 0.0
         chiefRay = Ray(y=0, theta=0)
         wasBlocked = False
-        while abs(dy) > self.precision or not wasBlocked:
+        while abs(dy) > self.precision or wasBlocked:
             chiefRay = self.chiefRay(y=y)
             chiefRayTrace = self.trace(chiefRay)
             outputChiefRay = chiefRayTrace[-1]
@@ -588,7 +693,7 @@ class ImagingPath(MatrixGroup):
             if abs(y) > self.maxHeight and not wasBlocked:
                 return float("+Inf")
 
-        return chiefRay.y * 2.0
+        return chiefRay.y
 
     def imageSize(self):
         """The image size is the object field of view multiplied by magnification.
@@ -621,134 +726,233 @@ class ImagingPath(MatrixGroup):
         magnification = conjugateMatrix.A
         return abs(fieldOfView * magnification)
 
-    def lagrangeInvariant(self, ray1=None, ray2=None, z=0):
+    def lagrangeInvariant(self):
         """
-        The Lagrange invariant is a quantity that is conserved
-        for any two rays in the system. It is often seen with the
-        chief ray and marginal ray in an imaging system, but it is
-        actually very general and any two rays can be used.
-        In ImagingPath(), if no rays are provided, the chief and
-        marginal rays are used.
-
-        Parameters
-        ----------
-        ray1 : object of Ray class
-            A ray at height y1 and angle theta1 (default=None)
-        ray2 : object of Ray class
-            A ray at height y2 and angle theta2 (default=None)
-        z : float
-            A distance that shows propagation length (default=0)
+        The lagrange invariant is the optical invariant calculated
+        with the principal and axial rays. It represents the maximum
+        optical invariant for which both rays can propagate unimpeded.
 
         Returns
         -------
         lagrangeInvariant : float
-            The value of the lagrange invariant constant for ray1 and ray2
-
-        Examples
-        --------
-        Since there is no input for the function, the lagrange invariant value is
-        calculated for chief and marginal rays.
-
-        >>> from raytracing import *
-        >>> path = ImagingPath() # define an imaging path
-        >>> # use append() to add elements to the imaging path
-        >>> path.append(Space(d=10))
-        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
-        >>> path.append(Space(d=30))
-        >>> path.append(Lens(f=20,diameter=15,label="f=20"))
-        >>> path.append(Space(d=20))
-        >>> print('lagrange invariant :', path.lagrangeInvariant())
-        lagrange invariant : 2.5004713529837317
-
-        See Also
-        --------
-        raytracing.Matrix.lagrangeInvariant
-
-        Notes
-        -----
-        This quantity is L = n (y1 theta2 - y2 theta1)
+            The value of the lagrange invariant for the system
 
         """
 
-        if ray1 is None:
-            (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
-            if apertureStopPosition is None:
-                raise ValueError("There is no aperture stop in this ImagingPath and therefore no marginal ray")
+        ray1 = self.axialRay()
+        ray2 = self.principalRay()
 
-            (ray1, dummy) = self.marginalRays()
+        if ray1 is None or ray2 is None:
+            return float("+inf")
 
-        if ray2 is None:
-            (fieldStopPosition, fieldStopDiameter) = self.fieldStop()
-            if fieldStopPosition is None:
-                raise ValueError("There is no field stop in this ImagingPath and therefore no chief ray")
+        return self.opticalInvariant(ray1, ray2)
 
-            ray2 = self.chiefRay()
-
-        return super(ImagingPath, self).lagrangeInvariant(z=z, ray1=ray1, ray2=ray2)
-
-    def display(self, onlyPrincipalAndAxialRays=True,
-                removeBlockedRaysCompletely=False, comments=None,
-                limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
-        """ Display the optical system and trace the rays.
+    def reportEfficiency(self, objectDiameter=None, emissionHalfAngle=None, nRays=10000): #pragma: no cover
+        """
+        The collection efficiency of the optical system is computed and a report is printed.
+        By default, it is computed across the field of view, but a specific object diameter 
+        can be provided as welll as an emission half angle.
+        The analysis is based on representing each ray as a linear combination
+        of the principal and axial rays. If the coefficients are more than 1.0, the rays will
+        be blocked.  If they are both less than 1.0, they should propagated unblocked to the 
+        image unless there is vignetting.
 
         Parameters
         ----------
-        limitObjectToFieldOfView : bool (Optional)
-            If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight (default=True)
-        onlyPrincipalAndAxialRays : bool (Optional)
-            If True, only the principal and axial rays will appear on the plot (default=True)
-        removeBlockedRaysCompletely : bool (Optional)
+        objectDiameter : float
+            The size of the object for the efficiency reference. Default: field of view
+        nRays : int
+            Number of rays simulated to calculate efficiency.  Default: 10000
+        """
+        import matplotlib.patches as p
+
+        principal = self.principalRay()
+        axial = self.axialRay()
+        Iap = abs(self.lagrangeInvariant())
+
+        if emissionHalfAngle is not None:
+            maxAngle = emissionHalfAngle
+        else:
+            maxAngle = np.pi/2
+
+        if objectDiameter is not None:
+            maxHeight = objectDiameter/2
+        else:
+            maxHeight = principal.y
+
+        sourceRays = RandomUniformRays(yMax=maxHeight, 
+                                 yMin=-maxHeight,
+                                 thetaMax=maxAngle,
+                                 thetaMin=-maxAngle,
+                                 maxCount=nRays)
+        Is = maxHeight * maxAngle
+
+        expectedBlocked = []
+        notBlocked = []
+        vignettedBlocked = []
+        vignettePositions = []
+        for ray in sourceRays:
+            Irp = self.opticalInvariant(ray, principal)
+            Iar = self.opticalInvariant(axial, ray)
+            outputRay = self.traceThrough(ray)
+
+            if abs(Irp) > Iap or abs(Iar) > Iap:
+                expectedBlocked.append((Irp/Iap, Iar/Iap))
+                continue
+
+            if outputRay.isBlocked:
+                vignettedBlocked.append((Irp/Iap, Iar/Iap))
+                vignettePositions.append(outputRay.z)
+            else:
+                notBlocked.append((Irp/Iap, Iar/Iap))
+
+        print("Optical System Properties for {0}".format(self.label))
+        print("---------------------------------------------------")
+        print(" Lagrange invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ 1/2 FOV ⨉ NA".format(Iap, principal.y, axial.theta))
+        print(" Object-side NA is {0:.2f}, and f/# is {1:.2f} ".format(self.NA(), self.fNumber()))
+        print(" Field of view is {0:.2f} mm".format(self.fieldOfView()))        
+        print("\nSource Properties")
+        print("-------------------")
+        print(" Object/source equivalent invariant: {0:.2f} mm = {1:.2f} mm ⨉ {2:.2f} ≈ height ⨉ half-angle".format(Is, maxHeight, maxAngle))
+        print("\nEfficiency")
+        print("----------")
+        print(" Collection efficiency from Monte Carlo: {0:.1f}% of ±{2:.2f} radian, over field diameter of {1:.1f} mm".format(100*len(notBlocked)/sourceRays.maxCount, 2*maxHeight, maxAngle))
+        print(" Collection efficiency from ratio of system to source invariants: {0:.1f}%".format(Iap/Is*100))
+        stopPosition, stopDiameter = self.apertureStop()
+        print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
+        print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(Is/Iap))
+        print("\nVignetting")
+        print("----------")
+        print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+        if len(vignettedBlocked) >= 2:
+            print("  Loss to vignetting: {0:.1f}%".format(100*len(vignettedBlocked)/(len(vignettedBlocked)+len(notBlocked))))
+            print("  Vignetting is due to blockers at positions: {0}".format(set(vignettePositions)))
+        else:
+            print("  No losses to vignetting")
+
+        fig, axis1 = plt.subplots(1)
+        fig.tight_layout(pad=4.0)
+        axis1.add_patch(p.Rectangle((-1,-1),2, 2, color=(0, 1.0, 0, 0.5), lw=3, fill=False,
+                              transform=axis1.transData, clip_on=True))
+
+        (x,y) = list(zip(*notBlocked))
+        plt.scatter(x,y, color=(0,1,0), marker='.',label="Transmitted")
+        if len(vignettedBlocked) >= 2:
+            (x,y) = list(zip(*vignettedBlocked))
+            plt.scatter(x,y, color=(1,0,0), marker='.',label="Vignetted")
+        (x,y) = list(zip(*expectedBlocked))
+        plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
+        axis1.set_xlabel("${I_{rp}}/{I_{ap}}$\n\nFigure: Each point is a ray emitted from the source.")
+        axis1.set_ylabel("${I_{ar}}/{I_{ap}}$")
+        axis1.set_xlim(-2,2)
+        axis1.set_ylim(-2,2)
+        axis1.set_aspect('equal')
+        axis1.legend(loc="upper right")
+        plt.show()
+
+    def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
+        """ Display the optical system and trace the rays.
+        Parameters
+        ----------
+        rays : `Rays` instance
+
+        raysList : list of `Rays` or list of list of `Ray`
+
+        removeBlocked : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
-
         """
-        if onlyChiefAndMarginalRays is not None:
-            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
-                          "use onlyPrincipalAndAxialRays instead.")
-            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
+
         if limitObjectToFieldOfView is not None:
             self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
+        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
-        self.figure.createFigure(title=self.label, comments=comments)
+        if raysList is None:
+            raysList = []
+        if rays is not None:
+            raysList.append(rays)
 
-        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
-                            removeBlockedRaysCompletely=removeBlockedRaysCompletely)
+        if len(raysList) == 0:
+            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
+                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
 
-    def save(self, filepath,
-             onlyPrincipalAndAxialRays=True,
-             removeBlockedRaysCompletely=False, comments=None,
-             limitObjectToFieldOfView=None, onlyChiefAndMarginalRays=None):
+            else:
+                warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+
+                rays = []
+                principalRay = self.principalRay()
+                axialRay = self.axialRay()
+
+                if principalRay is not None:
+                    rays.append(principalRay)
+                if axialRay is not None:
+                    rays.append(axialRay)
+
+                if len(rays) == 0:
+                    warnings.warn('Principal and axial rays are not defined for this system. '
+                                  'Using default ObjectRays.')
+                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+
+            raysList.append(rays)
+
+        self.figure.display(raysList=raysList, comments=comments, title=self.label,
+                            backend='matplotlib', display3D=False)
+
+    def saveFigure(self, rays=None, raysList=None, removeBlocked=True, comments=None,
+                   onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
         """
         The figure of the imaging path can be saved using this function.
 
         Parameters
         ----------
-        filepath : str or PathLike or file-like object
+        filePath : str or PathLike or file-like object
             A path, or a Python file-like object, or possibly some backend-dependent object.
             If filepath is not a path or has no extension, remember to specify format to
             ensure that the correct backend is used.
-        limitObjectToFieldOfView : bool (Optional)
-            If True, the object will be limited to the field of view and
-            the calculated field of view will be used instead of the objectHeight(default=True)
         onlyPrincipalAndAxialRays : bool (Optional)
             If True, only the principal rays will appear on the plot (default=True)
-        removeBlockedRaysCompletely : bool (Optional)
+        removeBlocked : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
 
         """
-        if onlyChiefAndMarginalRays is not None:
-            warnings.warn(" Usage of onlyChiefAndMarginalRays is deprecated, "
-                          "use onlyPrincipalAndAxialRays instead.")
-            onlyPrincipalAndAxialRays = onlyChiefAndMarginalRays
+
         if limitObjectToFieldOfView is not None:
             self.figure.designParams['limitObjectToFieldOfView'] = limitObjectToFieldOfView
+        self.figure.designParams['onlyPrincipalAndAxialRays'] = onlyPrincipalAndAxialRays
+        self.figure.designParams['removeBlockedRaysCompletely'] = removeBlocked
 
-        self.figure.createFigure(title=self.label, comments=comments)
+        if raysList is None:
+            raysList = []
+        if rays is not None:
+            raysList.append(rays)
 
-        self.figure.display(onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
-                            removeBlockedRaysCompletely=removeBlockedRaysCompletely,
-                            filepath=filepath)
+        if len(raysList) == 0:
+            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
+                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+                warnings.warn('No rays were provided for the display. Using a default ObjectRays.')
+            else:
+                warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+
+                rays = []
+                principalRay = self.principalRay()
+                axialRay = self.axialRay()
+
+                if principalRay is not None:
+                    rays.append(principalRay)
+                if axialRay is not None:
+                    rays.append(axialRay)
+
+                if len(rays) == 0:
+                    warnings.warn('Principal and axial rays are not defined for this system. '
+                                  'Using default ObjectRays.')
+                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+
+            raysList.append(rays)
+
+        self.figure.display(raysList=raysList, comments=comments, title=self.label,
+                            backend='matplotlib', display3D=False, filepath=filePath)
