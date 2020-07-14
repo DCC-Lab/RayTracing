@@ -32,6 +32,7 @@ RandomLambertianRays
 
     
       ~RandomLambertianRays.count
+      ~RandomLambertianRays.rays
       ~RandomLambertianRays.thetaValues
       ~RandomLambertianRays.yValues
 

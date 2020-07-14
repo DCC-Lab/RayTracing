@@ -33,4 +33,5 @@ AC508\_750\_B
       ~AC508_750_B.determinant
       ~AC508_750_B.hasPower
       ~AC508_750_B.isImaging
+      ~AC508_750_B.largestDiameter
 

@@ -33,4 +33,5 @@ LA1274\_A
       ~LA1274_A.determinant
       ~LA1274_A.hasPower
       ~LA1274_A.isImaging
+      ~LA1274_A.largestDiameter
 

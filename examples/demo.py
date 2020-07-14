@@ -7,7 +7,7 @@ path.append(Space(d=10))
 path.append(Lens(f=5))
 path.append(Space(d=10))
 path.display()
-# path.save('Figure1.png')
+# path.saveFigure('Figure1.png')
 
 path = ImagingPath()
 path.label = "Object at 4f, image at 4f/3"
@@ -15,7 +15,7 @@ path.append(Space(d=20))
 path.append(Lens(f=5))
 path.append(Space(d=10))
 path.display()
-# path.save('Figure2.png')
+# path.saveFigure('Figure2.png')
 
 path = ImagingPath()
 path.label = "Object at 4f, virtual image at"
@@ -23,7 +23,7 @@ path.append(Space(d=2.5))
 path.append(Lens(f=5))
 path.append(Space(d=10))
 path.display()
-# path.save('Figure2.png')
+# path.saveFigure('Figure2.png')
 
 path = ImagingPath()
 path.label = "4f system"
@@ -33,7 +33,7 @@ path.append(Space(d=10))
 path.append(Lens(f=5))
 path.append(Space(d=5))
 path.display()
-# path.save('Figure3.png')
+# path.saveFigure('Figure3.png')
 
 path = ImagingPath()
 path.fanAngle = 0.1

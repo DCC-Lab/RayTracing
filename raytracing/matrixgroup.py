@@ -36,7 +36,7 @@ class MatrixGroup(Matrix):
         self._lastRayTrace = None
 
     def append(self, matrix):
-        """This function adds an element at the end of the path.
+        r"""This function adds an element at the end of the path.
 
          Parameters
          ----------
@@ -92,14 +92,87 @@ class MatrixGroup(Matrix):
         self.backVertex = transferMatrix.backVertex
 
     def __len__(self):
+        """
+        Returns the number of matrices in the group. Allows the use of len(MatrixGroup).
+        """
         return len(self.elements)
 
-    def __getitem__(self, item):
-        if isinstance(item, slice):  # If we get a slice, return a matrix group
-            return MatrixGroup(self.elements[item])
-        return self.elements[item]
+    def __getitem__(self, key):
+        r""" This function is used to obtain a single element.
+
+        Parameters
+        ----------
+        key : int or slice
+            If key is an int, returns a single matrix.
+            If it is a slice, returns the group starting from key.start to 
+            key.stop - 1. The stop index is excluded.
+
+        Returns
+        -------
+        element : Matrix
+            The requested matrix or matrix group, depending if key is an int
+            or a slice.
+
+        Examples
+        --------
+        It is possible to access a single matrix instance with an integer key:
+        >>> from raytracing import *
+        >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        >>> firstSpace = system[0]
+        >>> print(firstSpace)
+         /             \
+        |  1.000   10.000 |
+        |               |
+        |  0.000    1.000 |
+         \             /
+        f = +inf (afocal)
+
+        It is possible to access a group with a slice key:
+        >>> from raytracing import *
+        >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        >>> first2f = system[:3]
+        >>> print(first2f)
+         /             \
+        |  0.000   10.000 |
+        |               |
+        | -0.100    0.000 |
+         \             /
+        f=10.000
+
+        See Also
+        --------
+        raytracing.MatrixGroup.__setitem__
+        """
+        if isinstance(key, slice):  # If we get a slice, return a matrix group
+            return MatrixGroup(self.elements[key])
+
+        return self.elements[key]
 
     def pop(self, index: int):
+        """ This function is used to remove a matrix at a specific index.
+
+        Parameters
+        ----------
+        index : int
+            Index where the matrix is removed.
+
+        Returns
+        -------
+        poppedElement : Matrix
+            The removed matrix.
+
+        Examples
+        --------
+        Let's remove an aperture from a 4f system:
+        >>> from raytracing import *
+        >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10), Aperture(100)])
+        >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? True
+
+        >>> aperture = system.pop(-1) # Removes the last element
+        >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? False
+        """
         poppedElement = self.elements.pop(index)  # We pop the matrix in the list
         tempElements = self.elements[:]  # We "copy" the list
         self.elements.clear()  # We clear the attribute
@@ -108,6 +181,42 @@ class MatrixGroup(Matrix):
         return poppedElement
 
     def insert(self, index: int, element: Matrix):
+        """ This function is used to insert a matrix at a specific index.
+
+        Parameters
+        ----------
+        index : int
+            Index where the matrix is inserted.
+        element: Matrix
+            Matrix object to insert. Can be a single matrix or multiple matrices within a group.
+
+        Examples
+        --------
+        Let's insert a 2f system in front of another 2f system to build a 4f system
+
+        >>> from raytracing import *
+        >>> initialGroup = MatrixGroup([Space(10), Lens(10), Space(10)])
+        >>> print(f"Initial 2f is imaging? {initialGroup.isImaging}")
+        Initial 2f is imaging? False
+
+        >>> initialGroup.insert(0, MatrixGroup([Space(15), Lens(15), Space(15)]))
+        >>> print(f"Final 4f is imaging? {initialGroup.isImaging}")
+        Final 4f is imaging? True
+
+        Let's insert an aperture between two 2f systems with infinite diameters
+        >>> from raytracing import *
+        >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? False
+
+        >>> system.insert(3, Aperture(50))
+        >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? True
+
+        See Also
+        --------
+        raytracing.MatrixGroup.append
+        """
         if not isinstance(element, collections.Iterable):
             element = MatrixGroup([element])
         else:
@@ -118,7 +227,40 @@ class MatrixGroup(Matrix):
         for matrix in tempElements:
             self.append(matrix)
 
-    def __setitem__(self, key, value: Matrix):
+    def __setitem__(self, key, element: Matrix):
+        """ This function is used to substitute a single matrix 
+        or a whole group with a single or multiple matrices.
+
+        Parameters
+        ----------
+        key : int or slice
+            If key is an int, substitutes a single matrix.
+            If it is a slice, substitutes the group starting from 
+            key.start to key.stop - 1. The stop index is excluded.
+        element: Matrix
+            Matrix object or matrix group used for the substitution.
+
+        Examples
+        --------
+        Let's change the focal length of a 2f system in a 4f system
+
+        >>> from raytracing import *
+        >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        >>> print(f"Initial magnification: {system.magnification()}")
+        Initial magnification: (-1.0, -1.0)
+
+        >>> system[3:] = MatrixGroup([Space(5), Lens(5), Space(5)])
+        >>> print(f"Final magnification: {system.magnification()}")
+        Final magnification: (-0.5, -2.0)
+
+        See Also
+        --------
+        raytracing.MatrixGroup.__getitem__
+
+        Notes
+        -----
+        If the key is a slice, the step is not taken into account.
+        """
         if isinstance(key, slice):
             if key.step is not None and key.step != 1:
                 warnings.warn("Not using the step of the slice.", UserWarning)
@@ -127,13 +269,13 @@ class MatrixGroup(Matrix):
             if key.stop is None:
                 key = slice(key.start, len(self))
             self.elements = self.elements[:key.start] + self.elements[key.stop:]  # "Cut" the original list
-            self.insert(key.start, value)
+            self.insert(key.start, element)
         else:
             self.pop(key)
-            self.insert(key, value)
+            self.insert(key, element)
 
     def transferMatrix(self, upTo=float('+Inf')):
-        """ The transfer matrix between front edge and distance=upTo
+        r""" The transfer matrix between front edge and distance=upTo
 
         Parameters
         ----------
@@ -188,7 +330,7 @@ class MatrixGroup(Matrix):
         return transferMatrix
 
     def transferMatrices(self):
-        """ The list of Matrix() that corresponds to the propagation through 
+        r""" The list of Matrix() that corresponds to the propagation through
         this element (or group). For a Matrix(), it simply returns a list 
         with a single element [self].
         For a MatrixGroup(), it returns the transferMatrices for 
@@ -262,7 +404,10 @@ class MatrixGroup(Matrix):
                 planePosition = transferMatrix.L + distance
                 if planePosition != 0 and conjugate is not None:
                     magnification = conjugate.A
-                    planes.append([planePosition, magnification])
+                    if any([areAbsolutelyAlmostEqual(pos, planePosition) and areAbsolutelyAlmostEqual(mag, magnification) for pos, mag in planes]):
+                        continue
+                    else:
+                        planes.append([planePosition, magnification])
         return planes
 
     def trace(self, inputRay):
@@ -292,7 +437,7 @@ class MatrixGroup(Matrix):
 
         """
         if not isinstance(inputRay, (Ray, GaussianBeam)):
-            raise TypeError("'inputRay' must be a Ray or a GaussianBeam.")
+            raise TypeError("'inputRay' must be a Ray or a GaussianBeam {0}".format(inputRay))
         ray = inputRay
         if ray != self._lastRayToBeTraced:
             rayTrace = [ray]
@@ -344,55 +489,6 @@ class MatrixGroup(Matrix):
             self.append(element)
 
         return self
-
-    def drawAt(self, z, axes, showLabels=True):  # pragma: no cover
-        """ Draw each element of this group """
-        for element in self.elements:
-            element.drawAt(z, axes)
-            element.drawAperture(z, axes)
-
-            if showLabels:
-                element.drawLabels(z, axes)
-            z += element.L
-
-    def drawPointsOfInterest(self, z, axes):  # pragma: no cover
-        """
-        Labels of general points of interest are drawn below the
-        axis, at 25% of the largest diameter.
-
-        AS and FS are drawn at 110% of the largest diameter
-        """
-        labels = {}  # Gather labels at same z
-
-        zElement = 0
-        # For the group as a whole, then each element
-        for pointOfInterest in self.pointsOfInterest(z=zElement):
-            zStr = "{0:3.3f}".format(pointOfInterest['z'])
-            label = pointOfInterest['label']
-            if zStr in labels:
-                labels[zStr] = labels[zStr] + ", " + label
-            else:
-                labels[zStr] = label
-
-        # Points of interest for each element
-        for element in self.elements:
-            pointsOfInterest = element.pointsOfInterest(zElement)
-
-            for pointOfInterest in pointsOfInterest:
-                zStr = "{0:3.3f}".format(pointOfInterest['z'])
-                label = pointOfInterest['label']
-                if zStr in labels:
-                    labels[zStr] = labels[zStr] + ", " + label
-                else:
-                    labels[zStr] = label
-            zElement += element.L
-
-        halfHeight = self.largestDiameter / 2
-        for zStr, label in labels.items():
-            z = float(zStr)
-            axes.annotate(label, xy=(z, 0.0), xytext=(z, -halfHeight * 0.5),
-                          xycoords='data', fontsize=12,
-                          ha='center', va='bottom')
 
     def __iter__(self):
         self.iteration = 0

@@ -1,5 +1,6 @@
 from .imagingpath import *
 from .laserpath import *
+from .lasercavity import *
 
 from .specialtylenses import *
 from .axicon import *
@@ -67,7 +68,7 @@ if 2 in examples:
     path.display()
     """)
     # or
-    # path.save("Figure 2.pdf")
+    # path.saveFigure("Figure 2.pdf")
 
 if 3 in examples:
     path = ImagingPath()
@@ -154,7 +155,7 @@ if 6 in examples:
     path.append(Space(d=4 + 18))
     path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
     path.append(Space(d=18))
-    path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True,
+    path.display(limitObjectToFieldOfView=True,
                  comments="""# Demo #6: Simple microscope system, only principal rays
     The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
     the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
@@ -254,7 +255,7 @@ if 11 in examples:
     path.append(Space(d=50))
     path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
     path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label + """\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #11: Thick diverging lens"
     path.objectHeight = 20
@@ -272,7 +273,7 @@ if 12 in examples:
     path.append(Space(d=10, diameter=25, label='Lens'))
     path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
     path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label + """\n
+    path.display(comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #12: Thick diverging lens built from individual elements"
     path.objectHeight = 20
@@ -296,7 +297,8 @@ if 13 in examples:
     print(M3.backwardConjugate())
 if 14 in examples:
     # Demo #14: Generic objectives
-    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
+    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2,
+                    magnification=40, fieldNumber=1.4, label="Objective")
     print("Focal distances: ", obj.focalDistances())
     print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
     print("Focal spots positions: ", obj.focusPositions(z=0))
@@ -392,7 +394,7 @@ if 18 in examples:
     path.append(Space(d=180))
     path.append(olympus.LUMPlanFL40X())
     path.append(Space(d=10))
-    path.display(inputBeam=GaussianBeam(w=0.001), comments="""
+    path.display(beams=[GaussianBeam(w=0.001)], comments="""
     path = LaserPath()
     path.label = "Demo #18: Laser beam and vendor lenses"
     path.append(Space(d=50))
@@ -408,21 +410,20 @@ if 18 in examples:
     path.append(Space(d=10))
     path.display()""")
 if 19 in examples:
-    cavity = LaserPath(label="Laser cavity: round trip\nCalculated laser modes")
-    cavity.isResonator = True
+    cavity = LaserCavity(label="Laser cavity: round trip\nCalculated laser modes")
     cavity.append(Space(d=160))
     cavity.append(DielectricSlab(thickness=100, n=1.8))
     cavity.append(Space(d=160))
-    cavity.append(CurvedMirror(R=400))
+    cavity.append(CurvedMirror(R=-400))
     cavity.append(Space(d=160))
     cavity.append(DielectricSlab(thickness=100, n=1.8))
     cavity.append(Space(d=160))
 
     # Calculate all self-replicating modes (i.e. eigenmodes)
     (q1, q2) = cavity.eigenModes()
-    print(q1, q2)
+    print(q1,q2)
 
-    # Obtain all physical (i.e. finite) self-replicating modes
+    # Obtain all physical modes (i.e. only finite eigenmodes)
     qs = cavity.laserModes()
     for q in qs:
         print(q)
