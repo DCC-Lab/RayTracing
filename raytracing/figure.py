@@ -29,6 +29,7 @@ class Figure:
                                            'imageColor': '0.3', 'objectColor': '0.1'})
 
         self.designParams = self.styles['default']
+        self.dpiFactor = 1
 
     def design(self, style: str = None,
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
@@ -406,6 +407,7 @@ class Figure:
         figure.points = self.points
         figure.annotations = self.annotations
         figure.designParams = self.designParams
+        figure.dpiFactor = self.dpiFactor
         return figure
 
     def display(self, raysList, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
@@ -463,9 +465,15 @@ class MplFigure(Figure):
             self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
                                    fontsize=10, verticalalignment='top')
         else:
-            self.figure, self.axes = plt.subplots(figsize=(10, 7))
+            self.figure, self.axes = plt.subplots(figsize=(10, 7))  # type: plt.Axes
 
-        self.axes.set(xlabel='Distance', ylabel='Height', title=title)
+        if self.dpiFactor == 0:
+            self.dpiFactor = self.figure.get_dpi() / 100
+
+        self.axes.set_xlabel('Distance', fontsize=13 * self.dpiFactor)
+        self.axes.set_ylabel('Height', fontsize=13 * self.dpiFactor)
+        self.axes.set_title(title, fontsize=13 * self.dpiFactor)
+        self.axes.tick_params(labelsize=12 * self.dpiFactor)
 
     def display2D(self, filepath=None):
         self.draw()
