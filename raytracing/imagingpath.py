@@ -876,6 +876,8 @@ class ImagingPath(MatrixGroup):
         if raysList is None:
             raysList = []
         if rays is not None:
+            if type(rays) is LampRays:
+                self.showImages = False
             raysList.append(rays)
 
         if len(raysList) == 0:
