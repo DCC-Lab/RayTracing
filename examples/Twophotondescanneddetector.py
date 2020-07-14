@@ -24,6 +24,7 @@ outputRays = path1.traceManyThrough(inputRays, progress=False)
 efficiency = 100*outputRays.count/inputRays.count
 path1.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+print(efficiency)
 
 
 ###
@@ -38,6 +39,7 @@ outputRays = path2.traceManyThrough(inputRays, progress=False)
 efficiency = 100*outputRays.count/inputRays.count
 path2.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+print(efficiency)
 
 
 ###
@@ -52,3 +54,4 @@ outputRays = path3.traceManyThrough(inputRays, progress=False)
 efficiency = 100*outputRays.count/inputRays.count
 path3.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+print(efficiency)
