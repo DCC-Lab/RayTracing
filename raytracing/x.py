@@ -1,4 +1,4 @@
-import envexamples
+
 from raytracing import *
 
 path = ImagingPath()
