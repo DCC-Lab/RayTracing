@@ -943,6 +943,7 @@ class ImagingPath(MatrixGroup):
             If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
         """
 
+        self._objectHeight = diameter
         rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber)
 
         self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
