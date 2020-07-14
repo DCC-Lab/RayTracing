@@ -12,6 +12,7 @@ class Figure:
     """
     def __init__(self, opticalPath):
         self.path = opticalPath
+        self.raysList = []
 
         self.graphics = []
         self.lines = []
@@ -101,8 +102,6 @@ class Figure:
     def setGraphicsFromPath(self):
         self.graphics = self.graphicsOfElements
 
-        if self.path.showObject:
-            self.graphics.append(self.graphicOfObject)
         if self.path.showImages:
             self.graphics.extend(self.graphicsOfImages)
 
@@ -133,10 +132,17 @@ class Figure:
         return graphics
 
     @property
-    def graphicOfObject(self) -> Graphic:
-        objectArrow = Arrow(dy=self.path.objectHeight, y=-self.path.objectHeight / 2, color='b')
-        objectGraphic = Graphic([objectArrow], x=self.path.objectPosition)
-        return objectGraphic
+    def graphicsOfRaysList(self) -> List[Graphic]:
+        graphics = []
+        for rays in self.raysList:
+            instance = type(rays).__name__
+            if instance is 'ObjectRays':
+                graphics.append(ObjectGraphic(rays.yMax*2, x=0))  # todo: object position
+            if instance is 'ImageRays':  # todo ImageRays (or Image)
+                graphics.append(ImageGraphic(rays.yMax*2, x=0))
+            if instance is 'LampRays':
+                graphics.append(LampGraphic(rays.yMax*2, x=0))
+        return graphics
 
     @property
     def graphicsOfImages(self) -> List[Graphic]:
@@ -145,12 +151,8 @@ class Figure:
         images = self.path.intermediateConjugates()
 
         for (imagePosition, magnification) in images:
-            imageHeight = magnification * self.path.objectHeight
-
-            arrow = Arrow(dy=imageHeight, y=-imageHeight / 2, color='r')
-            graphic = Graphic([arrow], x=imagePosition)
-
-            imageGraphics.append(graphic)
+            imageGraphics.append(ImageGraphic(diameter=magnification * self.path.objectHeight,
+                                              x=imagePosition))
 
         return imageGraphics
 
@@ -398,6 +400,7 @@ class Figure:
     @property
     def mplFigure(self) -> 'MplFigure':
         figure = MplFigure(opticalPath=self.path)
+        figure.raysList = self.raysList
         figure.graphics = self.graphics
         figure.lines = self.lines
         figure.labels = self.labels
@@ -407,14 +410,16 @@ class Figure:
         return figure
 
     def display(self, raysList, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
+        self.raysList = raysList
         self.initializeDisplay()
 
         self.lines = []
-        for rays in raysList:
+        for rays in self.raysList:
             rayTrace = self.rayTraceLines(rays=rays)
             self.lines.extend(rayTrace)
 
         self.setGraphicsFromPath()
+        self.graphics.extend(self.graphicsOfRaysList)
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
