@@ -69,6 +69,43 @@ class Graphic:
         return np.sum([c.length for c in self.components])
 
 
+class ObjectGraphic(Graphic):
+    def __init__(self, diameter, x=0):
+        self.diameter = diameter
+        super(ObjectGraphic, self).__init__(x=x, fixedWidth=False)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color='b')]
+        return self._components
+
+
+class ImageGraphic(Graphic):
+    def __init__(self, diameter, x=0):
+        self.diameter = diameter
+        super(ImageGraphic, self).__init__(x=x, fixedWidth=False)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color='r')]
+        return self._components
+
+
+class LampGraphic(Graphic):
+    def __init__(self, diameter, x=0):
+        self.diameter = diameter
+        super(LampGraphic, self).__init__(x=x, fixedWidth=False)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = [Rectangle((self.x, -self.diameter / 2), width=0.02, height=self.diameter,
+                                          color='y', fill=True)]
+        return self._components
+
+
 class MatrixGraphic(Graphic):
     def __init__(self, matrix, x=0.0, fixedWidth=False):
         self.matrix = matrix
@@ -391,7 +428,6 @@ class GraphicOf:
         instance = type(element).__name__
         if type(element) is Objective or issubclass(type(element), Objective):
             return ObjectiveGraphic(element, x=x)
-
         if instance is 'Lens':
             return LensGraphic(element, x=x, minSize=minSize)
         if instance is 'Space':
