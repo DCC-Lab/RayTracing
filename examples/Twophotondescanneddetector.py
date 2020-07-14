@@ -23,7 +23,6 @@ path1.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
 outputRays1.display("Output profile {0:.0f}% efficiency".format(efficiency1), showTheta=False)
 print(efficiency1)
 
-
 ###
 path2 = ImagingPath()
 path2.append(System4f(f1=50, diameter1=25, f2=50, diameter2=50))
@@ -33,7 +32,6 @@ efficiency2 = 100*outputRays2.count/inputRays.count
 path2.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
 outputRays2.display("Output profile {0:.0f}% efficiency".format(efficiency2), showTheta=False)
 print(efficiency2)
-
 
 ###
 path3 = ImagingPath()
