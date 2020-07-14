@@ -8,8 +8,6 @@ The size of the diffused light dictates which lenses and detector size to choose
 Therefore,  it is of great importance to find a well-sized detector that fits the optical system.  
 """
 
-#How to optimize the detector size ?
-
 nRays = 100000
 minHeight=-0.5
 maxHeight=0.5
