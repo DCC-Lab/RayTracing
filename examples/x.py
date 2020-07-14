@@ -1,3 +1,6 @@
+import envexamples
+from raytracing import *
+
 path = ImagingPath()
 path.label = "Demo #5: Simple microscope system"
 path.append(Space(d=4))
