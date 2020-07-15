@@ -99,7 +99,7 @@ class Figure:
         label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
         self.labels.append(label)
 
-    def setGraphicsFromPath(self):
+    def setGraphicsFromOpticalPath(self):
         self.graphics = self.graphicsOfElements
 
         if self.path.showImages:
@@ -420,7 +420,7 @@ class Figure:
             rayTrace = self.rayTraceLines(rays=rays)
             self.lines.extend(rayTrace)
 
-        self.setGraphicsFromPath()
+        self.setGraphicsFromOpticalPath()
         self.graphics.extend(self.graphicsOfRaysList)
 
         if backend is 'matplotlib':
