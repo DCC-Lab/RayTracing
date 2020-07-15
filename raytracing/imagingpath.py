@@ -877,7 +877,7 @@ class ImagingPath(MatrixGroup):
             raysList = []
         if rays is not None:
             if type(rays) is LampRays:
-                self.showImages = False
+                self.figure.designParams['showObject'] = False
             raysList.append(rays)
 
         if len(raysList) == 0:

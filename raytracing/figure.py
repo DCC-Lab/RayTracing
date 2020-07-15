@@ -116,9 +116,7 @@ class Figure:
 
     def setGraphicsFromOpticalPath(self):
         self.graphicGroups['elements'] = self.graphicsOfElements
-
-        if self.path.showImages:
-            self.graphicGroups['object'].extend(self.graphicsOfImages)
+        self.graphicGroups['object'].extend(self.graphicsOfImages)
 
         if self.path.showEntrancePupil:
             (pupilPosition, pupilDiameter) = self.path.entrancePupil()
@@ -434,6 +432,12 @@ class Figure:
         self.setGraphicsFromOpticalPath()
         self.setGraphicsFromRaysList()
 
+        if not self.designParams['showFOV']:
+            self.setGroupVisibility('FOV', False)
+
+        if not self.designParams['showObject']:
+            self.setGroupVisibility('object', False)
+
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
             mplFigure.create(comments, title)
@@ -461,6 +465,14 @@ class Figure:
                 mplFigure.display2D(filepath=filepath)
         else:
             raise NotImplementedError("The only supported backend is matplotlib.")
+
+    def setGroupVisibility(self, groupKey: str, isVisible: bool):
+        if groupKey in self.graphicGroups.keys():
+            for graphic in self.graphicGroups[groupKey]:
+                graphic.isVisible = isVisible  # todo: graphic.visible with setter on each component patches if exist
+        if groupKey in self.lineGroups.keys():
+            for line in self.lineGroups[groupKey]:
+                line.isVisible = isVisible
 
 
 class MplFigure(Figure):
