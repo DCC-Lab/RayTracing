@@ -24,7 +24,7 @@ class Figure:
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
                                   'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
-                                  'showFOV': True, 'showObject': True}
+                                  'showFOV': False, 'showObject': True}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
         self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
@@ -113,6 +113,22 @@ class Figure:
 
         label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
         self.labels.append(label)
+
+    def setPrincipalAndAxialRays(self):
+        (stopPosition, stopDiameter) = self.path.apertureStop()
+        if stopPosition is None:
+            return
+
+        principalRay = self.path.principalRay()
+        axialRay = self.path.axialRay()
+
+        rays = []
+        if principalRay is not None:
+            rays.append(principalRay)
+        if axialRay is not None:
+            rays.append(axialRay)
+        if rays:
+            self.lineGroups['FOV'].extend(self.rayTraceLines(rays))
 
     def setGraphicsFromOpticalPath(self):
         self.graphicGroups['elements'] = self.graphicsOfElements
@@ -429,6 +445,7 @@ class Figure:
             rayTrace = self.rayTraceLines(rays=rays)
             self.lineGroups[type(rays).__name__] = rayTrace
 
+        self.setPrincipalAndAxialRays()
         self.setGraphicsFromOpticalPath()
         self.setGraphicsFromRaysList()
 
