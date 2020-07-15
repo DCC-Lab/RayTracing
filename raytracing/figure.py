@@ -439,7 +439,6 @@ class Figure:
 
     def display(self, raysList, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
         self.raysList = raysList
-        self.initializeDisplay()
 
         for rays in self.raysList:
             rayTrace = self.rayTraceLines(rays=rays)

@@ -880,6 +880,8 @@ class ImagingPath(MatrixGroup):
                 self.figure.designParams['showObject'] = False
             raysList.append(rays)
 
+        self.figure.initializeDisplay()
+
         if len(raysList) == 0:
             self.figure.designParams['showFOV'] = True
             if not self.figure.designParams['onlyPrincipalAndAxialRays']:
