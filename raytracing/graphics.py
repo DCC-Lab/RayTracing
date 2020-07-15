@@ -321,16 +321,20 @@ class MatrixGroupGraphic(MatrixGraphic):
 
     @property
     def components(self):
-        components = []
+        if self._components is None:
+            self._components = self.mainComponents
+        return self._components
+
+    @property
+    def standAloneGraphics(self):
+        graphics = []
         z = 0
         for element in self.matrixGroup.elements:
-            graphic = GraphicOf(element, x=z)
-            # fixme: all components are defined at z=0 anyways,
-            #  should take a group of graphics instead ?
+            graphic = GraphicOf(element, x=z + self.x)
             if graphic is not None:
-                components.extend(graphic.components)
+                graphics.append(graphic)
             z += element.L
-        return components
+        return graphics
 
     @property
     def pointsOfInterest(self):
@@ -424,7 +428,7 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 
 
 class GraphicOf:
-    def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None]:
+    def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None, list]:
         instance = type(element).__name__
         if type(element) is Objective or issubclass(type(element), Objective):
             return ObjectiveGraphic(element, x=x)
@@ -437,6 +441,6 @@ class GraphicOf:
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         if issubclass(type(element), MatrixGroup):
-            return MatrixGroupGraphic(element, x=x)
+            return MatrixGroupGraphic(element, x=x).standAloneGraphics
         else:
             return MatrixGraphic(element, x=x)

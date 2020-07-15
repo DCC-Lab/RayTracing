@@ -126,7 +126,9 @@ class Figure:
         z = 0
         for element in self.path.elements:
             graphic = GraphicOf(element, x=z, minSize=maxRayHeight)
-            if graphic is not None:
+            if type(graphic) is list:  # MatrixGroup creates stand-alone graphics for now
+                graphics.extend(graphic)
+            elif graphic is not None:
                 graphics.append(graphic)
             z += element.L
         return graphics
