@@ -262,7 +262,7 @@ class MatrixGraphic(Graphic):
         figure = MplFigure(path)
         figure.graphicGroups['elements'] = [self]
         figure.create(title="Element properties")
-        figure.display2D()
+        figure.display2D(interactive=False)
 
 
 class LensGraphic(MatrixGraphic):
