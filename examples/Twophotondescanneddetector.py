@@ -28,7 +28,7 @@ def imagingPath(fl1=10, d1=10, fl2=10, d2=10, d3=10, title=""):
 # Three paths with different sets of lens and aperture.
 
 ###
-path1 = imagingPath(fl1=75, fl2=75, d1=50, d2=75, d3=0.5, title="")
+path1 = imagingPath(fl1=75, fl2=75, d1=50, d2=75, d3=1, title="")
 outputRays1 = path1.traceManyThrough(inputRays, progress=False)
 efficiency1 = 100*outputRays1.count/inputRays.count
 path1.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
@@ -36,7 +36,7 @@ outputRays1.display("Output profile {0:.0f}% efficiency".format(efficiency1), sh
 print(efficiency1)
 
 ###
-path2 = imagingPath(fl1=50, fl2=50, d1=25, d2=50, d3=0.5, title="")
+path2 = imagingPath(fl1=50, fl2=50, d1=25, d2=50, d3=1, title="")
 outputRays2 = path2.traceManyThrough(inputRays, progress=False)
 efficiency2 = 100*outputRays2.count/inputRays.count
 path2.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
@@ -44,7 +44,7 @@ outputRays2.display("Output profile {0:.0f}% efficiency".format(efficiency2), sh
 print(efficiency2)
 
 ###
-path3 = imagingPath(fl1=50, fl2=50, d1=25, d2=50, d3=1, title="")
+path3 = imagingPath(fl1=50, fl2=50, d1=25, d2=50, d3=10, title="")
 outputRays3 = path3.traceManyThrough(inputRays, progress=False)
 efficiency3 = 100*outputRays3.count/inputRays.count
 path3.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
