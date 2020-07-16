@@ -178,13 +178,13 @@ class SingletLens(MatrixGroup):
     te : float
         The edge thickness
     n : float
-        The refraction index of the material
+        The refraction index of the material if material not used
     diameter : float
         The diameter of the lens
-    mat1 : object of Matrix class
-        The transfer matrix of the lens
+    mat1 : object of Material class
+        The material of the lens
     wavelengthRef : float
-        The defined wavelength
+        The defined wavelength of reference for the index of refraction
     url : string
         A link to find more info for the lens
     label : string
@@ -217,10 +217,13 @@ class SingletLens(MatrixGroup):
             elif wavelengthRef is not None:
                 self.n=self.mat.n(wavelengthRef)
 
+        if self.n is None:
+            raise ValueError("You must provide n or material")
+
         elements = []
         elements.append(DielectricInterface(n1=1, n2=self.n, R=R1, diameter=diameter))
-        elements.append(Space(d=tc, n=n))
-        elements.append(DielectricInterface(n1=n, n2=1, R=R2, diameter=diameter))
+        elements.append(Space(d=tc, n=self.n))
+        elements.append(DielectricInterface(n1=self.n, n2=1, R=R2, diameter=diameter))
         super(SingletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
