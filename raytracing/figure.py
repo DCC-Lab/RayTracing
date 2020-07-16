@@ -128,8 +128,10 @@ class Figure:
         rays = []
         if principalRay is not None:
             rays.append(principalRay)
-            self.graphicGroups['FOV'].append(ObjectGraphic(principalRay.y*2, fill=False, color='gray'))
-            self.graphicGroups['FOV'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2, fill=False, color='gray'))
+            self.graphicGroups['FOV'].append(ObjectGraphic(principalRay.y*2,
+                                                           fill=False, color='gray'))
+            self.graphicGroups['FOV'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
+                                                                            fill=False, color='gray'))
 
         if axialRay is not None:
             rays.append(axialRay)
@@ -506,7 +508,7 @@ class Figure:
     def setGroupVisibility(self, groupKey: str, isVisible: bool):
         if groupKey in self.graphicGroups.keys():
             for graphic in self.graphicGroups[groupKey]:
-                graphic.isVisible = isVisible  # todo: graphic.visible with setter on each component patches if exist
+                graphic.isVisible = isVisible
         if groupKey in self.lineGroups.keys():
             for line in self.lineGroups[groupKey]:
                 line.isVisible = isVisible

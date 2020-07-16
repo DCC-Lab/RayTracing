@@ -439,7 +439,7 @@ class Line:
         self.color = color
         self.lineWidth = lineWidth
         self.lineStyle = lineStyle
-        self.label = label  # fixme: temporary for infinite lens minsize ray check
+        self.label = label
 
         self._isVisible = True
         self._patch = None

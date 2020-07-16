@@ -27,7 +27,7 @@ class Graphic:
 
         self.x = x
         self.y = y
-        self.useAutoScale = not fixedWidth  # todo: move autoScale as component-specific attribute
+        self.useAutoScale = not fixedWidth
 
         if label is not None:
             self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight * 1.3)
