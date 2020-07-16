@@ -16,7 +16,7 @@ maxHeight=0.5
 inputRays = RandomLambertianRays(yMax=maxHeight, yMin=minHeight, maxCount=nRays)
 
 # Defines the path. d1 and d2 are the diameter of the lenses, fl1 and fl2 are the focal lengths and d3 is the diameter of the aperture.
-def imagingPath(f1=10, d1=10, f2=10, d2=10, d3=10, title=""):
+def imagingPath(fl1=10, d1=10, fl2=10, d2=10, d3=10, title=""):
     
     path = ImagingPath()
     path.label=title
