@@ -885,19 +885,18 @@ class ImagingPath(MatrixGroup):
         if len(raysList) == 0:
             self.figure.designParams['showFOV'] = True
             if not self.figure.designParams['onlyPrincipalAndAxialRays']:
-                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
                 self.figure.designParams['showFOV'] = False
             else:
                 warnings.warn('No rays were provided for the display. Using principal and axial rays.')
                 if self.principalRay() is None and self.axialRay() is None:
                     warnings.warn('Principal and axial rays are not defined for this system. '
                                   'Using default ObjectRays.')
-                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
 
-            if rays is not None:
-                raysList.append(rays)
-            else:
-                self.figure.designParams['showObject'] = False
+        if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
+            defaultObject = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+            raysList.append(defaultObject)
+        else:
+            self.figure.designParams['showObject'] = False
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
                             backend='matplotlib', display3D=False, interactive=interactive, filepath=filePath)
