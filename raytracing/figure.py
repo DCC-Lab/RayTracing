@@ -499,7 +499,7 @@ class Figure:
             if display3D:
                 mplFigure.display3D(filepath=filepath)
             else:
-                mplFigure.display2D(filepath=filepath)
+                mplFigure.display2D(filepath=filepath, interactive=False)
         else:
             raise NotImplementedError("The only supported backend is matplotlib.")
 
