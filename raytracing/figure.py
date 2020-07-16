@@ -29,6 +29,7 @@ class Figure:
                                            'imageColor': '0.3', 'objectColor': '0.1'})
 
         self.designParams = self.styles['default']
+        self.fontScale = 1.0
 
     def design(self, style: str = None,
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
@@ -95,7 +96,8 @@ class Figure:
             else:
                 note2 = "Only chief and marginal rays shown"
 
-        label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
+        label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=12*self.fontScale,
+                      useDataUnits=False, alignment='left')
         self.labels.append(label)
 
     def setGraphicsFromPath(self):
@@ -206,7 +208,7 @@ class Figure:
         points = []
         halfHeight = self.displayRange / 2
         for zStr, label in labels.items():
-            points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5))
+            points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5, fontsize=12))
         return points
 
     @property
@@ -217,11 +219,11 @@ class Figure:
 
         (apertureStopPosition, apertureStopDiameter) = self.path.apertureStop()
         if apertureStopPosition is not None:
-            labels.append(Label('AS', apertureStopPosition, halfHeight * 1.1, fontsize=18))
+            labels.append(Label('AS', apertureStopPosition, halfHeight * 1.1, fontsize=17*self.fontScale))
 
         (fieldStopPosition, fieldStopDiameter) = self.path.fieldStop()
         if fieldStopPosition is not None:
-            labels.append(Label('FS', fieldStopPosition, halfHeight * 1.1, fontsize=18))
+            labels.append(Label('FS', fieldStopPosition, halfHeight * 1.1, fontsize=17*self.fontScale))
 
         return labels
 
@@ -461,14 +463,14 @@ class MplFigure(Figure):
             self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             self.axesComments.axis('off')
             self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
-                                   fontsize=10, verticalalignment='top')
+                                   fontsize=10*self.fontScale, verticalalignment='top')
         else:
             self.figure, self.axes = plt.subplots(figsize=(10, 7))
 
-        self.axes.set_xlabel('Distance', fontsize=13)
-        self.axes.set_ylabel('Height', fontsize=13)
-        self.axes.set_title(title, fontsize=13)
-        self.axes.tick_params(labelsize=12)
+        self.axes.set_xlabel('Distance', fontsize=13*self.fontScale)
+        self.axes.set_ylabel('Height', fontsize=13*self.fontScale)
+        self.axes.set_title(title, fontsize=13*self.fontScale)
+        self.axes.tick_params(labelsize=12*self.fontScale)
 
     def display2D(self, filepath=None):
         self.draw()
@@ -507,6 +509,7 @@ class MplFigure(Figure):
                 self.axes.add_patch(patch)
 
             if graphic.hasLabel:
+                graphic.label.fontsize *= self.fontScale
                 graphic.label = graphic.label.mplLabel
                 self.axes.add_artist(graphic.label.patch)
 
@@ -523,6 +526,7 @@ class MplFigure(Figure):
             if point.hasPointMarker:
                 self.axes.plot([point.x], [0], 'ko', markersize=3, color=point.color, linewidth=0.4)
             if point.text is not None:
+                point.fontsize *= self.fontScale
                 self.labels.append(point)
 
     def drawLabels(self):
