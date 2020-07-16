@@ -14,8 +14,8 @@ class Figure:
         self.path = opticalPath
         self.raysList = []
 
-        self.graphics = []
-        self.lines = []
+        self.graphicGroups = {'FOV': [], 'object': [], 'lamp': [], 'elements': []}
+        self.lineGroups = {'FOV': [], 'object': [], 'lamp': []}
         self.labels = []
         self.points = []
         self.annotations = []
@@ -23,13 +23,28 @@ class Figure:
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
-                                  'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False}
+                                  'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
+                                  'showFOV': False, 'showObject': True}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
         self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
                                            'imageColor': '0.3', 'objectColor': '0.1'})
 
         self.designParams = self.styles['default']
+
+    @property
+    def lines(self):
+        lines = []
+        for lineGroup in self.lineGroups.values():
+            lines.extend(lineGroup)
+        return lines
+
+    @property
+    def graphics(self):
+        graphics = []
+        for graphicGroup in self.graphicGroups.values():
+            graphics.extend(graphicGroup)
+        return graphics
 
     def design(self, style: str = None,
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
@@ -99,16 +114,30 @@ class Figure:
         label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
         self.labels.append(label)
 
-    def setGraphicsFromOpticalPath(self):
-        self.graphics = self.graphicsOfElements
+    def setPrincipalAndAxialRays(self):
+        (stopPosition, stopDiameter) = self.path.apertureStop()
+        if stopPosition is None:
+            return
 
-        if self.path.showImages:
-            self.graphics.extend(self.graphicsOfImages)
+        principalRay = self.path.principalRay()
+        axialRay = self.path.axialRay()
+
+        rays = []
+        if principalRay is not None:
+            rays.append(principalRay)
+        if axialRay is not None:
+            rays.append(axialRay)
+        if rays:
+            self.lineGroups['FOV'].extend(self.rayTraceLines(rays))
+
+    def setGraphicsFromOpticalPath(self):
+        self.graphicGroups['elements'] = self.graphicsOfElements
+        self.graphicGroups['object'].extend(self.graphicsOfImages)
 
         if self.path.showEntrancePupil:
             (pupilPosition, pupilDiameter) = self.path.entrancePupil()
             if pupilPosition is not None:
-                self.graphics.append(self.graphicOfEntrancePupil)
+                self.graphicGroups['elements'].append(self.graphicOfEntrancePupil)
 
         if self.path.showPointsOfInterest:
             self.points.extend(self.pointsOfInterest)
@@ -133,18 +162,15 @@ class Figure:
             z += element.L
         return graphics
 
-    @property
-    def graphicsOfRaysList(self) -> List[Graphic]:
-        graphics = []
+    def setGraphicsFromRaysList(self):
         for rays in self.raysList:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                graphics.append(ObjectGraphic(rays.yMax*2, x=0))  # todo: object position
+                self.graphicGroups['object'].append(ObjectGraphic(rays.yMax*2, x=0))  # todo: object position
             if instance is 'ImageRays':  # todo ImageRays (or Image)
-                graphics.append(ImageGraphic(rays.yMax*2, x=0))
+                self.graphicGroups['object'].append(ImageGraphic(rays.yMax*2, x=0))
             if instance is 'LampRays':
-                graphics.append(LampGraphic(rays.yMax*2, x=0))
-        return graphics
+                self.graphicGroups['lamp'].append(LampGraphic(rays.yMax*2, x=0))
 
     @property
     def graphicsOfImages(self) -> List[Graphic]:
@@ -403,8 +429,8 @@ class Figure:
     def mplFigure(self) -> 'MplFigure':
         figure = MplFigure(opticalPath=self.path)
         figure.raysList = self.raysList
-        figure.graphics = self.graphics
-        figure.lines = self.lines
+        figure.graphicGroups = self.graphicGroups
+        figure.lineGroups = self.lineGroups
         figure.labels = self.labels
         figure.points = self.points
         figure.annotations = self.annotations
@@ -413,15 +439,20 @@ class Figure:
 
     def display(self, raysList, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
         self.raysList = raysList
-        self.initializeDisplay()
 
-        self.lines = []
         for rays in self.raysList:
             rayTrace = self.rayTraceLines(rays=rays)
-            self.lines.extend(rayTrace)
+            self.lineGroups[type(rays).__name__] = rayTrace
 
+        self.setPrincipalAndAxialRays()
         self.setGraphicsFromOpticalPath()
-        self.graphics.extend(self.graphicsOfRaysList)
+        self.setGraphicsFromRaysList()
+
+        if not self.designParams['showFOV']:
+            self.setGroupVisibility('FOV', False)
+
+        if not self.designParams['showObject']:
+            self.setGroupVisibility('object', False)
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
@@ -435,10 +466,10 @@ class Figure:
 
     def displayGaussianBeam(self, beams=None,
                             title=None, comments=None, backend='matplotlib', display3D=False, filepath=None):
-        self.lines = []
-        self.graphics = self.graphicsOfElements
+        self.lineGroups['rays'] = []
+        self.graphicGroups['elements'] = self.graphicsOfElements
         for beam in beams:
-            self.lines.extend(self.beamTraceLines(beam))
+            self.lineGroups['rays'].extend(self.beamTraceLines(beam))
             self.annotations.extend(self.beamWaistAnnotations(beam))
 
         if backend is 'matplotlib':
@@ -450,6 +481,14 @@ class Figure:
                 mplFigure.display2D(filepath=filepath)
         else:
             raise NotImplementedError("The only supported backend is matplotlib.")
+
+    def setGroupVisibility(self, groupKey: str, isVisible: bool):
+        if groupKey in self.graphicGroups.keys():
+            for graphic in self.graphicGroups[groupKey]:
+                graphic.isVisible = isVisible  # todo: graphic.visible with setter on each component patches if exist
+        if groupKey in self.lineGroups.keys():
+            for line in self.lineGroups[groupKey]:
+                line.isVisible = isVisible
 
 
 class MplFigure(Figure):

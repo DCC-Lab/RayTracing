@@ -23,6 +23,7 @@ class Graphic:
         self.points = []
         self.lines = []
         self.annotations = []
+        self._isVisible = True
 
         self.x = x
         self.y = y
@@ -41,6 +42,16 @@ class Graphic:
     def components(self):
         """ Can be overwritten by other graphics """
         return self._components
+
+    @property
+    def isVisible(self):
+        return self._isVisible
+
+    @isVisible.setter
+    def isVisible(self, value: bool):
+        self._isVisible = value
+        for component in self.components:
+            component.isVisible = self._isVisible
 
     @property
     def halfHeight(self) -> float:
@@ -245,7 +256,7 @@ class MatrixGraphic(Graphic):
         from .imagingpath import ImagingPath
         path = ImagingPath(elements=[self.matrix])
         figure = MplFigure(path)
-        figure.graphics = [self]
+        figure.graphicGroups['elements'] = [self]
         figure.create(title="Element properties")
         figure.display2D()
 
