@@ -919,7 +919,7 @@ class AC508_400_B(AchromatDoubletLens):
 
     def __init__(self, wavelength=None):
         super(AC508_400_B,self).__init__(fa=400.0,fb=393.6, R1=280.6,R2=-208.0, R3=-859.0, 
-                                    tc1=4.5, tc2=2.6, te=5.6, n1=None, mat1=N_LAK22, n2=None, diameter=50.8,
+                                    tc1=4.5, tc2=2.6, te=5.6, n1=None, mat1=N_LAK22, n2=None, mat2=N_SF6HT, diameter=50.8,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
                                     label="AC508-400-B", wavelength=wavelength, wavelengthRef=0.855)
 
