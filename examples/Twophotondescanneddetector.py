@@ -29,8 +29,7 @@ outputRays1.display("Output profile {0:.0f}% efficiency".format(efficiency1), sh
 print(efficiency1)
 
 ###
-path2 = ImagingPath()
-path2.append(System4f(f1=50, diameter1=25, f2=50, diameter2=50))
+path2 = imagingPath(f1=50,d1=25,f2=50,d2=50)
 path2.append(Aperture(diameter=0.5, label='Camera'))
 outputRays2 = path2.traceManyThrough(inputRays, progress=False)
 efficiency2 = 100*outputRays2.count/inputRays.count
@@ -39,9 +38,7 @@ outputRays2.display("Output profile {0:.0f}% efficiency".format(efficiency2), sh
 print(efficiency2)
 
 ###
-path3 = ImagingPath()
-path3.append(System4f(f1=50, diameter1=25, f2=50, diameter2=50))
-path3.append(Aperture(diameter=10, label='Camera'))
+path2 = imagingPath(f1=50,d1=25,f2=50,d2=50)
 outputRays3 = path3.traceManyThrough(inputRays, progress=False)
 efficiency3 = 100*outputRays3.count/inputRays.count
 path3.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
