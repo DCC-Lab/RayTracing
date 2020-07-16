@@ -126,6 +126,9 @@ class Figure:
         rays = []
         if principalRay is not None:
             rays.append(principalRay)
+            self.graphicGroups['FOV'].append(ObjectGraphic(principalRay.y*2, fill=False, color='gray'))
+            self.graphicGroups['FOV'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2, fill=False, color='gray'))
+
         if axialRay is not None:
             rays.append(axialRay)
         if rays:
@@ -133,7 +136,6 @@ class Figure:
 
     def setGraphicsFromOpticalPath(self):
         self.graphicGroups['elements'] = self.graphicsOfElements
-        self.graphicGroups['object'].extend(self.graphicsOfImages)
 
         if self.path.showEntrancePupil:
             (pupilPosition, pupilDiameter) = self.path.entrancePupil()
@@ -166,24 +168,35 @@ class Figure:
     def setGraphicsFromRaysList(self):
         for rays in self.raysList:
             instance = type(rays).__name__
+            # todo: enable multiple instances
             if instance is 'ObjectRays':
                 self.graphicGroups['object'].append(ObjectGraphic(rays.yMax*2, x=0))  # todo: object position
-            if instance is 'ImageRays':  # todo ImageRays (or Image)
-                self.graphicGroups['object'].append(ImageGraphic(rays.yMax*2, x=0))
+                self.graphicGroups['object'].extend(self.graphicsOfConjugatePlanes(rays.yMax*2))
             if instance is 'LampRays':
                 self.graphicGroups['lamp'].append(LampGraphic(rays.yMax*2, x=0))
 
-    @property
-    def graphicsOfImages(self) -> List[Graphic]:
-        imageGraphics = []
+    def setLinesFromRaysList(self):
+        for rays in self.raysList:
+            rayTrace = self.rayTraceLines(rays=rays)
 
-        images = self.path.intermediateConjugates()
+            instance = type(rays).__name__
+            if instance is 'ObjectRays':
+                self.lineGroups['object'].extend(rayTrace)
+            elif instance is 'LampRays':
+                self.lineGroups['lamp'].extend(rayTrace)
+            elif instance not in self.lineGroups.keys():
+                self.lineGroups[instance] = rayTrace
+            else:
+                self.lineGroups[instance].extend(rayTrace)
 
-        for (imagePosition, magnification) in images:
-            imageGraphics.append(ImageGraphic(diameter=magnification * self.path.objectHeight,
-                                              x=imagePosition))
+    def graphicsOfConjugatePlanes(self, objectDiameter, fill=True, color='r'):
+        planeGraphics = []
+        planeInfo = self.path.intermediateConjugates()
 
-        return imageGraphics
+        for (position, magnification) in planeInfo:
+            planeGraphics.append(ImageGraphic(diameter=magnification * objectDiameter,
+                                              x=position, fill=fill, color=color))
+        return planeGraphics
 
     @property
     def graphicOfEntrancePupil(self) -> Graphic:
@@ -442,15 +455,15 @@ class Figure:
                 display3D=False, interactive=True, filepath=None):
         self.raysList = raysList
 
-        for rays in self.raysList:
-            rayTrace = self.rayTraceLines(rays=rays)
-            self.lineGroups[type(rays).__name__] = rayTrace
+        self.setLinesFromRaysList()
 
         self.setPrincipalAndAxialRays()
         self.setGraphicsFromOpticalPath()
         self.setGraphicsFromRaysList()
 
-        if not self.designParams['showFOV']:
+        if self.designParams['showFOV']:
+            self.designParams['showObject'] = False
+        else:
             self.setGroupVisibility('FOV', False)
 
         if not self.designParams['showObject']:
