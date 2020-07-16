@@ -38,7 +38,7 @@ outputRays2.display("Output profile {0:.0f}% efficiency".format(efficiency2), sh
 print(efficiency2)
 
 ###
-path2 = imagingPath(f1=50,d1=25,f2=50,d2=50)
+path3 = imagingPath(f1=50,d1=25,f2=50,d2=50)
 outputRays3 = path3.traceManyThrough(inputRays, progress=False)
 efficiency3 = 100*outputRays3.count/inputRays.count
 path3.display(limitObjectToFieldOfView=False, onlyPrincipalAndAxialRays=True)
