@@ -185,6 +185,7 @@ class Figure:
             if instance is 'ObjectRays':
                 self.lineGroups['object'].extend(rayTrace)
             elif instance is 'LampRays':
+                self.designParams['showObject'] = False
                 self.lineGroups['lamp'].extend(rayTrace)
             elif instance not in self.lineGroups.keys():
                 self.lineGroups[instance] = rayTrace
