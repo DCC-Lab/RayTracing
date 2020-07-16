@@ -81,26 +81,30 @@ class Graphic:
 
 
 class ObjectGraphic(Graphic):
-    def __init__(self, diameter, x=0):
+    def __init__(self, diameter, x=0, fill=True, color='b'):
         self.diameter = diameter
+        self.fill = fill
+        self.color = color
         super(ObjectGraphic, self).__init__(x=x, fixedWidth=False)
 
     @property
     def components(self):
         if self._components is None:
-            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color='b')]
+            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color=self.color, fill=self.fill)]
         return self._components
 
 
 class ImageGraphic(Graphic):
-    def __init__(self, diameter, x=0):
+    def __init__(self, diameter, x=0, fill=True, color='r'):
         self.diameter = diameter
+        self.fill = fill
+        self.color = color
         super(ImageGraphic, self).__init__(x=x, fixedWidth=False)
 
     @property
     def components(self):
         if self._components is None:
-            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color='r')]
+            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color=self.color, fill=self.fill)]
         return self._components
 
 
