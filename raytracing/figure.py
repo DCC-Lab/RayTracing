@@ -22,7 +22,7 @@ class Figure:
         self.annotations = []
 
         self.styles = dict()
-        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
+        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['b', 'g'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
                                   'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
                                   'showFOV': False, 'showObject': True}
@@ -48,8 +48,8 @@ class Figure:
         return graphics
 
     def design(self, style: str = None,
-               rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
-               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
+               rayColors: List[Union[str, tuple]] = None, lampRayColors: List[Union[str, tuple]] = None,
+               onlyAxialRay: bool = None, imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
         """ Update the design parameters of the figure.
         All parameters are None by default to allow for the update of one parameter at a time.
 
@@ -59,6 +59,8 @@ class Figure:
             Set all design parameters following a supported design style : 'default', 'presentation', 'publication'.
         rayColors : List[Union[str, tuple]], optional
             List of the colors to use for the three different ray type. Default is ['b', 'r', 'g'].
+        lampRayColors : List[Union[str, tuple]], optional
+            List of the colors to use for the rays of a lamp. Default is ['b', 'g'].
         onlyAxialRay : bool, optional
             Only draw the ray fan coming from the center of the object (axial ray).
             Works with fanAngle and fanNumber. Default to False.
@@ -73,7 +75,7 @@ class Figure:
             else:
                 raise ValueError("Available styles are : {}".format(self.styles.keys()))
 
-        newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
+        newDesignParams = {'rayColors': rayColors, 'lampRayColors': lampRayColors, 'onlyAxialRay': onlyAxialRay,
                            'imageColor': imageColor, 'objectColor': objectColor}
         for key, value in newDesignParams.items():
             if value is not None:
@@ -319,7 +321,10 @@ class Figure:
         2. the principal and axial rays.
         """
 
-        colors = self.designParams['rayColors']
+        if type(rays).__name__ is 'LampRays':
+            colors = self.designParams['lampRayColors']
+        else:
+            colors = self.designParams['rayColors']
 
         linewidth = 0.5
         manyRayTraces = self.path.traceMany(rays)
