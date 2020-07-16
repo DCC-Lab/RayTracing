@@ -22,18 +22,19 @@ class Figure:
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
-                                  'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False}
+                                  'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
+                                  'fontScale': 1.0}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
         self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
                                            'imageColor': '0.3', 'objectColor': '0.1'})
 
         self.designParams = self.styles['default']
-        self.fontScale = 1.0
 
     def design(self, style: str = None,
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
-               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
+               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None,
+               fontScale: float = None):
         """ Update the design parameters of the figure.
         All parameters are None by default to allow for the update of one parameter at a time.
 
@@ -50,6 +51,8 @@ class Figure:
             Color of image arrows. Default to 'r'.
         objectColor : Union[str, tuple], optional
             Color of object arrow. Default to 'b'.
+        fontScale : float, optional
+            Base scale factor for the size of all fonts used. Default to 1.
         """
         if style is not None:
             if style in self.styles.keys():
@@ -58,10 +61,15 @@ class Figure:
                 raise ValueError("Available styles are : {}".format(self.styles.keys()))
 
         newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
-                           'imageColor': imageColor, 'objectColor': objectColor}
+                           'imageColor': imageColor, 'objectColor': objectColor,
+                           'fontScale': fontScale}
         for key, value in newDesignParams.items():
             if value is not None:
                 self.designParams[key] = value
+
+    @property
+    def fontScale(self):
+        return self.designParams['fontScale']
 
     def initializeDisplay(self):
         """ Configure the imaging path and the figure according to the display conditions. """
