@@ -851,7 +851,7 @@ class ImagingPath(MatrixGroup):
         plt.show()
 
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -896,9 +896,11 @@ class ImagingPath(MatrixGroup):
 
             if rays is not None:
                 raysList.append(rays)
+            else:
+                self.figure.designParams['showObject'] = False
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
-                            backend='matplotlib', display3D=False, filepath=filePath)
+                            backend='matplotlib', display3D=False, interactive=interactive, filepath=filePath)
 
     def saveFigure(self, filePath, rays=None, raysList=None, removeBlocked=True, comments=None,
                    onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
@@ -924,7 +926,7 @@ class ImagingPath(MatrixGroup):
         self.display(rays=rays, raysList=raysList, removeBlocked=removeBlocked, comments=comments,
                      onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
-                     filePath=filePath)
+                     interactive=False, filePath=filePath)
 
     def displayWithObject(self, diameter, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
         """ Display the optical system and trace the rays.

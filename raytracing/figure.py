@@ -1,6 +1,7 @@
+from matplotlib.widgets import CheckButtons
+import matplotlib.pyplot as plt
 from .graphics import *
 from .ray import Ray
-import matplotlib.pyplot as plt
 import itertools
 import warnings
 import sys
@@ -437,7 +438,8 @@ class Figure:
         figure.designParams = self.designParams
         return figure
 
-    def display(self, raysList, comments=None, title=None, backend='matplotlib', display3D=False, filepath=None):
+    def display(self, raysList, comments=None, title=None, backend='matplotlib',
+                display3D=False, interactive=True, filepath=None):
         self.raysList = raysList
 
         for rays in self.raysList:
@@ -460,7 +462,7 @@ class Figure:
             if display3D:
                 mplFigure.display3D(filepath=filepath)
             else:
-                mplFigure.display2D(filepath=filepath)
+                mplFigure.display2D(interactive=interactive, filepath=filepath)
         else:
             raise NotImplementedError("The only supported backend is matplotlib.")
 
@@ -490,6 +492,17 @@ class Figure:
             for line in self.lineGroups[groupKey]:
                 line.isVisible = isVisible
 
+    @property
+    def visibility(self) -> dict:
+        visibility = {}
+        for groupKey, graphics in self.graphicGroups.items():
+            if graphics:
+                visibility[groupKey] = graphics[0].isVisible
+        for groupKey, lines in self.lineGroups.items():
+            if lines:
+                visibility[groupKey] = lines[0].isVisible
+        return visibility
+
 
 class MplFigure(Figure):
     """Matplotlib Figure"""
@@ -511,11 +524,19 @@ class MplFigure(Figure):
 
         self.axes.set(xlabel='Distance', ylabel='Height', title=title)
 
-    def display2D(self, filepath=None):
+    def display2D(self, interactive=True, filepath=None):
         self.draw()
 
         self.axes.callbacks.connect('ylim_changed', self.onZoomCallback)
         plt.connect('resize_event', self.onZoomCallback)
+
+        if interactive:
+            visibility = self.visibility
+            visibility.pop('elements')
+
+            subAxes = plt.axes([0.91, 0.65, 0.08, 0.05*len(visibility)])
+            checkboxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
+            checkboxes.on_clicked(self.onCheckBoxCallback)
 
         if filepath is not None:
             self.figure.savefig(filepath, dpi=600)
@@ -668,6 +689,12 @@ class MplFigure(Figure):
     def onZoomCallback(self, axes):
         self.updateGraphics()
         self.updateLabels()
+
+    def onCheckBoxCallback(self, groupKey):
+        oldState = self.visibility[groupKey]
+        self.setGroupVisibility(groupKey, not oldState)
+
+        plt.draw()
 
     def scalingOfGraphic(self, graphic):
         xScale, yScale = self.axesToDataScale()
