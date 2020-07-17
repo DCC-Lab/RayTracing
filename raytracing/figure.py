@@ -623,6 +623,8 @@ class MplFigure(Figure):
 
         labels = [textwrap.fill(label, 10) for label in visibility.keys()]
         self.checkBoxes = CheckButtons(subAxes, labels, visibility.values())
+        for label in self.checkBoxes.labels:
+            label.set_fontsize(11)
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):
