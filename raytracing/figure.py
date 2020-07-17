@@ -628,7 +628,7 @@ class MplFigure(Figure):
         for i, (label, rectangle, lines) in enumerate(zip(self.checkBoxes.labels,
                                                           self.checkBoxes.rectangles,
                                                           self.checkBoxes.lines)):
-            h = 0.9 - step * i
+            h = 0.85 - step * i
             label.set_fontsize(11)
             rectangle.set_x(0.05)
             rectangle.set_y(h)
