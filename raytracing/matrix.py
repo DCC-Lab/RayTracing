@@ -1370,11 +1370,11 @@ class Matrix(object):
         """ String description that allows the use of print(Matrix())
 
         """
-        # description = "\n /             \\ \n"
+
         description = "| {0:6.3f}   {1:6.3f} |\n".format(self.A, self.B)
         description += "|                 |\n"
         description += "| {0:6.3f}   {1:6.3f} |\n".format(self.C, self.D)
-        # description += " \\             /\n"
+        
         if self.C != 0:
             description += "f={0:0.3f}".format(-1.0 / self.C)
         else:
