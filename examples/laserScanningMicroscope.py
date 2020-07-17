@@ -1,22 +1,24 @@
 import envexamples
 from raytracing import *
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 """
 In a laser scanning system, the scanning components define 
 the covered field-of-view (FOV) at the sample plane. Here, 
-the polygonal mirror of 36 facets rotates rapidly to scan
-the beam along the horizontal direction. It produces an
-angle of 10 degrees, 0.1750 rad, between the facets. 
-Therefore, the laser beam covers a total angle of 20 degrees.
+we show a one-dimensional example with a polygonal mirror
+of 36 facets that rotates rapidly to scan
+the beam along the horizontal direction. It produces a meachnical 
+sweep of 10 degrees, or 0.1750 rad, between each facets. 
+Therefore, the laser beam covers a total optical scan angle of 20 degrees.
 In the following example, the object is considered to be the
 laser beam at the polygonal mirror plane. 
 The output profile shows on its x-axis the width of the FOV under the objective. 
 """
 
-# List of the height of the ray making it throught the system. 
-heights = []
+# List of the scan angle of the ray making it throught the system. 
+thetas = []
 
 # List of 1 corresponding to the number of elements in heights 
 # so that plt.plot() doesn't freak out. 
@@ -26,14 +28,13 @@ positions = []
 objectHalfHeight = 0.000250
 
 # Angle produced by the scanning element.
-scanAngle = 0.1750
+scanAngle = 10*np.pi/180
 
 # Number of total rays considered in these calculations. 
 nRays = 10000
 
 # Production of rays in the angle range of the scanning element.
-inputRays = RandomUniformRays(yMin = -objectHalfHeight, yMax = objectHalfHeight, thetaMin = -scanAngle, thetaMax = scanAngle, maxCount = nRays)
-
+scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=nRays)
 
 class UISUPLAPO60XW(Objective):
 
@@ -64,29 +65,14 @@ def illuminationPath():
 
     return illumination
 
-path = illuminationPath()
-for ray in inputRays:
-    rayInPath = path.traceThrough(ray)
-
-    if rayInPath.isNotBlocked:
-        heights.append(rayInPath.y*0.000001)
-        positions.append(1)
-
-    inputRays.displayProgress()
-
-plt.plot(heights, positions)
-plt.xlabel('Scanning positions of the focal spot (mm)')
-plt.show()
-
-thetas = []
-positions = []
 
 path = illuminationPath()
-scanRays = UniformRays(yMax=0, thetaMax=10*3.14/180, M=1, N=10)
 outputRays = path.traceManyThrough(scanRays)
 for i in range(len(outputRays)):
     thetas.append(scanRays[i].theta*180/np.pi)
     positions.append(outputRays[i].y*1000)
+
+    scanRays.displayProgress()
 
 plt.plot(positions, thetas)
 plt.ylabel('Scan angle (degrees)')
