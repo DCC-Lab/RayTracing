@@ -140,11 +140,8 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print(path.chiefRay())
-         /       \
-        |  6.668  |
-        |         |
-        | -0.333  |
-         \       /
+        y =  3.333
+        theta = -0.167
         z = 0.000
 
         See Also
@@ -245,19 +242,15 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Space(d=30))
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
-        >>> print( 'the first and the second marginal rays are :', path.marginalRays()[0],path.marginalRays()[1])
-        the first and the second marginal rays are :
-         /       \
-        |  0.000  |
-        |         |
-        |  0.050  |
-         \       /
+        >>> print( 'the first marginal ray is:\n', path.marginalRays()[0])
+        the first marginal ray is:
+         y =  0.000
+        theta =  0.050
         z = 0.000
-         /       \
-        |  0.000  |
-        |         |
-        | -0.050  |
-         \       /
+        >>> print( 'the second marginal ray is:\n', path.marginalRays()[1])
+        the second marginal ray is:
+         y =  0.000
+        theta = -0.050
         z = 0.000
 
         As it can be seen in the example, the marginal rays at y=0 
@@ -619,7 +612,7 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('field of view :', path.fieldOfView())
-        field of view : 6.668181337416174
+        field of view : 6.666665124862807
 
         Notes
         -----
@@ -656,7 +649,7 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('field of view :', path.fieldOfView())
-        field of view : 6.668181337416174
+        field of view : 6.666665124862807
 
         Notes
         -----
@@ -715,7 +708,7 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=20,diameter=15,label="f=20"))
         >>> path.append(Space(d=20))
         >>> print('size of the image :', path.imageSize())
-        size of the image : 10.001885411934927
+        size of the image : 9.999998574656525
 
         """
         fieldOfView = self.fieldOfView()
