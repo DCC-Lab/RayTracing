@@ -507,8 +507,10 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m1.determinant, 1)
 
     def testInfiniteBackConjugate(self):
-        m = Matrix(A=0, B=1, C=-1)
-        self.assertTupleEqual(m.backwardConjugate(), (inf, None))
+        m = Matrix(A=0, B=1, C=-1, D=0)
+        d, mat = m.backwardConjugate()
+        self.assertEqual(d, inf)
+        self.assertIsNotNone(mat)
 
     def testFiniteBackConjugate_1(self):
         m1 = Matrix(1, 10, 0, 1) * Matrix(1, 0, -1 / 5, 1)

@@ -148,7 +148,7 @@ class TestRays(envtest.RaytracingTestCase):
         rays = [Ray(0, 0)]
         rays = Rays(rays)
         rays.iteration = 1
-        self.assertEqual(rays.displayProgress, "")
+        self.assertPrints(rays.displayProgress, "")
 
     def testRayCountHistogramBinCountSpecified(self):
         r = [Ray(a, a) for a in range(6)]

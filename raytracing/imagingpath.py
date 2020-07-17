@@ -768,7 +768,7 @@ class ImagingPath(MatrixGroup):
 
         principal = self.principalRay()
         axial = self.axialRay()
-        Iap = abs(self.lagrangeInvariant())
+        Iap = abs(self.lagrangeInvariant()) # corresponds to Zhe in the article
 
         if emissionHalfAngle is not None:
             maxAngle = emissionHalfAngle
