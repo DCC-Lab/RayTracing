@@ -80,11 +80,9 @@ class Matrix(object):
     >>> from raytracing import *
     >>> M= Matrix(A=1,B=3,C=0,D=1)
     >>> print(M)
-    /                \
     |  1.000    3.000 |
     |                 |
     |  0.000    1.000 |
-     \               /
     f = +inf (afocal)
 
 
@@ -181,13 +179,10 @@ class Matrix(object):
         >>> from raytracing import *
         >>> M1= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
         >>> M2= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
-        >>> print('product M2*M1 :' , M2*M1)
-        product M2*M1 :
-         /             \
+        >>> print(M2*M1) #print the product of M2*M1
         |  1.000    0.000 |
-        |               |
+        |                 |
         | -0.667    1.000 |
-         \             /
         f=1.500
 
         """
@@ -242,13 +237,10 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
         >>> # M2 is an ABCD matrix of free space (d=2)
         >>> M2= Matrix(A=1,B=2,C=0,D=1,label='freeSpace')
-        >>> print('Total ABCD matrix :' , M1.mul_matrix(M2))
-        Total ABCD matrix :
-         /             \
+        >>> print(M1.mul_matrix(M2)) #print the total ABCD matrix
         |  1.000    2.000 |
-        |               |
+        |                 |
         | -0.333    0.333 |
-         \             /
         f=3.000
 
         See Also
@@ -326,13 +318,10 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
         >>> # R is a ray
         >>> R= Ray(y=10,theta=10)
-        >>> print('The output ray of Lens M1 :' , M1.mul_ray(R))
-        The output ray of Lens M1 :
-         /       \
-        | 10.000  |
-        |         |
-        |  9.000  |
-         \       /
+        >>> print('The output ray of Lens M1:\n' , M1.mul_ray(R))
+        The output ray of Lens M1:
+         y = 10.000
+        theta =  9.000
         z = 5.000
 
         And after a free space (d=2)
@@ -340,13 +329,10 @@ class Matrix(object):
         >>> # M2 is an ABCD matrix of free space (d=2)
         >>> M2= Matrix(A=1,B=2,C=0,D=1,physicalLength=2,label='freeSpace')
         >>> M=M1.mul_matrix(M2)
-        >>> print('The output ray of Lens M1 and free space M2 :' , M.mul_ray(R))
-        The output ray of Lens M1 and free space M2 :
-         /       \
-        | 30.000  |
-        |         |
-        |  7.000  |
-         \       /
+        >>> print('The output ray of Lens M1 and free space M2:\n' , M.mul_ray(R))
+        The output ray of Lens M1 and free space M2:
+         y = 30.000
+        theta =  7.000
         z = 7.000
 
 
@@ -401,8 +387,8 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
         >>> # B is a Gaussian Beam
         >>> B=GaussianBeam(q=complex(4.999994928425984,0.0050356572916806525),w=1,R=5,n=1)
-        >>> print('The output properties of are:' , M1.mul_beam(B))
-        The output properties of are: Complex radius: (10+0.0201j)
+        >>> print(M1.mul_beam(B)) #print the output properties
+        Complex radius: (10+0.0201j)
         w(z): 1.000, R(z): 10.000, z: 5.000, λ: 0.0 nm
         zo: 0.020, wo: 0.002, wo position: -10.000
 
@@ -476,13 +462,10 @@ class Matrix(object):
         >>> # M1 is an ABCD matrix of a lens (f=2)
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
         >>> transferM=M1.transferMatrix(upTo=5)
-        >>> print('The transfer matrix is:', transferM)
-        The transfer matrix is:
-         /             \
+        >>> print(transferM) # print the transfer matrix
         |  1.000    0.000 |
-        |               |
+        |                 |
         | -0.100    1.000 |
-         \             /
         f=10.000
 
         See Also
@@ -704,24 +687,18 @@ class Matrix(object):
         >>> inputRays = RandomUniformRays(yMax=0, maxCount=nRays)
         >>> Tr=M.traceMany(inputRays)
         >>> #index[0] of the first object in the list is the first input
-        >>> print('The properties of the first input ray:', Tr[0][0])
+        >>> print('The properties of the first input ray:\n', Tr[0][0])
         The properties of the first input ray:
-         /       \
-        |  0.000  |
-        |         |
-        | -1.461  |
-         \       /
+         y =  0.000
+        theta =  0.827
         z = 0.000
 
 
         >>> #index[1] of the first object in the list is the first output
-        >>> print('The properties of the first output ray:', Tr[0][1])
+        >>> print('The properties of the first output ray:\n', Tr[0][1])
         The properties of the first output ray:
-         /       \
-        |  0.000  |
-        |         |
-        |  1.113  |
-         \       /
+         y =  0.000
+        theta =  0.827
         z = 2.000
 
         See Also
@@ -1205,13 +1182,10 @@ class Matrix(object):
         >>> print('The position of the image:' , Image[0])
         The position of the image: -0.5
 
-        >>> print('conjugate matrix:' , Image[1])
-        conjugate matrix:
-         /             \
+        >>> print(Image[1]) #print the conjugate matrix
         |  0.500    0.000 |
-        |               |
+        |                 |
         |  5.000    2.000 |
-         \             /
         f=-0.200
 
         See Also
@@ -1257,13 +1231,10 @@ class Matrix(object):
         >>> print('The position of the image:' , Image[0])
         The position of the image: -0.5
 
-        >>> print('conjugate matrix:' , Image[1])
-        conjugate matrix:
-         /             \
+        >>> print(Image[1]) #print the conjugate matrix
         |  2.000    0.000 |
-        |               |
+        |                 |
         |  5.000    0.500 |
-         \             /
         f=-0.200
 
 
@@ -1399,15 +1370,15 @@ class Matrix(object):
         """ String description that allows the use of print(Matrix())
 
         """
-        description = "\n /             \\ \n"
-        description += "| {0:6.3f}   {1:6.3f} |\n".format(self.A, self.B)
-        description += "|               |\n"
+        # description = "\n /             \\ \n"
+        description = "| {0:6.3f}   {1:6.3f} |\n".format(self.A, self.B)
+        description += "|                 |\n"
         description += "| {0:6.3f}   {1:6.3f} |\n".format(self.C, self.D)
-        description += " \\             /\n"
+        # description += " \\             /\n"
         if self.C != 0:
-            description += "\nf={0:0.3f}\n".format(-1.0 / self.C)
+            description += "f={0:0.3f}".format(-1.0 / self.C)
         else:
-            description += "\nf = +inf (afocal)\n"
+            description += "f = +inf (afocal)"
         return description
 
     def __eq__(self, other):
@@ -1433,13 +1404,10 @@ class Lens(Matrix):
     >>> from raytracing import *
     >>> #define a lens with f=5 and diameter 20
     >>> L=Lens(f=5,diameter=20,label='Lens')
-    >>> print('The transfer matrix of Lens :', L)
-    The transfer matrix of Lens :
-     /             \
+    >>> print(L) #print the transfer matrix of the lens
     |  1.000    0.000 |
-    |               |
+    |                 |
     | -0.200    1.000 |
-     \             /
     f=5.000
     """
 
@@ -1532,13 +1500,10 @@ class CurvedMirror(Matrix):
     >>> from raytracing import *
     >>> #define a curved mirror with R=5 and diameter 20
     >>> M=CurvedMirror(R=5,diameter=20,label='curved mirror')
-    >>> print('The transfer matrix of curved mirror :' ,M)
-    The transfer matrix of curved mirror :
-     /             \
+    >>> print(M) #print the transfer matrix of curved mirror
     |  1.000    0.000 |
-    |               |
+    |                 |
     |  0.400    1.000 |
-     \             /
     f=-2.500
 
 
@@ -1622,13 +1587,10 @@ class Space(Matrix):
     >>> from raytracing import *
     >>> #define a free space of length 3, refraction index 1 and diameter 20
     >>> S=Space(d=3,n=1,diameter=20,label='free space')
-    >>> print('The transfer matrix of free space :' ,S)
-    The transfer matrix of free space :
-     /             \
+    >>> print(S) #print to see the transfer matrix of free space
     |  1.000    3.000 |
-    |               |
+    |                 |
     |  0.000    1.000 |
-     \             /
     f = +inf (afocal)
     """
 
@@ -1755,13 +1717,10 @@ class ThickLens(Matrix):
     >>> from raytracing import *
     >>> #define a thick lens with desired parameters
     >>> TLens=ThickLens(n=1.5,R1=4,R2=6,thickness=3,diameter=20,label='thick lens')
-    >>> print('The transfer matrix of thick lens :' ,TLens)
-    The transfer matrix of thick lens :
-     /             \
+    >>> print(TLens) #print the transfer matrix of the thick lens
     |  0.750    2.000 |
-    |               |
+    |                 |
     | -0.062    1.167 |
-     \             /
     f=16.000
 
 
@@ -1884,13 +1843,10 @@ class DielectricSlab(ThickLens):
     >>> from raytracing import *
     >>> #define a dielectric with refraction index of 1.5
     >>> D=DielectricSlab(n=1.5,thickness=5,diameter=20,label='Dielectric')
-    >>> print('The transfer matrix of dielectric slab :' ,D)
-        The transfer matrix of dielectric slab :
-     /             \
+    >>> print(D) #print the transfer matrix of dielectric slab
     |  1.000    3.333 |
-    |               |
+    |                 |
     | -0.000    1.000 |
-     \             /
     f = +inf (afocal)
 
     """
@@ -1944,13 +1900,10 @@ class Aperture(Matrix):
     >>> from raytracing import *
     >>> #define an aperture of diameter 10
     >>> A=Aperture(diameter=10,label='aperture')
-    >>> print('The transfer matrix of aperture :' ,A)
-    The transfer matrix of aperture :
-     /             \
+    >>> print(A) #print the transfer matrix of the aperture
     |  1.000    0.000 |
-    |               |
+    |                 |
     |  0.000    1.000 |
-     \             /
     f = +inf (afocal)
 
 

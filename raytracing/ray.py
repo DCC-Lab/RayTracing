@@ -246,13 +246,16 @@ class Ray:
     def __str__(self):
         """String description that allows the use of print(Ray())."""
 
-        description = "\n /       \\ \n"
-        description += "| {0:6.3f}  |\n".format(self.y)
-        description += "|         |\n"
-        description += "| {0:6.3f}  |\n".format(self.theta)
-        description += " \\       /\n\n"
+        # # description = "\n /       \\ \n"
+        # description = "\n| {0:6.3f}  |\n".format(self.y)
+        # description += "|         |\n"
+        # description += "| {0:6.3f}  |\n".format(self.theta)
+        # # description += " \\       /\n\n"
 
-        description += "z = {0:4.3f}\n".format(self.z)
+        description = "y = {0:6.3f}\n".format(self.y)
+        description += "theta = {0:6.3f}\n".format(self.theta)
+        description += "z = {0:4.3f}".format(self.z)
+
         if self.isBlocked:
             description += " (blocked)"
 
