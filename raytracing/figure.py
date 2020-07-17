@@ -533,6 +533,7 @@ class MplFigure(Figure):
         self.figure = None
         self.axes = None
         self.axesComments = None
+        self.checkBoxes = None
 
     def create(self, comments=None, title=None):
         if comments is not None:
@@ -552,12 +553,7 @@ class MplFigure(Figure):
         plt.connect('resize_event', self.onZoomCallback)
 
         if interactive:
-            visibility = self.visibility
-            visibility.pop('elements')
-
-            subAxes = plt.axes([0.91, 0.65, 0.08, 0.05*len(visibility)])
-            checkboxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
-            checkboxes.on_clicked(self.onCheckBoxCallback)
+            self.initVisibilityCheckBoxes()
 
         if filepath is not None:
             self.figure.savefig(filepath, dpi=600)
@@ -616,6 +612,14 @@ class MplFigure(Figure):
             if not label.useDataUnits:
                 artist.set_transform(self.axes.transAxes)
             self.axes.add_artist(artist)
+
+    def initVisibilityCheckBoxes(self):
+        visibility = self.visibility
+        visibility.pop('elements')
+
+        subAxes = plt.axes([0.91, 0.65, 0.08, 0.05 * len(visibility)])
+        self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
+        self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):
         for graphic in self.graphics:
