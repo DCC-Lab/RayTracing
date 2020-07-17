@@ -7,10 +7,11 @@ import numpy as np
 """
 In a laser scanning system, the scanning components define 
 the covered field-of-view (FOV) at the sample plane. Here, 
-the polygonal mirror of 36 facets rotates rapidly to scan
-the beam along the horizontal direction. It produces an
-angle of 10 degrees, 0.1750 rad, between the facets. 
-Therefore, the laser beam covers a total angle of 20 degrees.
+we show a one-dimensional example with a polygonal mirror
+of 36 facets that rotates rapidly to scan
+the beam along the horizontal direction. It produces a meachnical 
+sweep of 10 degrees, or 0.1750 rad, between each facets. 
+Therefore, the laser beam covers a total optical scan angle of 20 degrees.
 In the following example, the object is considered to be the
 laser beam at the polygonal mirror plane. 
 The output profile shows on its x-axis the width of the FOV under the objective. 
