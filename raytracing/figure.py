@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from .graphics import *
 from .ray import Ray
 import itertools
+import textwrap
 import warnings
 import sys
 
@@ -15,8 +16,8 @@ class Figure:
         self.path = opticalPath
         self.raysList = []
 
-        self.graphicGroups = {'FOV P&A': [], 'Object-Image': [], 'Lamp': [], 'Elements': []}
-        self.lineGroups = {'FOV P&A': [], 'Object-Image': [], 'Lamp': []}
+        self.graphicGroups = {'P&A rays of FOV': [], 'Object & Image': [], 'Lamp': [], 'Elements': []}
+        self.lineGroups = {'P&A rays of FOV': [], 'Object & Image': [], 'Lamp': []}
         self.labels = []
         self.points = []
         self.annotations = []
@@ -128,15 +129,15 @@ class Figure:
         rays = []
         if principalRay is not None:
             rays.append(principalRay)
-            self.graphicGroups['FOV P&A'].append(ObjectGraphic(principalRay.y*2,
+            self.graphicGroups['P&A rays of FOV'].append(ObjectGraphic(principalRay.y*2,
                                                            fill=False, color='gray'))
-            self.graphicGroups['FOV P&A'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
+            self.graphicGroups['P&A rays of FOV'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
                                                                             fill=False, color='gray'))
 
         if axialRay is not None:
             rays.append(axialRay)
         if rays:
-            self.lineGroups['FOV P&A'].extend(self.rayTraceLines(rays))
+            self.lineGroups['P&A rays of FOV'].extend(self.rayTraceLines(rays))
 
     def setGraphicsFromOpticalPath(self):
         self.graphicGroups['Elements'] = self.graphicsOfElements
@@ -174,8 +175,8 @@ class Figure:
             instance = type(rays).__name__
             # todo: enable multiple instances
             if instance is 'ObjectRays':
-                self.graphicGroups['Object-Image'].append(ObjectGraphic(rays.yMax*2, x=0))  # todo: object position
-                self.graphicGroups['Object-Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax*2))
+                self.graphicGroups['Object & Image'].append(ObjectGraphic(rays.yMax*2, x=0))  # todo: object position
+                self.graphicGroups['Object & Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax*2))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax*2, x=0))
 
@@ -185,7 +186,7 @@ class Figure:
 
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                self.lineGroups['Object-Image'].extend(rayTrace)
+                self.lineGroups['Object & Image'].extend(rayTrace)
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 self.lineGroups['Lamp'].extend(rayTrace)
@@ -472,10 +473,10 @@ class Figure:
         if self.designParams['showFOV']:
             self.designParams['showObjectImage'] = False
         else:
-            self.setGroupVisibility('FOV P&A', False)
+            self.setGroupVisibility('P&A rays of FOV', False)
 
         if not self.designParams['showObjectImage']:
-            self.setGroupVisibility('Object-Image', False)
+            self.setGroupVisibility('Object & Image', False)
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
@@ -617,9 +618,11 @@ class MplFigure(Figure):
         visibility = self.visibility
         visibility.pop('Elements')
 
-        height = 0.05 * len(visibility)
+        height = 0.1 * len(visibility)
         subAxes = plt.axes([0.90, 0.90-height, 0.1, height], frameon=False)
-        self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
+
+        labels = [textwrap.fill(label, 10) for label in visibility.keys()]
+        self.checkBoxes = CheckButtons(subAxes, labels, visibility.values())
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):
@@ -716,7 +719,8 @@ class MplFigure(Figure):
         self.updateGraphics()
         self.updateLabels()
 
-    def onCheckBoxCallback(self, groupKey):
+    def onCheckBoxCallback(self, groupKey: str):
+        groupKey = groupKey.replace('\n', ' ')
         oldState = self.visibility[groupKey]
         self.setGroupVisibility(groupKey, not oldState)
 
