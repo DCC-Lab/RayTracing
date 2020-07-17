@@ -31,8 +31,7 @@ RandomRays
 .. autosummary::
 
     
-      ~RandomRays.count
-      ~RandomRays.rays
+      ~RandomRays.intensityValues
       ~RandomRays.thetaValues
       ~RandomRays.yValues
 

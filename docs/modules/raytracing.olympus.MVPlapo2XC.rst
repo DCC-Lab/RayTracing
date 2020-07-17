@@ -33,6 +33,4 @@ MVPlapo2XC
       ~MVPlapo2XC.determinant
       ~MVPlapo2XC.hasPower
       ~MVPlapo2XC.isImaging
-      ~MVPlapo2XC.largestDiameter
-      ~MVPlapo2XC.warningDisplayed
 

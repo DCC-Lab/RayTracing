@@ -19,9 +19,9 @@ ThickLens
 
     
         ~ThickLens.__init__
-        ~ThickLens.flipOrientation
+        ~ThickLens.drawAperture
+        ~ThickLens.drawAt
         ~ThickLens.pointsOfInterest
-        ~ThickLens.transferMatrix
 
 
 
@@ -36,5 +36,4 @@ ThickLens
       ~ThickLens.determinant
       ~ThickLens.hasPower
       ~ThickLens.isImaging
-      ~ThickLens.largestDiameter
 

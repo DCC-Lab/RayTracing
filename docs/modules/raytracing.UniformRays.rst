@@ -30,8 +30,7 @@ UniformRays
 .. autosummary::
 
     
-      ~UniformRays.count
-      ~UniformRays.rays
+      ~UniformRays.intensityValues
       ~UniformRays.thetaValues
       ~UniformRays.yValues
 

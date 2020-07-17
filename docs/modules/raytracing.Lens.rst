@@ -19,6 +19,7 @@ Lens
 
     
         ~Lens.__init__
+        ~Lens.drawAt
         ~Lens.pointsOfInterest
 
 
@@ -34,5 +35,4 @@ Lens
       ~Lens.determinant
       ~Lens.hasPower
       ~Lens.isImaging
-      ~Lens.largestDiameter
 

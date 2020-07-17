@@ -19,7 +19,7 @@ DielectricSlab
 
     
         ~DielectricSlab.__init__
-        ~DielectricSlab.transferMatrix
+        ~DielectricSlab.drawAt
 
 
 
@@ -34,5 +34,4 @@ DielectricSlab
       ~DielectricSlab.determinant
       ~DielectricSlab.hasPower
       ~DielectricSlab.isImaging
-      ~DielectricSlab.largestDiameter
 
