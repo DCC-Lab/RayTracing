@@ -12,6 +12,7 @@ class Figure:
     """Base class to contain the required objects of a figure.
     Promote to a backend-derived Figure class to enable display features.
     """
+
     def __init__(self, opticalPath):
         self.path = opticalPath
         self.raysList = []
@@ -129,10 +130,10 @@ class Figure:
         rays = []
         if principalRay is not None:
             rays.append(principalRay)
-            self.graphicGroups['P&A rays of FOV'].append(ObjectGraphic(principalRay.y*2,
-                                                           fill=False, color='gray'))
+            self.graphicGroups['P&A rays of FOV'].append(ObjectGraphic(principalRay.y * 2,
+                                                                       fill=False, color='gray'))
             self.graphicGroups['P&A rays of FOV'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
-                                                                            fill=False, color='gray'))
+                                                                                        fill=False, color='gray'))
 
         if axialRay is not None:
             rays.append(axialRay)
@@ -175,10 +176,10 @@ class Figure:
             instance = type(rays).__name__
             # todo: enable multiple instances
             if instance is 'ObjectRays':
-                self.graphicGroups['Object & Image'].append(ObjectGraphic(rays.yMax*2, x=0))  # todo: object position
-                self.graphicGroups['Object & Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax*2))
+                self.graphicGroups['Object & Image'].append(ObjectGraphic(rays.yMax * 2, x=0))  # todo: object position
+                self.graphicGroups['Object & Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2))
             if instance is 'LampRays':
-                self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax*2, x=0))
+                self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
 
     def setLinesFromRaysList(self):
         for rays in self.raysList:
@@ -276,7 +277,7 @@ class Figure:
     @property
     def displayRange(self):
         """ The maximum height of the objects in the optical path. """
-        from .laserpath import LaserPath   # Fixme: circular import fix
+        from .laserpath import LaserPath  # Fixme: circular import fix
 
         if isinstance(self.path, LaserPath):
             return self.laserDisplayRange
@@ -528,6 +529,7 @@ class Figure:
 
 class MplFigure(Figure):
     """Matplotlib Figure"""
+
     def __init__(self, opticalPath):
         super().__init__(opticalPath)
 
@@ -623,18 +625,22 @@ class MplFigure(Figure):
         self.checkBoxes = CheckButtons(subAxes, labels, visibility.values())
 
         step = 0.15
-        for i, (label, rectangle) in enumerate(zip(self.checkBoxes.labels, self.checkBoxes.rectangles)):
+        for i, (label, rectangle, lines) in enumerate(zip(self.checkBoxes.labels,
+                                                          self.checkBoxes.rectangles,
+                                                          self.checkBoxes.lines)):
+            h = 0.9 - step * i
             label.set_fontsize(11)
             rectangle.set_x(0.05)
-            rectangle.set_y(0.9 - step*i)
+            rectangle.set_y(h)
             rectangle.set(width=0.12, height=0.04)
-            label.set_y(0.9 - step*i + 0.02)
+            label.set_y(h + 0.02)
             label.set_x(0.2)
 
-        for (lineA, lineB) in self.checkBoxes.lines:
-            pass  # todo
-            # print(lineA.__dict__)
-            # print(lineB.__dict__)
+            lineA, lineB = lines
+            lineA.set_xdata([0.05, 0.17])
+            lineB.set_xdata([0.05, 0.17])
+            lineA.set_ydata([h, h + 0.04])
+            lineB.set_ydata([h + 0.04, h])
 
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
@@ -705,8 +711,8 @@ class MplFigure(Figure):
                     else:
                         requiredSpacing = boxA.x0 - boxB.x1
 
-                    self.translateLabel(labels[a], boxA, dx=-requiredSpacing/2)
-                    self.translateLabel(labels[b], boxB, dx=requiredSpacing/2)
+                    self.translateLabel(labels[a], boxA, dx=-requiredSpacing / 2)
+                    self.translateLabel(labels[b], boxB, dx=requiredSpacing / 2)
 
             i += 1
             if noOverlap:
@@ -724,7 +730,7 @@ class MplFigure(Figure):
 
     def updateDisplayRange(self):
         """Set a symmetric Y-axis display range defined as 1.5 times the maximum halfHeight of all graphics."""
-        halfDisplayHeight = self.displayRange/2 * 1.5
+        halfDisplayHeight = self.displayRange / 2 * 1.5
         self.axes.autoscale()
         self.axes.set_ylim(-halfDisplayHeight, halfDisplayHeight)
 
