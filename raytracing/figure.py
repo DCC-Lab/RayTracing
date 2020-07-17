@@ -617,14 +617,25 @@ class MplFigure(Figure):
     def initVisibilityCheckBoxes(self):
         visibility = self.visibility
         visibility.pop('Elements')
-
-        height = 0.1 * len(visibility)
-        subAxes = plt.axes([0.90, 0.90-height, 0.1, height], frameon=False)
-
         labels = [textwrap.fill(label, 10) for label in visibility.keys()]
+
+        subAxes = plt.axes([0.90, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
         self.checkBoxes = CheckButtons(subAxes, labels, visibility.values())
-        for label in self.checkBoxes.labels:
+
+        step = 0.15
+        for i, (label, rectangle) in enumerate(zip(self.checkBoxes.labels, self.checkBoxes.rectangles)):
             label.set_fontsize(11)
+            rectangle.set_x(0.05)
+            rectangle.set_y(0.9 - step*i)
+            rectangle.set(width=0.12, height=0.04)
+            label.set_y(0.9 - step*i + 0.02)
+            label.set_x(0.2)
+
+        for (lineA, lineB) in self.checkBoxes.lines:
+            pass  # todo
+            # print(lineA.__dict__)
+            # print(lineB.__dict__)
+
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):
