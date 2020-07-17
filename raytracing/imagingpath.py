@@ -894,7 +894,7 @@ class ImagingPath(MatrixGroup):
             defaultObject = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
             raysList.append(defaultObject)
         else:
-            self.figure.designParams['showObject'] = True
+            self.figure.designParams['showObjectImage'] = True
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
                             backend='matplotlib', display3D=False, interactive=interactive, filepath=filePath)
