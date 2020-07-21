@@ -833,8 +833,9 @@ class ImagingPath(MatrixGroup):
         if len(vignettedBlocked) >= 2:
             (x,y) = list(zip(*vignettedBlocked))
             plt.scatter(x,y, color=(1,0,0), marker='.',label="Vignetted")
-        (x,y) = list(zip(*expectedBlocked))
-        plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
+        if len(expectedBlocked) >= 2:
+            (x,y) = list(zip(*expectedBlocked))
+            plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
         axis1.set_xlabel("${I_{rp}}/{I_{ap}}$\n\nFigure: Each point is a ray emitted from the source.")
         axis1.set_ylabel("${I_{ar}}/{I_{ap}}$")
         axis1.set_xlim(-2,2)
