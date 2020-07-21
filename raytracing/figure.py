@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from .graphics import *
 from .ray import Ray
 import itertools
-import textwrap
 import warnings
 import sys
 
@@ -556,6 +555,7 @@ class MplFigure(Figure):
         plt.connect('resize_event', self.onZoomCallback)
 
         if interactive:
+            plt.subplots_adjust(right=0.82)
             self.initVisibilityCheckBoxes()
 
         if filepath is not None:
@@ -619,10 +619,9 @@ class MplFigure(Figure):
     def initVisibilityCheckBoxes(self):
         visibility = self.visibility
         visibility.pop('Elements')
-        labels = [textwrap.fill(label, 10) for label in visibility.keys()]
 
-        subAxes = plt.axes([0.90, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
-        self.checkBoxes = CheckButtons(subAxes, labels, visibility.values())
+        subAxes = plt.axes([0.82, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
+        self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
 
         step = 0.15
         for i, (label, rectangle, lines) in enumerate(zip(self.checkBoxes.labels,
@@ -632,7 +631,7 @@ class MplFigure(Figure):
             label.set_fontsize(11)
             rectangle.set_x(0.05)
             rectangle.set_y(h)
-            rectangle.set(width=0.22, height=0.04)
+            rectangle.set(width=0.12, height=0.04)
             label.set_y(h + 0.02)
             label.set_x(0.2)
 
