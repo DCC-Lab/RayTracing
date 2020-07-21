@@ -307,7 +307,7 @@ class Rays:
                     :align: center
 
         """
-        fontScale = 1
+        fontScale = 1.2
 
         plt.ioff()
         if showTheta:
