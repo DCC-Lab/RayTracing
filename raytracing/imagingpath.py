@@ -844,6 +844,19 @@ class ImagingPath(MatrixGroup):
         axis1.legend(loc="upper right")
         plt.show()
 
+    def subPath(self, zStart: float):
+        z = 0
+        for i, element in enumerate(self.elements):
+            if z < zStart < z + element.L:
+                assert type(element).__name__ is 'Space', 'The position of the rays cannot be in the same ' \
+                                                          'position of another element.'
+                newElements = [Space(z + element.L - zStart)]
+                newElements.extend(self.elements[i+1:])
+                return ImagingPath(elements=newElements)
+            z += element.L
+
+        raise ValueError('The position of the rays does not fit in any spaces.')
+
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
                 onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None):
         """ Display the optical system and trace the rays.
