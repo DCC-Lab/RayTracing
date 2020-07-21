@@ -251,38 +251,34 @@ if 11 in examples:
     # Demo #11: Thick diverging lens
     path = ImagingPath()
     path.label = "Demo #11: Thick diverging lens"
-    path.objectHeight = 20
     path.append(Space(d=50))
     path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
     path.append(Space(d=50))
-    path.display(comments=path.label + """\n
+    path.displayWithObject(diameter=20, comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #11: Thick diverging lens"
-    path.objectHeight = 20
     path.append(Space(d=50))
     path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
     path.append(Space(d=50))
-    path.display()""")
+    path.displayWithObject(diameter=20)""")
 if 12 in examples:
     # Demo #12: Thick diverging lens built from individual elements
     path = ImagingPath()
     path.label = "Demo #12: Thick diverging lens built from individual elements"
-    path.objectHeight = 20
     path.append(Space(d=50))
     path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
     path.append(Space(d=10, diameter=25, label='Lens'))
     path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
     path.append(Space(d=50))
-    path.display(comments=path.label + """\n
+    path.displayWithObject(diameter=20, comments=path.label + """\n
     path = ImagingPath()
     path.label = "Demo #12: Thick diverging lens built from individual elements"
-    path.objectHeight = 20
     path.append(Space(d=50))
     path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
     path.append(Space(d=10, diameter=25, label='Lens'))
     path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
     path.append(Space(d=50))
-    path.display()""")
+    path.displayWithObject(diameter=20)""")
 
 if 13 in examples:
     # Demo #13, forward and backward conjugates
@@ -305,46 +301,31 @@ if 14 in examples:
     print("Distance between entrance and exit planes: ", obj.L)
 
     path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 20
     path.label = "Demo #14 Path with generic objective"
     path.append(Space(180))
     path.append(obj)
     path.append(Space(10))
-    path.display(comments=path.label + """
+    path.displayWithObject(diameter=20, fanAngle=0.005, comments=path.label + """
     path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 10.0
     path.label = "Path with generic objective"
     path.append(Space(180))
     path.append(obj)
     path.append(Space(10))
-    path.display()""")
+    path.displayWithObject(diameter=20, fanAngle=0.0, fanNumber=1, rayNumber=15)""")
 if 15 in examples:
     # Demo #15: Olympus objective LUMPlanFL40X
     path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 20
     path.label = "Demo #15 Path with LUMPlanFL40X"
     path.append(Space(180))
     path.append(olympus.LUMPlanFL40X())
-    path.display(comments=path.label + """
+    path.append(Space(10))
+    path.displayWithObject(diameter=10, fanAngle=0.005, comments=path.label + """
     path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 10.0
     path.label = "Path with LUMPlanFL40X"
     path.append(Space(180))
     path.append(olympus.LUMPlanFL40X())
     path.append(Space(10))
-    path.display()""")
+    path.displayWithObject(diameter=20, fanAngle=0.0, fanNumber=1, rayNumber=15)""")
 if 16 in examples:
     # Demo #16: Vendor lenses
     thorlabs.AC254_050_A().display()

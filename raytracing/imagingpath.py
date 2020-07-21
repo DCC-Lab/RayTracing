@@ -845,7 +845,7 @@ class ImagingPath(MatrixGroup):
         plt.show()
 
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -872,31 +872,26 @@ class ImagingPath(MatrixGroup):
         if rays is not None:
             raysList.append(rays)
 
-        if len(raysList) == 0:
-            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
-                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+        self.figure.initializeDisplay()
 
+        if len(raysList) == 0:
+            self.figure.designParams['showFOV'] = True
+            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
+                self.figure.designParams['showFOV'] = False
             else:
                 warnings.warn('No rays were provided for the display. Using principal and axial rays.')
-
-                rays = []
-                principalRay = self.principalRay()
-                axialRay = self.axialRay()
-
-                if principalRay is not None:
-                    rays.append(principalRay)
-                if axialRay is not None:
-                    rays.append(axialRay)
-
-                if len(rays) == 0:
+                if self.principalRay() is None and self.axialRay() is None:
                     warnings.warn('Principal and axial rays are not defined for this system. '
                                   'Using default ObjectRays.')
-                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
 
-            raysList.append(rays)
+        if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
+            defaultObject = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+            raysList.append(defaultObject)
+        else:
+            self.figure.designParams['showObjectImage'] = True
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
-                            backend='matplotlib', display3D=False, filepath=filePath)
+                            backend='matplotlib', display3D=False, interactive=interactive, filepath=filePath)
 
     def saveFigure(self, filePath, rays=None, raysList=None, removeBlocked=True, comments=None,
                    onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
@@ -922,4 +917,24 @@ class ImagingPath(MatrixGroup):
         self.display(rays=rays, raysList=raysList, removeBlocked=removeBlocked, comments=comments,
                      onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
-                     filePath=filePath)
+                     interactive=False, filePath=filePath)
+
+    def displayWithObject(self, diameter, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+        """ Display the optical system and trace the rays.
+
+        Parameters
+        ----------
+        diameter : float
+            Diameter of the object.
+        removeBlocked : bool (Optional)
+            If True, the blocked rays are removed (default=False)
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+        """
+
+        self._objectHeight = diameter
+        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber)
+
+        self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
+                     onlyPrincipalAndAxialRays=False,
+                     limitObjectToFieldOfView=False)
