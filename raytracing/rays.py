@@ -311,14 +311,14 @@ class Rays:
 
         plt.ioff()
         if showTheta:
-            fig, axes = plt.subplots(2)
+            fig, axes = plt.subplots(2, figsize=(10, 7))
             fig.suptitle(title, fontsize=12*fontScale)
             fig.tight_layout(pad=3.0)
 
             axis1 = axes[0]
             axis2 = axes[1]
         else:
-            fig, axis1 = plt.subplots(1)
+            fig, axis1 = plt.subplots(1, figsize=(10, 7))
             fig.suptitle(title, fontsize=13*fontScale)
             fig.tight_layout(pad=3.0)
 
