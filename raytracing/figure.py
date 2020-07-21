@@ -175,8 +175,8 @@ class Figure:
             instance = type(rays).__name__
             # todo: enable multiple instances
             if instance is 'ObjectRays':
-                self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2, x=0))  # todo: object position
-                self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2))
+                self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2, x=rays._z))  # todo: object position
+                self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays._z))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
 
@@ -195,9 +195,12 @@ class Figure:
             else:
                 self.lineGroups[instance].extend(rayTrace)
 
-    def graphicsOfConjugatePlanes(self, objectDiameter, fill=True, color='r'):
+    def graphicsOfConjugatePlanes(self, objectDiameter, fill=True, color='r', x=0):
         planeGraphics = []
-        planeInfo = self.path.intermediateConjugates()
+        if x != 0:
+            planeInfo = self.path.subPath(zStart=x).intermediateConjugates()
+        else:
+            planeInfo = self.path.intermediateConjugates()
 
         for (position, magnification) in planeInfo:
             planeGraphics.append(ImageGraphic(diameter=magnification * objectDiameter,
@@ -325,13 +328,22 @@ class Figure:
         2. the principal and axial rays.
         """
 
+        linewidth = 0.5
         if type(rays).__name__ is 'LampRays':
             colors = self.designParams['lampRayColors']
         else:
             colors = self.designParams['rayColors']
 
-        linewidth = 0.5
-        manyRayTraces = self.path.traceMany(rays)
+        dz = 0
+        if type(rays) is not list:
+            if rays._z != 0:
+                dz = rays._z
+
+        if dz != 0:
+            subPath = self.path.subPath(zStart=dz)
+            manyRayTraces = subPath.traceMany(rays)
+        else:
+            manyRayTraces = self.path.traceMany(rays)
 
         maxHeight = 0
         for rayTrace in manyRayTraces:
@@ -355,7 +367,7 @@ class Figure:
                     (y[0] + maxHeight) / (maxHeight * 2) * (len(colors) - 1)))
                 colorIndex = colorIndex % len(colors)
 
-            line = Line(x, y, color=colors[colorIndex], lineWidth=linewidth, label='ray')
+            line = Line(np.asarray(x) + dz, y, color=colors[colorIndex], lineWidth=linewidth, label='ray')
             lines.append(line)
 
         return lines
