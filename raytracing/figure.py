@@ -17,8 +17,8 @@ class Figure:
         self.path = opticalPath
         self.raysList = []
 
-        self.graphicGroups = {'P&A rays of FOV': [], 'Object & Image': [], 'Lamp': [], 'Elements': []}
-        self.lineGroups = {'P&A rays of FOV': [], 'Object & Image': [], 'Lamp': []}
+        self.graphicGroups = {'Principal/axial rays': [], 'Object/Image': [], 'Lamp': [], 'Elements': []}
+        self.lineGroups = {'Principal/axial rays': [], 'Object/Image': [], 'Lamp': []}
         self.labels = []
         self.points = []
         self.annotations = []
@@ -130,15 +130,15 @@ class Figure:
         rays = []
         if principalRay is not None:
             rays.append(principalRay)
-            self.graphicGroups['P&A rays of FOV'].append(ObjectGraphic(principalRay.y * 2,
+            self.graphicGroups['Principal/axial rays'].append(ObjectGraphic(principalRay.y * 2,
                                                                        fill=False, color='gray'))
-            self.graphicGroups['P&A rays of FOV'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
+            self.graphicGroups['Principal/axial rays'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
                                                                                         fill=False, color='gray'))
 
         if axialRay is not None:
             rays.append(axialRay)
         if rays:
-            self.lineGroups['P&A rays of FOV'].extend(self.rayTraceLines(rays))
+            self.lineGroups['Principal/axial rays'].extend(self.rayTraceLines(rays))
 
     def setGraphicsFromOpticalPath(self):
         self.graphicGroups['Elements'] = self.graphicsOfElements
@@ -176,8 +176,8 @@ class Figure:
             instance = type(rays).__name__
             # todo: enable multiple instances
             if instance is 'ObjectRays':
-                self.graphicGroups['Object & Image'].append(ObjectGraphic(rays.yMax * 2, x=0))  # todo: object position
-                self.graphicGroups['Object & Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2))
+                self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2, x=0))  # todo: object position
+                self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
 
@@ -187,7 +187,7 @@ class Figure:
 
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                self.lineGroups['Object & Image'].extend(rayTrace)
+                self.lineGroups['Object/Image'].extend(rayTrace)
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 self.lineGroups['Lamp'].extend(rayTrace)
@@ -474,10 +474,10 @@ class Figure:
         if self.designParams['showFOV']:
             self.designParams['showObjectImage'] = False
         else:
-            self.setGroupVisibility('P&A rays of FOV', False)
+            self.setGroupVisibility('Principal/axial rays', False)
 
         if not self.designParams['showObjectImage']:
-            self.setGroupVisibility('Object & Image', False)
+            self.setGroupVisibility('Object/Image', False)
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
@@ -632,7 +632,7 @@ class MplFigure(Figure):
             label.set_fontsize(11)
             rectangle.set_x(0.05)
             rectangle.set_y(h)
-            rectangle.set(width=0.12, height=0.04)
+            rectangle.set(width=0.22, height=0.04)
             label.set_y(h + 0.02)
             label.set_x(0.2)
 
