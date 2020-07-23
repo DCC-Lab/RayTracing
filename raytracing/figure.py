@@ -580,7 +580,7 @@ class MplFigure(Figure):
         plt.connect('resize_event', self.onZoomCallback)
 
         if interactive:
-            plt.subplots_adjust(right=0.82)
+            plt.subplots_adjust(right=0.81)
             self.initVisibilityCheckBoxes()
 
         if filepath is not None:
@@ -645,7 +645,7 @@ class MplFigure(Figure):
         visibility = self.visibility
         visibility.pop('Elements')
 
-        subAxes = plt.axes([0.82, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
+        subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
         self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
 
         step = 0.15
