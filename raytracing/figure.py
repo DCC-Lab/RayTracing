@@ -557,7 +557,7 @@ class MplFigure(Figure):
         self.axes.set_xlabel('Distance', fontsize=13*self.fontScale)
         self.axes.set_ylabel('Height', fontsize=13*self.fontScale)
         self.axes.set_title(title, fontsize=13*self.fontScale)
-        self.axes.tick_params(labelsize=12*self.fontScale)
+        self.axes.tick_params(labelsize=13*self.fontScale)
 
     def display2D(self, interactive=True, filepath=None):
         self.draw()
