@@ -174,9 +174,9 @@ class Figure:
         for rays in self.raysList:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                objectKey = 'Object/Image (z={})'.format(rays._z) if rays._z != 0 else 'Object/Image'
-                self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays._z)]
-                self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays._z))
+                objectKey = 'Object/Image (z={})'.format(rays.z) if rays.z != 0 else 'Object/Image'
+                self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z)]
+                self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
 
@@ -186,10 +186,10 @@ class Figure:
 
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                if rays._z == 0:
+                if rays.z == 0:
                     self.lineGroups['Object/Image'].extend(rayTrace)
                 else:
-                    self.lineGroups['Object/Image (z={})'.format(rays._z)] = rayTrace
+                    self.lineGroups['Object/Image (z={})'.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 self.lineGroups['Lamp'].extend(rayTrace)
@@ -339,8 +339,8 @@ class Figure:
 
         dz = 0
         if type(rays) is not list:
-            if rays._z != 0:
-                dz = rays._z
+            if rays.z != 0:
+                dz = rays.z
 
         if dz != 0:
             forwardPath = self.path.subPath(zStart=dz)
