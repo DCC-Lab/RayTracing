@@ -330,7 +330,7 @@ class Rays:
         axis1.set_xlabel("Height of ray", fontsize=13*fontScale)
         axis1.set_ylabel("Ray count", fontsize=13*fontScale)
         axis1.legend(["Intensity"], fontsize=13*fontScale)
-        axis1.tick_params(labelsize=12*fontScale)
+        axis1.tick_params(labelsize=13*fontScale)
 
         if showTheta:
             (x, y) = self.rayAnglesHistogram()
@@ -341,7 +341,7 @@ class Rays:
             axis2.set_xlabel("Angle of ray [rad]", fontsize=13*fontScale)
             axis2.set_ylabel("Ray count", fontsize=13*fontScale)
             axis2.legend(["Angle"], fontsize=13*fontScale)
-            axis2.tick_params(labelsize=12*fontScale)
+            axis2.tick_params(labelsize=13*fontScale)
 
         plt.show()
 
