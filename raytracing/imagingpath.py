@@ -943,7 +943,7 @@ class ImagingPath(MatrixGroup):
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
                      interactive=False, filePath=filePath)
 
-    def displayWithObject(self, diameter, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+    def displayWithObject(self, diameter, z=0, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -957,7 +957,7 @@ class ImagingPath(MatrixGroup):
         """
 
         self._objectHeight = diameter
-        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber)
+        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber, z=z)
 
         self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
                      onlyPrincipalAndAxialRays=False,
