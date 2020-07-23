@@ -844,15 +844,25 @@ class ImagingPath(MatrixGroup):
         axis1.legend(loc="upper right")
         plt.show()
 
-    def subPath(self, zStart: float):
+    def subPath(self, zStart: float, backwards=False):
+        """ Secondary ImagingPath defined from a desired zStart to the end of current path
+        or to the start of current path if 'inverse' is True. Used internally to trace rays
+        from different positions. """
+
         z = 0
         for i, element in enumerate(self.elements):
             if z < zStart < z + element.L:
                 assert type(element).__name__ is 'Space', 'The position of the rays cannot be in the same ' \
                                                           'position of another element.'
-                newElements = [Space(z + element.L - zStart)]
-                newElements.extend(self.elements[i+1:])
-                return ImagingPath(elements=newElements)
+                if backwards:
+                    newElements = [Space(zStart - z)]
+                    newElements.extend(self.elements[i-1::-1])
+                    return ImagingPath(elements=newElements)
+                else:
+                    newElements = [Space(z + element.L - zStart)]
+                    newElements.extend(self.elements[i+1:])
+                    return ImagingPath(elements=newElements)
+
             z += element.L
 
         raise ValueError('The position of the rays does not fit in any spaces.')
