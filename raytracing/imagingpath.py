@@ -909,7 +909,8 @@ class ImagingPath(MatrixGroup):
                                   'Using default ObjectRays.')
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
-            defaultObject = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+            defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
+                                       halfAngle=self.fanAngle, T=self.rayNumber)
             raysList.append(defaultObject)
         else:
             self.figure.designParams['showObjectImage'] = True
