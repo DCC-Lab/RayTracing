@@ -856,7 +856,8 @@ class ImagingPath(MatrixGroup):
                                                           'position of another element.'
                 if backwards:
                     newElements = [Space(zStart - z)]
-                    newElements.extend(self.elements[i-1::-1])
+                    if i != 0:
+                        newElements.extend(self.elements[i-1::-1])
                     return ImagingPath(elements=newElements)
                 else:
                     newElements = [Space(z + element.L - zStart)]
