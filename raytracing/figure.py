@@ -26,7 +26,7 @@ class Figure:
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['b', 'g'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
                                   'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
-                                  'fontScale': 1.0, 'showFOV': False, 'showObjectImage': True}
+                                  'fontScale': 1.2, 'showFOV': False, 'showObjectImage': True}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
         self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
