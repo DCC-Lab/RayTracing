@@ -767,10 +767,11 @@ class RandomLambertianRays(RandomRays):
         return ray
 
 class ObjectRays(UniformRays):
-    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None):
+    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None):
         super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
         self.z = z
         self.rayColors = rayColors
+        self.color = color
 
 class LampRays(RandomUniformRays):
     def __init__(self, diameter, NA=1.0, N=10000):
