@@ -175,7 +175,7 @@ class Figure:
             instance = type(rays).__name__
             # todo: enable multiple instances
             if instance is 'ObjectRays':
-                self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2, x=rays._z))  # todo: object position
+                self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2, x=rays._z))
                 self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays._z))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
@@ -204,7 +204,7 @@ class Figure:
 
         for (position, magnification) in planeInfo:
             planeGraphics.append(ImageGraphic(diameter=magnification * objectDiameter,
-                                              x=position, fill=fill, color=color))
+                                              x=position + x, fill=fill, color=color))
         return planeGraphics
 
     @property
