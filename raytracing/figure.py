@@ -200,12 +200,18 @@ class Figure:
 
     def graphicsOfConjugatePlanes(self, objectDiameter, fill=True, color='r', x=0):
         planeGraphics = []
-        if x != 0:
-            planeInfo = self.path.subPath(zStart=x).intermediateConjugates()
-        else:
-            planeInfo = self.path.intermediateConjugates()
 
-        for (position, magnification) in planeInfo:
+        if x != 0:
+            planeConjugates = self.path.subPath(zStart=x).intermediateConjugates()
+            backwardConjugates = self.path.subPath(zStart=x, backwards=True).intermediateConjugates()
+            for backConjugate in backwardConjugates:
+                backConjugate[0] *= -1
+            planeConjugates.extend(backwardConjugates)
+
+        else:
+            planeConjugates = self.path.intermediateConjugates()
+
+        for (position, magnification) in planeConjugates:
             planeGraphics.append(ImageGraphic(diameter=magnification * objectDiameter,
                                               x=position + x, fill=fill, color=color))
         return planeGraphics
