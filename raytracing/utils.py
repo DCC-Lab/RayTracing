@@ -44,3 +44,20 @@ def deprecated(reason: str):
         return wrapper
 
     return deprecatedFunc
+
+
+def printClassHierarchy(aClass):
+    def printAllChilds(aClass):
+        for child in aClass.__subclasses__():
+            print("\"{0}\" -> \"{1}\"".format(aClass.__name__, child.__name__))
+            printAllChilds(child)
+
+    print("digraph G {")
+    print("  rankdir=\"LR\";")
+    printAllChilds(aClass)
+    print("}")
+
+def printModuleClasses(moduleName):
+    for name, obj in inspect.getmembers(sys.modules[moduleName]):
+        if inspect.isclass(obj) and obj.__module__.startswith(moduleName):
+            print(obj)

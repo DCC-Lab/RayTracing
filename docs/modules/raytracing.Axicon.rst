@@ -38,5 +38,4 @@ Axicon
       ~Axicon.determinant
       ~Axicon.hasPower
       ~Axicon.isImaging
-      ~Axicon.largestDiameter
 

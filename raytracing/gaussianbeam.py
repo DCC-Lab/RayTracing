@@ -148,7 +148,7 @@ class GaussianBeam(object):
             description += "λ: {0:.1f} nm\n".format(self.wavelength)
             description += "zo: {0:.3f}, ".format(self.zo)
             description += "wo: {0:.3f}, ".format(self.wo)
-            description += "wo position: {0:.3f} ".format(self.waistPosition)
+            description += "wo position: {0:.3f}".format(self.waistPosition)
             return description
         else:
             return "Beam is not finite: q={0}".format(self.q)

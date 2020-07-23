@@ -33,5 +33,4 @@ LA1422\_A
       ~LA1422_A.determinant
       ~LA1422_A.hasPower
       ~LA1422_A.isImaging
-      ~LA1422_A.largestDiameter
 

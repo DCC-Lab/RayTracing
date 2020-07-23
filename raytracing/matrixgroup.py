@@ -57,11 +57,9 @@ class MatrixGroup(Matrix):
          >>> matGrp.append(Lens(f=10)) # add a matrix of a lens (f=10)
          >>> matGrp.append(Space(d=10)) # add a matrix of space (d=10)
          >>> print(matGrp) # print to see the output ABCD matrix
-         /             \
          |  0.000   10.000 |
-         |               |
+         |                 |
          | -0.100    0.000 |
-          \             /
          f=10.000
 
          """
@@ -120,11 +118,9 @@ class MatrixGroup(Matrix):
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> firstSpace = system[0]
         >>> print(firstSpace)
-         /             \
         |  1.000   10.000 |
-        |               |
+        |                 |
         |  0.000    1.000 |
-         \             /
         f = +inf (afocal)
 
         It is possible to access a group with a slice key:
@@ -132,11 +128,9 @@ class MatrixGroup(Matrix):
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> first2f = system[:3]
         >>> print(first2f)
-         /             \
         |  0.000   10.000 |
-        |               |
+        |                 |
         | -0.100    0.000 |
-         \             /
         f=10.000
 
         See Also
@@ -296,11 +290,9 @@ class MatrixGroup(Matrix):
         >>> Spc2=Space(d=10,label='Space2') # space d=10
         >>> matGrp=MatrixGroup(elements=[Spc1,Len,Spc2]) # make a matrix group of the created elements
         >>> print(matGrp.transferMatrix(upTo=15)) # print to see the transfer matrix in distance=15
-         /             \
         |  0.500   10.000 |
-        |               |
+        |                 |
         | -0.100    0.000 |
-         \             /
         f=10.000
 
 
@@ -349,18 +341,15 @@ class MatrixGroup(Matrix):
         >>> Lens1=Lens(f=10,label='Lens1') # lens f=10
         >>> matGrp=MatrixGroup(elements=[Spc1,Lens1]) # make a matrix group of the created elements
         >>> # print to see the transfer matrices of the space and the lens
-        >>> print(matGrp.transferMatrices()[0],matGrp.transferMatrices()[1])
-         /             \
+        >>> print(matGrp.transferMatrices()[0])
         |  1.000   10.000 |
-        |               |
+        |                 |
         |  0.000    1.000 |
-         \             /
         f = +inf (afocal)
-         /             \
+        >>> print(matGrp.transferMatrices()[1])
         |  1.000    0.000 |
-        |               |
+        |                 |
         | -0.100    1.000 |
-         \             /
         f=10.000
 
         """
