@@ -332,10 +332,12 @@ class Figure:
         """
 
         linewidth = 0.5
+        colors = self.designParams['rayColors']
         if type(rays).__name__ is 'LampRays':
             colors = self.designParams['lampRayColors']
-        else:
-            colors = self.designParams['rayColors']
+        elif type(rays).__name__ is 'ObjectRays':
+            if rays.rayColors is not None:
+                colors = rays.rayColors
 
         dz = 0
         if type(rays) is not list:
