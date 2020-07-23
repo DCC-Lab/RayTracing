@@ -340,8 +340,16 @@ class Figure:
                 dz = rays._z
 
         if dz != 0:
-            subPath = self.path.subPath(zStart=dz)
-            manyRayTraces = subPath.traceMany(rays)
+            forwardPath = self.path.subPath(zStart=dz)
+            backwardPath = self.path.subPath(zStart=dz, backwards=True)
+
+            forwardRayTraces = forwardPath.traceMany(rays)
+            backwardRayTraces = backwardPath.traceMany(rays)
+            for rayTrace in backwardRayTraces:
+                for ray in rayTrace:
+                    ray.z = -abs(ray.z)
+            manyRayTraces = forwardRayTraces
+            manyRayTraces.extend(backwardRayTraces)
         else:
             manyRayTraces = self.path.traceMany(rays)
 
