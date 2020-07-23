@@ -174,12 +174,9 @@ class Figure:
         for rays in self.raysList:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                if rays._z == 0:
-                    self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2))
-                    self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2))
-                else:
-                    self.graphicGroups['Object/Image (z={})'.format(rays._z)] = [ObjectGraphic(rays.yMax * 2, x=rays._z)]
-                    self.graphicGroups['Object/Image (z={})'.format(rays._z)].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays._z))
+                objectKey = 'Object/Image (z={})'.format(rays._z) if rays._z != 0 else 'Object/Image'
+                self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays._z)]
+                self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays._z))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
 
