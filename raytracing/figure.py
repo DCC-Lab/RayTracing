@@ -173,10 +173,13 @@ class Figure:
     def setGraphicsFromRaysList(self):
         for rays in self.raysList:
             instance = type(rays).__name__
-            # todo: enable multiple instances
             if instance is 'ObjectRays':
-                self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2, x=rays._z))
-                self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays._z))
+                if rays._z == 0:
+                    self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2))
+                    self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2))
+                else:
+                    self.graphicGroups['Object/Image (z={})'.format(rays._z)] = [ObjectGraphic(rays.yMax * 2, x=rays._z)]
+                    self.graphicGroups['Object/Image (z={})'.format(rays._z)].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays._z))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
 
@@ -186,7 +189,10 @@ class Figure:
 
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                self.lineGroups['Object/Image'].extend(rayTrace)
+                if rays._z == 0:
+                    self.lineGroups['Object/Image'].extend(rayTrace)
+                else:
+                    self.lineGroups['Object/Image (z={})'.format(rays._z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 self.lineGroups['Lamp'].extend(rayTrace)
