@@ -337,7 +337,6 @@ class Figure:
         2. the principal and axial rays.
         """
 
-        linewidth = 0.5
         colors = self.designParams['rayColors']
         if type(rays).__name__ is 'LampRays':
             colors = self.designParams['lampRayColors']
@@ -386,7 +385,7 @@ class Figure:
                     (y[0] + maxHeight) / (maxHeight * 2) * (len(colors) - 1)))
                 colorIndex = colorIndex % len(colors)
 
-            line = Line(np.asarray(x) + dz, y, color=colors[colorIndex], lineWidth=linewidth, label='ray')
+            line = Line(np.asarray(x) + dz, y, color=colors[colorIndex], lineWidth=lineWidth, label='ray')
             lines.append(line)
 
         return lines
