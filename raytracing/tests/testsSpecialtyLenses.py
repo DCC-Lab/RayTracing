@@ -1,15 +1,40 @@
-import envtest # modifies path
+import envtest  # modifies path
 import matplotlib.pyplot as plt
 
 from raytracing import *
 
 
 class TestAchromatDoubletLens(envtest.RaytracingTestCase):
+
     def testInit(self):
         achromat = AchromatDoubletLens(fa=-100.0, fb=-103.6, R1=-52.0, R2=49.9, R3=600.0, tc1=2.0, tc2=4.0, te=7.7,
                                        n1=N_BAK4.n(0.5876), n2=SF5.n(0.5876), diameter=25.4, url='https://www.test.com',
                                        label="testInit Doublet")
         self.assertIsNotNone(achromat)
+
+    def testAchromatShift(self):
+        achromat855 = AchromatDoubletLens(fa=200.0, fb=193.2, R1=134.0, R2=-109.2, R3=-515.2,
+                                          tc1=8.2, tc2=5.0, te=10.1, mat1=N_LAK22, mat2=N_SF6HT,
+                                          diameter=50.8,
+                                          url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
+                                          label="AC508-200-B", wavelengthRef=0.855)
+
+        achromat700 = AchromatDoubletLens(fa=200.0, fb=193.2, R1=134.0, R2=-109.2, R3=-515.2,
+                                          tc1=8.2, tc2=5.0, te=10.1, mat1=N_LAK22, mat2=N_SF6HT,
+                                          diameter=50.8,
+                                          url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=259',
+                                          label="AC508-200-B", wavelength=0.700, wavelengthRef=0.855)
+
+        thorlabs_focal_value_855 = 0
+        thorlabs_focal_value_700 = 0.010  # mm
+
+        diff = abs(thorlabs_focal_value_855 - thorlabs_focal_value_700)
+
+        diffFocal = abs((-1 / achromat855.C) - (-1 / achromat700.C))
+        print(-1 / achromat855.C, -1 / achromat700.C)
+        print(diff, diffFocal)
+
+        self.assertAlmostEqual(diff, diffFocal, places=3)
 
     def testWarnThickness(self):
         with self.assertWarns(UserWarning):
@@ -25,7 +50,7 @@ class TestAchromatDoubletLens(envtest.RaytracingTestCase):
 
     def testWarnEffectiveFocalLength(self):
         with self.assertWarns(UserWarning):
-            achromat = AchromatDoubletLens(fa=150.00,fb=126.46, R1=92.05,R2=-72.85, R3=-305.87, tc1=23.2, tc2=23.1,
+            achromat = AchromatDoubletLens(fa=150.00, fb=126.46, R1=92.05, R2=-72.85, R3=-305.87, tc1=23.2, tc2=23.1,
                                            te=36.01, n1=1.6700, n2=1.8467, diameter=75, url="https://www.test.com",
                                            label="TestEffectiveFocalLength Doublet")
 
@@ -87,25 +112,25 @@ class TestAchromatDoubletLensSubclasses(envtest.RaytracingTestCase):
 class TestSingletLens(envtest.RaytracingTestCase):
     def testInit(self):
         achromat = SingletLens(f=75.0, fb=72.0, R1=38.6, R2=100000, tc=4.1, te=2.0, n=N_BK7.n(0.5876),
-                                       diameter=25.4, url='https://www.test.com', label="TestInit Singlet")
+                               diameter=25.4, url='https://www.test.com', label="TestInit Singlet")
         self.assertIsNotNone(achromat)
 
     def testWarnThickness(self):
         with self.assertWarns(UserWarning):
             achromat = SingletLens(f=63.52, fb=62.41, R1=77.6, R2=-55.9, tc=4.0, te=5.0, n=N_BK7.n(0.5876),
-                                           diameter=25.4, url='https://www.test.com', label="testThickness Singlet")
+                                   diameter=25.4, url='https://www.test.com', label="testThickness Singlet")
 
     def testWarnBackFocalLength(self):
         with self.assertWarns(UserWarning):
             achromat = SingletLens(f=15.9, fb=22.9, R1=20.89, R2=-16.73, tc=12, te=1.9, n=N_BAF10.n(0.5876),
-                                           diameter=25.4, url='https://www.test.com',
-                                           label="TestBackFocalLength Singlet")
+                                   diameter=25.4, url='https://www.test.com',
+                                   label="TestBackFocalLength Singlet")
 
     def testWarnEffectiveFocalLength(self):
         with self.assertWarns(UserWarning):
             achromat = SingletLens(f=150.00, fb=57.82, R1=92.05, R2=-72.85, tc=23.2, te=4.8, n=1.6700,
-                                           diameter=75, url="https://www.test.com",
-                                           label="TestEffectiveFocalLength Singlet")
+                                   diameter=75, url="https://www.test.com",
+                                   label="TestEffectiveFocalLength Singlet")
 
 
 class TestSingletLensSubclasses(envtest.RaytracingTestCase):
@@ -165,6 +190,7 @@ class TestObjectives(envtest.RaytracingTestCase):
                               magnification=40, fieldNumber=22, label='TestFlip Objective', url="https://www.test.com")
         flipped = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
                               magnification=40, fieldNumber=22, label='TestFlip Objective', url="https://www.test.com")
+
         flipped.flipOrientation()
 
         self.assertFalse(original.isFlipped)
@@ -174,8 +200,10 @@ class TestObjectives(envtest.RaytracingTestCase):
 
     def testPointsOfInterest(self):
         z = 10
+
         objective = Objective(f=180/40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
                               magnification=40, fieldNumber=22, label='TestPoI Objective', url="https://www.test.com")
+
         points = objective.pointsOfInterest(z)
         ff = z + objective.focusToFocusLength
         fb = z
@@ -185,8 +213,10 @@ class TestObjectives(envtest.RaytracingTestCase):
 
     def testPointsOfInterestFlipped(self):
         z = 10
+
         objective = Objective(f=180/40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
                               magnification=40, fieldNumber=22, label='TestPoI Objective', url="https://www.test.com")
+
         points = objective.pointsOfInterest(z)
         ff = z + objective.focusToFocusLength
         fb = z

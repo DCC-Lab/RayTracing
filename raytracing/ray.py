@@ -36,13 +36,15 @@ class Ray:
 
     """
 
-    def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked: bool = False):
+    def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked:bool = False, wavelength: float = None):
         self.y = y
         self.theta = theta
 
         self.z = z
         self.isBlocked = isBlocked
         self.apertureDiameter = float("+Inf")
+
+        self.wavelength = wavelength
 
     @property
     def isNotBlocked(self) -> bool:
@@ -244,13 +246,10 @@ class Ray:
     def __str__(self):
         """String description that allows the use of print(Ray())."""
 
-        description = "\n /       \\ \n"
-        description += "| {0:6.3f}  |\n".format(self.y)
-        description += "|         |\n"
-        description += "| {0:6.3f}  |\n".format(self.theta)
-        description += " \\       /\n\n"
+        description = "y = {0:6.3f}\n".format(self.y)
+        description += "theta = {0:6.3f}\n".format(self.theta)
+        description += "z = {0:4.3f}".format(self.z)
 
-        description += "z = {0:4.3f}\n".format(self.z)
         if self.isBlocked:
             description += " (blocked)"
 

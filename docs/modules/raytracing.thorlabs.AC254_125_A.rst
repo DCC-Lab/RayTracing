@@ -33,5 +33,4 @@ AC254\_125\_A
       ~AC254_125_A.determinant
       ~AC254_125_A.hasPower
       ~AC254_125_A.isImaging
-      ~AC254_125_A.largestDiameter
 

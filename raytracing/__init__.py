@@ -1,4 +1,4 @@
-"""A simple module for ray tracing with ABCD matrices.
+r"""A simple module for ray tracing with ABCD matrices.
 https://github.com/DCC-Lab/RayTracing
 
 Create an `ImagingPath()`, append matrices (optical elements or other
@@ -86,6 +86,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.2.11"
+__version__ = "1.2.12"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 

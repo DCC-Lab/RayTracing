@@ -23,10 +23,11 @@ class Graphic:
         self.points = []
         self.lines = []
         self.annotations = []
+        self._isVisible = True
 
         self.x = x
         self.y = y
-        self.useAutoScale = not fixedWidth  # todo: move autoScale as component-specific attribute
+        self.useAutoScale = not fixedWidth
 
         if label is not None:
             self.label = Label(text=label, x=self.centroid[0], y=self.halfHeight * 1.3)
@@ -41,6 +42,16 @@ class Graphic:
     def components(self):
         """ Can be overwritten by other graphics """
         return self._components
+
+    @property
+    def isVisible(self):
+        return self._isVisible
+
+    @isVisible.setter
+    def isVisible(self, value: bool):
+        self._isVisible = value
+        for component in self.components:
+            component.isVisible = self._isVisible
 
     @property
     def halfHeight(self) -> float:
@@ -67,6 +78,47 @@ class Graphic:
     @property
     def length(self):
         return np.sum([c.length for c in self.components])
+
+
+class ObjectGraphic(Graphic):
+    def __init__(self, diameter, x=0, fill=True, color='b'):
+        self.diameter = diameter
+        self.fill = fill
+        self.color = color
+        super(ObjectGraphic, self).__init__(x=x, fixedWidth=False)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color=self.color, fill=self.fill)]
+        return self._components
+
+
+class ImageGraphic(Graphic):
+    def __init__(self, diameter, x=0, fill=True, color='r'):
+        self.diameter = diameter
+        self.fill = fill
+        self.color = color
+        super(ImageGraphic, self).__init__(x=x, fixedWidth=False)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = [Arrow(dy=self.diameter, y=-self.diameter / 2, color=self.color, fill=self.fill)]
+        return self._components
+
+
+class LampGraphic(Graphic):
+    def __init__(self, diameter, x=0):
+        self.diameter = diameter
+        super(LampGraphic, self).__init__(x=x, fixedWidth=False)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = [Rectangle((self.x, -self.diameter / 2), width=0.02, height=self.diameter,
+                                          color='y', fill=True)]
+        return self._components
 
 
 class MatrixGraphic(Graphic):
@@ -208,9 +260,9 @@ class MatrixGraphic(Graphic):
         from .imagingpath import ImagingPath
         path = ImagingPath(elements=[self.matrix])
         figure = MplFigure(path)
-        figure.graphics = [self]
+        figure.graphicGroups['elements'] = [self]
         figure.create(title="Element properties")
-        figure.display2D()
+        figure.display2D(interactive=False)
 
 
 class LensGraphic(MatrixGraphic):
@@ -284,16 +336,20 @@ class MatrixGroupGraphic(MatrixGraphic):
 
     @property
     def components(self):
-        components = []
+        if self._components is None:
+            self._components = self.mainComponents
+        return self._components
+
+    @property
+    def standAloneGraphics(self):
+        graphics = []
         z = 0
         for element in self.matrixGroup.elements:
-            graphic = GraphicOf(element, x=z)
-            # fixme: all components are defined at z=0 anyways,
-            #  should take a group of graphics instead ?
+            graphic = GraphicOf(element, x=z + self.x)
             if graphic is not None:
-                components.extend(graphic.components)
+                graphics.append(graphic)
             z += element.L
-        return components
+        return graphics
 
     @property
     def pointsOfInterest(self):
@@ -387,11 +443,10 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 
 
 class GraphicOf:
-    def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None]:
+    def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None, list]:
         instance = type(element).__name__
         if type(element) is Objective or issubclass(type(element), Objective):
             return ObjectiveGraphic(element, x=x)
-
         if instance is 'Lens':
             return LensGraphic(element, x=x, minSize=minSize)
         if instance is 'Space':
@@ -401,6 +456,6 @@ class GraphicOf:
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         if issubclass(type(element), MatrixGroup):
-            return MatrixGroupGraphic(element, x=x)
+            return MatrixGroupGraphic(element, x=x).standAloneGraphics
         else:
             return MatrixGraphic(element, x=x)

@@ -19,6 +19,7 @@ Aperture
 
     
         ~Aperture.__init__
+        ~Aperture.drawAt
 
 
 
@@ -33,5 +34,4 @@ Aperture
       ~Aperture.determinant
       ~Aperture.hasPower
       ~Aperture.isImaging
-      ~Aperture.largestDiameter
 

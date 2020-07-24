@@ -33,5 +33,4 @@ LA1134\_A
       ~LA1134_A.determinant
       ~LA1134_A.hasPower
       ~LA1134_A.isImaging
-      ~LA1134_A.largestDiameter
 
