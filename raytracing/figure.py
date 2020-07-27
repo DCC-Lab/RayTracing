@@ -6,6 +6,11 @@ import itertools
 import warnings
 import sys
 
+""" Graphics key constants """
+kPrincipalKey = "Principal/axial rays"
+kObjectImageKey = "Object/Image"
+kLampKey = "Lamp"
+kElementsKey = "Elements"
 
 class Figure:
     """Base class to contain the required objects of a figure.

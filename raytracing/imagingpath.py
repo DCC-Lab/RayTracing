@@ -846,7 +846,7 @@ class ImagingPath(MatrixGroup):
 
     def subPath(self, zStart: float, backwards=False):
         """ Secondary ImagingPath defined from a desired zStart to the end of current path
-        or to the start of current path if 'inverse' is True. Used internally to trace rays
+        or to the start of current path if 'backwards' is True. Used internally to trace rays
         from different positions. """
 
         z = 0
