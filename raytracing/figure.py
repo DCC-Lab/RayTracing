@@ -26,7 +26,7 @@ class Figure:
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['b', 'g'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
                                   'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
-                                  'showFOV': False, 'showObjectImage': True}
+                                  'fontScale': 1.2, 'showFOV': False, 'showObjectImage': True}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
         self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
@@ -49,8 +49,9 @@ class Figure:
         return graphics
 
     def design(self, style: str = None,
-               rayColors: List[Union[str, tuple]] = None, lampRayColors: List[Union[str, tuple]] = None,
-               onlyAxialRay: bool = None, imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None):
+               rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
+               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None,
+               fontScale: float = None):
         """ Update the design parameters of the figure.
         All parameters are None by default to allow for the update of one parameter at a time.
 
@@ -69,6 +70,8 @@ class Figure:
             Color of image arrows. Default to 'r'.
         objectColor : Union[str, tuple], optional
             Color of object arrow. Default to 'b'.
+        fontScale : float, optional
+            Base scale factor for the size of all fonts used. Default to 1.
         """
         if style is not None:
             if style in self.styles.keys():
@@ -76,11 +79,16 @@ class Figure:
             else:
                 raise ValueError("Available styles are : {}".format(self.styles.keys()))
 
-        newDesignParams = {'rayColors': rayColors, 'lampRayColors': lampRayColors, 'onlyAxialRay': onlyAxialRay,
-                           'imageColor': imageColor, 'objectColor': objectColor}
+        newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
+                           'imageColor': imageColor, 'objectColor': objectColor,
+                           'fontScale': fontScale}
         for key, value in newDesignParams.items():
             if value is not None:
                 self.designParams[key] = value
+
+    @property
+    def fontScale(self):
+        return self.designParams['fontScale']
 
     def initializeDisplay(self):
         """ Configure the imaging path and the figure according to the display conditions. """
@@ -115,7 +123,8 @@ class Figure:
             else:
                 note2 = "Only chief and marginal rays shown"
 
-        label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=11, useDataUnits=False, alignment='left')
+        label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=12*self.fontScale,
+                      useDataUnits=False, alignment='left')
         self.labels.append(label)
 
     def setPrincipalAndAxialRays(self):
@@ -271,7 +280,7 @@ class Figure:
         points = []
         halfHeight = self.displayRange / 2
         for zStr, label in labels.items():
-            points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5))
+            points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5, fontsize=12))
         return points
 
     @property
@@ -282,11 +291,11 @@ class Figure:
 
         (apertureStopPosition, apertureStopDiameter) = self.path.apertureStop()
         if apertureStopPosition is not None:
-            labels.append(Label('AS', apertureStopPosition, halfHeight * 1.1, fontsize=18))
+            labels.append(Label('AS', apertureStopPosition, halfHeight * 1.1, fontsize=17*self.fontScale))
 
         (fieldStopPosition, fieldStopDiameter) = self.path.fieldStop()
         if fieldStopPosition is not None:
-            labels.append(Label('FS', fieldStopPosition, halfHeight * 1.1, fontsize=18))
+            labels.append(Label('FS', fieldStopPosition, halfHeight * 1.1, fontsize=17*self.fontScale))
 
         return labels
 
@@ -577,11 +586,14 @@ class MplFigure(Figure):
             self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
             self.axesComments.axis('off')
             self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
-                                   fontsize=10, verticalalignment='top')
+                                   fontsize=10*self.fontScale, verticalalignment='top')
         else:
             self.figure, self.axes = plt.subplots(figsize=(10, 7))
 
-        self.axes.set(xlabel='Distance', ylabel='Height', title=title)
+        self.axes.set_xlabel('Distance', fontsize=13*self.fontScale)
+        self.axes.set_ylabel('Height', fontsize=13*self.fontScale)
+        self.axes.set_title(title, fontsize=13*self.fontScale)
+        self.axes.tick_params(labelsize=13*self.fontScale)
 
     def display2D(self, interactive=True, filepath=None):
         self.draw()
@@ -624,6 +636,7 @@ class MplFigure(Figure):
                 self.axes.add_patch(patch)
 
             if graphic.hasLabel:
+                graphic.label.fontsize *= self.fontScale
                 graphic.label = graphic.label.mplLabel
                 self.axes.add_artist(graphic.label.patch)
 
@@ -640,6 +653,7 @@ class MplFigure(Figure):
             if point.hasPointMarker:
                 self.axes.plot([point.x], [0], 'ko', markersize=3, color=point.color, linewidth=0.4)
             if point.text is not None:
+                point.fontsize *= self.fontScale
                 self.labels.append(point)
 
     def drawLabels(self):
