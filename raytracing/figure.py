@@ -774,15 +774,15 @@ class MplFigure(Figure):
     def _showPlot(self):
         try:
             plt.plot()
-            if sys.platform.startswith('win'):
-                plt.show()
-            else:
-                plt.draw()
-                while True:
-                    if plt.get_fignums():
-                        plt.pause(0.001)
-                    else:
-                        break
+            # if sys.platform.startswith('win'):
+            plt.show()
+            # else:
+            #     plt.draw()
+            #     while True:
+            #         if plt.get_fignums():
+            #             plt.pause(0.001)
+            #         else:
+            #             break
 
         except KeyboardInterrupt:
             plt.close()
