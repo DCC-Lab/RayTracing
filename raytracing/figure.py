@@ -56,7 +56,7 @@ class Figure:
     def design(self, style: str = None,
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
                imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None,
-               fontScale: float = None):
+               fontScale: float = None, lampRayColors: List[Union[str, tuple]] = None):
         """ Update the design parameters of the figure.
         All parameters are None by default to allow for the update of one parameter at a time.
 
@@ -86,7 +86,7 @@ class Figure:
 
         newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
                            'imageColor': imageColor, 'objectColor': objectColor,
-                           'fontScale': fontScale}
+                           'fontScale': fontScale, 'lampRayColors': lampRayColors}
         for key, value in newDesignParams.items():
             if value is not None:
                 self.designParams[key] = value
