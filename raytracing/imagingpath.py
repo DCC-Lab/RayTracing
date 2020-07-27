@@ -844,6 +844,30 @@ class ImagingPath(MatrixGroup):
         axis1.legend(loc="upper right")
         plt.show()
 
+    def subPath(self, zStart: float, backwards=False):
+        """ Secondary ImagingPath defined from a desired zStart to the end of current path
+        or to the start of current path if 'backwards' is True. Used internally to trace rays
+        from different positions. """
+
+        z = 0
+        for i, element in enumerate(self.elements):
+            if z < zStart < z + element.L:
+                assert type(element).__name__ is 'Space', 'The position of the rays cannot be in the same ' \
+                                                          'position of another element.'
+                if backwards:
+                    newElements = [Space(zStart - z)]
+                    if i != 0:
+                        newElements.extend(self.elements[i-1::-1])
+                    return ImagingPath(elements=newElements)
+                else:
+                    newElements = [Space(z + element.L - zStart)]
+                    newElements.extend(self.elements[i+1:])
+                    return ImagingPath(elements=newElements)
+
+            z += element.L
+
+        raise ValueError('The position of the rays does not fit in any spaces.')
+
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
                 onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None):
         """ Display the optical system and trace the rays.
@@ -885,7 +909,8 @@ class ImagingPath(MatrixGroup):
                                   'Using default ObjectRays.')
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
-            defaultObject = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+            defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
+                                       halfAngle=self.fanAngle, T=self.rayNumber)
             raysList.append(defaultObject)
         else:
             self.figure.designParams['showObjectImage'] = True
@@ -919,7 +944,7 @@ class ImagingPath(MatrixGroup):
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
                      interactive=False, filePath=filePath)
 
-    def displayWithObject(self, diameter, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+    def displayWithObject(self, diameter, z=0, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -933,7 +958,7 @@ class ImagingPath(MatrixGroup):
         """
 
         self._objectHeight = diameter
-        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber)
+        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber, z=z)
 
         self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
                      onlyPrincipalAndAxialRays=False,

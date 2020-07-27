@@ -139,8 +139,8 @@ class Arrow(Component):
         Starting point in y-axis where the base of the arrow sits. Defaults to 0.
     """
 
-    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1, fill=True):
-        super(Arrow, self).__init__(color=color, hasFixedWidth=False, fill=fill)
+    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1, fill=True, lineStyle='-'):
+        super(Arrow, self).__init__(color=color, hasFixedWidth=False, fill=fill, lineStyle=lineStyle, lineWidth=0.5)
         self.dy = dy
         self.y = y
         self.width = width
