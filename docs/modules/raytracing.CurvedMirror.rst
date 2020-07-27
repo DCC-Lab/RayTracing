@@ -19,7 +19,6 @@ CurvedMirror
 
     
         ~CurvedMirror.__init__
-        ~CurvedMirror.flipOrientation
         ~CurvedMirror.pointsOfInterest
 
 

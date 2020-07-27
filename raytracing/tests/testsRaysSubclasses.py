@@ -1,5 +1,6 @@
 import envtest  # modifies path
 from raytracing import *
+import numpy as np
 
 inf = float("+inf")
 
@@ -8,8 +9,8 @@ class TestUniformRays(envtest.RaytracingTestCase):
     def testRays(self):
         rays = UniformRays(1, -1, 1, -1, 10, 11)
         raysList = []
-        for y in linspace(-1, 1, 10):
-            for theta in linspace(-1, 1, 11):
+        for y in np.linspace(-1, 1, 10):
+            for theta in np.linspace(-1, 1, 11):
                 raysList.append(Ray(y, theta))
         self.assertIsNotNone(rays)
         self.assertEqual(rays.yMax, 1)
@@ -23,8 +24,8 @@ class TestUniformRays(envtest.RaytracingTestCase):
     def testRaysWithNoneArgs(self):
         rays = UniformRays()
         raysList = []
-        for y in linspace(-1, 1, 100):
-            for theta in linspace(-pi / 2, pi / 2, 100):
+        for y in np.linspace(-1, 1, 100):
+            for theta in np.linspace(-pi / 2, pi / 2, 100):
                 raysList.append(Ray(y, theta))
         self.assertIsNotNone(rays)
         self.assertEqual(rays.yMax, 1)
@@ -41,9 +42,9 @@ class TestLambertianRays(envtest.RaytracingTestCase):
     def testLambertianRays(self):
         rays = LambertianRays(1, -1, 10, 11, 12)
         raysList = []
-        for theta in linspace(-pi / 2, pi / 2, 11):
+        for theta in np.linspace(-pi / 2, pi / 2, 11):
             intensity = int(12 * cos(theta))
-            for y in linspace(-1, 1, 10):
+            for y in np.linspace(-1, 1, 10):
                 for _ in range(intensity):
                     raysList.append(Ray(y, theta))
         self.assertEqual(rays.yMin, -1)
@@ -56,9 +57,9 @@ class TestLambertianRays(envtest.RaytracingTestCase):
     def testLambertianRaysNoneArgs(self):
         rays = LambertianRays()
         raysList = []
-        for theta in linspace(-pi / 2, pi / 2, 100):
+        for theta in np.linspace(-pi / 2, pi / 2, 100):
             intensity = int(100 * cos(theta))
-            for y in linspace(-1, 1, 100):
+            for y in np.linspace(-1, 1, 100):
                 for _ in range(intensity):
                     raysList.append(Ray(y, theta))
         self.assertEqual(rays.yMin, -1)
@@ -96,10 +97,7 @@ class TestRandomRays(envtest.RaytracingTestCase):
         rays = RandomRays()
         # Test purpose only:
         rays._rays = [Ray()]
-        try:
-            ray = rays[0]
-        except Exception:
-            self.fail("This should not raise any exception.")
+        ray = self.assertDoesNotRaise(rays.__getitem__, None, 0)
         self.assertEqual(ray, Ray())
 
     def testRandomRaysGetWarnsWhenGeneratingRaysOnlyForLongTimes(self):

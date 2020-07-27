@@ -33,5 +33,4 @@ XLPLN25X
       ~XLPLN25X.determinant
       ~XLPLN25X.hasPower
       ~XLPLN25X.isImaging
-      ~XLPLN25X.warningDisplayed
 

@@ -24,8 +24,6 @@ ImagingPath
         ~ImagingPath.chiefRay
         ~ImagingPath.createRayTracePlot
         ~ImagingPath.display
-        ~ImagingPath.displayRange
-        ~ImagingPath.drawDisplayObjects
         ~ImagingPath.drawEntrancePupil
         ~ImagingPath.drawImages
         ~ImagingPath.drawObject
@@ -36,11 +34,9 @@ ImagingPath
         ~ImagingPath.fieldOfView
         ~ImagingPath.fieldStop
         ~ImagingPath.imageSize
-        ~ImagingPath.lagrangeInvariant
         ~ImagingPath.marginalRays
         ~ImagingPath.rearrangeRayTraceForPlotting
         ~ImagingPath.save
-        ~ImagingPath.updateDisplay
 
 
 

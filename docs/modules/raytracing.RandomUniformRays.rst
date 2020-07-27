@@ -31,7 +31,7 @@ RandomUniformRays
 .. autosummary::
 
     
-      ~RandomUniformRays.count
+      ~RandomUniformRays.intensityValues
       ~RandomUniformRays.thetaValues
       ~RandomUniformRays.yValues
 

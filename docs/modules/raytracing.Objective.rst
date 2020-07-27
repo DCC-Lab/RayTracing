@@ -19,7 +19,6 @@ Objective
 
     
         ~Objective.__init__
-        ~Objective.drawAperture
         ~Objective.drawAt
         ~Objective.flipOrientation
         ~Objective.pointsOfInterest
@@ -37,5 +36,4 @@ Objective
       ~Objective.determinant
       ~Objective.hasPower
       ~Objective.isImaging
-      ~Objective.warningDisplayed
 

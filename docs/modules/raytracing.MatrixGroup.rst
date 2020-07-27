@@ -26,7 +26,6 @@ MatrixGroup
         ~MatrixGroup.drawPointsOfInterest
         ~MatrixGroup.flipOrientation
         ~MatrixGroup.hasFiniteApertureDiameter
-        ~MatrixGroup.intermediateConjugates
         ~MatrixGroup.largestDiameter
         ~MatrixGroup.trace
         ~MatrixGroup.transferMatrices

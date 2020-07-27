@@ -33,5 +33,4 @@ XLUMPlanFLN20X
       ~XLUMPlanFLN20X.determinant
       ~XLUMPlanFLN20X.hasPower
       ~XLUMPlanFLN20X.isImaging
-      ~XLUMPlanFLN20X.warningDisplayed
 

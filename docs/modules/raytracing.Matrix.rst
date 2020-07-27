@@ -19,7 +19,7 @@ Matrix
 
     
         ~Matrix.__init__
-        ~Matrix.axesToDataScale
+        ~Matrix.axesToDataScaling
         ~Matrix.backFocalLength
         ~Matrix.backwardConjugate
         ~Matrix.display
@@ -38,7 +38,6 @@ Matrix
         ~Matrix.forwardConjugate
         ~Matrix.frontFocalLength
         ~Matrix.hasFiniteApertureDiameter
-        ~Matrix.lagrangeInvariant
         ~Matrix.largestDiameter
         ~Matrix.magnification
         ~Matrix.mul_beam
@@ -49,8 +48,6 @@ Matrix
         ~Matrix.trace
         ~Matrix.traceMany
         ~Matrix.traceManyThrough
-        ~Matrix.traceManyThroughInParallel
-        ~Matrix.traceManyThroughInParallelNoChunks
         ~Matrix.traceThrough
         ~Matrix.transferMatrices
         ~Matrix.transferMatrix

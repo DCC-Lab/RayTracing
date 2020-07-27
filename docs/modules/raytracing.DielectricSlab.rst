@@ -20,7 +20,6 @@ DielectricSlab
     
         ~DielectricSlab.__init__
         ~DielectricSlab.drawAt
-        ~DielectricSlab.transferMatrix
 
 
 

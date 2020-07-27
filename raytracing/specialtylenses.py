@@ -28,6 +28,43 @@ class AchromatDoubletLens(MatrixGroup):
     Most manufacturer's specifiy 1% tolerance, so if fa is more than 1% different
     from the final focal length, a warning is raised.
 
+    Parameters
+    ----------
+    fa : float
+        The effective focal length
+    fb : float
+        The back focal length
+    R1 : float
+        The first radius
+    R2 : float
+        The second radius
+    R3 : float
+        The third radius
+    tc1 : float
+        The first center thickness
+    tc2 : float
+        The second center thickness
+    te : float
+        The edge thickness
+    n1 : float
+        The refraction index of the first material
+    n2 : float
+        The refractive index of the second material
+    diameter : float
+        The diameter of the lens
+    mat1 : object of Matrix class
+        The transfer matrix of the first lens
+    mat2 : object of Matrix class
+        The transfer matrix of the second lens
+    wavelengthRef : float
+        The defined wavelength
+    url : string
+        A link to find more info for the lens
+    label : string
+        The name of the lens
+
+    Notes
+    -----
     Nomenclature from Thorlabs:
     https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120 
 
@@ -36,8 +73,8 @@ class AchromatDoubletLens(MatrixGroup):
 
     """
 
-    def __init__(self, fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None,
-                 url=None, label=''):
+    def __init__(self, fa, fb, R1, R2, R3, tc1, tc2, te, diameter, n1=None, n2=None, mat1=None, mat2=None, wavelengthRef=None,
+                 url=None, label='', wavelength=None):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -52,12 +89,23 @@ class AchromatDoubletLens(MatrixGroup):
         self.mat2 = mat2
         self.url = url
 
+        if self.mat1 is not None and self.mat2 is not None :
+            if wavelength is not None:
+                self.n1=self.mat1.n(wavelength)
+                self.n2=self.mat2.n(wavelength)
+            elif wavelengthRef is not None:
+                self.n1=self.mat1.n(wavelengthRef)
+                self.n2=self.mat2.n(wavelengthRef)
+
+        if self.n1 is None or self.n2 is None:
+            raise ValueError("n1 or n2 not set")
+
         elements = []
-        elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
-        elements.append(Space(d=tc1, n=n1))
-        elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
-        elements.append(Space(d=tc2, n=n2))
-        elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
+        elements.append(DielectricInterface(n1=1, n2=self.n1, R=R1, diameter=diameter))
+        elements.append(Space(d=tc1, n=self.n1))
+        elements.append(DielectricInterface(n1=self.n1, n2=self.n2, R=R2, diameter=diameter))
+        elements.append(Space(d=tc2, n=self.n2))
+        elements.append(DielectricInterface(n1=self.n2, n2=1, R=R3, diameter=diameter))
         super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
@@ -91,28 +139,68 @@ class AchromatDoubletLens(MatrixGroup):
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            The position
         """
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    @property
+    def surfaces(self) -> List[Interface]:
+        return [SphericalInterface(R=self.R1, L=self.tc1, n=self.n1),
+                SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
+                SphericalInterface(R=self.R3)]
 
+      
 class SingletLens(MatrixGroup):
     """
-        General singlet lens with an effective focal length of f, back focal
-        length of fb.  The values f and fb are used to validate the final focal lengths
-        and back focal lengths that are obtained from the combination of elements.
-        Most manufacturer's specifiy 1% tolerance, so if f is more than 1% different
-        from the final focal length, a warning is raised.
+    General singlet lens with an effective focal length of f, back focal
+    length of fb.  The values f and fb are used to validate the final focal lengths
+    and back focal lengths that are obtained from the combination of elements.
+    Most manufacturer's specifiy 1% tolerance, so if f is more than 1% different
+    from the final focal length, a warning is raised.
 
-        Nomenclature from Thorlabs:
-        https://www.thorlabs.com/images/TabImages/Plano-Convex_Lens_Schematic.gif
+        Parameters
+    ----------
+    f : float
+        The effective focal length
+    fb : float
+        The back focal length
+    R1 : float
+        The first radius
+    R2 : float
+        The second radius
+    tc : float
+        The center thickness
+    te : float
+        The edge thickness
+    n : float
+        The refraction index of the material if material not used
+    diameter : float
+        The diameter of the lens
+    mat1 : object of Material class
+        The material of the lens
+    wavelengthRef : float
+        The defined wavelength of reference for the index of refraction
+    url : string
+        A link to find more info for the lens
+    label : string
+        The name of the lens
 
-        """
 
-    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat1=None, wavelengthRef=None,
-                 url=None, label=''):
+    Notes
+    -----
+    Nomenclature from Thorlabs:
+    https://www.thorlabs.com/images/TabImages/Plano-Convex_Lens_Schematic.gif
+
+    """
+
+    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat=None, wavelengthRef=None,
+                 url=None, label='', wavelength=None):
+
         self.f = f
         self.fb = fb
         self.R1 = R1
@@ -123,10 +211,19 @@ class SingletLens(MatrixGroup):
         self.mat = mat
         self.url = url
 
+        if self.mat is not None:
+            if wavelength is not None:
+                self.n=self.mat.n(wavelength)
+            elif wavelengthRef is not None:
+                self.n=self.mat.n(wavelengthRef)
+
+        if self.n is None:
+            raise ValueError("You must provide n or material")
+
         elements = []
-        elements.append(DielectricInterface(n1=1, n2=n, R=R1, diameter=diameter))
-        elements.append(Space(d=tc, n=n))
-        elements.append(DielectricInterface(n1=n, n2=1, R=R2, diameter=diameter))
+        elements.append(DielectricInterface(n1=1, n2=self.n, R=R1, diameter=diameter))
+        elements.append(Space(d=tc, n=self.n))
+        elements.append(DielectricInterface(n1=self.n, n2=1, R=R2, diameter=diameter))
         super(SingletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
@@ -160,17 +257,46 @@ class SingletLens(MatrixGroup):
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            The position
+
         """
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    @property
+    def surfaces(self) -> List[Interface]:
+        return [SphericalInterface(R=self.R1, L=self.tc, n=self.n),
+                SphericalInterface(R=self.R2)]
+
 
 class Objective(MatrixGroup):
+
+    """
+    Parameters
+    ----------
+    f : float
+        The focal length
+    NA : float
+        The numerical aperture
+    focusToFocusLength : float
+        The distance between the front focal point to the back focal point.
+    backAperture : float
+        The back aperture
+    workingDistance : float
+        The distance from the front lens element of the objective to the closest surface.
+    url : string
+        A link to find more info for the lens
+    label : string
+        The name of the lens
+
+    """
     warningDisplayed = False
 
-    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification, fieldNumber, url=None, label=''):
         """ General microscope objective, approximately correct.
 
         We model the objective as an ideal lens with back focal point at the entrance
@@ -186,6 +312,8 @@ class Objective(MatrixGroup):
 
         self.f = f
         self.NA = NA
+        self.magnification = magnification
+        self.fieldNumber = fieldNumber
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
@@ -214,6 +342,9 @@ reproduce the objective."
             warnings.warn(msg, FutureWarning)
             Objective.warningDisplayed = True
 
+    def maximumOpticalInvariant(self):
+        return (self.fieldNumber/2)/self.magnification * self.NA
+
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
         self.isFlipped = not self.isFlipped
@@ -236,8 +367,11 @@ reproduce the objective."
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
-        'z':position
-        'label':the label to be used.  Can include LaTeX math code.
+
+        Parameters
+        ----------
+        z : float
+            The position
         """
         if self.isFlipped:
             return [{'z': z + self.focusToFocusLength, 'label': '$F_b$'}, {'z': z, 'label': '$F_f$'}]
