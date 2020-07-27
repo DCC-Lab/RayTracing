@@ -6,6 +6,11 @@ import itertools
 import warnings
 import sys
 
+""" Graphics key constants """
+kPrincipalKey = "Principal/axial rays"
+kObjectImageKey = "Object/Image"
+kLampKey = "Lamp"
+kElementsKey = "Elements"
 
 class Figure:
     """Base class to contain the required objects of a figure.
@@ -182,10 +187,15 @@ class Figure:
     def setGraphicsFromRaysList(self):
         for rays in self.raysList:
             instance = type(rays).__name__
-            # todo: enable multiple instances
             if instance is 'ObjectRays':
-                self.graphicGroups['Object/Image'].append(ObjectGraphic(rays.yMax * 2, x=0))  # todo: object position
-                self.graphicGroups['Object/Image'].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2))
+                objectKey = 'Object/Image (z={})'.format(rays.z) if rays.z != 0 else 'Object/Image'
+                color = 'b' if rays.color is None else rays.color
+                self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z, color=color)]
+                if rays.color is None:
+                    self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z))
+                else:
+                    self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
+                                                                                        fill=False, color=color))
             if instance is 'LampRays':
                 self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
 
@@ -195,7 +205,10 @@ class Figure:
 
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                self.lineGroups['Object/Image'].extend(rayTrace)
+                if rays.z == 0:
+                    self.lineGroups['Object/Image'].extend(rayTrace)
+                else:
+                    self.lineGroups['Object/Image (z={})'.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 self.lineGroups['Lamp'].extend(rayTrace)
@@ -204,13 +217,22 @@ class Figure:
             else:
                 self.lineGroups[instance].extend(rayTrace)
 
-    def graphicsOfConjugatePlanes(self, objectDiameter, fill=True, color='r'):
+    def graphicsOfConjugatePlanes(self, objectDiameter, fill=True, color='r', x=0):
         planeGraphics = []
-        planeInfo = self.path.intermediateConjugates()
 
-        for (position, magnification) in planeInfo:
+        if x != 0:
+            planeConjugates = self.path.subPath(zStart=x).intermediateConjugates()
+            backwardConjugates = self.path.subPath(zStart=x, backwards=True).intermediateConjugates()
+            for backConjugate in backwardConjugates:
+                backConjugate[0] *= -1
+            planeConjugates.extend(backwardConjugates)
+
+        else:
+            planeConjugates = self.path.intermediateConjugates()
+
+        for (position, magnification) in planeConjugates:
             planeGraphics.append(ImageGraphic(diameter=magnification * objectDiameter,
-                                              x=position, fill=fill, color=color))
+                                              x=position + x, fill=fill, color=color))
         return planeGraphics
 
     @property
@@ -334,12 +356,31 @@ class Figure:
         2. the principal and axial rays.
         """
 
+        colors = self.designParams['rayColors']
         if type(rays).__name__ is 'LampRays':
             colors = self.designParams['lampRayColors']
-        else:
-            colors = self.designParams['rayColors']
+        elif type(rays).__name__ is 'ObjectRays':
+            if rays.rayColors is not None:
+                colors = rays.rayColors
 
-        manyRayTraces = self.path.traceMany(rays)
+        dz = 0
+        if type(rays) is not list:
+            if rays.z != 0:
+                dz = rays.z
+
+        if dz != 0:
+            forwardPath = self.path.subPath(zStart=dz)
+            backwardPath = self.path.subPath(zStart=dz, backwards=True)
+
+            forwardRayTraces = forwardPath.traceMany(rays)
+            backwardRayTraces = backwardPath.traceMany(rays)
+            for rayTrace in backwardRayTraces:
+                for ray in rayTrace:
+                    ray.z = -abs(ray.z)
+            manyRayTraces = forwardRayTraces
+            manyRayTraces.extend(backwardRayTraces)
+        else:
+            manyRayTraces = self.path.traceMany(rays)
 
         maxHeight = 0
         for rayTrace in manyRayTraces:
@@ -363,7 +404,7 @@ class Figure:
                     (y[0] + maxHeight) / (maxHeight * 2) * (len(colors) - 1)))
                 colorIndex = colorIndex % len(colors)
 
-            line = Line(x, y, color=colors[colorIndex], lineWidth=lineWidth, label='ray')
+            line = Line(np.asarray(x) + dz, y, color=colors[colorIndex], lineWidth=lineWidth, label='ray')
             lines.append(line)
 
         return lines
@@ -566,7 +607,7 @@ class MplFigure(Figure):
         plt.connect('resize_event', self.onZoomCallback)
 
         if interactive:
-            plt.subplots_adjust(right=0.82)
+            plt.subplots_adjust(right=0.81)
             self.initVisibilityCheckBoxes()
 
         if filepath is not None:
@@ -633,7 +674,7 @@ class MplFigure(Figure):
         visibility = self.visibility
         visibility.pop('Elements')
 
-        subAxes = plt.axes([0.82, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
+        subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
         self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
 
         step = 0.15
