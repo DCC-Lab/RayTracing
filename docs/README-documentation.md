@@ -132,28 +132,16 @@ Then you can open `_build/html/index.html`.
 
 ### Updating the documentation
 
-1. (Optional, if new classes were added) **Add new modules in `reference.rst`**
+>  The documentation files for all methods are auto-generated and maintained during build.
 
-1. (Optional, if new methods were added) **Regenerate the stub files**
-   1. Requirements
-   2. Path
-   3. Commands
-   4. Push to repo
+1. If new classes were added, update `reference.rst` (Optional) 
 
-2. 
+   > Simply follow the template and add new files (titles) or classes (items)
 
-### Technical details
+2. Go to https://readthedocs.org/projects/raytracing/ 
 
-- When autogenerating the stub files from toctrees in `reference.rst`, note that sphinx-autogen requires to load a pythonpath to your project. 
-  
-    On windows the command is 
-    ```
-  $ set PYTHONPATH=C:\Path\to\project
-  $ sphinx-autogen -t docs/_templates docs/reference.rst
-  ```
-    On Mac/Linux:
-    ```
-  PYTHONPATH=. sphinx-autogen -t docs/_templates docs/index.rst
-    ```
-  
-  > If this path is not set properly, you will get an error `Failed to import raytracing...`
+   > You need to be logged in as one of the maintainers. 
+
+3. Click `Build version` (latest by default)
+
+   > To build a specific branch, go to Versions and activate the desired branch in the list at the bottom (it might require a build of master to fetch for new branches). 
