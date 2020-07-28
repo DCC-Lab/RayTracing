@@ -525,10 +525,17 @@ class UniformRays(Rays):
         self.M = M
         self.N = N
         rays = []
-        for y in np.linspace(self.yMin, self.yMax, self.M, endpoint=True):
+
+        if self.M == 1:
+            heights = [0]
+        else:
+            heights = np.linspace(self.yMin, self.yMax, self.M, endpoint=True)
+
+        for y in heights:
             for theta in np.linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
                 rays.append(Ray(y, theta))
         super(UniformRays, self).__init__(rays=rays)
+
 
 class LambertianRays(Rays):
     """A list of rays with Lambertian distribution.
