@@ -170,7 +170,7 @@ class Rays:
         >>> plt.xlabel('Height of Rays')
         >>> plt.show()
 
-        .. image:: Histogram.png
+        .. image:: ../../../images/Histogram.png
                     :width: 70%
                     :align: center
 
@@ -249,7 +249,7 @@ class Rays:
         >>> plt.xlabel('Angle of Rays')
         >>> plt.show()
 
-        .. image:: AngleHist.png
+        .. image:: ../../../images/AngleHist.png
                     :width: 70%
                     :align: center
 
@@ -303,7 +303,7 @@ class Rays:
         >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, maxCount=nRays)
         >>> inputRays.display()
 
-        .. image:: displayRays.png
+        .. image:: ../../../images/displayRays.png
                     :width: 70%
                     :align: center
 
@@ -501,7 +501,7 @@ class UniformRays(Rays):
     >>> inputRays = UniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, N=nRays, M=10)
     >>> inputRays.display()
 
-    .. image:: UniformRays.png
+    .. image:: ../images/UniformRays.png
                     :width: 70%
                     :align: center
 
@@ -558,7 +558,7 @@ class LambertianRays(Rays):
     >>> inputRays = LambertianRays(yMin=minHeight, yMax=maxHeight)
     >>> inputRays.display()
 
-    .. image:: LambertianRays.png
+    .. image:: ../images/LambertianRays.png
                     :width: 70%
                     :align: center
 
@@ -687,7 +687,7 @@ class RandomUniformRays(RandomRays):
         >>> inputRays.display()
 
 
-        .. image:: RandomUniformRays.png
+        .. image:: ../images/RandomUniformRays.png
                     :width: 70%
                     :align: center
 
@@ -738,7 +738,7 @@ class RandomLambertianRays(RandomRays):
     >>> inputRays.display()
 
 
-    .. image:: RandomLambertianRays.png
+    .. image:: ../images/RandomLambertianRays.png
                 :width: 70%
                 :align: center
 
