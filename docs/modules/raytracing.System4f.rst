@@ -32,6 +32,8 @@ System4f
     
       ~System4f.determinant
       ~System4f.hasPower
+      ~System4f.isIdentity
       ~System4f.isImaging
       ~System4f.largestDiameter
+      ~System4f.surfaces
 

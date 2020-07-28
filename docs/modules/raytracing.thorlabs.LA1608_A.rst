@@ -32,5 +32,8 @@ LA1608\_A
     
       ~LA1608_A.determinant
       ~LA1608_A.hasPower
+      ~LA1608_A.isIdentity
       ~LA1608_A.isImaging
+      ~LA1608_A.largestDiameter
+      ~LA1608_A.surfaces
 

@@ -22,7 +22,8 @@ Axicon
         ~Axicon.deviationAngle
         ~Axicon.drawAt
         ~Axicon.focalLineLength
-        ~Axicon.mul_mat
+        ~Axicon.mul_beam
+        ~Axicon.mul_matrix
         ~Axicon.mul_ray
 
 
@@ -37,5 +38,8 @@ Axicon
     
       ~Axicon.determinant
       ~Axicon.hasPower
+      ~Axicon.isIdentity
       ~Axicon.isImaging
+      ~Axicon.largestDiameter
+      ~Axicon.surfaces
 

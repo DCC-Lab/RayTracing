@@ -32,6 +32,8 @@ System2f
     
       ~System2f.determinant
       ~System2f.hasPower
+      ~System2f.isIdentity
       ~System2f.isImaging
       ~System2f.largestDiameter
+      ~System2f.surfaces
 

@@ -18,25 +18,25 @@ ImagingPath
     :toctree: methods/ImagingPath
 
     
+        ~ImagingPath.NA
         ~ImagingPath.__init__
         ~ImagingPath.apertureStop
-        ~ImagingPath.axialRays
+        ~ImagingPath.axialRay
         ~ImagingPath.chiefRay
-        ~ImagingPath.createRayTracePlot
         ~ImagingPath.display
-        ~ImagingPath.drawEntrancePupil
-        ~ImagingPath.drawImages
-        ~ImagingPath.drawObject
-        ~ImagingPath.drawOpticalElements
-        ~ImagingPath.drawRayTraces
-        ~ImagingPath.drawStops
+        ~ImagingPath.displayWithObject
         ~ImagingPath.entrancePupil
+        ~ImagingPath.fNumber
         ~ImagingPath.fieldOfView
         ~ImagingPath.fieldStop
+        ~ImagingPath.halfFieldOfView
         ~ImagingPath.imageSize
+        ~ImagingPath.lagrangeInvariant
         ~ImagingPath.marginalRays
-        ~ImagingPath.rearrangeRayTraceForPlotting
-        ~ImagingPath.save
+        ~ImagingPath.principalRay
+        ~ImagingPath.reportEfficiency
+        ~ImagingPath.saveFigure
+        ~ImagingPath.subPath
 
 
 
@@ -50,5 +50,9 @@ ImagingPath
     
       ~ImagingPath.determinant
       ~ImagingPath.hasPower
+      ~ImagingPath.isIdentity
       ~ImagingPath.isImaging
+      ~ImagingPath.largestDiameter
+      ~ImagingPath.objectHeight
+      ~ImagingPath.surfaces
 

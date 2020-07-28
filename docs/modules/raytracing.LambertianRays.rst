@@ -30,7 +30,8 @@ LambertianRays
 .. autosummary::
 
     
-      ~LambertianRays.intensityValues
+      ~LambertianRays.count
+      ~LambertianRays.rays
       ~LambertianRays.thetaValues
       ~LambertianRays.yValues
 

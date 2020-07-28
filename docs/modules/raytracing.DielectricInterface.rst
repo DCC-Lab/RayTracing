@@ -19,7 +19,6 @@ DielectricInterface
 
     
         ~DielectricInterface.__init__
-        ~DielectricInterface.drawAt
         ~DielectricInterface.flipOrientation
 
 
@@ -34,5 +33,8 @@ DielectricInterface
     
       ~DielectricInterface.determinant
       ~DielectricInterface.hasPower
+      ~DielectricInterface.isIdentity
       ~DielectricInterface.isImaging
+      ~DielectricInterface.largestDiameter
+      ~DielectricInterface.surfaces
 

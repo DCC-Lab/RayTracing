@@ -32,5 +32,9 @@ LUMPlanFL40X
     
       ~LUMPlanFL40X.determinant
       ~LUMPlanFL40X.hasPower
+      ~LUMPlanFL40X.isIdentity
       ~LUMPlanFL40X.isImaging
+      ~LUMPlanFL40X.largestDiameter
+      ~LUMPlanFL40X.surfaces
+      ~LUMPlanFL40X.warningDisplayed
 

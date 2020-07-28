@@ -32,5 +32,8 @@ ACN254\_040\_A
     
       ~ACN254_040_A.determinant
       ~ACN254_040_A.hasPower
+      ~ACN254_040_A.isIdentity
       ~ACN254_040_A.isImaging
+      ~ACN254_040_A.largestDiameter
+      ~ACN254_040_A.surfaces
 

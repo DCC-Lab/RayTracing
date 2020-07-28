@@ -32,5 +32,8 @@ AC254\_045\_A
     
       ~AC254_045_A.determinant
       ~AC254_045_A.hasPower
+      ~AC254_045_A.isIdentity
       ~AC254_045_A.isImaging
+      ~AC254_045_A.largestDiameter
+      ~AC254_045_A.surfaces
 

@@ -19,6 +19,7 @@ CurvedMirror
 
     
         ~CurvedMirror.__init__
+        ~CurvedMirror.flipOrientation
         ~CurvedMirror.pointsOfInterest
 
 
@@ -33,5 +34,8 @@ CurvedMirror
     
       ~CurvedMirror.determinant
       ~CurvedMirror.hasPower
+      ~CurvedMirror.isIdentity
       ~CurvedMirror.isImaging
+      ~CurvedMirror.largestDiameter
+      ~CurvedMirror.surfaces
 

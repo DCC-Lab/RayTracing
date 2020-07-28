@@ -21,11 +21,11 @@ Rays
         ~Rays.__init__
         ~Rays.append
         ~Rays.display
-        ~Rays.displayAngles
         ~Rays.displayProgress
+        ~Rays.load
         ~Rays.rayAnglesHistogram
         ~Rays.rayCountHistogram
-        ~Rays.whichBin
+        ~Rays.save
 
 
 
@@ -37,7 +37,8 @@ Rays
 .. autosummary::
 
     
-      ~Rays.intensityValues
+      ~Rays.count
+      ~Rays.rays
       ~Rays.thetaValues
       ~Rays.yValues
 

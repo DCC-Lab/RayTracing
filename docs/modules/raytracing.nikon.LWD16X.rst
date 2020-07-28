@@ -32,7 +32,9 @@ LWD16X
     
       ~LWD16X.determinant
       ~LWD16X.hasPower
+      ~LWD16X.isIdentity
       ~LWD16X.isImaging
       ~LWD16X.largestDiameter
+      ~LWD16X.surfaces
       ~LWD16X.warningDisplayed
 

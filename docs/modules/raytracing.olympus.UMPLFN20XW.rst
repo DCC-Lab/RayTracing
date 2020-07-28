@@ -32,5 +32,9 @@ UMPLFN20XW
     
       ~UMPLFN20XW.determinant
       ~UMPLFN20XW.hasPower
+      ~UMPLFN20XW.isIdentity
       ~UMPLFN20XW.isImaging
+      ~UMPLFN20XW.largestDiameter
+      ~UMPLFN20XW.surfaces
+      ~UMPLFN20XW.warningDisplayed
 

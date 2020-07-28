@@ -18,15 +18,15 @@ MatrixGroup
     :toctree: methods/MatrixGroup
 
     
-        ~MatrixGroup.ImagingPath
-        ~MatrixGroup.LaserPath
         ~MatrixGroup.__init__
         ~MatrixGroup.append
-        ~MatrixGroup.drawAt
-        ~MatrixGroup.drawPointsOfInterest
         ~MatrixGroup.flipOrientation
         ~MatrixGroup.hasFiniteApertureDiameter
-        ~MatrixGroup.largestDiameter
+        ~MatrixGroup.insert
+        ~MatrixGroup.intermediateConjugates
+        ~MatrixGroup.load
+        ~MatrixGroup.pop
+        ~MatrixGroup.save
         ~MatrixGroup.trace
         ~MatrixGroup.transferMatrices
         ~MatrixGroup.transferMatrix
@@ -43,5 +43,8 @@ MatrixGroup
     
       ~MatrixGroup.determinant
       ~MatrixGroup.hasPower
+      ~MatrixGroup.isIdentity
       ~MatrixGroup.isImaging
+      ~MatrixGroup.largestDiameter
+      ~MatrixGroup.surfaces
 

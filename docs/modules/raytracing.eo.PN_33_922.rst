@@ -32,5 +32,8 @@ PN\_33\_922
     
       ~PN_33_922.determinant
       ~PN_33_922.hasPower
+      ~PN_33_922.isIdentity
       ~PN_33_922.isImaging
+      ~PN_33_922.largestDiameter
+      ~PN_33_922.surfaces
 

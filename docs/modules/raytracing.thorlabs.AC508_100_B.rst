@@ -32,5 +32,8 @@ AC508\_100\_B
     
       ~AC508_100_B.determinant
       ~AC508_100_B.hasPower
+      ~AC508_100_B.isIdentity
       ~AC508_100_B.isImaging
+      ~AC508_100_B.largestDiameter
+      ~AC508_100_B.surfaces
 

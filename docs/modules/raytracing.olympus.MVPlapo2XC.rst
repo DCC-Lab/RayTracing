@@ -32,5 +32,9 @@ MVPlapo2XC
     
       ~MVPlapo2XC.determinant
       ~MVPlapo2XC.hasPower
+      ~MVPlapo2XC.isIdentity
       ~MVPlapo2XC.isImaging
+      ~MVPlapo2XC.largestDiameter
+      ~MVPlapo2XC.surfaces
+      ~MVPlapo2XC.warningDisplayed
 

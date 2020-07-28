@@ -31,7 +31,8 @@ RandomLambertianRays
 .. autosummary::
 
     
-      ~RandomLambertianRays.intensityValues
+      ~RandomLambertianRays.count
+      ~RandomLambertianRays.rays
       ~RandomLambertianRays.thetaValues
       ~RandomLambertianRays.yValues
 

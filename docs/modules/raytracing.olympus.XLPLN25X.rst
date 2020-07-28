@@ -32,5 +32,9 @@ XLPLN25X
     
       ~XLPLN25X.determinant
       ~XLPLN25X.hasPower
+      ~XLPLN25X.isIdentity
       ~XLPLN25X.isImaging
+      ~XLPLN25X.largestDiameter
+      ~XLPLN25X.surfaces
+      ~XLPLN25X.warningDisplayed
 

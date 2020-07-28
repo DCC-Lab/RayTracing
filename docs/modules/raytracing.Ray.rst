@@ -19,6 +19,8 @@ Ray
 
     
         ~Ray.__init__
+        ~Ray.along
+        ~Ray.at
         ~Ray.fan
         ~Ray.fanGroup
 

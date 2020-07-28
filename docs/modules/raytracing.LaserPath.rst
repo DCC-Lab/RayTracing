@@ -19,13 +19,7 @@ LaserPath
 
     
         ~LaserPath.__init__
-        ~LaserPath.createBeamTracePlot
         ~LaserPath.display
-        ~LaserPath.drawBeamTrace
-        ~LaserPath.drawWaists
-        ~LaserPath.eigenModes
-        ~LaserPath.laserModes
-        ~LaserPath.rearrangeBeamTraceForPlotting
 
 
 
@@ -39,5 +33,8 @@ LaserPath
     
       ~LaserPath.determinant
       ~LaserPath.hasPower
+      ~LaserPath.isIdentity
       ~LaserPath.isImaging
+      ~LaserPath.largestDiameter
+      ~LaserPath.surfaces
 

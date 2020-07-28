@@ -32,5 +32,9 @@ XLUMPlanFLN20X
     
       ~XLUMPlanFLN20X.determinant
       ~XLUMPlanFLN20X.hasPower
+      ~XLUMPlanFLN20X.isIdentity
       ~XLUMPlanFLN20X.isImaging
+      ~XLUMPlanFLN20X.largestDiameter
+      ~XLUMPlanFLN20X.surfaces
+      ~XLUMPlanFLN20X.warningDisplayed
 

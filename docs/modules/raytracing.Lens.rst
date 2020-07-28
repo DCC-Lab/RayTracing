@@ -19,7 +19,7 @@ Lens
 
     
         ~Lens.__init__
-        ~Lens.drawAt
+        ~Lens.displayHalfHeight
         ~Lens.pointsOfInterest
 
 
@@ -34,5 +34,8 @@ Lens
     
       ~Lens.determinant
       ~Lens.hasPower
+      ~Lens.isIdentity
       ~Lens.isImaging
+      ~Lens.largestDiameter
+      ~Lens.surfaces
 

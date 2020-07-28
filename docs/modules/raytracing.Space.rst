@@ -19,7 +19,6 @@ Space
 
     
         ~Space.__init__
-        ~Space.drawAt
         ~Space.transferMatrix
 
 
@@ -34,5 +33,8 @@ Space
     
       ~Space.determinant
       ~Space.hasPower
+      ~Space.isIdentity
       ~Space.isImaging
+      ~Space.largestDiameter
+      ~Space.surfaces
 

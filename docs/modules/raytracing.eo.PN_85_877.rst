@@ -32,5 +32,8 @@ PN\_85\_877
     
       ~PN_85_877.determinant
       ~PN_85_877.hasPower
+      ~PN_85_877.isIdentity
       ~PN_85_877.isImaging
+      ~PN_85_877.largestDiameter
+      ~PN_85_877.surfaces
 

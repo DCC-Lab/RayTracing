@@ -32,5 +32,8 @@ LA1805\_A
     
       ~LA1805_A.determinant
       ~LA1805_A.hasPower
+      ~LA1805_A.isIdentity
       ~LA1805_A.isImaging
+      ~LA1805_A.largestDiameter
+      ~LA1805_A.surfaces
 

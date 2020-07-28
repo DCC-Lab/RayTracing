@@ -32,5 +32,8 @@ LA1131\_A
     
       ~LA1131_A.determinant
       ~LA1131_A.hasPower
+      ~LA1131_A.isIdentity
       ~LA1131_A.isImaging
+      ~LA1131_A.largestDiameter
+      ~LA1131_A.surfaces
 

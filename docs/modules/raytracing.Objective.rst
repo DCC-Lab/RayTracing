@@ -19,8 +19,8 @@ Objective
 
     
         ~Objective.__init__
-        ~Objective.drawAt
         ~Objective.flipOrientation
+        ~Objective.maximumOpticalInvariant
         ~Objective.pointsOfInterest
 
 
@@ -35,5 +35,9 @@ Objective
     
       ~Objective.determinant
       ~Objective.hasPower
+      ~Objective.isIdentity
       ~Objective.isImaging
+      ~Objective.largestDiameter
+      ~Objective.surfaces
+      ~Objective.warningDisplayed
 
