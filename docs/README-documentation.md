@@ -121,13 +121,26 @@ If there is an error you should go to the line that raises the error and fix it 
 
 ### Build local
 
-Anyone can build the documentation locally. From the docs directory, with appropriate tools installed, type: 
+Anyone can build the documentation locally. From the docs directory, with the requirements installed in your python environment, type: 
 ```
+make clean  # (optional, remove previous build) 
 make html
 ```
 Then you can open `_build/html/index.html`.
 
 > For some reasons on my computer I have to leave the folder `docs` and call `docs/make html`
+
+### Updating the documentation
+
+1. (Optional, if new classes were added) **Add new modules in `reference.rst`**
+
+1. (Optional, if new methods were added) **Regenerate the stub files**
+   1. Requirements
+   2. Path
+   3. Commands
+   4. Push to repo
+
+2. 
 
 ### Technical details
 
@@ -142,3 +155,5 @@ Then you can open `_build/html/index.html`.
     ```
   PYTHONPATH=. sphinx-autogen -t docs/_templates docs/index.rst
     ```
+  
+  > If this path is not set properly, you will get an error `Failed to import raytracing...`
