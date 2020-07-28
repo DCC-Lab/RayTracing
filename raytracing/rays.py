@@ -777,6 +777,7 @@ class RandomLambertianRays(RandomRays):
         self.append(ray)
         return ray
 
+
 class ObjectRays(UniformRays):
     def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None):
         super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
@@ -784,8 +785,19 @@ class ObjectRays(UniformRays):
         self.rayColors = rayColors
         self.color = color
 
-class LampRays(RandomUniformRays):
-    def __init__(self, diameter, NA=1.0, N=10000):
-        super(LampRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
 
+class LampRays(RandomUniformRays, Rays):
+    def __init__(self, diameter, NA=1.0, N=10000, random=False):
+        if random:
+            RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
+        else:
+            self.yMin = -diameter/2
+            self.yMax = diameter/2
+            self.maxCount = N
 
+            rays = []
+            heights = np.linspace(self.yMin, self.yMax, N, endpoint=True)
+            angles = np.linspace(-NA, NA, N, endpoint=True)
+            for y, theta in zip(heights, angles):
+                rays.append(Ray(y, theta))
+            Rays.__init__(self, rays=rays)
