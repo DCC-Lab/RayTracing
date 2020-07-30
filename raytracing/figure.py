@@ -116,9 +116,6 @@ class Figure:
                 warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
                 self.designParams['limitObjectToFieldOfView'] = False
 
-        if not self.designParams['limitObjectToFieldOfView']:
-            note1 = "Object height: {0:.2f}".format(self.path.objectHeight)
-
         if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
             if stopPosition is None or self.path.principalRay() is None:
