@@ -239,7 +239,7 @@ class MatrixGraphic(Graphic):
 
         And the result is shown in the following figure:
 
-        .. image:: display.png
+        .. image::  ../../../images/matrixGraphicDisplay.png
             :width: 70%
             :align: center
 
