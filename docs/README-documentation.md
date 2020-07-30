@@ -121,24 +121,27 @@ If there is an error you should go to the line that raises the error and fix it 
 
 ### Build local
 
-Anyone can build the documentation locally. From the docs directory, with appropriate tools installed, type: 
+Anyone can build the documentation locally. From the docs directory, with the requirements installed in your python environment, type: 
 ```
+make clean  # (optional, remove previous build) 
 make html
 ```
 Then you can open `_build/html/index.html`.
 
 > For some reasons on my computer I have to leave the folder `docs` and call `docs/make html`
 
-### Technical details
+### Updating the documentation
 
-- When autogenerating the stub files from toctrees in `reference.rst`, note that sphinx-autogen requires to load a pythonpath to your project. 
-  
-    On windows the command is 
-    ```
-  $ set PYTHONPATH=C:\Path\to\project
-  $ sphinx-autogen -t docs/_templates docs/reference.rst
-  ```
-    On Mac/Linux:
-    ```
-  PYTHONPATH=. sphinx-autogen -t docs/_templates docs/index.rst
-    ```
+>  The documentation files for all methods are auto-generated and maintained during build.
+
+1. If new classes were added, update `reference.rst` (Optional) 
+
+   > Simply follow the template and add new files (titles) or classes (items)
+
+2. Go to https://readthedocs.org/projects/raytracing/ 
+
+   > You need to be logged in as one of the maintainers. 
+
+3. Click `Build version` (latest by default)
+
+   > To build a specific branch, go to Versions and activate the desired branch in the list at the bottom (it might require a build of master to fetch for new branches). 
