@@ -195,7 +195,8 @@ class Figure:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
                                                                                         fill=False, color=color))
             if instance is 'LampRays':
-                self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
+                lampKey = 'Lamp (z={})'.format(rays.z) if rays.z != 0 else 'Lamp'
+                self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z)]
 
     def setLinesFromRaysList(self):
         for rays in self.raysList:
@@ -209,7 +210,10 @@ class Figure:
                     self.lineGroups['Object/Image (z={})'.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
-                self.lineGroups['Lamp'].extend(rayTrace)
+                if rays.z == 0:
+                    self.lineGroups['Lamp'].extend(rayTrace)
+                else:
+                    self.lineGroups['Lamp (z={})'.format(rays.z)] = rayTrace
             elif instance not in self.lineGroups.keys():
                 self.lineGroups[instance] = rayTrace
             else:
