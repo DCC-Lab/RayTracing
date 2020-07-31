@@ -74,6 +74,7 @@ class Rays:
         self.iteration = 0
         self.progressLog = 10000
         self.z = 0
+        self.rayColors = None
 
         # We cache these because they can be lengthy to calculate
         self._yValues = None
@@ -787,7 +788,7 @@ class ObjectRays(UniformRays):
 
 
 class LampRays(RandomUniformRays, Rays):
-    def __init__(self, diameter, NA=1.0, N=10000, random=False):
+    def __init__(self, diameter, NA=1.0, N=10000, random=False, z=0, rayColors=None):
         if random:
             RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
         else:
@@ -801,3 +802,6 @@ class LampRays(RandomUniformRays, Rays):
             for y, theta in zip(heights, angles):
                 rays.append(Ray(y, theta))
             Rays.__init__(self, rays=rays)
+
+        self.z = z
+        self.rayColors = rayColors
