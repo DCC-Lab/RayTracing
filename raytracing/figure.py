@@ -358,17 +358,15 @@ class Figure:
         2. the principal and axial rays.
         """
 
-        colors = self.designParams['rayColors']
-        if type(rays).__name__ is 'LampRays':
-            colors = self.designParams['lampRayColors']
-        elif type(rays).__name__ is 'ObjectRays':
-            if rays.rayColors is not None:
-                colors = rays.rayColors
-
         dz = 0
+        colors = self.designParams['rayColors']
         if type(rays) is not list:
             if rays.z != 0:
                 dz = rays.z
+            if rays.rayColors is not None:
+                colors = rays.rayColors
+            elif type(rays).__name__ is 'LampRays':
+                colors = self.designParams['lampRayColors']
 
         if dz != 0:
             forwardPath = self.path.subPath(zStart=dz)
