@@ -12,6 +12,7 @@ kObjectImageKey = "Object/Image"
 kLampKey = "Lamp"
 kElementsKey = "Elements"
 
+
 class Figure:
     """Base class to contain the required objects of a figure.
     Promote to a backend-derived Figure class to enable display features.
@@ -28,7 +29,7 @@ class Figure:
         self.annotations = []
 
         self.styles = dict()
-        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['b', 'g'], 'onlyAxialRay': False,
+        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['y'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
                                   'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
                                   'fontScale': 1.2, 'showFOV': False, 'showObjectImage': True}
