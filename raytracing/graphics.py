@@ -116,7 +116,7 @@ class LampGraphic(Graphic):
     @property
     def components(self):
         if self._components is None:
-            self._components = [Rectangle((self.x, -self.diameter / 2), width=0.02, height=self.diameter,
+            self._components = [Rectangle((-0.08, -self.diameter / 2), width=0.16, height=self.diameter,
                                           color='y', fill=True)]
         return self._components
 

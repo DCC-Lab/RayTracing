@@ -12,6 +12,7 @@ kObjectImageKey = "Object/Image"
 kLampKey = "Lamp"
 kElementsKey = "Elements"
 
+
 class Figure:
     """Base class to contain the required objects of a figure.
     Promote to a backend-derived Figure class to enable display features.
@@ -28,7 +29,7 @@ class Figure:
         self.annotations = []
 
         self.styles = dict()
-        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['b', 'g'], 'onlyAxialRay': False,
+        self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['y'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
                                   'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
                                   'fontScale': 1.2, 'showFOV': False, 'showObjectImage': True}
@@ -194,7 +195,8 @@ class Figure:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
                                                                                         fill=False, color=color))
             if instance is 'LampRays':
-                self.graphicGroups['Lamp'].append(LampGraphic(rays.yMax * 2, x=0))
+                lampKey = 'Lamp (z={})'.format(rays.z) if rays.z != 0 else 'Lamp'
+                self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z)]
 
     def setLinesFromRaysList(self):
         for rays in self.raysList:
@@ -208,7 +210,10 @@ class Figure:
                     self.lineGroups['Object/Image (z={})'.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
-                self.lineGroups['Lamp'].extend(rayTrace)
+                if rays.z == 0:
+                    self.lineGroups['Lamp'].extend(rayTrace)
+                else:
+                    self.lineGroups['Lamp (z={})'.format(rays.z)] = rayTrace
             elif instance not in self.lineGroups.keys():
                 self.lineGroups[instance] = rayTrace
             else:
@@ -353,17 +358,15 @@ class Figure:
         2. the principal and axial rays.
         """
 
-        colors = self.designParams['rayColors']
-        if type(rays).__name__ is 'LampRays':
-            colors = self.designParams['lampRayColors']
-        elif type(rays).__name__ is 'ObjectRays':
-            if rays.rayColors is not None:
-                colors = rays.rayColors
-
         dz = 0
+        colors = self.designParams['rayColors']
         if type(rays) is not list:
             if rays.z != 0:
                 dz = rays.z
+            if rays.rayColors is not None:
+                colors = rays.rayColors
+            elif type(rays).__name__ is 'LampRays':
+                colors = self.designParams['lampRayColors']
 
         if dz != 0:
             forwardPath = self.path.subPath(zStart=dz)
