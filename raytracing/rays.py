@@ -788,19 +788,20 @@ class ObjectRays(UniformRays):
 
 
 class LampRays(RandomUniformRays, Rays):
-    def __init__(self, diameter, NA=1.0, N=10000, random=False, z=0, rayColors=None):
+    def __init__(self, diameter, NA=1.0, N=100, random=False, z=0, rayColors=None, T=10):
         if random:
             RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
         else:
             self.yMin = -diameter/2
             self.yMax = diameter/2
-            self.maxCount = N
+            self.maxCount = N*T
 
             rays = []
             heights = np.linspace(self.yMin, self.yMax, N, endpoint=True)
-            angles = np.linspace(-NA, NA, N, endpoint=True)
-            for y, theta in zip(heights, angles):
-                rays.append(Ray(y, theta))
+            angles = np.linspace(-NA, NA, T, endpoint=True)
+            for y in heights:
+                for theta in angles:
+                    rays.append(Ray(y, theta))
             Rays.__init__(self, rays=rays)
 
         self.z = z
