@@ -123,10 +123,8 @@ class Figure:
                 warnings.warn("No aperture stop in system: cannot use onlyPrincipalAndAxialRays=True since they are "
                               "not defined.")
                 self.designParams['onlyPrincipalAndAxialRays'] = False
-            else:
-                note2 = "Only chief and marginal rays shown"
 
-        label = Label(x=0.05, y=0.02, text=note1 + "\n" + note2, fontsize=12*self.fontScale,
+        label = Label(x=0.05, y=0, text=note1 + "\n" + note2, fontsize=12*self.fontScale,
                       useDataUnits=False, alignment='left')
         self.labels.append(label)
 
