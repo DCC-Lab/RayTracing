@@ -341,6 +341,7 @@ class Rays:
             axis2.set_ylabel("Ray count", fontsize=13*fontScale)
             axis2.tick_params(labelsize=13*fontScale)
 
+        plt.subplots_adjust(left=0.12)
         plt.show()
 
     def displayProgress(self):
