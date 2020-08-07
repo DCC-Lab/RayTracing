@@ -326,23 +326,19 @@ class Rays:
 
         (x, y) = self.rayCountHistogram()
 
-        # axis1.set_title('Intensity profile')
         axis1.plot(x, y, 'k-', label="Intensity")
         axis1.set_ylim([0, max(y) * 1.1])
         axis1.set_xlabel("Height of ray", fontsize=13*fontScale)
         axis1.set_ylabel("Ray count", fontsize=13*fontScale)
-        axis1.legend(["Intensity"], fontsize=13*fontScale)
         axis1.tick_params(labelsize=13*fontScale)
 
         if showTheta:
             (x, y) = self.rayAnglesHistogram()
-            # axis2.set_title('Angle histogram')
             axis2.plot(x, y, 'k--', label="Orientation profile")
             axis2.set_ylim([0, max(y) * 1.1])
             axis2.set_xlim([-np.pi / 2, np.pi / 2])
             axis2.set_xlabel("Angle of ray [rad]", fontsize=13*fontScale)
             axis2.set_ylabel("Ray count", fontsize=13*fontScale)
-            axis2.legend(["Angle"], fontsize=13*fontScale)
             axis2.tick_params(labelsize=13*fontScale)
 
         plt.show()
