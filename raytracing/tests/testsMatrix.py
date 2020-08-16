@@ -382,14 +382,16 @@ class TestMatrix(envtest.RaytracingTestCase):
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallelNoOutput(self):
-        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True, universal_newlines=True)
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True,
+                                         universal_newlines=True)
         self.assertEqual(processComplete.stdout, "")
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallelWithOutput(self):
-        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"], capture_output=True, universal_newlines=True)
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
+                                         capture_output=True, universal_newlines=True)
         self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
     def testPointsOfInterest(self):
@@ -552,24 +554,20 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testStrRepresentation(self):
         m = Matrix(C=1)
-        strRepresentation = r""" /             \ 
-| {0:6.3f}   {1:6.3f} |
-|               |
-| {2:6.3f}   {3:6.3f} |
- \             /
-""".format(1, 0, 1, 1)
-        strRepresentation += "\nf={:0.3f}\n".format(-1.0)
+        strRepresentation = r""" |  1.000    0.000 |
+|                 |
+|  1.000    1.000 |
+f=-1.000
+"""
         self.assertEqual(str(m).strip(), strRepresentation.strip())
 
     def testStrRepresentationAfocal(self):
         m = Matrix()
-        strRepresentation = r""" /             \ 
-| {0:6.3f}   {1:6.3f} |
-|               |
-| {2:6.3f}   {3:6.3f} |
- \             /
-""".format(1, 0, 0, 1)
-        strRepresentation += "\nf = +inf (afocal)\n".format(-1.0)
+        strRepresentation = r""" |  1.000    0.000 |
+|                 |
+|  0.000    1.000 |
+f = +inf (afocal)
+"""
         self.assertEqual(str(m).strip(), strRepresentation.strip())
 
     def testDisplayHalfHeight(self):
