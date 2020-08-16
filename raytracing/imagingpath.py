@@ -823,7 +823,8 @@ class ImagingPath(MatrixGroup):
         else:
             print("  No losses to vignetting")
 
-        fig, axis1 = plt.subplots(1)
+        fontScale = 1.2
+        fig, axis1 = plt.subplots(1, figsize=(10, 7))
         fig.tight_layout(pad=4.0)
         axis1.add_patch(p.Rectangle((-1,-1),2, 2, color=(0, 1.0, 0, 0.5), lw=3, fill=False,
                               transform=axis1.transData, clip_on=True))
@@ -836,12 +837,13 @@ class ImagingPath(MatrixGroup):
         if len(expectedBlocked) >= 2:
             (x,y) = list(zip(*expectedBlocked))
             plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
-        axis1.set_xlabel("${I_{rp}}/{I_{ap}}$\n\nFigure: Each point is a ray emitted from the source.")
-        axis1.set_ylabel("${I_{ar}}/{I_{ap}}$")
-        axis1.set_xlim(-2,2)
-        axis1.set_ylim(-2,2)
+        axis1.set_xlabel("$B$\n\nFigure: Each point is a ray emitted from the source.", fontsize=13*fontScale)
+        axis1.set_ylabel("$A$", fontsize=13*fontScale)
+        axis1.set_xlim(-2, 2)
+        axis1.set_ylim(-2, 2)
         axis1.set_aspect('equal')
-        axis1.legend(loc="upper right")
+        axis1.legend(loc="upper right", fontsize=13*fontScale)
+        axis1.tick_params(labelsize=13*fontScale)
         plt.show()
 
     def subPath(self, zStart: float, backwards=False):

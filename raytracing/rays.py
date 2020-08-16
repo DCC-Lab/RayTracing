@@ -75,6 +75,7 @@ class Rays:
         self.progressLog = 10000
         self.z = 0
         self.rayColors = None
+        self.label = None
 
         # We cache these because they can be lengthy to calculate
         self._yValues = None
@@ -326,25 +327,22 @@ class Rays:
 
         (x, y) = self.rayCountHistogram()
 
-        # axis1.set_title('Intensity profile')
         axis1.plot(x, y, 'k-', label="Intensity")
         axis1.set_ylim([0, max(y) * 1.1])
         axis1.set_xlabel("Height of ray", fontsize=13*fontScale)
         axis1.set_ylabel("Ray count", fontsize=13*fontScale)
-        axis1.legend(["Intensity"], fontsize=13*fontScale)
         axis1.tick_params(labelsize=13*fontScale)
 
         if showTheta:
             (x, y) = self.rayAnglesHistogram()
-            # axis2.set_title('Angle histogram')
             axis2.plot(x, y, 'k--', label="Orientation profile")
             axis2.set_ylim([0, max(y) * 1.1])
             axis2.set_xlim([-np.pi / 2, np.pi / 2])
             axis2.set_xlabel("Angle of ray [rad]", fontsize=13*fontScale)
             axis2.set_ylabel("Ray count", fontsize=13*fontScale)
-            axis2.legend(["Angle"], fontsize=13*fontScale)
             axis2.tick_params(labelsize=13*fontScale)
 
+        plt.subplots_adjust(left=0.12)
         plt.show()
 
     def displayProgress(self):
@@ -780,15 +778,16 @@ class RandomLambertianRays(RandomRays):
 
 
 class ObjectRays(UniformRays):
-    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None):
+    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None, label=None):
         super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
         self.z = z
         self.rayColors = rayColors
         self.color = color
+        self.label = label
 
 
 class LampRays(RandomUniformRays, Rays):
-    def __init__(self, diameter, NA=1.0, N=100, random=False, z=0, rayColors=None, T=10):
+    def __init__(self, diameter, NA=1.0, N=100, random=False, z=0, rayColors=None, T=10, label=None):
         if random:
             RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
         else:
@@ -806,3 +805,4 @@ class LampRays(RandomUniformRays, Rays):
 
         self.z = z
         self.rayColors = rayColors
+        self.label = label

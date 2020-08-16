@@ -81,11 +81,11 @@ class Graphic:
 
 
 class ObjectGraphic(Graphic):
-    def __init__(self, diameter, x=0, fill=True, color='b'):
+    def __init__(self, diameter, x=0, fill=True, color='b', label=None):
         self.diameter = diameter
         self.fill = fill
         self.color = color
-        super(ObjectGraphic, self).__init__(x=x, fixedWidth=False)
+        super(ObjectGraphic, self).__init__(x=x, fixedWidth=False, label=label)
 
     @property
     def components(self):
@@ -109,9 +109,9 @@ class ImageGraphic(Graphic):
 
 
 class LampGraphic(Graphic):
-    def __init__(self, diameter, x=0):
+    def __init__(self, diameter, x=0, label=None):
         self.diameter = diameter
-        super(LampGraphic, self).__init__(x=x, fixedWidth=False)
+        super(LampGraphic, self).__init__(x=x, fixedWidth=False, label=label)
 
     @property
     def components(self):
