@@ -188,7 +188,7 @@ class Figure:
             if instance is 'ObjectRays':
                 objectKey = 'Object/Image (z={})'.format(rays.z) if rays.z != 0 else 'Object/Image'
                 color = 'b' if rays.color is None else rays.color
-                self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z, color=color)]
+                self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z, color=color, label=rays.label)]
                 if rays.color is None:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z))
                 else:
@@ -196,7 +196,7 @@ class Figure:
                                                                                         fill=False, color=color))
             if instance is 'LampRays':
                 lampKey = 'Lamp (z={})'.format(rays.z) if rays.z != 0 else 'Lamp'
-                self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z)]
+                self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z, label=rays.label)]
 
     def setLinesFromRaysList(self):
         for rays in self.raysList:

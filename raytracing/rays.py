@@ -75,6 +75,7 @@ class Rays:
         self.progressLog = 10000
         self.z = 0
         self.rayColors = None
+        self.label = None
 
         # We cache these because they can be lengthy to calculate
         self._yValues = None
@@ -777,15 +778,16 @@ class RandomLambertianRays(RandomRays):
 
 
 class ObjectRays(UniformRays):
-    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None):
+    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None, label=None):
         super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
         self.z = z
         self.rayColors = rayColors
         self.color = color
+        self.label = label
 
 
 class LampRays(RandomUniformRays, Rays):
-    def __init__(self, diameter, NA=1.0, N=10000, random=False, z=0, rayColors=None):
+    def __init__(self, diameter, NA=1.0, N=10000, random=False, z=0, rayColors=None, label=None):
         if random:
             RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
         else:
@@ -802,3 +804,4 @@ class LampRays(RandomUniformRays, Rays):
 
         self.z = z
         self.rayColors = rayColors
+        self.label = label
