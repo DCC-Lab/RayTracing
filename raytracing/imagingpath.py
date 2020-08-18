@@ -823,7 +823,7 @@ class ImagingPath(MatrixGroup):
         else:
             print("  No losses to vignetting")
 
-        fontScale = 1.2
+        fontScale = 1.5
         fig, axis1 = plt.subplots(1, figsize=(10, 7))
         fig.tight_layout(pad=4.0)
         axis1.add_patch(p.Rectangle((-1,-1),2, 2, color=(0, 1.0, 0, 0.5), lw=3, fill=False,
