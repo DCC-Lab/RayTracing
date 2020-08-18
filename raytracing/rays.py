@@ -755,8 +755,8 @@ class RandomLambertianRays(RandomRays):
 
     """
 
-    def __init__(self, yMax=1.0, yMin=None, maxCount=10000):
-        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=np.pi / 2, thetaMin=-np.pi / 2,
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=-np.pi / 2, maxCount=10000):
+        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=thetaMax, thetaMin=thetaMin,
                                                    maxCount=maxCount)
 
     def randomRay(self) -> Ray:
