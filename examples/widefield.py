@@ -25,6 +25,7 @@ from raytracing import *
 def imagingPath(a=10, b=10, title=""):
     
     path = ImagingPath()
+    path.design(fontScale=1.7)
     path.label=title
     path.append(System4f(f1=50, diameter1=a, f2=50, diameter2=b))
     path.append(Aperture(diameter=10, label='Camera'))
