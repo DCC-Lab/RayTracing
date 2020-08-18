@@ -46,20 +46,20 @@ inputRays = RandomUniformRays(yMax = objectHalfHeight,
 path1 = imagingPath(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
 outputRays = path1.traceManyThroughInParallel(inputRays)
 efficiency = 100*outputRays.count/inputRays.count
-path1.display()
+path1.display(interactive=False)
 outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
 path1.reportEfficiency()
 
 path2 = imagingPath(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
 outputRays = path2.traceManyThroughInParallel(inputRays)
 efficiency = 100*outputRays.count/inputRays.count
-path2.display()
+path2.display(interactive=False)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
 path2.reportEfficiency()
 
 path3 = imagingPath(a=25, b=50, title="Better AS at first lens and FS at Camera")
 outputRays = path3.traceManyThroughInParallel(inputRays)
 efficiency = 100*outputRays.count/inputRays.count
-path3.display()
+path3.display(interactive=False)
 outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
 path3.reportEfficiency()
