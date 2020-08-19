@@ -12,7 +12,7 @@ import numpy as np
 
 """
 """
-All the 1 indices relates to the Laser scanning calculations while 2 realtes to the Confocal pinhole side.
+All the "1" indices relates to the Laser scanning position calculations while "2" realtes to the Confocal pinhole size calculation.
 """
 # List of the scan angle of the ray making it throught the system. 
 thetas = []
@@ -37,6 +37,7 @@ positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -30
 
 # Number of total rays produced by the focal spot
 nRays = 100000
+
 # Production of rays in the angle range of the scanning element.
 scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=nRays)
 
@@ -59,7 +60,7 @@ class UISUPLAPO60XW(Objective):
                                          label='UISUPLAPO60XW Objective')
 
 
-def illuminationPath():
+def illuminationPath1():
 
     illumination1 = ImagingPath()
     # The object in this situation is the laser beam at the scanning element. 
@@ -75,7 +76,7 @@ def illuminationPath():
 
     return illumination1
     
-path1 = illuminationPath()
+path1 = illuminationPath1()
 outputRays1 = path1.traceManyThrough(scanRays)
 for i in range(len(outputRays1)):
     thetas.append(scanRays[i].theta*180/np.pi)
@@ -121,7 +122,7 @@ def optimalPinholeSize():
     return pinholeIdeal
 
 
-def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
+def illuminationPath2(pinholeFactor=None, focalSpotPosition=None):
     """
     Determines the amount of rays emitted from the object that are detected at the pinhole plane. 
 
@@ -157,7 +158,7 @@ for pinhole in pinholeModifier:
     for z in positions:
         print(".",end='')
         newPosition = 5 + (z * 0.000001)
-        efficiency = illuminationPath(pinholeFactor=pinhole, focalSpotPosition=newPosition)
+        efficiency = illuminationPath2(pinholeFactor=pinhole, focalSpotPosition=newPosition)
         efficiencyValues.append(efficiency)
     pinholeModifier[pinhole] = efficiencyValues
 
