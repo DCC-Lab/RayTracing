@@ -16,7 +16,7 @@ thetas = []
 
 # List of 1 corresponding to the number of elements in heights 
 # so that plt.plot() doesn't freak out. 
-positions = []
+positions1 = []
 
 # Radius of the laser beam at the scanning element.
 # Focal spot radius (Airy disk radius)
@@ -56,7 +56,7 @@ class UISUPLAPO60XW(Objective):
                                          label='UISUPLAPO60XW Objective')
 
 
-def illuminationPath1():
+def illuminationPath():
 
     illumination1 = ImagingPath()
     # The object in this situation is the laser beam at the scanning element. 
@@ -73,15 +73,15 @@ def illuminationPath1():
     return illumination1
 
 
-path1 = illuminationPath1()
+path1 = illuminationPath()
 outputRays1 = path1.traceManyThrough(scanRays)
 for i in range(len(outputRays1)):
     thetas.append(scanRays[i].theta*180/np.pi)
-    positions.append(outputRays1[i].y*1000)
+    positions1.append(outputRays1[i].y*1000)
 
     scanRays.displayProgress()
 
-plt.plot(thetas,positions)
+plt.plot(thetas,positions1)
 plt.xlabel('Scan angle (degrees)')
 plt.ylabel('Scanning position of the focal spot (µm)')
 plt.show()
