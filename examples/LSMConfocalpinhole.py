@@ -25,9 +25,6 @@ objectHalfHeight =focalRadius= 0.000250
 # Angle produced by the scanning element.
 scanAngle = 10*np.pi/180
 
-# Production of rays in the angle range of the scanning element.
-scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=nRays)
-
 # Dictionary of pinhole factors with an empty list which will subsequently contain the transmission efficiency
 # for each focal spot position
 pinholeModifier = {1 / 3: [], 1: [], 3: []}
@@ -37,6 +34,8 @@ positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -30
 
 # Number of total rays produced by the focal spot
 nRays = 100000
+# Production of rays in the angle range of the scanning element.
+scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=nRays)
 
 # Production of rays from a focal spot with a radius determined by focalRadius
 inputRays = RandomUniformRays(yMax=focalRadius, yMin=-focalRadius, maxCount=nRays)
