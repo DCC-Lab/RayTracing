@@ -59,7 +59,7 @@ class UISUPLAPO60XW(Objective):
                                          label='UISUPLAPO60XW Objective')
 
 
-def path():
+def illuminationPath():
 
     illumination1 = ImagingPath()
     # The object in this situation is the laser beam at the scanning element. 
@@ -74,15 +74,19 @@ def path():
     illumination1.append(Space(d=180/40))
 
     return illumination1
-
-def illuminationPath():
     
-    path1 = illuminationPath()
-    outputRays1 = path1.traceManyThrough(scanRays)
-    for i in range(len(outputRays1)):
-        thetas.append(scanRays[i].theta*180/np.pi)
-        positions1.append(outputRays1[i].y*1000)
-        scanRays.displayProgress()
+path1 = illuminationPath()
+outputRays1 = path1.traceManyThrough(scanRays)
+for i in range(len(outputRays1)):
+    thetas.append(scanRays[i].theta*180/np.pi)
+    positions1.append(outputRays1[i].y*1000)
+    scanRays.displayProgress()
+
+plt.plot(thetas,positions1)
+plt.xlabel('Scan angle (degrees)')
+plt.ylabel('Scanning position of the focal spot (µm)')
+plt.show()
+
 
 def path(focalSpotPosition=objFocalLength): 
     illumination2 = ImagingPath()
@@ -166,8 +170,4 @@ plt.xlabel('Position of the focal spot (nm)')
 plt.legend()
 plt.show()
 
-plt.plot(thetas,positions1)
-plt.xlabel('Scan angle (degrees)')
-plt.ylabel('Scanning position of the focal spot (µm)')
-plt.show()
 
