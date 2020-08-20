@@ -5,7 +5,19 @@ import numpy as np
 
 
 """
-
+The following code contains finding of the scanning position of the focal spot and optimal pinhole size.
+In a confocal laser scanning microscope, the scanning components define 
+the covered field-of-view (FOV) at the sample plane. Here, 
+we show a one-dimensional example with a polygonal mirror
+of 36 facets that rotates rapidly to scan the beam along the horizontal direction. 
+It produces a meachnical  sweep of 10 degrees, or 0.1750 rad, between each facets. 
+Therefore, the laser beam covers a total optical scan angle of 20 degrees.
+In this example, the object is considered to be the laser beam at the polygonal mirror plane. 
+The output profile shows on its x-axis the width of the FOV under the objective. 
+At the same time, it is possible to obtain and plot the intensity of a point source at
+the pinhole of a confocal microscope (with variable pinhole size) as a function
+of position of focal spot by sending a large number of rays in the system 
+(changing the position of the focal spot provides an optical sectioning process).
 
 
 
