@@ -34,13 +34,11 @@ def imagingPath(a=10, b=10, title=""):
 
 
 # Input from the expected field of view
-nRays=1000000
-objectHalfHeight = 5
-inputRays = RandomUniformRays(yMax = objectHalfHeight, 
-                              yMin = -objectHalfHeight,
+inputRays = RandomUniformRays(yMax = 5, 
+                              yMin = -5,
                               thetaMin = -0.5,
                               thetaMax = +0.5,
-                              maxCount=nRays)
+                              maxCount=1000000)
 
 # Three paths with different sets of lens diameter. 
 path1 = imagingPath(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
