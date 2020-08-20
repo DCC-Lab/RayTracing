@@ -91,7 +91,6 @@ for i in range(len(outputRays1)):
     heightpositions.append(outputRays1[i].y*1000)
     scanRays.displayProgress()
 
-<<<<<<< HEAD
 plt.plot(thetas,heightpositions)
 plt.xlabel('Scan angle (degrees)')
 plt.ylabel('Scanning position of the focal spot (µm)')
