@@ -96,10 +96,11 @@ for i in range(len(outputRays1)):
     scanRays.displayProgress()
 
 plt.plot(thetas,positions1)
-plt.xlabel('Scan angle (degrees)')
-plt.ylabel('Scanning position of the focal spot (µm)')
+plt.xlabel('Scan angle (degrees)', fontsize=20)
+plt.ylabel('Scanning position of the focal spot (µm)', fontsize=20)
 plt.show()
 
+#-----------------------------------------------------------
 
 def path(focalSpotPosition=objFocalLength): 
     illumination2 = ImagingPath()
@@ -134,7 +135,7 @@ def optimalPinholeSize():
     return pinholeIdeal
 
 
-def illuminationPath2(pinholeFactor=None, focalSpotPosition=None):
+def rayEfficiency(pinholeFactor=None, focalSpotPosition2=None):
     """
     Determines the amount of rays emitted from the object that are detected at the pinhole plane. 
 
@@ -152,7 +153,7 @@ def illuminationPath2(pinholeFactor=None, focalSpotPosition=None):
             Returns the illumination path
     """
 
-    illumination2 = path(focalSpotPosition)
+    illumination2 = path(focalSpotPosition2)
 
     pinholeSize = optimalPinholeSize() * pinholeFactor
     illumination2.append(Aperture(diameter=pinholeSize))
@@ -170,7 +171,7 @@ for pinhole in pinholeModifier:
     for z in positions:
         print(".",end='')
         newPosition = 5 + (z * 0.000001)
-        efficiency = illuminationPath2(pinholeFactor=pinhole, focalSpotPosition=newPosition)
+        efficiency = rayEfficiency(pinholeFactor=pinhole, focalSpotPosition2=newPosition)
         efficiencyValues.append(efficiency)
     pinholeModifier[pinhole] = efficiencyValues
 
@@ -178,8 +179,8 @@ for pinhole in pinholeModifier:
 plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Small pinhole', linestyle='dashed')
 plt.plot(positions, pinholeModifier[1], 'k-', label='Ideal pinhole')
 plt.plot(positions, pinholeModifier[3], 'k--', label='Large pinhole', linestyle='dotted')
-plt.ylabel('Transmission efficiency')
-plt.xlabel('Position of the focal spot (nm)')
+plt.ylabel('Transmission efficiency', fontsize=20)
+plt.xlabel('Position of the focal spot (nm)', fontsize=20)
 plt.legend()
 plt.show()
 
