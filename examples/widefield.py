@@ -20,9 +20,10 @@ paths containing different lens diameter.
 
 import envexamples
 from raytracing import *
+import gc
 
 # Defines the path. a and b are the diameter of the lenses.
-def imagingPath(a=10, b=10, title=""):
+def imagingPathPreset(a=10, b=10, title=""):
     
     path = ImagingPath()
     path.design(fontScale=1.7)
@@ -40,24 +41,30 @@ inputRays = RandomUniformRays(yMax = 5,
                               thetaMax = +0.5,
                               maxCount=1000000)
 
-# Three paths with different sets of lens diameter. 
-path1 = imagingPath(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
-outputRays = path1.traceManyThroughInParallel(inputRays)
-efficiency = 100*outputRays.count/inputRays.count
-path1.display(interactive=False)
-outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
-path1.reportEfficiency()
+if __name__ == "__main__":
 
-path2 = imagingPath(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
-outputRays = path2.traceManyThroughInParallel(inputRays)
-efficiency = 100*outputRays.count/inputRays.count
-path2.display(interactive=False)
-outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
-path2.reportEfficiency()
+    # Three paths with different sets of lens diameter. 
+    path1 = imagingPathPreset(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
+    outputRays = path1.traceManyThroughInParallel(inputRays)
+    efficiency = 100*outputRays.count/inputRays.count
+    path1.display(interactive=False)
+    outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
+    path1.reportEfficiency()
 
-path3 = imagingPath(a=25, b=50, title="Better AS at first lens and FS at Camera")
-outputRays = path3.traceManyThroughInParallel(inputRays)
-efficiency = 100*outputRays.count/inputRays.count
-path3.display(interactive=False)
-outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
-path3.reportEfficiency()
+    gc.collect()
+
+    path2 = imagingPathPreset(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
+    outputRays = path2.traceManyThroughInParallel(inputRays)
+    efficiency = 100*outputRays.count/inputRays.count
+    path2.display(interactive=False)
+    outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+    path2.reportEfficiency()
+
+    gc.collect()
+
+    path3 = imagingPathPreset(a=25, b=50, title="Better AS at first lens and FS at Camera")
+    outputRays = path3.traceManyThroughInParallel(inputRays)
+    efficiency = 100*outputRays.count/inputRays.count
+    path3.display(interactive=False)
+    outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
+    path3.reportEfficiency()
