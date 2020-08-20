@@ -92,10 +92,6 @@ for i in range(len(outputRays1)):
     scanRays.displayProgress()
 
 plt.plot(thetas,heightpositions)
-plt.xlabel('Scan angle (degrees)')
-plt.ylabel('Scanning position of the focal spot (µm)')
-
-plt.plot(thetas,positions1)
 plt.xlabel('Scan angle (degrees)', fontsize=20)
 plt.ylabel('Scanning position of the focal spot (µm)', fontsize=20)
 plt.show()
