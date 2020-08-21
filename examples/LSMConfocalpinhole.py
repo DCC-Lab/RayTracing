@@ -5,29 +5,33 @@ import numpy as np
 
 
 """
+The following code contains finding of the scanning position of the focal spot and optimal pinhole size.
 In a confocal laser scanning microscope, the scanning components define 
-the covered field-of-view (FOV) at the sample plane the pinhole, conjugated to the illumination focal spot 
-is used to block the out of focus light . 
-The following code contains calculations of the scanning position of the focal spot and optimal pinhole size.
-Here, we show a one-dimensional example with a polygonal mirror
+the covered field-of-view (FOV) at the sample plane. Here, 
+we show a one-dimensional example with a polygonal mirror
 of 36 facets that rotates rapidly to scan the beam along the horizontal direction. 
 It produces a meachnical  sweep of 10 degrees, or 0.1750 rad, between each facets. 
 Therefore, the laser beam covers a total optical scan angle of 20 degrees.
 In this example, the object is considered to be the laser beam at the polygonal mirror plane. 
 The output profile shows on its x-axis the width of the FOV under the objective. 
-At the same time, to obtain and plot the intensity of a point source at
+At the same time, it is possible to obtain and plot the intensity of a point source at
 the pinhole of a confocal microscope (with variable pinhole size) as a function
 of position of focal spot by sending a large number of rays in the system 
 (changing the position of the focal spot provides an optical sectioning process).
-All the "1" indices relates to the scanning position path while "2" relates to the pinhole size calculation path.
-"""
 
+
+
+
+"""
+"""
+All the "1" indices relates to the Laser scanning position calculations while "2" relates to the confocal pinhole size calculation.
+"""
 # List of the scan angle of the ray making it throught the system. 
 thetas = []
 
 # List of 1 corresponding to the number of elements in heights 
 # so that plt.plot() doesn't freak out. 
-heightpositions = []
+positions1 = []
 
 # Radius of the laser beam at the scanning element.
 # Focal spot radius (Airy disk radius)
@@ -88,10 +92,10 @@ path1 = illuminationPath1()
 outputRays1 = path1.traceManyThrough(scanRays)
 for i in range(len(outputRays1)):
     thetas.append(scanRays[i].theta*180/np.pi)
-    heightpositions.append(outputRays1[i].y*1000)
+    positions1.append(outputRays1[i].y*1000)
     scanRays.displayProgress()
 
-plt.plot(thetas,heightpositions)
+plt.plot(thetas,positions1)
 plt.xlabel('Scan angle (degrees)', fontsize=20)
 plt.ylabel('Scanning position of the focal spot (µm)', fontsize=20)
 plt.show()
