@@ -778,6 +778,34 @@ class RandomLambertianRays(RandomRays):
 
 
 class ObjectRays(UniformRays):
+    """
+    A set of rays used for objects.
+
+    Parameters
+    ----------------
+    diameter: float
+        Diameter of the object.
+
+    Other Parameters
+    ----------------
+    H: int
+        The number of point sources to create on the object (the number of ray fans) across its diameter.
+    T: int
+        The number of rays to trace for each point source (ray fan) across `halfAngle`.
+    halfAngle: float
+        The half angle of each ray fan.
+    z: float
+        Position of the object in the optical path.
+    rayColors
+        Specify a color or a set of colors for the traced rays.
+    color
+        Color used to draw the graphics of the object (filled) and its images (outlined).
+        By default, objects are blue and images are red, but this parameter overwrites both at the same time
+        to help distinguish multiple objects in a path.
+    label: str
+        Label to display over the object in the imaging path.
+
+    """
     def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None, label=None):
         super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
         self.z = z
@@ -787,7 +815,37 @@ class ObjectRays(UniformRays):
 
 
 class LampRays(RandomUniformRays, Rays):
-    def __init__(self, diameter, NA=1.0, N=100, random=False, z=0, rayColors=None, T=10, label=None):
+    """
+    A set of rays used to simulate Lamp rays either randomly or with a defined amount of point sources
+    spread evenly across its diameter.
+
+    Parameters
+    ----------------
+    diameter: float
+        Diameter of the lamp.
+
+    Other Parameters
+    ----------------
+    NA: float
+        Numerical aperture of the lens.
+    N: int
+        Amount of point sources to use across the diameter of the lamp with default settings.
+        If random is true, this is the amount of rays to trace in total.
+    T: int
+        The number of rays to trace for each point sources (N). Only used if random is false (default).
+    H: int
+        Only used for similarity with ObjectRays. When random is false H can be set to overwrite N
+         since they are the same.
+    z: float
+        Position of the lamp in the optical path.
+    random: bool
+        Use randomly distributed rays across the lamp's diameter. Better used with a high N.
+    rayColors
+        Specify a color or a set of colors for the traced rays of this lamp.
+    label: str
+        Label to display over the lamp in the imaging path.
+
+    """
     def __init__(self, diameter, NA=1.0, N=100, T=10, H=None, random=False, z=0, rayColors=None, label=None):
         if random:
             RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
