@@ -788,11 +788,15 @@ class ObjectRays(UniformRays):
 
 class LampRays(RandomUniformRays, Rays):
     def __init__(self, diameter, NA=1.0, N=100, random=False, z=0, rayColors=None, T=10, label=None):
+    def __init__(self, diameter, NA=1.0, N=100, T=10, H=None, random=False, z=0, rayColors=None, label=None):
         if random:
             RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
         else:
             self.yMin = -diameter/2
             self.yMax = diameter/2
+
+            if H:
+                N = H
             self.maxCount = N*T
 
             rays = []
