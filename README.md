@@ -200,7 +200,7 @@ class Matrix(builtins.object)
 
 ## Examples
 
-In the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) directory, you can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view. However, you can also run the module directly with `python -m raytracing`, which will run the following code (`__main__.py`) to give you a flavour of what is possible:
+In the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) directory, you can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view. However, you can also run the module directly with `python -m raytracing`, which will run the following code (`__main__.py`) to give you a flavour of what is possible (note: in the US, it will give you a flavor of what is possible instead):
 
 ```python
 from .imagingpath import *
