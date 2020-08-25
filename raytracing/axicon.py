@@ -107,23 +107,6 @@ class Axicon(Matrix):
 
         return outputRay
 
-    def mul_matrix(self, rightSideMatrix):
-        """ The final matrix of an optical path with an axicon can be calculated using this function.
-
-        Parameters
-        ----------
-        rightSideMatrix : object of matrix class
-            The ABCD matrix of an element or an optical path.
-
-        Notes
-        -----
-        For now the final matrix with an axicon in the path cannot be calculated.
-
-        """
-
-        raise TypeError("Cannot calculate final matrix with axicon in path. \
-            You can only propagate rays all the way through")
-
     def mul_beam(self, rightSideBeam):
         """This function calculates the multiplication of a coherent beam with complex radius
         of curvature q by an ABCD matrix. However it will raise an error in case the input is an axicon
