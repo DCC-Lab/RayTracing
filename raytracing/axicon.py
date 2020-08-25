@@ -131,12 +131,10 @@ class Axicon(Matrix):
 
         raise TypeError("Cannot use Axicon with GaussianBeam, only with Ray")
 
-    def drawAt(self, z, axes):  # pragma: no cover
-        halfHeight = 4
-        if self.apertureDiameter != float('Inf'):
-            halfHeight = self.apertureDiameter / 2
-
-        plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k', head_length=0.25, head_width=0.25,
-                  length_includes_head=True)
-        plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k', head_length=0.25, head_width=0.25,
-                  length_includes_head=True)
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes
+        """
+        minThickness = - np.tan(self.alpha) * self.displayHalfHeight()
+        return [FlatInterface(n=self.n, L=minThickness),
+                ConicalInterface(alpha=self.alpha)]
