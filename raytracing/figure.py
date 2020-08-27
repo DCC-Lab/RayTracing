@@ -32,7 +32,8 @@ class Figure:
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['y'], 'onlyAxialRay': False,
                                   'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
                                   'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
-                                  'fontScale': 1.2, 'showFOV': False, 'showObjectImage': True}
+                                  'fontScale': 1.2, 'showFOV': False, 'showObjectImage': True,
+                                  'FOVColors': ['blue', 'red']}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
         self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
@@ -57,7 +58,8 @@ class Figure:
     def design(self, style: str = None,
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
                imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None,
-               fontScale: float = None, lampRayColors: List[Union[str, tuple]] = None):
+               fontScale: float = None, lampRayColors: List[Union[str, tuple]] = None,
+               FOVColors: list = None):
         """ Update the design parameters of the figure.
         All parameters are None by default to allow for the update of one parameter at a time.
 
@@ -76,6 +78,8 @@ class Figure:
             Color of image arrows. Default to 'r'.
         objectColor : Union[str, tuple], optional
             Color of object arrow. Default to 'b'.
+        FOVColors: list
+            The 2 colors to use for the graphics of FOV.
         fontScale : float, optional
             Base scale factor for the size of all fonts used. Default to 1.
         """
@@ -87,7 +91,8 @@ class Figure:
 
         newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
                            'imageColor': imageColor, 'objectColor': objectColor,
-                           'fontScale': fontScale, 'lampRayColors': lampRayColors}
+                           'fontScale': fontScale, 'lampRayColors': lampRayColors,
+                           'FOVColors': FOVColors}
         for key, value in newDesignParams.items():
             if value is not None:
                 self.designParams[key] = value
@@ -123,7 +128,7 @@ class Figure:
                               "not defined.")
                 self.designParams['onlyPrincipalAndAxialRays'] = False
 
-        label = Label(x=0.05, y=0, text=note1, fontsize=12*self.fontScale,
+        label = Label(x=0.05, y=0.02, text=note1, fontsize=12*self.fontScale,
                       useDataUnits=False, alignment='left')
         self.labels.append(label)
 
@@ -139,9 +144,9 @@ class Figure:
         if principalRay is not None:
             rays.append(principalRay)
             self.graphicGroups['Principal/axial rays'].append(ObjectGraphic(principalRay.y * 2,
-                                                                       fill=False, color='gray'))
+                                                       fill=False, color=self.designParams['FOVColors'][0]))
             self.graphicGroups['Principal/axial rays'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
-                                                                                        fill=False, color='gray'))
+                                                       fill=False, color=self.designParams['FOVColors'][1]))
 
         if axialRay is not None:
             rays.append(axialRay)
