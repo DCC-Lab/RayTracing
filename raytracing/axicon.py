@@ -107,23 +107,6 @@ class Axicon(Matrix):
 
         return outputRay
 
-    def mul_matrix(self, rightSideMatrix):
-        """ The final matrix of an optical path with an axicon can be calculated using this function.
-
-        Parameters
-        ----------
-        rightSideMatrix : object of matrix class
-            The ABCD matrix of an element or an optical path.
-
-        Notes
-        -----
-        For now the final matrix with an axicon in the path cannot be calculated.
-
-        """
-
-        raise TypeError("Cannot calculate final matrix with axicon in path. \
-            You can only propagate rays all the way through")
-
     def mul_beam(self, rightSideBeam):
         """This function calculates the multiplication of a coherent beam with complex radius
         of curvature q by an ABCD matrix. However it will raise an error in case the input is an axicon
@@ -148,12 +131,10 @@ class Axicon(Matrix):
 
         raise TypeError("Cannot use Axicon with GaussianBeam, only with Ray")
 
-    def drawAt(self, z, axes):  # pragma: no cover
-        halfHeight = 4
-        if self.apertureDiameter != float('Inf'):
-            halfHeight = self.apertureDiameter / 2
-
-        plt.arrow(z, 0, 0, halfHeight, width=0.1, fc='k', ec='k', head_length=0.25, head_width=0.25,
-                  length_includes_head=True)
-        plt.arrow(z, 0, 0, -halfHeight, width=0.1, fc='k', ec='k', head_length=0.25, head_width=0.25,
-                  length_includes_head=True)
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes
+        """
+        minThickness = - np.tan(self.alpha) * self.displayHalfHeight()
+        return [FlatInterface(n=self.n, L=minThickness),
+                ConicalInterface(alpha=self.alpha)]

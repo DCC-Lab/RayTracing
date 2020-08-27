@@ -240,6 +240,12 @@ class SurfacePair(Component):
         h = self.halfHeight
         v1 = self.x
 
+        if type(self.surfaceA).__name__ == 'ConicalInterface':
+            a = self.surfaceA.alpha
+            corner = v1 - np.tan(a) * h
+            self.corners = [corner]
+            return [BezierCurve([(corner, -h), (v1, 0)]), BezierCurve([(v1, 0), (corner, h)])]
+
         if self.surfaceA.R == float("+inf"):
             self.corners = [v1]
             return [BezierCurve([(v1, -h), (v1, h)])]
@@ -260,6 +266,16 @@ class SurfacePair(Component):
     def getPathB(self) -> List[BezierCurve]:
         h = self.halfHeight
         v2 = self.x + self.surfaceA.L
+
+        if type(self.surfaceB).__name__ == 'ConicalInterface':
+            a = self.surfaceB.alpha
+            delta = np.tan(a) * h
+            corner2 = v2 + delta
+            self.corners.append(corner2)
+            return [BezierCurve([(self.corners[0], h), (corner2, h)]),
+                    BezierCurve([(corner2, h), (v2, 0)]),
+                    BezierCurve([(v2, 0), (corner2, -h)]),
+                    BezierCurve([(corner2, -h), (self.corners[0], -h)])]
 
         if self.surfaceB.R == float("+inf"):
             self.corners.append(v2)
