@@ -151,7 +151,7 @@ class Figure:
         if axialRay is not None:
             rays.append(axialRay)
         if rays:
-            self.lineGroups['Principal/axial rays'].extend(self.rayTraceLines(rays, lineWidth=1.5))
+            self.lineGroups['Principal/axial rays'].extend(self.rayTraceLines(rays, lineWidth=1.5, lineStyles=['-', '--', '-']))
 
     def setGraphicsFromOpticalPath(self):
         self.graphicGroups['Elements'] = self.graphicsOfElements
@@ -354,7 +354,7 @@ class Figure:
 
         return displayRange
 
-    def rayTraceLines(self, rays, lineWidth=0.5) -> List[Line]:
+    def rayTraceLines(self, rays, lineWidth=0.5, lineStyles=None) -> List[Line]:
         """ A list of all ray trace line objects corresponding to either
         1. the group of rays defined by the user (fanAngle, fanNumber, rayNumber).
         2. the principal and axial rays.
@@ -406,7 +406,8 @@ class Figure:
                     (y[0] + maxHeight) / (maxHeight * 2) * (len(colors) - 1)))
                 colorIndex = colorIndex % len(colors)
 
-            line = Line(np.asarray(x) + dz, y, color=colors[colorIndex], lineWidth=lineWidth, label='ray')
+            lineStyle = '-' if lineStyles is None else lineStyles[colorIndex]
+            line = Line(np.asarray(x) + dz, y, color=colors[colorIndex], lineWidth=lineWidth, lineStyle=lineStyle, label='ray')
             lines.append(line)
 
         return lines
