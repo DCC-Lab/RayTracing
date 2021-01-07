@@ -1,5 +1,7 @@
 import math
 import warnings
+import inspect
+import sys
 
 """ Two constants: deg and rad to quickly convert to degrees
 or radians with angle*degPerRad or angle*radPerDeg """
@@ -51,7 +53,7 @@ def printClassHierarchy(aClass):
         for child in aClass.__subclasses__():
             print("\"{0}\" -> \"{1}\"".format(aClass.__name__, child.__name__))
             printAllChilds(child)
-
+    print("# Paste this in the text field of http://www.graphviz.org")
     print("digraph G {")
     print("  rankdir=\"LR\";")
     printAllChilds(aClass)

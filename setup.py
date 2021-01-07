@@ -10,7 +10,7 @@ rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/*
 
 setuptools.setup(
     name="raytracing",
-    version="1.2.13",
+    version="1.3.0",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",
@@ -26,7 +26,7 @@ setuptools.setup(
     monte carlo design raytracing',
     packages=setuptools.find_packages(),
     install_requires=['matplotlib>=3', 'numpy'],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     package_data = {
         # If any package contains *.txt or *.rst files, include them:
         '': ['*.png'],

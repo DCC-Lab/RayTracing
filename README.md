@@ -6,7 +6,7 @@ This code aims to provide a simple ray tracing module for calculating various pr
 
 It is not a package to do "Rendering in 3D with raytracing".
 
-The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. There are [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with only a few files, and only `matplotlib` as a dependent module.
+The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. There are [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with only a few files, and only `matplotlib` as a dependent module.  **A tutorial article in SPIE J. Neurophotonics will be available soon, contact dccote@cervo.ulaval.ca if you want a preprint.**
 
 The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
@@ -61,7 +61,7 @@ path.append(Space(d=100))
 path.display()
 ```
 
-You can also call display() on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
+You can also call `display()` on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
 
 ```python
 from raytracing import *
@@ -70,7 +70,7 @@ thorlabs.AC254_050_A().display()
 eo.PN_33_921().display()
 ```
 
-Finally, an addition as of 1.2.0 is the ability to obtain the intensity profile of a given source from the object plane at the exit plane of an OpticalPath. This is in fact really simple: by tracing a large number of rays, with the number of rays at y and θ being proportionnal to the intensity, one can obtain the intensity profile by plotting the histogram of rays reaching a given height at the image plane. `Rays` are small classes that return a `Ray` that satisfies the condition of the class.  Currently, there is `UniformRays`,`RandomUniformRays` `LambertianRays` and `RandomLambertianRays` (a Lambertian distribution follows a cosθ distribution, it is a common diffuse surface source).  They appear like iterators and can easily be used like this example script:
+Finally, an addition as of 1.2.0 is the ability to obtain the intensity profile of a given source from the object plane at the exit plane of an `OpticalPath`. This is in fact really simple: by tracing a large number of rays, with the number of rays at y and θ being proportionnal to the intensity, one can obtain the intensity profile by plotting the histogram of rays reaching a given height at the image plane. `Rays` are small classes that return a `Ray` that satisfies the condition of the class.  Currently, there is `UniformRays`,`RandomUniformRays` `LambertianRays` and `RandomLambertianRays` (a Lambertian distribution follows a cosθ distribution, it is a common diffuse surface source).  They appear like iterators and can easily be used like this example script:
 
 ```python
 from raytracing import *
