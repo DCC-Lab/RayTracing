@@ -38,6 +38,7 @@ class BezierCurve:
 
 class Component:
     """ The base class for all graphic components. Defined from bezier curves. """
+
     def __init__(self, color=(0.85, 0.95, 0.95), fill=True, lineWidth=1.0, lineStyle='-', hasFixedWidth=True):
 
         self.color = color
@@ -47,6 +48,7 @@ class Component:
         self.hasFixedWidth = hasFixedWidth
 
         self._patch = None
+        self._isVisible = True
 
     @property
     def bezierCurves(self) -> List[BezierCurve]:
@@ -93,8 +95,18 @@ class Component:
                 codes.extend(newCodes)
                 coords.extend(newCoords)
             self._patch = patches.PathPatch(mpath.Path(coords, codes), color=self.color, fill=self.fill,
-                                            linewidth=self.lineWidth, linestyle=self.lineStyle)
+                                            linewidth=self.lineWidth, linestyle=self.lineStyle, visible=self.isVisible)
         return self._patch
+
+    @property
+    def isVisible(self):
+        return self._isVisible
+
+    @isVisible.setter
+    def isVisible(self, value):
+        self._isVisible = value
+        if self._patch is not None:
+            self._patch.set_visible(self._isVisible)
 
     @staticmethod
     def linearBezierCurvesFrom(controlPoints: List[Tuple]) -> List[BezierCurve]:
@@ -108,7 +120,7 @@ class Component:
 
         bezierCurves = []
         for i, cpA in enumerate(controlPoints[:-1]):
-            cpB = controlPoints[i+1]
+            cpB = controlPoints[i + 1]
             bezierCurves.append(BezierCurve([cpA, cpB]))
         return bezierCurves
 
@@ -126,8 +138,9 @@ class Arrow(Component):
     y: float
         Starting point in y-axis where the base of the arrow sits. Defaults to 0.
     """
-    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1):
-        super(Arrow, self).__init__(color=color, hasFixedWidth=False)
+
+    def __init__(self, dy: float, y=0.0, color='k', width=0.002, headLengthRatio=0.1, fill=True, lineStyle='-'):
+        super(Arrow, self).__init__(color=color, hasFixedWidth=False, fill=fill, lineStyle=lineStyle, lineWidth=0.5)
         self.dy = dy
         self.y = y
         self.width = width
@@ -203,7 +216,7 @@ class Surface(Component):
 
 class SurfacePair(Component):
     def __init__(self, surfaceA, surfaceB, halfHeight, x=0.0):
-        colorValue = 1.0 - np.min([(surfaceA.n - 1)**2 / 2, 0.5])
+        colorValue = 1.0 - np.min([(surfaceA.n - 1) ** 2 / 2, 0.5])
         color = (colorValue - 0.1, colorValue, 0.95)
         super(SurfacePair, self).__init__(color=color)
 
@@ -227,6 +240,12 @@ class SurfacePair(Component):
         h = self.halfHeight
         v1 = self.x
 
+        if type(self.surfaceA).__name__ == 'ConicalInterface':
+            a = self.surfaceA.alpha
+            corner = v1 - np.tan(a) * h
+            self.corners = [corner]
+            return [BezierCurve([(corner, -h), (v1, 0)]), BezierCurve([(v1, 0), (corner, h)])]
+
         if self.surfaceA.R == float("+inf"):
             self.corners = [v1]
             return [BezierCurve([(v1, -h), (v1, h)])]
@@ -247,6 +266,16 @@ class SurfacePair(Component):
     def getPathB(self) -> List[BezierCurve]:
         h = self.halfHeight
         v2 = self.x + self.surfaceA.L
+
+        if type(self.surfaceB).__name__ == 'ConicalInterface':
+            a = self.surfaceB.alpha
+            delta = np.tan(a) * h
+            corner2 = v2 + delta
+            self.corners.append(corner2)
+            return [BezierCurve([(self.corners[0], h), (corner2, h)]),
+                    BezierCurve([(corner2, h), (v2, 0)]),
+                    BezierCurve([(v2, 0), (corner2, -h)]),
+                    BezierCurve([(corner2, -h), (self.corners[0], -h)])]
 
         if self.surfaceB.R == float("+inf"):
             self.corners.append(v2)
@@ -269,6 +298,7 @@ class SurfacePair(Component):
 
 class DoubleThinArrow(Component):
     """ A thin arrow centered on y-axis with an arrow head on both ends. """
+
     def __init__(self, height: float, color='k', headWidth=0.01, headLengthRatio=0.12):
         super(DoubleThinArrow, self).__init__(color=color, lineWidth=1.5, fill=False, hasFixedWidth=False)
 
@@ -294,6 +324,7 @@ class DoubleThinArrow(Component):
 
 class ApertureBars(Component):
     """Define an aperture graphic component with default RayTracing style used to draw the apertures. """
+
     def __init__(self, y: float, x=0.0, width=0.0, color='0.7'):
         super().__init__(color=color, fill=False, lineWidth=3)
         if width == 0.0:
@@ -331,6 +362,7 @@ class Label:
     """ Label base class. Promoted to MplLabel by the Figure Manager if using a matplotlib backend.
     A label can have a text and a point, independently, but the point will always sit on the optical axis at y=0.
     """
+
     def __init__(self, text: str = None, x=0.0, y=0.0, fontsize=10, hasPointMarker=False, color='k',
                  useDataUnits=True, alignment='center'):
         self.text = text
@@ -373,7 +405,8 @@ class Label:
     @property
     def mplLabel(self) -> 'MplLabel':
         # fixme? promoting to mplLabel to help the figure manager
-        return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPointMarker, self.color, self.useDataUnits, self.alignment)
+        return MplLabel(self.text, self.x, self.y, self.fontsize, self.hasPointMarker, self.color, self.useDataUnits,
+                        self.alignment)
 
 
 class MplLabel(Label):
@@ -414,6 +447,7 @@ class Point(Label):
 
 class Line:
     """ A 2D data line object """
+
     def __init__(self, xData, yData, color: Union[tuple, str] = 'k', lineWidth=1, lineStyle='-', label=None):
         super().__init__()
         self.xData = xData
@@ -421,12 +455,27 @@ class Line:
         self.color = color
         self.lineWidth = lineWidth
         self.lineStyle = lineStyle
-        self.label = label  # fixme: temporary for infinite lens minsize ray check
+        self.label = label
+
+        self._isVisible = True
+        self._patch = None
 
     @property
     def patch(self):
-        return plt.Line2D(self.xData, self.yData, color=self.color, label=self.label,
-                          linewidth=self.lineWidth, linestyle=self.lineStyle)
+        if self._patch is None:
+            self._patch = plt.Line2D(self.xData, self.yData, color=self.color, label=self.label,
+                                     linewidth=self.lineWidth, linestyle=self.lineStyle, visible=self.isVisible)
+        return self._patch
+
+    @property
+    def isVisible(self):
+        return self._isVisible
+
+    @isVisible.setter
+    def isVisible(self, value):
+        self._isVisible = value
+        if self._patch is not None:
+            self._patch.set_visible(self._isVisible)
 
 
 class ArrowAnnotation:

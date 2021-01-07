@@ -1309,13 +1309,13 @@ class Matrix(object):
 
         The original object:
 
-        .. image:: flipOrientation_before.png
+        .. image:: ../../../images/flipOrientation_before.png
             :width: 70%
             :align: center
 
         The flipped object:
 
-        .. image:: flipOrientation_after.png
+        .. image:: ../../../images/flipOrientation_after.png
             :width: 70%
             :align: center
 

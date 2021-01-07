@@ -10,7 +10,7 @@ rm dist/*; python setup.py sdist bdist_wheel; python -m twine upload dist/*
 
 setuptools.setup(
     name="raytracing",
-    version="1.2.12",
+    version="1.2.13",
     url="https://github.com/DCC-Lab/RayTracing",
     author="Daniel Cote",
     author_email="dccote@cervo.ulaval.ca",
@@ -25,7 +25,7 @@ setuptools.setup(
     keywords='optics optical lens ray tracing matrix matrices aperture field stop\
     monte carlo design raytracing',
     packages=setuptools.find_packages(),
-    install_requires=['matplotlib', 'numpy'],
+    install_requires=['matplotlib>=3', 'numpy'],
     python_requires='>=3.6',
     package_data = {
         # If any package contains *.txt or *.rst files, include them:

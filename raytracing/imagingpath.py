@@ -69,7 +69,7 @@ class ImagingPath(MatrixGroup):
 
         And the following figure will be plotted:
 
-        .. image:: ImagingPath.png
+        .. image:: ../images/ImagingPath.png
                     :width: 70%
                     :align: center
     """
@@ -407,7 +407,7 @@ class ImagingPath(MatrixGroup):
 
         >>> path.display()
 
-        .. image:: apertureStop.png
+        .. image:: ../../../images/apertureStop.png
             :width: 70%
             :align: center
 
@@ -532,7 +532,7 @@ class ImagingPath(MatrixGroup):
 
         >>> path.display()
 
-        .. image:: apertureStop.png
+        .. image:: ../../../images/apertureStop.png
             :width: 70%
             :align: center
 
@@ -823,7 +823,8 @@ class ImagingPath(MatrixGroup):
         else:
             print("  No losses to vignetting")
 
-        fig, axis1 = plt.subplots(1)
+        fontScale = 1.5
+        fig, axis1 = plt.subplots(1, figsize=(10, 7))
         fig.tight_layout(pad=4.0)
         axis1.add_patch(p.Rectangle((-1,-1),2, 2, color=(0, 1.0, 0, 0.5), lw=3, fill=False,
                               transform=axis1.transData, clip_on=True))
@@ -833,18 +834,44 @@ class ImagingPath(MatrixGroup):
         if len(vignettedBlocked) >= 2:
             (x,y) = list(zip(*vignettedBlocked))
             plt.scatter(x,y, color=(1,0,0), marker='.',label="Vignetted")
-        (x,y) = list(zip(*expectedBlocked))
-        plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
-        axis1.set_xlabel("${I_{rp}}/{I_{ap}}$\n\nFigure: Each point is a ray emitted from the source.")
-        axis1.set_ylabel("${I_{ar}}/{I_{ap}}$")
-        axis1.set_xlim(-2,2)
-        axis1.set_ylim(-2,2)
+        if len(expectedBlocked) >= 2:
+            (x,y) = list(zip(*expectedBlocked))
+            plt.scatter(x,y, color=(0.5,0.5,0.5), marker='.',label="Blocked")
+        axis1.set_xlabel("$B$\n\nFigure: Each point is a ray emitted from the source.", fontsize=13*fontScale)
+        axis1.set_ylabel("$A$", fontsize=13*fontScale)
+        axis1.set_xlim(-2, 2)
+        axis1.set_ylim(-2, 2)
         axis1.set_aspect('equal')
-        axis1.legend(loc="upper right")
+        axis1.legend(loc="upper right", fontsize=13*fontScale)
+        axis1.tick_params(labelsize=13*fontScale)
         plt.show()
 
+    def subPath(self, zStart: float, backwards=False):
+        """ Secondary ImagingPath defined from a desired zStart to the end of current path
+        or to the start of current path if 'backwards' is True. Used internally to trace rays
+        from different positions. """
+
+        z = 0
+        for i, element in enumerate(self.elements):
+            if z < zStart < z + element.L:
+                assert type(element).__name__ is 'Space', 'The position of the rays cannot be in the same ' \
+                                                          'position of another element.'
+                if backwards:
+                    newElements = [Space(zStart - z)]
+                    if i != 0:
+                        newElements.extend(self.elements[i-1::-1])
+                    return ImagingPath(elements=newElements)
+                else:
+                    newElements = [Space(z + element.L - zStart)]
+                    newElements.extend(self.elements[i+1:])
+                    return ImagingPath(elements=newElements)
+
+            z += element.L
+
+        raise ValueError('The position of the rays does not fit in any spaces.')
+
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, filePath=None):
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -871,31 +898,27 @@ class ImagingPath(MatrixGroup):
         if rays is not None:
             raysList.append(rays)
 
-        if len(raysList) == 0:
-            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
-                rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
+        self.figure.initializeDisplay()
 
+        if len(raysList) == 0:
+            self.figure.designParams['showFOV'] = True
+            if not self.figure.designParams['onlyPrincipalAndAxialRays']:
+                self.figure.designParams['showFOV'] = False
             else:
                 warnings.warn('No rays were provided for the display. Using principal and axial rays.')
-
-                rays = []
-                principalRay = self.principalRay()
-                axialRay = self.axialRay()
-
-                if principalRay is not None:
-                    rays.append(principalRay)
-                if axialRay is not None:
-                    rays.append(axialRay)
-
-                if len(rays) == 0:
+                if self.principalRay() is None and self.axialRay() is None:
                     warnings.warn('Principal and axial rays are not defined for this system. '
                                   'Using default ObjectRays.')
-                    rays = ObjectRays(self.objectHeight, halfAngle=self.fanAngle, T=self.rayNumber)
 
-            raysList.append(rays)
+        if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
+            defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
+                                       halfAngle=self.fanAngle, T=self.rayNumber)
+            raysList.append(defaultObject)
+        else:
+            self.figure.designParams['showObjectImage'] = True
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
-                            backend='matplotlib', display3D=False, filepath=filePath)
+                            backend='matplotlib', display3D=False, interactive=interactive, filepath=filePath)
 
     def saveFigure(self, filePath, rays=None, raysList=None, removeBlocked=True, comments=None,
                    onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
@@ -921,4 +944,24 @@ class ImagingPath(MatrixGroup):
         self.display(rays=rays, raysList=raysList, removeBlocked=removeBlocked, comments=comments,
                      onlyPrincipalAndAxialRays=onlyPrincipalAndAxialRays,
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
-                     filePath=filePath)
+                     interactive=False, filePath=filePath)
+
+    def displayWithObject(self, diameter, z=0, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+        """ Display the optical system and trace the rays.
+
+        Parameters
+        ----------
+        diameter : float
+            Diameter of the object.
+        removeBlocked : bool (Optional)
+            If True, the blocked rays are removed (default=False)
+        comments : string
+            If comments are included they will be displayed on a graph in the bottom half of the plot. (default=None)
+        """
+
+        self._objectHeight = diameter
+        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber, z=z)
+
+        self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
+                     onlyPrincipalAndAxialRays=False,
+                     limitObjectToFieldOfView=False)
