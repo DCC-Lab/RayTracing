@@ -4,7 +4,7 @@ This document describes where the documentation is, how to write or update docum
 
 ## Reading documentation
 
-If you are a user of the raytracing package, you probably want to read the documentation online at https://raytracing.readthedocs.io/ 
+If you are a user of the raytracing package, you probably want to read the documentation online at https://raytracing.readthedocs.io/. There are useful information about the required python version, installation, description of the functions in the module, and several examples to show how this module is used.
 
 ## Writing documentation
 
@@ -89,7 +89,7 @@ pip install sphinx
 pip install recommonmark
 pip install sphinx_rtd_theme
 ```
-The package `recommonmark` adds Markdown support.
+Note that the package `recommonmark` adds Markdown support.
 
 ### Files controlling the format
 |File|Usage|
@@ -101,29 +101,47 @@ The package `recommonmark` adds Markdown support.
 
 *[FIXME: Information here on key files and their role in the Sphynx documentation system]*
 
+Defined pages in the website are the content of the following files:
+
+1. raytracing (`raytracing.rst`) : Simple introdution to the module and its classes.
+2. gettingStarted (`gettingStarted.md`) : Description about the installation and updating the module.
+3. reference (`reference.rst`) : Documentation of the module ( description of classes and functions)
+4. examples (`raytracing.rst`) : Examples for introducing how to start using the module. 
+5. contribute (`raytracing.rst`) : How to report issues and bugs.
+6. FAQ (`raytracing.rst`)
+
+
+
 ### Build online
 The online documentation can be updated directly from the [RayTracing project](https://readthedocs.org/projects/raytracing/) on ReadTheDocs by the project administrators (currently dccote, jlbegin and elaheparham) to match the release from PyPI. The build is currently set on the master branch.
+To build a released version, an admistrator must go to the [Build](https://readthedocs.org/projects/raytracing/builds/) on ReadTheDocs, select the version and push Build Version. 
+
+Remember before bulding online the new documentation version, you should check if all the documentations and examples are working properly. So, run `.../raytracing/tests/TestModule.py` and if there are no errors, the documentation is working properly. 
+If there is an error you should go to the line that raises the error and fix it before publishing the new version.
 
 ### Build local
 
-Anyone can build the documentation locally. From the docs directory, with appropriate tools installed, type: 
+Anyone can build the documentation locally. From the docs directory, with the requirements installed in your python environment, type: 
 ```
+make clean  # (optional, remove previous build) 
 make html
 ```
 Then you can open `_build/html/index.html`.
 
 > For some reasons on my computer I have to leave the folder `docs` and call `docs/make html`
 
-### Technical details
+### Updating the documentation
 
-- When autogenerating the stub files from toctrees in `reference.rst`, note that sphinx-autogen requires to load a pythonpath to your project. 
-  
-    On windows the command is 
-    ```
-  $ set PYTHONPATH=C:\Path\to\project
-  $ sphinx-autogen -t docs/_templates docs/reference.rst
-  ```
-    On Mac/Linux:
-    ```
-  PYTHONPATH=. sphinx-autogen -t docs/_templates docs/index.rst
-    ```
+>  The documentation files for all methods are auto-generated and maintained during build.
+
+1. If new classes were added, update `reference.rst` (Optional) 
+
+   > Simply follow the template and add new files (titles) or classes (items)
+
+2. Go to https://readthedocs.org/projects/raytracing/ 
+
+   > You need to be logged in as one of the maintainers. 
+
+3. Click `Build version` (latest by default)
+
+   > To build a specific branch, go to Versions and activate the desired branch in the list at the bottom (it might require a build of master to fetch for new branches). 

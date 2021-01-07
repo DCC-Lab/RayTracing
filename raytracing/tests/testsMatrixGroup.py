@@ -4,7 +4,7 @@ from raytracing import *
 
 inf = float("+inf")
 
-testSaveHugeFile = True
+testSaveHugeFiles = True
 
 
 class TestMatrixGroup(envtest.RaytracingTestCase):
@@ -122,10 +122,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         otherElement = Space(10, 1.33)
         with warnings.catch_warnings():
             warnings.simplefilter("error")
-            try:
-                mg.append(otherElement)
-            except UserWarning:
-                self.fail("Refraction indices should match!")
+            self.assertDoesNotRaise(mg.append, UserWarning, otherElement)
 
     def testAppendRefractionIndicesMismatch(self):
         mg = MatrixGroup()
@@ -474,13 +471,14 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         lens = Lens(10)
         space = Space(10)
         mg = MatrixGroup([space, lens, space, Space(20), Lens(20), Space(20)])
-        try:
-            with self.assertWarns(UserWarning):
-                mg[3:len(mg):1] = [space, lens, space]
-        except AssertionError:
+
+        def toto():
+            mg[3:len(mg):1] = [space, lens, space]
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            self.assertDoesNotRaise(toto, UserWarning)
             self.assertListEqual(mg.elements, [space, lens, space, space, lens, space])
-        else:
-            self.fail("This should not print any warning!")
 
     def testSetItemStartIndexIsNone(self):
         lens = Lens(10)
@@ -548,18 +546,12 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
         time.sleep(0.5)  # Make sure everything is ok
 
     def assertSaveNotFailed(self, matrixGroup: MatrixGroup, name: str):
-        try:
-            matrixGroup.save(name)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(matrixGroup.save, None, name)
 
     def assertLoadNotFailed(self, matrixGroup: MatrixGroup, name: str = None, append: bool = False):
         if name is None:
             name = self.fileName
-        try:
-            matrixGroup.load(name, append)
-        except Exception as exception:
-            self.fail(f"An exception was raised:\n{exception}")
+        self.assertDoesNotRaise(matrixGroup.load, None, name, append)
 
     def assertLoadEqualsMatrixGroup(self, loadMatrixGroup: MatrixGroup, supposedMatrixGroup: MatrixGroup):
         tempList = supposedMatrixGroup.elements
@@ -591,11 +583,11 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
         mg = MatrixGroup([Space(20), ThickLens(1.22, 10, 10, 10)])
         self.assertSaveNotFailed(mg, self.fileName)
 
-    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFiles, "Don't test saving a lot of matrices")
     def testSaveHugeFile(self):
         fname = self.tempFilePath("hugeFile.pkl")
-        spaces = [Space(10) for _ in range(500)]
-        lenses = [Lens(10) for _ in range(500)]
+        spaces = [Space(10) for _ in range(200)]
+        lenses = [Lens(10) for _ in range(200)]
         elements = spaces + lenses
         mg = MatrixGroup(elements)
         self.assertSaveNotFailed(mg, fname)
@@ -629,11 +621,11 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
             pickle.Pickler(file).dump(wrongObj)
         time.sleep(0.5)  # Make sure everything is ok
 
-        try:
+        def toto():
             with self.assertRaises(IOError):
                 MatrixGroup().load(fname)
-        except AssertionError as exception:
-            self.fail(str(exception))
+
+        self.assertDoesNotRaise(toto, AssertionError)
 
     def testLoadWrongIterType(self):
         fname = self.tempFilePath("wrongObj.pkl")
@@ -641,11 +633,12 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
         with open(fname, 'wb') as file:
             pickle.Pickler(file).dump(wrongIterType)
         time.sleep(0.5)
-        try:
+
+        def toto():
             with self.assertRaises(IOError):
                 MatrixGroup().load(fname)
-        except AssertionError as exception:
-            self.fail(str(exception))
+
+        self.assertDoesNotRaise(toto, AssertionError)
 
     def testSaveThenLoad(self):
         fname = self.tempFilePath("saveThenLoad.pkl")
@@ -655,11 +648,11 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
         self.assertLoadNotFailed(mg2, fname)
         self.assertLoadEqualsMatrixGroup(mg2, mg1)
 
-    @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of matrices")
+    @envtest.skipIf(not testSaveHugeFiles, "Don't test saving a lot of matrices")
     def testSaveThenLoadHugeFile(self):
         fname = self.tempFilePath("hugeFile.pkl")
-        spaces = [Space(10) for _ in range(500)]
-        lenses = [Lens(10) for _ in range(500)]
+        spaces = [Space(10) for _ in range(125)]
+        lenses = [Lens(10) for _ in range(125)]
         elements = spaces + lenses
         mg1 = MatrixGroup(elements)
         mg2 = MatrixGroup()

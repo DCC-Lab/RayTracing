@@ -57,11 +57,9 @@ class MatrixGroup(Matrix):
          >>> matGrp.append(Lens(f=10)) # add a matrix of a lens (f=10)
          >>> matGrp.append(Space(d=10)) # add a matrix of space (d=10)
          >>> print(matGrp) # print to see the output ABCD matrix
-         /             \
          |  0.000   10.000 |
-         |               |
+         |                 |
          | -0.100    0.000 |
-          \             /
          f=10.000
 
          """
@@ -120,12 +118,9 @@ class MatrixGroup(Matrix):
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> firstSpace = system[0]
         >>> print(firstSpace)
-         /             \
         |  1.000   10.000 |
-        |               |
+        |                 |
         |  0.000    1.000 |
-         \             /
-
         f = +inf (afocal)
 
         It is possible to access a group with a slice key:
@@ -133,12 +128,9 @@ class MatrixGroup(Matrix):
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> first2f = system[:3]
         >>> print(first2f)
-         /             \
         |  0.000   10.000 |
-        |               |
+        |                 |
         | -0.100    0.000 |
-         \             /
-
         f=10.000
 
         See Also
@@ -169,9 +161,10 @@ class MatrixGroup(Matrix):
         >>> from raytracing import *
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10), Aperture(100)])
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? True
+
         >>> aperture = system.pop(-1) # Removes the last element
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
-        Has finite diameter? True
         Has finite diameter? False
         """
         poppedElement = self.elements.pop(index)  # We pop the matrix in the list
@@ -198,18 +191,20 @@ class MatrixGroup(Matrix):
         >>> from raytracing import *
         >>> initialGroup = MatrixGroup([Space(10), Lens(10), Space(10)])
         >>> print(f"Initial 2f is imaging? {initialGroup.isImaging}")
+        Initial 2f is imaging? False
+
         >>> initialGroup.insert(0, MatrixGroup([Space(15), Lens(15), Space(15)]))
         >>> print(f"Final 4f is imaging? {initialGroup.isImaging}")
-        Initial 2f is imaging? False
         Final 4f is imaging? True
 
         Let's insert an aperture between two 2f systems with infinite diameters
         >>> from raytracing import *
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
+        Has finite diameter? False
+
         >>> system.insert(3, Aperture(50))
         >>> print(f"Has finite diameter? {system.hasFiniteApertureDiameter()}")
-        Has finite diameter? False
         Has finite diameter? True
 
         See Also
@@ -246,9 +241,10 @@ class MatrixGroup(Matrix):
         >>> from raytracing import *
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> print(f"Initial magnification: {system.magnification()}")
+        Initial magnification: (-1.0, -1.0)
+
         >>> system[3:] = MatrixGroup([Space(5), Lens(5), Space(5)])
         >>> print(f"Final magnification: {system.magnification()}")
-        Initial magnification: (-1.0, -1.0)
         Final magnification: (-0.5, -2.0)
 
         See Also
@@ -294,11 +290,9 @@ class MatrixGroup(Matrix):
         >>> Spc2=Space(d=10,label='Space2') # space d=10
         >>> matGrp=MatrixGroup(elements=[Spc1,Len,Spc2]) # make a matrix group of the created elements
         >>> print(matGrp.transferMatrix(upTo=15)) # print to see the transfer matrix in distance=15
-         /             \
         |  0.500   10.000 |
-        |               |
+        |                 |
         | -0.100    0.000 |
-         \             /
         f=10.000
 
 
@@ -347,18 +341,15 @@ class MatrixGroup(Matrix):
         >>> Lens1=Lens(f=10,label='Lens1') # lens f=10
         >>> matGrp=MatrixGroup(elements=[Spc1,Lens1]) # make a matrix group of the created elements
         >>> # print to see the transfer matrices of the space and the lens
-        >>> print(matGrp.transferMatrices()[0],matGrp.transferMatrices()[1])
-         /             \
+        >>> print(matGrp.transferMatrices()[0])
         |  1.000   10.000 |
-        |               |
+        |                 |
         |  0.000    1.000 |
-         \             /
         f = +inf (afocal)
-         /             \
+        >>> print(matGrp.transferMatrices()[1])
         |  1.000    0.000 |
-        |               |
+        |                 |
         | -0.100    1.000 |
-         \             /
         f=10.000
 
         """
@@ -402,7 +393,7 @@ class MatrixGroup(Matrix):
                 planePosition = transferMatrix.L + distance
                 if planePosition != 0 and conjugate is not None:
                     magnification = conjugate.A
-                    if any([isclose(pos, planePosition) and isclose(mag, magnification) for pos, mag in planes]):
+                    if any([areAbsolutelyAlmostEqual(pos, planePosition) and areAbsolutelyAlmostEqual(mag, magnification) for pos, mag in planes]):
                         continue
                     else:
                         planes.append([planePosition, magnification])
@@ -435,7 +426,7 @@ class MatrixGroup(Matrix):
 
         """
         if not isinstance(inputRay, (Ray, GaussianBeam)):
-            raise TypeError("'inputRay' must be a Ray or a GaussianBeam.")
+            raise TypeError("'inputRay' must be a Ray or a GaussianBeam {0}".format(inputRay))
         ray = inputRay
         if ray != self._lastRayToBeTraced:
             rayTrace = [ray]

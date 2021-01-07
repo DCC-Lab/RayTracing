@@ -1,6 +1,5 @@
 import envtest  # modifies path
-import platform
-import sys
+import subprocess
 
 from raytracing import *
 
@@ -340,28 +339,14 @@ class TestMatrix(envtest.RaytracingTestCase):
             m.traceManyThrough(self.assertIs)
 
     def testTraceManyThroughOutput(self):
-        import io
-        from contextlib import redirect_stdout
-
-        f = io.StringIO()
-        with redirect_stdout(f):
-            rays = [Ray(y, y) for y in range(10_000)]
-            m = Matrix(physicalLength=1)
-            m.traceManyThrough(rays, True)
-        out = f.getvalue()
-        self.assertEqual(out.strip(), "Progress 10000/10000 (100%)")
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "Progress 10000/10000 (100%)", inputRays=rays, progress=True)
 
     def testTraceManyThroughNoOutput(self):
-        import io
-        from contextlib import redirect_stdout
-
-        f = io.StringIO()
-        with redirect_stdout(f):
-            rays = [Ray(y, y) for y in range(10_000)]
-            m = Matrix(physicalLength=1)
-            m.traceManyThrough(rays, False)
-        out = f.getvalue()
-        self.assertEqual(out.strip(), "")
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "", inputRays=rays, progress=False)
 
     def testTraceManyThroughLastRayBlocked(self):
         m = Matrix()
@@ -377,13 +362,10 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
-        try:
-            trace = m.traceManyThroughInParallel(rays)
-            for i in range(len(rays)):
-                # Order is not kept, we have to check if the ray traced is in the original list
-                self.assertTrue(trace[i] in rays)
-        except:
-            pass
+        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(trace[i], rays)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
@@ -391,13 +373,26 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
-        try:
-            traceWithNumberProcesses = m.traceManyThroughInParallel(rays, processes=2)
-            for i in range(len(rays)):
-                # Order is not kept, we have to check if the ray traced is in the original list
-                self.assertIn(traceWithNumberProcesses[i], rays)
-        except Exception as exception:
-            self.fail(f"Exception raised:\n{exception}")
+        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(trace[i], rays)
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallelNoOutput(self):
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True,
+                                         universal_newlines=True)
+        self.assertEqual(processComplete.stdout, "")
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallelWithOutput(self):
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
+                                         capture_output=True, universal_newlines=True)
+        self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
     def testPointsOfInterest(self):
         m = Matrix()
@@ -411,11 +406,11 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix(A=1, B=1, C=3, D=4)
         self.assertFalse(m.isImaging)
 
-    def testLagrangeInvariantSpace(self):
+    def testOpticalInvariantSpace(self):
         m = Space(d=10)
         self.assertIsNotNone(m)
-        before = m.lagrangeInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
-        after = m.lagrangeInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        before = m.opticalInvariant(z=0, ray1=Ray(1, 2), ray2=Ray(2, 1))
+        after = m.opticalInvariant(z=10, ray1=Ray(1, 2), ray2=Ray(2, 1))
         self.assertAlmostEqual(before, after)
 
     def testHasNoPower(self):
@@ -514,8 +509,10 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m1.determinant, 1)
 
     def testInfiniteBackConjugate(self):
-        m = Matrix(A=0, B=1, C=-1)
-        self.assertTupleEqual(m.backwardConjugate(), (inf, None))
+        m = Matrix(A=0, B=1, C=-1, D=0)
+        d, mat = m.backwardConjugate()
+        self.assertEqual(d, inf)
+        self.assertIsNotNone(mat)
 
     def testFiniteBackConjugate_1(self):
         m1 = Matrix(1, 10, 0, 1) * Matrix(1, 0, -1 / 5, 1)
@@ -557,35 +554,29 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testStrRepresentation(self):
         m = Matrix(C=1)
-        strRepresentation = r""" /             \ 
-| {0:6.3f}   {1:6.3f} |
-|               |
-| {2:6.3f}   {3:6.3f} |
- \             /
-""".format(1, 0, 1, 1)
-        strRepresentation += "\nf={:0.3f}\n".format(-1.0)
+        strRepresentation = r""" |  1.000    0.000 |
+|                 |
+|  1.000    1.000 |
+f=-1.000
+"""
         self.assertEqual(str(m).strip(), strRepresentation.strip())
 
     def testStrRepresentationAfocal(self):
         m = Matrix()
-        strRepresentation = r""" /             \ 
-| {0:6.3f}   {1:6.3f} |
-|               |
-| {2:6.3f}   {3:6.3f} |
- \             /
-""".format(1, 0, 0, 1)
-        strRepresentation += "\nf = +inf (afocal)\n".format(-1.0)
+        strRepresentation = r""" |  1.000    0.000 |
+|                 |
+|  0.000    1.000 |
+f = +inf (afocal)
+"""
         self.assertEqual(str(m).strip(), strRepresentation.strip())
 
     def testDisplayHalfHeight(self):
         m = Matrix(apertureDiameter=10)
-        minSize = 2
-        self.assertEqual(m.displayHalfHeight(minSize), m.apertureDiameter / 2)
+        self.assertEqual(m.displayHalfHeight(), m.apertureDiameter / 2)
 
     def testDisplayHalfHeightInfiniteDiameter(self):
         m = Matrix(apertureDiameter=inf)
         self.assertEqual(m.displayHalfHeight(), 4)
-        self.assertEqual(m.displayHalfHeight(6), 6)
 
     def testEqualityNotSameClassInstance(self):
         m = Matrix()

@@ -1,5 +1,5 @@
 from .ray import *
-from numpy import *
+import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 import time
@@ -73,6 +73,9 @@ class Rays:
 
         self.iteration = 0
         self.progressLog = 10000
+        self.z = 0
+        self.rayColors = None
+        self.label = None
 
         # We cache these because they can be lengthy to calculate
         self._yValues = None
@@ -169,7 +172,7 @@ class Rays:
         >>> plt.xlabel('Height of Rays')
         >>> plt.show()
 
-        .. image:: Histogram.png
+        .. image:: ../../../images/Histogram.png
                     :width: 70%
                     :align: center
 
@@ -190,7 +193,7 @@ class Rays:
         if self._countHistogramParameters != (binCount, minValue, maxValue):
             self._countHistogramParameters = (binCount, minValue, maxValue)
 
-            (self._yHistogram, binEdges) = histogram(self.yValues,
+            (self._yHistogram, binEdges) = np.histogram(self.yValues,
                                                      bins=binCount,
                                                      range=(minValue, maxValue))
             self._yHistogram = list(self._yHistogram)
@@ -235,8 +238,7 @@ class Rays:
         >>> maxTheta=0.5
         >>> nBin=20
         >>> # define a list of random rays with uniform distribution
-        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
-        >>>                               thetaMax=maxTheta, maxCount=nRays)
+        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, maxCount=nRays)
         >>> [xVal,yVal]=inputRays.rayAnglesHistogram(binCount=nBin)
 
         And to plot the hitogram we can use xVal and yVal of the theta as the following:
@@ -249,7 +251,7 @@ class Rays:
         >>> plt.xlabel('Angle of Rays')
         >>> plt.show()
 
-        .. image:: AngleHist.png
+        .. image:: ../../../images/AngleHist.png
                     :width: 70%
                     :align: center
 
@@ -271,7 +273,7 @@ class Rays:
         if self._anglesHistogramParameters != (binCount, minValue, maxValue):
             self._anglesHistogramParameters = (binCount, minValue, maxValue)
 
-            (self._thetaHistogram, binEdges) = histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
+            (self._thetaHistogram, binEdges) = np.histogram(self.thetaValues, bins=binCount, range=(minValue, maxValue))
             self._thetaHistogram = list(self._thetaHistogram)
             xValues = []
             for i in range(len(binEdges) - 1):
@@ -300,47 +302,47 @@ class Rays:
         >>> maxTheta=0.5
         >>> nBin=20
         >>> # define a list of random rays with uniform distribution
-        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
-        >>>                               thetaMax=maxTheta, maxCount=nRays)
+        >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, maxCount=nRays)
         >>> inputRays.display()
 
-        .. image:: displayRays.png
+        .. image:: ../../../images/displayRays.png
                     :width: 70%
                     :align: center
 
         """
+        fontScale = 1.5
+
         plt.ioff()
         if showTheta:
-            fig, axes = plt.subplots(2)
-            fig.suptitle(title)
+            fig, axes = plt.subplots(2, figsize=(10, 7))
+            fig.suptitle(title, fontsize=12*fontScale)
             fig.tight_layout(pad=3.0)
 
             axis1 = axes[0]
             axis2 = axes[1]
         else:
-            fig, axis1 = plt.subplots(1)
-            fig.suptitle(title)
+            fig, axis1 = plt.subplots(1, figsize=(10, 7))
+            fig.suptitle(title, fontsize=13*fontScale)
             fig.tight_layout(pad=3.0)
 
         (x, y) = self.rayCountHistogram()
 
-        # axis1.set_title('Intensity profile')
         axis1.plot(x, y, 'k-', label="Intensity")
         axis1.set_ylim([0, max(y) * 1.1])
-        axis1.set_xlabel("Height of ray")
-        axis1.set_ylabel("Ray count")
-        axis1.legend(["Intensity"])
+        axis1.set_xlabel("Height of ray", fontsize=13*fontScale)
+        axis1.set_ylabel("Ray count", fontsize=13*fontScale)
+        axis1.tick_params(labelsize=13*fontScale)
 
         if showTheta:
             (x, y) = self.rayAnglesHistogram()
-            # axis2.set_title('Angle histogram')
             axis2.plot(x, y, 'k--', label="Orientation profile")
             axis2.set_ylim([0, max(y) * 1.1])
-            axis2.set_xlim([-pi / 2, pi / 2])
-            axis2.set_xlabel("Angle of ray [rad]")
-            axis2.set_ylabel("Ray count")
-            axis2.legend(["Angle"])
+            axis2.set_xlim([-np.pi / 2, np.pi / 2])
+            axis2.set_xlabel("Angle of ray [rad]", fontsize=13*fontScale)
+            axis2.set_ylabel("Ray count", fontsize=13*fontScale)
+            axis2.tick_params(labelsize=13*fontScale)
 
+        plt.subplots_adjust(left=0.12)
         plt.show()
 
     def displayProgress(self):
@@ -495,11 +497,10 @@ class UniformRays(Rays):
     >>> minTheta=0
     >>> maxTheta=0.5
     >>> # define a list of rays with uniform distribution
-    >>> inputRays = UniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,
-    >>>                               thetaMax=maxTheta, N=nRays, M=10)
+    >>> inputRays = UniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, N=nRays, M=10)
     >>> inputRays.display()
 
-    .. image:: UniformRays.png
+    .. image:: ../images/UniformRays.png
                     :width: 70%
                     :align: center
 
@@ -510,7 +511,7 @@ class UniformRays(Rays):
 
     """
 
-    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, M=100, N=100):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=None, M=100, N=100):
         self.yMax = yMax
         self.yMin = yMin
         if self.yMin is None:
@@ -523,8 +524,14 @@ class UniformRays(Rays):
         self.M = M
         self.N = N
         rays = []
-        for y in linspace(self.yMin, self.yMax, self.M, endpoint=True):
-            for theta in linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
+
+        if self.M == 1:
+            heights = [0]
+        else:
+            heights = np.linspace(self.yMin, self.yMax, self.M, endpoint=True)
+
+        for y in heights:
+            for theta in np.linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
                 rays.append(Ray(y, theta))
         super(UniformRays, self).__init__(rays=rays)
 
@@ -557,7 +564,7 @@ class LambertianRays(Rays):
     >>> inputRays = LambertianRays(yMin=minHeight, yMax=maxHeight)
     >>> inputRays.display()
 
-    .. image:: LambertianRays.png
+    .. image:: ../images/LambertianRays.png
                     :width: 70%
                     :align: center
 
@@ -574,15 +581,15 @@ class LambertianRays(Rays):
         if yMin is None:
             self.yMin = -yMax
 
-        self.thetaMin = -pi / 2
-        self.thetaMax = pi / 2
+        self.thetaMin = -np.pi / 2
+        self.thetaMax = np.pi / 2
         self.M = M
         self.N = N
         self.I = I
         rays = []
-        for theta in linspace(self.thetaMin, self.thetaMax, N, endpoint=True):
-            intensity = int(I * cos(theta))
-            for y in linspace(self.yMin, self.yMax, M, endpoint=True):
+        for theta in np.linspace(self.thetaMin, self.thetaMax, N, endpoint=True):
+            intensity = int(I * np.cos(theta))
+            for y in np.linspace(self.yMin, self.yMax, M, endpoint=True):
                 for k in range(intensity):
                     rays.append(Ray(y, theta))
         super(LambertianRays, self).__init__(rays=rays)
@@ -599,7 +606,7 @@ class RandomRays(Rays):
         Minimum height for the rays (default=None).
         If no value is assigned to this parameter it will be -yMax.
     thetaMax : float
-        Maximum angle for the rays (default=pi/2)
+        Maximum angle for the rays (default=np.pi/2)
     thetaMin : float
         Minimum angle for the rays (default=None)
         If no value is assigned to this parameter it will be -thetaMax
@@ -613,7 +620,7 @@ class RandomRays(Rays):
     raytracing.RandomUniformRays
 
     """
-    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=None, maxCount=100000):
         self.maxCount = maxCount
         self.yMax = yMax
         self.yMin = yMin
@@ -686,7 +693,7 @@ class RandomUniformRays(RandomRays):
         >>> inputRays.display()
 
 
-        .. image:: RandomUniformRays.png
+        .. image:: ../images/RandomUniformRays.png
                     :width: 70%
                     :align: center
 
@@ -697,7 +704,7 @@ class RandomUniformRays(RandomRays):
 
         """
 
-    def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
+    def __init__(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=None, maxCount=100000):
         super(RandomUniformRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=thetaMax, thetaMin=thetaMin,
                                                 maxCount=maxCount)
 
@@ -705,8 +712,8 @@ class RandomUniformRays(RandomRays):
         if len(self._rays) == self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
-        theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
-        y = self.yMin + random.random() * (self.yMax - self.yMin)
+        theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
         ray = Ray(y=y, theta=theta)
         self.append(ray)
         return ray
@@ -737,7 +744,7 @@ class RandomLambertianRays(RandomRays):
     >>> inputRays.display()
 
 
-    .. image:: RandomLambertianRays.png
+    .. image:: ../images/RandomLambertianRays.png
                 :width: 70%
                 :align: center
 
@@ -749,7 +756,7 @@ class RandomLambertianRays(RandomRays):
     """
 
     def __init__(self, yMax=1.0, yMin=None, maxCount=10000):
-        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=pi / 2, thetaMin=-pi / 2,
+        super(RandomLambertianRays, self).__init__(yMax=yMax, yMin=yMin, thetaMax=np.pi / 2, thetaMin=-np.pi / 2,
                                                    maxCount=maxCount)
 
     def randomRay(self) -> Ray:
@@ -758,13 +765,106 @@ class RandomLambertianRays(RandomRays):
 
         theta = 0
         while (True):
-            theta = self.thetaMin + random.random() * (self.thetaMax - self.thetaMin)
-            intensity = cos(theta)
-            seed = random.random()
+            theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+            intensity = np.cos(theta)
+            seed = np.random.random()
             if seed < intensity:
                 break
 
-        y = self.yMin + random.random() * (self.yMax - self.yMin)
+        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
         ray = Ray(y, theta)
         self.append(ray)
         return ray
+
+
+class ObjectRays(UniformRays):
+    """
+    A set of rays used for objects.
+
+    Parameters
+    ----------------
+    diameter: float
+        Diameter of the object.
+
+    Other Parameters
+    ----------------
+    H: int
+        The number of point sources to create on the object (the number of ray fans) across its diameter.
+    T: int
+        The number of rays to trace for each point source (ray fan) across `halfAngle`.
+    halfAngle: float
+        The half angle of each ray fan.
+    z: float
+        Position of the object in the optical path.
+    rayColors
+        Specify a color or a set of colors for the traced rays.
+    color
+        Color used to draw the graphics of the object (filled) and its images (outlined).
+        By default, objects are blue and images are red, but this parameter overwrites both at the same time
+        to help distinguish multiple objects in a path.
+    label: str
+        Label to display over the object in the imaging path.
+
+    """
+    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None, label=None):
+        super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
+        self.z = z
+        self.rayColors = rayColors
+        self.color = color
+        self.label = label
+
+
+class LampRays(RandomUniformRays, Rays):
+    """
+    A set of rays used to simulate Lamp rays either randomly or with a defined amount of point sources
+    spread evenly across its diameter.
+
+    Parameters
+    ----------------
+    diameter: float
+        Diameter of the lamp.
+
+    Other Parameters
+    ----------------
+    NA: float
+        Numerical aperture of the lens.
+    N: int
+        Amount of point sources to use across the diameter of the lamp with default settings.
+        If random is true, this is the amount of rays to trace in total.
+    T: int
+        The number of rays to trace for each point sources (N). Only used if random is false (default).
+    H: int
+        Only used for similarity with ObjectRays. When random is false H can be set to overwrite N
+         since they are the same.
+    z: float
+        Position of the lamp in the optical path.
+    random: bool
+        Use randomly distributed rays across the lamp's diameter. Better used with a high N.
+    rayColors
+        Specify a color or a set of colors for the traced rays of this lamp.
+    label: str
+        Label to display over the lamp in the imaging path.
+
+    """
+    def __init__(self, diameter, NA=1.0, N=100, T=10, H=None, random=False, z=0, rayColors=None, label=None):
+        if random:
+            RandomUniformRays.__init__(self, yMax=diameter/2, yMin=-diameter/2, thetaMax=NA, thetaMin=-NA, maxCount=N)
+        else:
+            self.yMin = -diameter/2
+            self.yMax = diameter/2
+
+            if H:
+                N = H
+            self.maxCount = N*T
+
+            rays = []
+            heights = np.linspace(self.yMin, self.yMax, N, endpoint=True)
+            angles = np.linspace(-NA, NA, T, endpoint=True)
+            for y in heights:
+                for theta in angles:
+                    rays.append(Ray(y, theta))
+            Rays.__init__(self, rays=rays)
+
+        self.z = z
+        self.rayColors = rayColors
+        self.label = label

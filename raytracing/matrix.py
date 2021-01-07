@@ -1,7 +1,9 @@
 from .ray import *
 from .gaussianbeam import *
 from .rays import *
+from .interface import *
 
+from typing import List
 import multiprocessing
 import sys
 import math
@@ -78,11 +80,9 @@ class Matrix(object):
     >>> from raytracing import *
     >>> M= Matrix(A=1,B=3,C=0,D=1)
     >>> print(M)
-    /                \
     |  1.000    3.000 |
     |                 |
     |  0.000    1.000 |
-     \               /
     f = +inf (afocal)
 
 
@@ -137,8 +137,10 @@ class Matrix(object):
         self.label = label
         self.isFlipped = False
         super(Matrix, self).__init__()
-        if not isclose(self.determinant, self.frontIndex / self.backIndex, atol=self.__epsilon__):
-            raise ValueError("The matrix has inconsistent values")
+
+        if areAbsolutelyNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
+            raise ValueError("The matrix has inconsistent values: \
+                determinant is incorrect considering front and back indices.")
 
     @property
     def isIdentity(self):
@@ -152,15 +154,6 @@ class Matrix(object):
         B is never really infinity, but C can be precisely zero (especially
         in free space), then B*C is zero in that particular case.
 
-        Examples
-        --------
-        >>> from raytracing import *
-
-        >>> # M is an ABCD matrix of a lens (f=3)
-        >>> M= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
-        >>> print('the determinant of matrix is equal to :' , M.determinant())
-        the determinant of matrix is equal to : 1.0
-
         """
 
         if self.C == 0:
@@ -168,6 +161,11 @@ class Matrix(object):
 
         return self.A * self.D - self.B * self.C
 
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes """
+        return []
+    
     def __mul__(self, rightSide):
         """Operator overloading allowing easy-to-read matrix multiplication
         with other `Matrix`, with a `Ray` or a `GaussianBeam`.
@@ -179,10 +177,13 @@ class Matrix(object):
         Examples
         --------
         >>> from raytracing import *
-
         >>> M1= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
         >>> M2= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
-        >>> print('product M2*M1 :' , M2*M1)
+        >>> print(M2*M1) #print the product of M2*M1
+        |  1.000    0.000 |
+        |                 |
+        | -0.667    1.000 |
+        f=1.500
 
         """
         if isinstance(rightSide, Matrix):
@@ -236,13 +237,10 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/3,D=1,label='Lens')
         >>> # M2 is an ABCD matrix of free space (d=2)
         >>> M2= Matrix(A=1,B=2,C=0,D=1,label='freeSpace')
-        >>> print('Total ABCD matrix :' , M1.mul_matrix(M2))
-        Total ABCD matrix :
-         /             \
+        >>> print(M1.mul_matrix(M2)) #print the total ABCD matrix
         |  1.000    2.000 |
-        |               |
+        |                 |
         | -0.333    0.333 |
-         \             /
         f=3.000
 
         See Also
@@ -320,13 +318,10 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
         >>> # R is a ray
         >>> R= Ray(y=10,theta=10)
-        >>> print('The output ray of Lens M1 :' , M1.mul_ray(R))
-        The output ray of Lens M1 :
-         /       \
-        | 10.000  |
-        |         |
-        |  9.000  |
-         \       /
+        >>> print('The output ray of Lens M1:\n' , M1.mul_ray(R))
+        The output ray of Lens M1:
+         y = 10.000
+        theta =  9.000
         z = 5.000
 
         And after a free space (d=2)
@@ -334,13 +329,10 @@ class Matrix(object):
         >>> # M2 is an ABCD matrix of free space (d=2)
         >>> M2= Matrix(A=1,B=2,C=0,D=1,physicalLength=2,label='freeSpace')
         >>> M=M1.mul_matrix(M2)
-        >>> print('The output ray of Lens M1 and free space M2 :' , M.mul_ray(R))
-        The output ray of Lens M1 and free space M2 :
-         /       \
-        | 30.000  |
-        |         |
-        |  7.000  |
-         \       /
+        >>> print('The output ray of Lens M1 and free space M2:\n' , M.mul_ray(R))
+        The output ray of Lens M1 and free space M2:
+         y = 30.000
+        theta =  7.000
         z = 7.000
 
 
@@ -394,11 +386,11 @@ class Matrix(object):
         >>> # M1 is an ABCD matrix of a lens (f=10)
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=5,label='Lens')
         >>> # B is a Gaussian Beam
-        >>> B=GaussianBeam(q=complex(1,1),w=1,R=5,n=1)
-        >>> print('The output properties of are:' , M1.mul_beam(B))
-        The output ray of Lens M1 : Complex radius: (0.976+1.22j)
-        w(z): 0.020, R(z): 2.500, z: 5.000, λ: 632.8 nm
-        zo: 1.220, wo: 0.016, wo position: -0.976
+        >>> B=GaussianBeam(q=complex(4.999994928425984,0.0050356572916806525),w=1,R=5,n=1)
+        >>> print(M1.mul_beam(B)) #print the output properties
+        Complex radius: (10+0.0201j)
+        w(z): 1.000, R(z): 10.000, z: 5.000, λ: 0.0 nm
+        zo: 0.020, wo: 0.002, wo position: -10.000
 
         See Also
         --------
@@ -470,13 +462,10 @@ class Matrix(object):
         >>> # M1 is an ABCD matrix of a lens (f=2)
         >>> M1= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
         >>> transferM=M1.transferMatrix(upTo=5)
-        >>> print('The transfer matrix is:', transferM)
-        The transfer matrix is:
-         /             \
+        >>> print(transferM) # print the transfer matrix
         |  1.000    0.000 |
-        |               |
+        |                 |
         | -0.100    1.000 |
-         \             /
         f=10.000
 
         See Also
@@ -505,48 +494,57 @@ class Matrix(object):
 
         return [self]
 
-    def lagrangeInvariant(self, ray1, ray2, z=0):
-        """ The Lagrange invariant is a quantity that is conserved
-        for any two rays in the system. It is often seen with the
-        chief ray and marginal ray in an imaging system, but it is
-        actually very general and any two rays can be used.
-        In ImagingPath(), if no rays are provided, the chief and
-        marginal rays are used.
+    def opticalInvariant(self, ray1, ray2, z=0):
+        """
+        The optical invariant is a quantity that is conserved
+        for any two rays in the system. It is very general and
+        any two rays can be used. It is often seen with the
+        chief ray and marginal ray in an imaging system, in which
+        case it is called the Lagrange invariant. 
+        In ImagingPath(), the principal and axial rays can be used,
+        in which case the optical invariant is called the Lagrange Invariant,
+        and is the maximal optical invariant between two rays that guarantees 
+        neither one will be blocked.
 
         Parameters
         ----------
         ray1 : object of Ray class
-            A ray at height y1 and angle theta1
+            A ray at height y1 and angle theta1 (default=None)
         ray2 : object of Ray class
-            A ray at height y2 and angle theta2
+            A ray at height y2 and angle theta2 (default=None)
         z : float
-            A distance that shows propagation length
+            A distance that shows propagation length (default=0)
 
         Returns
         -------
-        lagrangeInvariant : float
-            The value of the lagrange invariant constant for ray1 and ray2
+        opticalInvariant : float
+            The value of the optical invariant constant for ray1 and ray2
 
         Examples
         --------
+        Since there is no input for the function, the optical invariant value is
+        calculated for chief and marginal rays.
+
         >>> from raytracing import *
-        >>> # M is an ABCD matrix of a lens (f=10)
-        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,label='Lens')
-        >>> # R1 and R2 are two rays
-        >>> R1=Ray(y=5,theta=20)
-        >>> R2=Ray(y=2,theta=10)
-        >>> LagrangeInv=M.lagrangeInvariant(R1,R2)
-        >>> print('The lagrange invariant value for R1 and R2 is:', LagrangeInv)
-        The lagrange invariant value for R1 and R2 is: -10.0
+        >>> path = ImagingPath() # define an imaging path
+        >>> # use append() to add elements to the imaging path
+        >>> path.append(Space(d=10))
+        >>> path.append(Lens(f=10,diameter=10,label="f=10"))
+        >>> path.append(Space(d=30))
+        >>> path.append(Lens(f=20,diameter=15,label="f=20"))
+        >>> path.append(Space(d=20))
+        >>> ray1, ray2 = Ray(0.5,0.05) , Ray(3,0.25)
+        >>> print('optical invariant :', path.opticalInvariant(ray1,ray2))
+        optical invariant : 0.025000000000000022
 
         See Also
         --------
-        raytracing.Matrix.transferMatrices
         raytracing.ImagingPath.lagrangeInvariant
 
         Notes
         -----
-        To use this function, the physicalLength of the system should be zero.
+        This quantity is L = n (y1 theta2 - y2 theta1)
+
         """
 
         matrix = self.transferMatrix(upTo=z)
@@ -667,7 +665,7 @@ class Matrix(object):
 
         Parameters
         ----------
-        inputRays : object of Ray class
+        inputRays : list of object of Ray class
             A List of rays, each object includes two ray. The fisr is the properties
             of the input ray and the second is the properties of the output ray.
 
@@ -689,23 +687,18 @@ class Matrix(object):
         >>> inputRays = RandomUniformRays(yMax=0, maxCount=nRays)
         >>> Tr=M.traceMany(inputRays)
         >>> #index[0] of the first object in the list is the first input
-        >>> print('The properties of the first input ray:', Tr[0][0])
+        >>> print('The properties of the first input ray:\n', Tr[0][0])
         The properties of the first input ray:
-         /       \
-        |  0.000  |
-        |         |
-        |  1.113  |
-         \       /
+         y =  0.000
+        theta =  0.827
         z = 0.000
 
+
         >>> #index[1] of the first object in the list is the first output
-        >>> print('The properties of the first output ray:', Tr[0][1])
+        >>> print('The properties of the first output ray:\n', Tr[0][1])
         The properties of the first output ray:
-         /       \
-        |  0.000  |
-        |         |
-        |  1.113  |
-         \       /
+         y =  0.000
+        theta =  0.827
         z = 2.000
 
         See Also
@@ -743,6 +736,8 @@ class Matrix(object):
 
         Examples
         --------
+        Since the input of this example is random, we should not expect to get the same results every time.
+
         >>> from raytracing import *
         >>> # M is an ABCD matrix of a lens (f=10)
         >>> M= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
@@ -753,7 +748,7 @@ class Matrix(object):
         >>> print('heights of the output rays:', Tr.yValues)
         heights of the output rays: [4.323870378874155, 2.794064779525441, 0.7087442942835853]
 
-        >>>> print('angles of the output rays:', Tr.thetaValues)
+        >>> print('angles of the output rays:', Tr.thetaValues)
         angles of the output rays: [-1.499826089814585, 0.7506850963379516, -0.44348989046728904]
 
         See Also
@@ -829,16 +824,25 @@ class Matrix(object):
             processes = multiprocessing.cpu_count()
 
         theExplicitList = list(inputRays)
-        manyInputRays = [theExplicitList[i::processes] for i in range(processes)]
+        manyInputRays = [(theExplicitList[i::processes], progress) for i in range(processes)]
 
         with multiprocessing.Pool(processes=processes) as pool:
-            outputRays = pool.map(self.traceManyThrough, manyInputRays)
+            outputRays = pool.starmap(self.traceManyThrough, manyInputRays)
 
         outputRaysList = []
         for rays in outputRays:
             outputRaysList += rays.rays
 
         return Rays(rays=outputRaysList)
+
+    def profileFromRayTraces(self, rayTraces, z=float("+inf")):
+        outputRays = Rays()
+        for rayTrace in rayTraces:
+            ray = Ray.along(rayTrace, z=z)
+            if ray.isNotBlocked:
+                outputRays.append(ray)
+
+        return outputRays
 
     @property
     def isImaging(self):
@@ -867,7 +871,7 @@ class Matrix(object):
         And as usual, C = -1/f (always).
         """
 
-        return abs(self.B) < Matrix.__epsilon__
+        return isAlmostZero(self.B, self.__epsilon__)
 
     @property
     def hasPower(self):
@@ -887,7 +891,7 @@ class Matrix(object):
         >>> print('hasPower:' , M2.hasPower)
         hasPower: False
         """
-        return abs(self.C) > Matrix.__epsilon__
+        return isNotZero(self.C, self.__epsilon__)
 
     def pointsOfInterest(self, z):
         """ Any points of interest for this matrix (focal points,
@@ -1173,21 +1177,16 @@ class Matrix(object):
         --------
         >>> from raytracing import *
         >>> # M1 is an ABCD matrix of an object
-        >>> M1= Matrix(A=1,B=-2,C=3,D=1,physicalLength=0,label='Lens')
+        >>> M1= Matrix(A=3,B=1,C=5,D=2,physicalLength=0,label='Lens')
         >>> Image=M1.forwardConjugate()
         >>> print('The position of the image:' , Image[0])
-        The position of the image: 2.0
+        The position of the image: -0.5
 
-        And to see the conjugate matrix you can call index 1 of the output.
-
-        >>> print('conjugate matrix:' , Image[1])
-        conjugate matrix:
-         /               \
-        |  7.000    0.000 |
+        >>> print(Image[1]) #print the conjugate matrix
+        |  0.500    0.000 |
         |                 |
-        |  3.000    1.000 |
-         \               /
-        f=-0.333
+        |  5.000    2.000 |
+        f=-0.200
 
         See Also
         --------
@@ -1227,21 +1226,16 @@ class Matrix(object):
         --------
         >>> from raytracing import *
         >>> # M1 is an ABCD matrix of an object
-        >>> M1= Matrix(A=1,B=-3,C=1,D=1,physicalLength=0,label='Lens')
+        >>> M1= Matrix(A=2,B=1,C=5,D=3,physicalLength=2,label='Lens')
         >>> Image=M1.backwardConjugate()
         >>> print('The position of the image:' , Image[0])
-        The position of the image: 3.0
+        The position of the image: -0.5
 
-        And to see the conjugate matrix you can call index 1 of the output.
-
-        >>> print('conjugate matrix:' , Image[1])
-        conjugate matrix:
-         /               \
-        |  1.000    0.000 |
+        >>> print(Image[1]) #print the conjugate matrix
+        |  2.000    0.000 |
         |                 |
-        |  1.000    4.000 |
-         \               /
-        f=-1.000
+        |  5.000    0.500 |
+        f=-0.200
 
 
         See Also
@@ -1253,10 +1247,14 @@ class Matrix(object):
         M2 = M1*Space(distance)
         M2.isImaging == True
         """
-        if self.A == 0:
-            return (float("+inf"), None)
-        distance = -self.B / self.A
+        if self.A != 0:
+            distance = -self.B / self.A
+        else:
+            distance = float("+inf")
         conjugateMatrix = self * Space(d=distance)
+        # This element is A*d + B, A is precisely 0, d is large, therefore B' == 0.
+        conjugateMatrix.B = 0 
+
         return (distance, conjugateMatrix)
 
     def magnification(self):
@@ -1272,10 +1270,10 @@ class Matrix(object):
         --------
         >>> from raytracing import *
         >>> # M1 is an ABCD matrix of an object
-        >>> Mat= Matrix(A=2,B=0,C=1,D=3,physicalLength=0,label='Lens')
+        >>> Mat= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=0,label='Lens')
         >>> M=Mat.magnification()
         >>> print('(A , D): (',M[0],',',M[1],')')
-        (A , D): ( 2.0 , 3.0 )
+        (A , D): ( 1.0 , 1.0 )
 
 
         See Also
@@ -1311,13 +1309,13 @@ class Matrix(object):
 
         The original object:
 
-        .. image:: flipOrientation_before.png
+        .. image:: ../../../images/flipOrientation_before.png
             :width: 70%
             :align: center
 
         The flipped object:
 
-        .. image:: flipOrientation_after.png
+        .. image:: ../../../images/flipOrientation_after.png
             :width: 70%
             :align: center
 
@@ -1344,7 +1342,7 @@ class Matrix(object):
 
         return self
 
-    def displayHalfHeight(self, minSize=0):
+    def displayHalfHeight(self):
         """ A reasonable height for display purposes for
         an element, whether it is infinite or not.
         If the element is infinite, the half-height is currently
@@ -1360,29 +1358,27 @@ class Matrix(object):
             The half height of the optical element
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
-        if minSize > halfHeight:
-            halfHeight = minSize
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter / 2.0  # real half height
         return halfHeight
 
     def display(self):
-        from .figure import Graphic
-        return Graphic(self).display()
+        from .figure import GraphicOf
+        return GraphicOf(self).display()
 
     def __str__(self):
         """ String description that allows the use of print(Matrix())
 
         """
-        description = "\n /             \\ \n"
-        description += "| {0:6.3f}   {1:6.3f} |\n".format(self.A, self.B)
-        description += "|               |\n"
+
+        description = "| {0:6.3f}   {1:6.3f} |\n".format(self.A, self.B)
+        description += "|                 |\n"
         description += "| {0:6.3f}   {1:6.3f} |\n".format(self.C, self.D)
-        description += " \\             /\n"
+        
         if self.C != 0:
-            description += "\nf={0:0.3f}\n".format(-1.0 / self.C)
+            description += "f={0:0.3f}".format(-1.0 / self.C)
         else:
-            description += "\nf = +inf (afocal)\n"
+            description += "f = +inf (afocal)"
         return description
 
     def __eq__(self, other):
@@ -1408,13 +1404,10 @@ class Lens(Matrix):
     >>> from raytracing import *
     >>> #define a lens with f=5 and diameter 20
     >>> L=Lens(f=5,diameter=20,label='Lens')
-    >>> print('The transfer matrix of Lens :', L)
-    The transfer matrix of Lens :
-     /             \
+    >>> print(L) #print the transfer matrix of the lens
     |  1.000    0.000 |
-    |               |
+    |                 |
     | -0.200    1.000 |
-     \             /
     f=5.000
     """
 
@@ -1425,6 +1418,17 @@ class Lens(Matrix):
                                    frontVertex=0,
                                    backVertex=0,
                                    label=label)
+        self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+
+        For a thin lens, obviously the user does not worry about the details
+        of the lens, because they only provide the focal length. We compute a
+        reasonable radius of curvature and provide 
+        """
+        return [SphericalInterface(R=100), SphericalInterface(R=-100)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1450,6 +1454,34 @@ class Lens(Matrix):
 
         return pointsOfInterest
 
+    def displayHalfHeight(self):
+        """ A reasonable height for display purposes for
+        an element, whether it is infinite or not.
+        If the element is infinite, the half-height is currently
+        set to '4' or to the specified minimum half height.
+        If not, it is the apertureDiameter/2.
+
+        Returns
+        -------
+        halfHeight : float
+            The half height of the optical element
+        """
+        if self.apertureDiameter != float('+Inf'):
+            self._physicalHalfHeight = self.apertureDiameter / 2.0  # real half height
+        return self._physicalHalfHeight
+
+    @property
+    def largestDiameter(self):
+        """ Largest diameter for a group of elements
+
+        Returns
+        -------
+        LargestDiameter : float
+            Largest diameter of the element or group of elements. For a `Matrix`
+            this will simply be the aperture diameter of this element.
+        """
+        return self._physicalHalfHeight
+
 
 class CurvedMirror(Matrix):
     r"""A curved mirror of radius R and infinite or finite diameter.
@@ -1468,14 +1500,11 @@ class CurvedMirror(Matrix):
     >>> from raytracing import *
     >>> #define a curved mirror with R=5 and diameter 20
     >>> M=CurvedMirror(R=5,diameter=20,label='curved mirror')
-    >>> print('The transfer matrix of curved mirror :' ,M)
-    The transfer matrix of curved mirror :
-     /             \
+    >>> print(M) #print the transfer matrix of curved mirror
     |  1.000    0.000 |
-    |               |
-    | -0.400    1.000 |
-     \             /
-    f=2.500
+    |                 |
+    |  0.400    1.000 |
+    f=-2.500
 
 
     Notes
@@ -1494,6 +1523,12 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
                                            frontVertex=0,
                                            backVertex=0,
                                            label=label)
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(R=2/self.C)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1552,13 +1587,10 @@ class Space(Matrix):
     >>> from raytracing import *
     >>> #define a free space of length 3, refraction index 1 and diameter 20
     >>> S=Space(d=3,n=1,diameter=20,label='free space')
-    >>> print('The transfer matrix of free space :' ,S)
-    The transfer matrix of free space :
-     /             \
+    >>> print(S) #print to see the transfer matrix of free space
     |  1.000    3.000 |
-    |               |
+    |                 |
     |  0.000    1.000 |
-     \             /
     f = +inf (afocal)
     """
 
@@ -1634,6 +1666,12 @@ class DielectricInterface(Matrix):
                                                   backIndex=n2,
                                                   label=label)
 
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(R=self.R, n=self.n2)]
+
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
 
@@ -1679,13 +1717,10 @@ class ThickLens(Matrix):
     >>> from raytracing import *
     >>> #define a thick lens with desired parameters
     >>> TLens=ThickLens(n=1.5,R1=4,R2=6,thickness=3,diameter=20,label='thick lens')
-    >>> print('The transfer matrix of thick lens :' ,TLens)
-    The transfer matrix of thick lens :
-     /             \
+    >>> print(TLens) #print the transfer matrix of the thick lens
     |  0.750    2.000 |
-    |               |
+    |                 |
     | -0.062    1.167 |
-     \             /
     f=16.000
 
 
@@ -1711,6 +1746,13 @@ class ThickLens(Matrix):
                                         frontVertex=0,
                                         backVertex=thickness,
                                         label=label)
+
+    @property
+    def surfaces(self):
+        """ A list of surfaces that represents the element for drawing purposes 
+        """
+        return [SphericalInterface(R=self.R1, n=self.n, L=self.L),
+                SphericalInterface(R=self.R2)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
@@ -1801,14 +1843,12 @@ class DielectricSlab(ThickLens):
     >>> from raytracing import *
     >>> #define a dielectric with refraction index of 1.5
     >>> D=DielectricSlab(n=1.5,thickness=5,diameter=20,label='Dielectric')
-    >>> print('The transfer matrix of dielectric slab :' ,D)
-    The transfer matrix of dielectric slab :
-     /                \
+    >>> print(D) #print the transfer matrix of dielectric slab
     |  1.000    3.333 |
     |                 |
     | -0.000    1.000 |
-     \               /
     f = +inf (afocal)
+
     """
 
     def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
@@ -1817,6 +1857,11 @@ class DielectricSlab(ThickLens):
                                              thickness=thickness,
                                              diameter=diameter,
                                              label=label)
+
+    @property
+    def surfaces(self) -> List[Interface]:
+        """ A list of surfaces that represents the element for drawing purposes. """
+        return [FlatInterface(L=self.L, n=self.n), FlatInterface()]
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
@@ -1855,14 +1900,12 @@ class Aperture(Matrix):
     >>> from raytracing import *
     >>> #define an aperture of diameter 10
     >>> A=Aperture(diameter=10,label='aperture')
-    >>> print('The transfer matrix of aperture :' ,A)
-    The transfer matrix of aperture :
-     /                \
+    >>> print(A) #print the transfer matrix of the aperture
     |  1.000    0.000 |
     |                 |
     |  0.000    1.000 |
-     \               /
     f = +inf (afocal)
+
 
     Notes
     -----

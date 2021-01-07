@@ -73,8 +73,8 @@ class AchromatDoubletLens(MatrixGroup):
 
     """
 
-    def __init__(self, fa, fb, R1, R2, R3, tc1, tc2, te, n1, n2, diameter, mat1=None, mat2=None, wavelengthRef=None,
-                 url=None, label=''):
+    def __init__(self, fa, fb, R1, R2, R3, tc1, tc2, te, diameter, n1=None, n2=None, mat1=None, mat2=None, wavelengthRef=None,
+                 url=None, label='', wavelength=None):
         self.fa = fa
         self.fb = fb
         self.R1 = R1
@@ -89,12 +89,23 @@ class AchromatDoubletLens(MatrixGroup):
         self.mat2 = mat2
         self.url = url
 
+        if self.mat1 is not None and self.mat2 is not None :
+            if wavelength is not None:
+                self.n1=self.mat1.n(wavelength)
+                self.n2=self.mat2.n(wavelength)
+            elif wavelengthRef is not None:
+                self.n1=self.mat1.n(wavelengthRef)
+                self.n2=self.mat2.n(wavelengthRef)
+
+        if self.n1 is None or self.n2 is None:
+            raise ValueError("n1 or n2 not set")
+
         elements = []
-        elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
-        elements.append(Space(d=tc1, n=n1))
-        elements.append(DielectricInterface(n1=n1, n2=n2, R=R2, diameter=diameter))
-        elements.append(Space(d=tc2, n=n2))
-        elements.append(DielectricInterface(n1=n2, n2=1, R=R3, diameter=diameter))
+        elements.append(DielectricInterface(n1=1, n2=self.n1, R=R1, diameter=diameter))
+        elements.append(Space(d=tc1, n=self.n1))
+        elements.append(DielectricInterface(n1=self.n1, n2=self.n2, R=R2, diameter=diameter))
+        elements.append(Space(d=tc2, n=self.n2))
+        elements.append(DielectricInterface(n1=self.n2, n2=1, R=R3, diameter=diameter))
         super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
@@ -137,6 +148,13 @@ class AchromatDoubletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    @property
+    def surfaces(self) -> List[Interface]:
+        return [SphericalInterface(R=self.R1, L=self.tc1, n=self.n1),
+                SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
+                SphericalInterface(R=self.R3)]
+
+      
 class SingletLens(MatrixGroup):
     """
     General singlet lens with an effective focal length of f, back focal
@@ -160,13 +178,13 @@ class SingletLens(MatrixGroup):
     te : float
         The edge thickness
     n : float
-        The refraction index of the material
+        The refraction index of the material if material not used
     diameter : float
         The diameter of the lens
-    mat1 : object of Matrix class
-        The transfer matrix of the lens
+    mat1 : object of Material class
+        The material of the lens
     wavelengthRef : float
-        The defined wavelength
+        The defined wavelength of reference for the index of refraction
     url : string
         A link to find more info for the lens
     label : string
@@ -180,8 +198,9 @@ class SingletLens(MatrixGroup):
 
     """
 
-    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat1=None, wavelengthRef=None,
-                 url=None, label=''):
+    def __init__(self, f, fb, R1, R2, tc, te, n, diameter, mat=None, wavelengthRef=None,
+                 url=None, label='', wavelength=None):
+
         self.f = f
         self.fb = fb
         self.R1 = R1
@@ -192,10 +211,19 @@ class SingletLens(MatrixGroup):
         self.mat = mat
         self.url = url
 
+        if self.mat is not None:
+            if wavelength is not None:
+                self.n=self.mat.n(wavelength)
+            elif wavelengthRef is not None:
+                self.n=self.mat.n(wavelengthRef)
+
+        if self.n is None:
+            raise ValueError("You must provide n or material")
+
         elements = []
-        elements.append(DielectricInterface(n1=1, n2=n, R=R1, diameter=diameter))
-        elements.append(Space(d=tc, n=n))
-        elements.append(DielectricInterface(n1=n, n2=1, R=R2, diameter=diameter))
+        elements.append(DielectricInterface(n1=1, n2=self.n, R=R1, diameter=diameter))
+        elements.append(Space(d=tc, n=self.n))
+        elements.append(DielectricInterface(n1=self.n, n2=1, R=R2, diameter=diameter))
         super(SingletLens, self).__init__(elements=elements, label=label)
         self.apertureDiameter = diameter
 
@@ -239,6 +267,11 @@ class SingletLens(MatrixGroup):
         (f1, f2) = self.focusPositions(z)
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
+    @property
+    def surfaces(self) -> List[Interface]:
+        return [SphericalInterface(R=self.R1, L=self.tc, n=self.n),
+                SphericalInterface(R=self.R2)]
+
 
 class Objective(MatrixGroup):
 
@@ -263,7 +296,7 @@ class Objective(MatrixGroup):
     """
     warningDisplayed = False
 
-    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, url=None, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification, fieldNumber, url=None, label=''):
         """ General microscope objective, approximately correct.
 
         We model the objective as an ideal lens with back focal point at the entrance
@@ -279,6 +312,8 @@ class Objective(MatrixGroup):
 
         self.f = f
         self.NA = NA
+        self.magnification = magnification
+        self.fieldNumber = fieldNumber
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
@@ -306,6 +341,9 @@ No guarantee that apertures and field of view will exactly \
 reproduce the objective."
             warnings.warn(msg, FutureWarning)
             Objective.warningDisplayed = True
+
+    def maximumOpticalInvariant(self):
+        return (self.fieldNumber/2)/self.magnification * self.NA
 
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
