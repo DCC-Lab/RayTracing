@@ -7,15 +7,24 @@ from .axicon import *
 from . import thorlabs
 from . import eo
 from . import olympus
+from . import utils
 
 import argparse
 
 ap = argparse.ArgumentParser(prog='python -m raytracing')
 ap.add_argument("-e", "--examples", required=False, default='all',
                 help="Specific example numbers, separated by a comma")
+ap.add_argument("-c", "--classes", required=False, action='store_const',
+                const=True, help="Print the class hierarchy in graphviz format")
 
 args = vars(ap.parse_args())
 examples = args['examples']
+printClasses = args['classes']
+
+if printClasses:
+    printClassHierarchy(Rays)
+    printClassHierarchy(Matrix)
+    exit(0)
 
 if examples == 'all':
     examples = range(1, 30)
