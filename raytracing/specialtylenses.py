@@ -347,7 +347,6 @@ reproduce the objective."
 
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
-        self.isFlipped = not self.isFlipped
 
         z = 0
         for element in self.elements:
