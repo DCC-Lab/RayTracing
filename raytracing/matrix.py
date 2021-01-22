@@ -162,7 +162,7 @@ class Matrix(object):
         return self.A * self.D - self.B * self.C
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes """
         return []
     
@@ -1421,7 +1421,7 @@ class Lens(Matrix):
         self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
 
         For a thin lens, obviously the user does not worry about the details
@@ -1525,7 +1525,7 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
                                            label=label)
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
         return [SphericalInterface(R=2/self.C)]
@@ -1667,7 +1667,7 @@ class DielectricInterface(Matrix):
                                                   label=label)
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
         return [SphericalInterface(R=self.R, n=self.n2)]
@@ -1748,7 +1748,7 @@ class ThickLens(Matrix):
                                         label=label)
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
         return [SphericalInterface(R=self.R1, n=self.n, L=self.L),
@@ -1859,7 +1859,7 @@ class DielectricSlab(ThickLens):
                                              label=label)
 
     @property
-    def surfaces(self) -> List[Interface]:
+    def forwardSurfaces(self) -> List[Interface]:
         """ A list of surfaces that represents the element for drawing purposes. """
         return [FlatInterface(L=self.L, n=self.n), FlatInterface()]
 
