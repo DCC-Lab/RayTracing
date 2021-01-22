@@ -165,6 +165,24 @@ class Matrix(object):
     def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes """
         return []
+
+    @property
+    def surfaces(self):
+        surfaces = self.forwardSurfaces
+
+        if self.isFlipped:
+            surfaces.reverse()
+            for i, surface in enumerate(surfaces):
+                if type(surface) == SphericalInterface:
+                    surface.R *= -1
+                if (i + 1) == len(surfaces):
+                    nextSurface = Interface()
+                else:
+                    nextSurface = surfaces[i + 1]
+                surface.n = nextSurface.n
+                surface.L = nextSurface.L
+
+        return surfaces
     
     def __mul__(self, rightSide):
         """Operator overloading allowing easy-to-read matrix multiplication
