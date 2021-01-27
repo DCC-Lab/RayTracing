@@ -423,10 +423,7 @@ class ObjectiveGraphic(MatrixGroupGraphic):
                   (0, halfHeight)]
 
         if self.matrixGroup.isFlipped:
-            print("Flipped matrix graphic not implemented.")
-        #     trans = transforms.Affine2D().scale(-1).translate(tx=z + L, ty=0) + axes.transData
-        # else:
-        #     trans = transforms.Affine2D().translate(tx=z, ty=0) + axes.transData
+            points = [(-a + L, b) for a, b in points]
 
         components = [Polygon(points, lineStyle='--')]
 

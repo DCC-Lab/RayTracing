@@ -6,7 +6,16 @@ This code aims to provide a simple ray tracing module for calculating various pr
 
 It is not a package to do "Rendering in 3D with raytracing".
 
-The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. There are [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with only a few files, and only `matplotlib` as a dependent module.  **A tutorial article in SPIE J. Neurophotonics will be available soon, contact dccote@cervo.ulaval.ca if you want a preprint.**
+The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. As of January 21st, 2021, there is an extensive, freely accessible tutorial in Journal of Neurophotonics:
+
+> ["Tools and tutorial on practical ray tracing for microscopy"](https://doi.org/10.1117/1.NPh.8.1.010801) 
+>
+> by V. Pineau Noël*, S. Masoumi*, E. Parham*, G. Genest, L. Bégin, M.-A. Vigneault, D. C. Côté, 
+> Neurophotonics, 8(1), 010801 (2021). 
+> *Equal contributions.
+> Permalink: https://doi.org/10.1117/1.NPh.8.1.010801
+
+There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
 The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 

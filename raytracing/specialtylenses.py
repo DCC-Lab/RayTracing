@@ -149,7 +149,7 @@ class AchromatDoubletLens(MatrixGroup):
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
     @property
-    def surfaces(self) -> List[Interface]:
+    def forwardSurfaces(self) -> List[Interface]:
         return [SphericalInterface(R=self.R1, L=self.tc1, n=self.n1),
                 SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
                 SphericalInterface(R=self.R3)]
@@ -268,7 +268,7 @@ class SingletLens(MatrixGroup):
         return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
     @property
-    def surfaces(self) -> List[Interface]:
+    def forwardSurfaces(self) -> List[Interface]:
         return [SphericalInterface(R=self.R1, L=self.tc, n=self.n),
                 SphericalInterface(R=self.R2)]
 
@@ -347,7 +347,6 @@ reproduce the objective."
 
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
-        self.isFlipped = not self.isFlipped
 
         z = 0
         for element in self.elements:
