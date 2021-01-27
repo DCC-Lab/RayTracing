@@ -132,7 +132,7 @@ class Axicon(Matrix):
         raise TypeError("Cannot use Axicon with GaussianBeam, only with Ray")
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes
         """
         minThickness = - np.tan(self.alpha) * self.displayHalfHeight()
