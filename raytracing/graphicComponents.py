@@ -435,7 +435,8 @@ class MplLabel(Label):
         Stretched in the x-axis to give more free space to the labels."""
 
         displayBox = self.patch.get_tightbbox(figure.canvas.get_renderer())
-        dataBox = displayBox.inverse_transformed(axes.transData)
+        dataBox = displayBox.transformed(axes.transData.inverted())
+
         dataBox = dataBox.expanded(sw=stretch, sh=1)
         return dataBox
 
