@@ -468,6 +468,7 @@ class MatrixGroup(Matrix):
     def flipOrientation(self):
         """ Flip the orientation (forward-backward) of this group of elements.
         Each element is also flipped individually. """
+        self.isFlipped = not self.isFlipped
 
         allElements = self.elements
         allElements.reverse()

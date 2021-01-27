@@ -162,9 +162,27 @@ class Matrix(object):
         return self.A * self.D - self.B * self.C
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes """
         return []
+
+    @property
+    def surfaces(self):
+        surfaces = self.forwardSurfaces
+
+        if self.isFlipped:
+            surfaces.reverse()
+            for i, surface in enumerate(surfaces):
+                if type(surface) == SphericalInterface:
+                    surface.R *= -1
+                if (i + 1) == len(surfaces):
+                    nextSurface = Interface()
+                else:
+                    nextSurface = surfaces[i + 1]
+                surface.n = nextSurface.n
+                surface.L = nextSurface.L
+
+        return surfaces
     
     def __mul__(self, rightSide):
         """Operator overloading allowing easy-to-read matrix multiplication
@@ -1421,7 +1439,7 @@ class Lens(Matrix):
         self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
 
         For a thin lens, obviously the user does not worry about the details
@@ -1525,7 +1543,7 @@ in version 1.2.8 to maintain the sign convention", UserWarning)
                                            label=label)
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
         return [SphericalInterface(R=2/self.C)]
@@ -1667,7 +1685,7 @@ class DielectricInterface(Matrix):
                                                   label=label)
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
         return [SphericalInterface(R=self.R, n=self.n2)]
@@ -1748,7 +1766,7 @@ class ThickLens(Matrix):
                                         label=label)
 
     @property
-    def surfaces(self):
+    def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
         return [SphericalInterface(R=self.R1, n=self.n, L=self.L),
@@ -1859,7 +1877,7 @@ class DielectricSlab(ThickLens):
                                              label=label)
 
     @property
-    def surfaces(self) -> List[Interface]:
+    def forwardSurfaces(self) -> List[Interface]:
         """ A list of surfaces that represents the element for drawing purposes. """
         return [FlatInterface(L=self.L, n=self.n), FlatInterface()]
 
