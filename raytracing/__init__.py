@@ -14,37 +14,6 @@ defined. You may adjust the values to suit your needs in `ImagingPath()`.
 Create a `LaserPath()` to analyse gaussian beams using the complex radius
 of curvature q and the same matrices.
 
-The class hierarchy can be seen on http://webgraphviz.com with the
-following description:
-
-```
-digraph G {
-   rankdir="LR";
-
-    subgraph elements {
-        "Matrix" -> "Space"
-        "Matrix" -> "Lens"
-        "Matrix" -> "Aperture"
-        "Matrix" -> "ThickLens"
-        "Matrix" -> "CurvedMirror"
-        "Matrix" -> DielectricInterface
-        "Matrix" -> "MatrixGroup"
-        "ThickLens" -> "DielectricSlab"
-
-        "MatrixGroup" -> "AchromaticDoubletLens"
-        "AchromaticDoubletLens" -> "thorlabs.partNumber"
-        "AchromaticDoubletLens" -> "eo.partNumber"
-        "MatrixGroup" -> "Objective"
-        "Objective" -> "olympus.partNumber"
-    }
-
-    subgraph mathview {
-        "Matrix" -> "MatrixGroup"
-        "MatrixGroup" -> ImagingPath
-        "MatrixGroup" -> LaserPath
-    }
-}
-```
 """
 
 import math
@@ -86,6 +55,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
