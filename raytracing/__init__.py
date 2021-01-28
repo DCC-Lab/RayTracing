@@ -14,6 +14,7 @@ defined. You may adjust the values to suit your needs in `ImagingPath()`.
 Create a `LaserPath()` to analyse gaussian beams using the complex radius
 of curvature q and the same matrices.
 
+The class hierarchy can be obtained with `python -m raytracing --classes`
 """
 
 import math
