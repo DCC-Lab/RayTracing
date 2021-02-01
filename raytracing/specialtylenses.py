@@ -312,28 +312,30 @@ class Objective(MatrixGroup):
 
         self.f = f
         self.NA = NA
-        self.magnification = magnification
-        self.fieldNumber = fieldNumber
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
-        self.frontAperture = 2 * (NA * workingDistance)
+
+        self.magnification = magnification
+        self.fieldNumber = fieldNumber
+
+        self.frontAperture = 2 * (self.NA * self.workingDistance)
         self.isFlipped = False
         self.url = url
 
-        elements = [Aperture(diameter=backAperture, label="backAperture"),
-                    Space(d=f),
-                    Matrix(1, 0, 0, 1, physicalLength=focusToFocusLength - 2 * f),
-                    Lens(f=f),
-                    Space(d=f - workingDistance),
+        elements = [Aperture(diameter=self.backAperture, label="backAperture"),
+                    Space(d=self.f),
+                    Matrix(1, 0, 0, 1, physicalLength=self.focusToFocusLength - 2 * self.f),
+                    Lens(f=self.f),
+                    Space(d=self.f - self.workingDistance),
                     Aperture(diameter=self.frontAperture, label="frontAperture"),
-                    Space(d=workingDistance)]
+                    Space(d=self.workingDistance)]
 
         super(Objective, self).__init__(elements=elements, label=label)
 
         self.frontVertex = 0
-        self.backVertex = focusToFocusLength - workingDistance
-        self.apertureDiameter = backAperture
+        self.backVertex = self.focusToFocusLength - self.workingDistance
+        self.apertureDiameter = self.backAperture
 
         if not Objective.warningDisplayed:
             msg = "Objective class not fully tested. \
