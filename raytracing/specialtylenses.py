@@ -296,7 +296,7 @@ class Objective(MatrixGroup):
     """
     warningDisplayed = False
 
-    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification, fieldNumber, url=None, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification=None, fieldNumber=None, url=None, label=''):
         """ General microscope objective, approximately correct.
 
         We model the objective as an ideal lens with back focal point at the entrance
@@ -343,7 +343,11 @@ reproduce the objective."
             Objective.warningDisplayed = True
 
     def maximumOpticalInvariant(self):
-        return (self.fieldNumber/2)/self.magnification * self.NA
+        if self.magnification is None or self.fieldNumber is None:
+            raise AttributeError("Cannot compute the maximum optical invariant without fieldNumber "
+                                 "and magnification defined.")
+        else:
+            return (self.fieldNumber/2)/self.magnification * self.NA
 
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
