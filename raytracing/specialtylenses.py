@@ -296,7 +296,7 @@ class Objective(MatrixGroup):
     """
     warningDisplayed = False
 
-    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification, fieldNumber, url=None, label=''):
+    def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification=None, fieldNumber=None, url=None, label=''):
         """ General microscope objective, approximately correct.
 
         We model the objective as an ideal lens with back focal point at the entrance
@@ -312,28 +312,30 @@ class Objective(MatrixGroup):
 
         self.f = f
         self.NA = NA
-        self.magnification = magnification
-        self.fieldNumber = fieldNumber
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
         self.workingDistance = workingDistance
-        self.frontAperture = 2 * (NA * workingDistance)
+
+        self.magnification = magnification
+        self.fieldNumber = fieldNumber
+
+        self.frontAperture = 2 * (self.NA * self.workingDistance)
         self.isFlipped = False
         self.url = url
 
-        elements = [Aperture(diameter=backAperture, label="backAperture"),
-                    Space(d=f),
-                    Matrix(1, 0, 0, 1, physicalLength=focusToFocusLength - 2 * f),
-                    Lens(f=f),
-                    Space(d=f - workingDistance),
+        elements = [Aperture(diameter=self.backAperture, label="backAperture"),
+                    Space(d=self.f),
+                    Matrix(1, 0, 0, 1, physicalLength=self.focusToFocusLength - 2 * self.f),
+                    Lens(f=self.f),
+                    Space(d=self.f - self.workingDistance),
                     Aperture(diameter=self.frontAperture, label="frontAperture"),
-                    Space(d=workingDistance)]
+                    Space(d=self.workingDistance)]
 
         super(Objective, self).__init__(elements=elements, label=label)
 
         self.frontVertex = 0
-        self.backVertex = focusToFocusLength - workingDistance
-        self.apertureDiameter = backAperture
+        self.backVertex = self.focusToFocusLength - self.workingDistance
+        self.apertureDiameter = self.backAperture
 
         if not Objective.warningDisplayed:
             msg = "Objective class not fully tested. \
@@ -343,7 +345,11 @@ reproduce the objective."
             Objective.warningDisplayed = True
 
     def maximumOpticalInvariant(self):
-        return (self.fieldNumber/2)/self.magnification * self.NA
+        if self.magnification is None or self.fieldNumber is None:
+            raise AttributeError("Cannot compute the maximum optical invariant without fieldNumber "
+                                 "and magnification defined.")
+        else:
+            return (self.fieldNumber/2)/self.magnification * self.NA
 
     def flipOrientation(self):
         super(Objective, self).flipOrientation()
