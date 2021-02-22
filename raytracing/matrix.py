@@ -12,6 +12,10 @@ import warnings
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
 
+class CardinalPoint(NamedTuple):
+    z1: float = None
+    z2: float = None
+
 class FocalLengths(NamedTuple):
     f1: float = None
     f2: float = None
@@ -23,6 +27,10 @@ class PrincipalPlanes(NamedTuple):
 class Magnification(NamedTuple):
     transverse: float = None
     angular: float = None
+
+class Conjugate(NamedTuple):
+    d: float = None
+    transferMatrix:'Matrix' = None
 
 
 def warningLineFormat(message, category, filename, lineno, line=None):
@@ -1154,9 +1162,9 @@ class Matrix(object):
         if self.hasPower:
             (f1, f2) = self.focalDistances()
             (p1, p2) = self.principalPlanePositions(z)
-            return (p1 - f1, p2 + f2)
+            return CardinalPoint(p1 - f1, p2 + f2)
         else:
-            return (None, None)
+            return CardinalPoint(None, None)
 
     def principalPlanePositions(self, z):
         """ Positions of the input and output principal planes.
@@ -1240,7 +1248,7 @@ class Matrix(object):
             distance = -self.B / self.D
             conjugateMatrix = Space(d=distance, n=self.backIndex) * self
 
-        return (distance, conjugateMatrix)
+        return Conjugate(d=distance, transferMatrix=conjugateMatrix)
 
     def backwardConjugate(self):
         r""" With an image at the back edge of the element,
@@ -1289,7 +1297,7 @@ class Matrix(object):
         # This element is A*d + B, A is precisely 0, d is large, therefore B' == 0.
         conjugateMatrix.B = 0 
 
-        return (distance, conjugateMatrix)
+        return Conjugate(d=distance, transferMatrix=conjugateMatrix)
 
     def magnification(self):
         """The magnification of the element
@@ -1551,8 +1559,6 @@ class CurvedMirror(Matrix):
     """
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
-        warnings.warn("The sign of the radius of curvature in CurvedMirror was changed \
-in version 1.2.8 to maintain the sign convention", UserWarning)
         super(CurvedMirror, self).__init__(A=1, B=0, C=2 / float(R), D=1,
                                            physicalLength=0,
                                            apertureDiameter=diameter,
