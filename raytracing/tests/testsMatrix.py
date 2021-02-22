@@ -427,6 +427,22 @@ class TestMatrix(envtest.RaytracingTestCase):
         focalLengths = (-1 / 3, -1 / 3)
         self.assertTupleEqual(m.effectiveFocalLengths(), focalLengths)
 
+    def testEffectiveFocalIsNamedTuple(self):
+        m = Matrix(A=1, B=0, C=3, D=1)
+        focalLengths = (-1 / 3, -1 / 3)
+
+        actualFocalLengths = m.effectiveFocalLengths() 
+        self.assertEqual(actualFocalLengths.f1, focalLengths[0])
+        self.assertEqual(actualFocalLengths.f2, focalLengths[0])
+
+    def testEffectiveFocalIsNamedTuple(self):
+        m = Matrix(A=1, B=0, C=3, D=1)
+
+        focalLengths = FocalLengths(f1=-1 / 3, f2=-1 / 3)
+        self.assertEqual(focalLengths.f1, -1/3)
+        self.assertEqual(focalLengths.f2, -1/3)
+
+
     def testEffectiveFocalLengthsNoPower(self):
         m = Matrix(1, 0, 0, 1)
         focalLengths = (inf, inf)
@@ -533,6 +549,12 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testMagnificationImaging(self):
         m = Matrix()
         self.assertTupleEqual(m.magnification(), (1, 1))
+
+    def testMagnificationNamedTupleImaging(self):
+        m = Matrix()
+        mag = m.magnification()
+        self.assertAlmostEqual(mag.transverse, 1)
+        self.assertAlmostEqual(mag.angular, 1)
 
     def testMagnificationNotImaging(self):
         m = Matrix(B=1)
