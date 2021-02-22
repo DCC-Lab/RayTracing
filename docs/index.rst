@@ -10,7 +10,7 @@ properties of optical paths (object, image, aperture stops, field stops). It
 makes use of ABCD matrices and does not consider aberrations (spherical or
 chromatic). Since it uses the ABCD formalism (or Ray matrices, or Gauss
 matrices) it can perform tracing of rays and gaussian laser beams.
-This package is developed by `DCClab <http://dcclab.ca>`_ members.  The many contributions cannot be described in all their details, but a list is provided here in no particular order:
+This package is developed by `DCClab <http://www.dcclab.ca>`_ members.  The many contributions cannot be described in all their details, but a list is provided here in no particular order:
 
 * Elahe Parham: Documentation and examples writing
 * Shadi Masoumi: Tutorials, Examples and usage
