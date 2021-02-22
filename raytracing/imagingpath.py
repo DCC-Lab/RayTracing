@@ -7,7 +7,7 @@ import numpy as np
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
 
-class PrincipalRays(NamedTuple):
+class MarginalRays(NamedTuple):
     up: Ray = None
     down: Ray = None
 
@@ -283,14 +283,14 @@ class ImagingPath(MatrixGroup):
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         if stopPosition is None:
-            return PrincipalRays(None, None)  # No aperture stop -> no marginal rays
+            return MarginalRays(None, None)  # No aperture stop -> no marginal rays
 
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
         if transferMatrixToApertureStop.isImaging:
-            return PrincipalRays(None, None)
+            return MarginalRays(None, None)
 
         thetaUp = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
@@ -298,7 +298,7 @@ class ImagingPath(MatrixGroup):
         if thetaDown > thetaUp:
             (thetaUp, thetaDown) = (thetaDown, thetaUp)
 
-        return PrincipalRays(Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown))
+        return MarginalRays(up=Ray(y=y, theta=thetaUp), down=Ray(y=y, theta=thetaDown))
 
     def axialRay(self):
         """This function returns the axial ray of the system, also known as
