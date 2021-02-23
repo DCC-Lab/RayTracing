@@ -15,6 +15,7 @@ class Stop(NamedTuple):
     z: float = 0
     diameter: float = None
 
+
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
     the combination of Matrix() or MatrixGroup() to be used 
