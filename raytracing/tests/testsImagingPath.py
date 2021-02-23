@@ -3,12 +3,18 @@ from raytracing import *
 
 inf = float("+inf")
 
+
+
 class TestImagingPath(envtest.RaytracingTestCase):
     def testImagingPath(self):
         path = ImagingPath()
         self.assertIsNotNone(path)
         self.assertListEqual(path.elements, [])
-        self.assertEqual(path.objectHeight, 10)
+        self.assertEqual(path._objectHeight, 10)
+        self.assertEqual(path.objectPosition, 0)
+        self.assertEqual(path.fanAngle, 0.1)
+        self.assertEqual(path.fanNumber, 9)
+        self.assertEqual(path.rayNumber, 3)
         self.assertEqual(path.precision, 1e-6)
         self.assertEqual(path.maxHeight, 10000.0)
         self.assertTrue(path.showImages)
