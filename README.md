@@ -15,11 +15,13 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 > *Equal contributions.
 > Permalink: https://doi.org/10.1117/1.NPh.8.1.010801
 
-There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
+The tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
 The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
-If you want to perform calculations with coherent laser beams, then you use `GaussianBeam` and `LaserPath`. Everything is essentially the same, except that the formalism does not allow for the gaussian beam to be "blocked", hence any calculation of stops with aperture are not available in `LaserPath`.
+We have tried to separate the calculation code (i.e. the matrices and subclasses) from the drawing code (figures and graphics). One can use the calculation code without any graphics calls.
+
+If you want to perform calculations with coherent laser beams, then you use `GaussianBeam` and `LaserPath`. Everything is essentially the same, except that the formalism does not allow for the gaussian beam to be "blocked", hence any calculation of stops with aperture are not available in `LaserPath`. That part of the code is less developed, but it is nevertheless available.
 
 ## Installing and upgrading
 

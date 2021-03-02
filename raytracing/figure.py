@@ -675,7 +675,8 @@ class MplFigure(Figure):
 
     def initVisibilityCheckBoxes(self):
         visibility = self.visibility
-        visibility.pop('Elements')
+        if 'Elements' in visibility.keys():
+            visibility.pop('Elements')
 
         subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
         self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())

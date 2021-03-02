@@ -4,6 +4,17 @@ from .matrixgroup import *
 from .ray import *
 import numpy as np
 
+""" We start with general, useful namedtuples to simplify management of values """
+from typing import NamedTuple
+
+class MarginalRays(NamedTuple):
+    up: Ray = None
+    down: Ray = None
+
+class Stop(NamedTuple):
+    z: float = 0
+    diameter: float = None
+
 
 class ImagingPath(MatrixGroup):
     """ImagingPath: the main class of the module, allowing
@@ -23,14 +34,14 @@ class ImagingPath(MatrixGroup):
 
     Attributes
     ----------
-    _objectHeight : float
+    objectHeight : float
         The full height of object can be defined using this attribute (default=10.0)
     objectPosition : float
         This attribute defines the position of the object which must be defined zero for now. (default=0)
     fanAngle : float
         This value indicates full fan angle in radians for rays (default=0.1)
     fanNumber : int
-        This value indicates the number of ray(s) in fan (default=9)
+        This value indicates the number of fans from the object (default=3)
     precision : float
         The accuracy to be considered when calculating the field stop (default=0.001)
     maxHeight : float
@@ -79,8 +90,8 @@ class ImagingPath(MatrixGroup):
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
         self.fanAngle = 0.1  # full fan angle for rays
-        self.fanNumber = 9  # number of rays in fan
-        self.rayNumber = 3  # number of points on object
+        self.fanNumber = 3  # number of points on object
+        self.rayNumber = 3  # number of rays in fan
 
         # Constants when calculating field stop
         self.precision = 0.000001
@@ -273,14 +284,14 @@ class ImagingPath(MatrixGroup):
         """
         (stopPosition, stopDiameter) = self.apertureStop()
         if stopPosition is None:
-            return None, None  # No aperture stop -> no marginal rays
+            return MarginalRays(None, None)  # No aperture stop -> no marginal rays
 
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
         if transferMatrixToApertureStop.isImaging:
-            return None, None
+            return MarginalRays(None, None)
 
         thetaUp = (stopDiameter / 2.0 - A * y) / B
         thetaDown = (-stopDiameter / 2.0 - A * y) / B
@@ -288,7 +299,7 @@ class ImagingPath(MatrixGroup):
         if thetaDown > thetaUp:
             (thetaUp, thetaDown) = (thetaDown, thetaUp)
 
-        return [Ray(y=y, theta=thetaUp), Ray(y=y, theta=thetaDown)]
+        return MarginalRays(up=Ray(y=y, theta=thetaUp), down=Ray(y=y, theta=thetaDown))
 
     def axialRay(self):
         """This function returns the axial ray of the system, also known as
@@ -428,7 +439,7 @@ class ImagingPath(MatrixGroup):
         ratio is maximum is the aperture stop.
         """
         if not self.hasFiniteApertureDiameter():
-            return (None, float('+Inf'))
+            return Stop(z=None, diameter=float('+Inf'))
         else:
             ray = Ray(y=0, theta=0.1)  # Any ray angle will do
             rayTrace = self.trace(ray)
@@ -444,7 +455,7 @@ class ImagingPath(MatrixGroup):
                     apertureStopDiameter = ray.apertureDiameter
                     maxRatio = ratio
 
-            return (apertureStopPosition, apertureStopDiameter)
+            return Stop(z=apertureStopPosition, diameter=apertureStopDiameter)
 
     def entrancePupil(self):
         """The entrance pupil is the image of the aperture stop
@@ -483,15 +494,15 @@ class ImagingPath(MatrixGroup):
             transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
             (pupilPosition, matrixToPupil) = transferMatrixToApertureStop.backwardConjugate()
             if matrixToPupil is None:
-                return None, None
+                return Stop(None, None)
             else:
                 (Mt, Ma) = matrixToPupil.magnification()
                 if Mt != 0:
-                    return (-pupilPosition, stopDiameter / abs(Mt))
+                    return Stop(-pupilPosition, stopDiameter / abs(Mt))
                 else:
-                    return (-pupilPosition, float("+inf"))
+                    return Stop(-pupilPosition, float("+inf"))
         else:
-            return (None, None)
+            return Stop(None, None)
 
     def fieldStop(self):
         """ The field stop is the aperture that limits the image size (or field of view)
@@ -580,7 +591,7 @@ class ImagingPath(MatrixGroup):
                 y += dy
                 wasBlocked = outputChiefRay.isBlocked
                 if abs(y) > self.maxHeight and not wasBlocked:
-                    return (fieldStopPosition, fieldStopDiameter)
+                    return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
 
             for ray in chiefRayTrace:
                 if ray.isBlocked:
@@ -588,7 +599,7 @@ class ImagingPath(MatrixGroup):
                     fieldStopDiameter = ray.apertureDiameter
                     break
 
-        return fieldStopPosition, fieldStopDiameter
+        return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
 
     def fieldOfView(self):
         """The field of view is the length visible before the chief
@@ -912,7 +923,7 @@ class ImagingPath(MatrixGroup):
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
             defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
-                                       halfAngle=self.fanAngle, T=self.rayNumber)
+                                       halfAngle=self.fanAngle, T=self.rayNumber, H=self.fanNumber)
             raysList.append(defaultObject)
         else:
             self.figure.designParams['showObjectImage'] = True
