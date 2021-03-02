@@ -1162,9 +1162,9 @@ class Matrix(object):
         if self.hasPower:
             (f1, f2) = self.focalDistances()
             (p1, p2) = self.principalPlanePositions(z)
-            return CardinalPoint(p1 - f1, p2 + f2)
+            return CardinalPoint(z1=p1 - f1, z2=p2 + f2)
         else:
-            return CardinalPoint(None, None)
+            return CardinalPoint(z1=None, z2=None)
 
     def principalPlanePositions(self, z):
         """ Positions of the input and output principal planes.
