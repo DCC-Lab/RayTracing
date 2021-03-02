@@ -60,6 +60,14 @@ class TestImagingPath(envtest.RaytracingTestCase):
         fourF = ImagingPath(elements)
         self.assertTupleEqual(fourF.apertureStop(), (40, 700))
 
+    def testApertureStopNamedTuple(self):
+        f1 = 10
+        f2 = 20
+        elements = [Space(f1), Lens(f1, 1000), Space(f1 + f2), Lens(f2, 700), Space(f2)]
+        fourF = ImagingPath(elements)
+        self.assertEqual(fourF.apertureStop().diameter, 700)
+        self.assertEqual(fourF.apertureStop().z, 40)
+
     def testEntrancePupilInfiniteApertureDiam(self):
         space = Space(2)
         tLens = ThickLens(1, 10, -9, 2)
@@ -120,6 +128,15 @@ class TestImagingPath(envtest.RaytracingTestCase):
         lens2 = Lens(10, 50)
         path = ImagingPath([space, lens, space2, lens2, space])
         self.assertTupleEqual(path.fieldStop(), (30, 50))
+
+    def testFieldStopNamedTuple(self):
+        space = Space(10)
+        lens = Lens(10, 25)
+        space2 = Space(20)
+        lens2 = Lens(10, 50)
+        path = ImagingPath([space, lens, space2, lens2, space])
+        self.assertEqual(path.fieldStop().z, 30)
+        self.assertEqual(path.fieldStop().diameter, 50)
 
     def testEntrancePupilNoBackwardConjugate(self):
         path = ImagingPath()
@@ -230,6 +247,12 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertEqual(ray2.y, 10)
         self.assertEqual(ray2.theta, -1.5)
 
+    def testMarginalRays(self):
+        path = ImagingPath(System2f(10, 10))
+        rays = path.marginalRays(10)
+        self.assertEqual(rays.up, rays[0])
+        self.assertEqual(rays.down, rays[1])
+
     def testMarginalRaysThetaUpAndDownFlipped(self):
         path = ImagingPath(System2f(5))
         tl = ThickLens(1.1, 0.1, -0.1, 10)
@@ -309,7 +332,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path = ImagingPath(System2f(10, 10))
         with self.assertRaises(ValueError):
             path.chiefRay()
-
 
 if __name__ == '__main__':
     envtest.main()
