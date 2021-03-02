@@ -439,7 +439,7 @@ class ImagingPath(MatrixGroup):
         ratio is maximum is the aperture stop.
         """
         if not self.hasFiniteApertureDiameter():
-            return (None, float('+Inf'))
+            return Stop(z=None, diameter=float('+Inf'))
         else:
             ray = Ray(y=0, theta=0.1)  # Any ray angle will do
             rayTrace = self.trace(ray)
@@ -455,7 +455,7 @@ class ImagingPath(MatrixGroup):
                     apertureStopDiameter = ray.apertureDiameter
                     maxRatio = ratio
 
-            return (apertureStopPosition, apertureStopDiameter)
+            return Stop(z=apertureStopPosition, diameter=apertureStopDiameter)
 
     def entrancePupil(self):
         """The entrance pupil is the image of the aperture stop
@@ -591,7 +591,7 @@ class ImagingPath(MatrixGroup):
                 y += dy
                 wasBlocked = outputChiefRay.isBlocked
                 if abs(y) > self.maxHeight and not wasBlocked:
-                    return Stop(fieldStopPosition, fieldStopDiameter)
+                    return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
 
             for ray in chiefRayTrace:
                 if ray.isBlocked:
@@ -599,7 +599,7 @@ class ImagingPath(MatrixGroup):
                     fieldStopDiameter = ray.apertureDiameter
                     break
 
-        return Stop(fieldStopPosition, fieldStopDiameter)
+        return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
 
     def fieldOfView(self):
         """The field of view is the length visible before the chief
