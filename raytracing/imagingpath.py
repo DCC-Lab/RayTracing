@@ -30,7 +30,7 @@ class ImagingPath(MatrixGroup):
     fanAngle : float
         This value indicates full fan angle in radians for rays (default=0.1)
     fanNumber : int
-        This value indicates the number of ray(s) in fan (default=9)
+        This value indicates the number of fans from the object (default=3)
     precision : float
         The accuracy to be considered when calculating the field stop (default=0.001)
     maxHeight : float
@@ -79,8 +79,8 @@ class ImagingPath(MatrixGroup):
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
         self.fanAngle = 0.1  # full fan angle for rays
-        self.fanNumber = 9  # number of rays in fan
-        self.rayNumber = 3  # number of points on object
+        self.fanNumber = 3  # number of points on object
+        self.rayNumber = 3  # number of rays in fan
 
         # Constants when calculating field stop
         self.precision = 0.000001
@@ -912,7 +912,7 @@ class ImagingPath(MatrixGroup):
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
             defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
-                                       halfAngle=self.fanAngle, T=self.rayNumber)
+                                       halfAngle=self.fanAngle, T=self.rayNumber, H=self.fanNumber)
             raysList.append(defaultObject)
         else:
             self.figure.designParams['showObjectImage'] = True
