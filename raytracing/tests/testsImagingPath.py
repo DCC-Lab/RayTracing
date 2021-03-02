@@ -13,7 +13,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertEqual(path._objectHeight, 10)
         self.assertEqual(path.objectPosition, 0)
         self.assertEqual(path.fanAngle, 0.1)
-        self.assertEqual(path.fanNumber, 9)
+        self.assertEqual(path.fanNumber, 3)
         self.assertEqual(path.rayNumber, 3)
         self.assertEqual(path.precision, 1e-6)
         self.assertEqual(path.maxHeight, 10000.0)
