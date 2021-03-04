@@ -22,6 +22,18 @@
     {%- endif %}
     {%- endfor %}
 
+.. rubric:: Inherited Methods
+
+.. autosummary::
+    :template: autoFunction.rst
+    :toctree: methods/{{ objname }}
+
+    {% for item in methods %}
+    {%- if item in inherited_members %}
+        ~{{ name }}.{{ item }}
+    {%- endif %}
+    {%- endfor %}
+
 {% endif %}
 {% endblock %}
 
