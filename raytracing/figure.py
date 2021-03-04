@@ -118,8 +118,9 @@ class Figure:
             if imageSize != float('+Inf'):
                 note1 += " Image size: {0:.2f}".format(imageSize)
             else:
-                warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
-                self.designParams['limitObjectToFieldOfView'] = False
+                if self.designParams['limitObjectToFieldOfView']:
+                    warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True.")
+                    self.designParams['limitObjectToFieldOfView'] = False
 
         if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
