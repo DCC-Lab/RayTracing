@@ -923,7 +923,7 @@ class ImagingPath(MatrixGroup):
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
             if self.fanAngle is None:
-                self.fanAngle = np.tan(self.figure.displayRange / 2 / self.L)
+                self.fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
             defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
                                        halfAngle=self.fanAngle, T=self.rayNumber, H=self.fanNumber)
             raysList.append(defaultObject)
@@ -974,7 +974,7 @@ class ImagingPath(MatrixGroup):
 
         self._objectHeight = diameter
         if fanAngle is None:
-            fanAngle = np.tan(self.figure.displayRange / 2 / self.L)
+            fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
         rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber, z=z)
 
         self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
