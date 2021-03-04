@@ -9,6 +9,8 @@ or radians with angle*degPerRad or angle*radPerDeg """
 degPerRad = 180.0 / math.pi
 radPerDeg = math.pi / 180.0
 
+warnings.simplefilter("default", DeprecationWarning)
+
 
 def isAlmostZero(value, epsilon=1e-3):
     return abs(value) < epsilon
