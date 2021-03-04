@@ -9,6 +9,29 @@ import sys
 import math
 import warnings
 
+""" We start with general, useful namedtuples to simplify management of values """
+from typing import NamedTuple
+
+class CardinalPoint(NamedTuple):
+    z1: float = None
+    z2: float = None
+
+class FocalLengths(NamedTuple):
+    f1: float = None
+    f2: float = None
+
+class PrincipalPlanes(NamedTuple):
+    z1: float = None
+    z2: float = None
+
+class Magnification(NamedTuple):
+    transverse: float = None
+    angular: float = None
+
+class Conjugate(NamedTuple):
+    d: float = None
+    transferMatrix:'Matrix' = None
+
 
 def warningLineFormat(message, category, filename, lineno, line=None):
     return '\n%s:%s\n%s:%s\n' % (filename, lineno, category.__name__, message)
@@ -986,6 +1009,7 @@ class Matrix(object):
         focal distances: (5.0, 5.0)
 
         """
+
         if self.hasPower:
             focalLength2 = -1.0 / self.C  # left (n1) to right (n2)
             focalLength1 = -(self.frontIndex / self.backIndex) / self.C  # right (n2) to left (n2)
@@ -993,7 +1017,7 @@ class Matrix(object):
             focalLength1 = float("+Inf")
             focalLength2 = float("+Inf")
 
-        return (focalLength1, focalLength2)
+        return FocalLengths(f1=focalLength1, f2=focalLength2)
 
     def backFocalLength(self):
         """ The focal lengths measured from the back vertex.
@@ -1138,9 +1162,9 @@ class Matrix(object):
         if self.hasPower:
             (f1, f2) = self.focalDistances()
             (p1, p2) = self.principalPlanePositions(z)
-            return (p1 - f1, p2 + f2)
+            return CardinalPoint(z1=p1 - f1, z2=p2 + f2)
         else:
-            return (None, None)
+            return CardinalPoint(z1=None, z2=None)
 
     def principalPlanePositions(self, z):
         """ Positions of the input and output principal planes.
@@ -1176,7 +1200,7 @@ class Matrix(object):
             p1 = None
             p2 = None
 
-        return (p1, p2)
+        return PrincipalPlanes(z1=p1, z2=p2)
 
     def forwardConjugate(self):
         r""" With an object at the front edge of the element, where
@@ -1224,7 +1248,7 @@ class Matrix(object):
             distance = -self.B / self.D
             conjugateMatrix = Space(d=distance, n=self.backIndex) * self
 
-        return (distance, conjugateMatrix)
+        return Conjugate(d=distance, transferMatrix=conjugateMatrix)
 
     def backwardConjugate(self):
         r""" With an image at the back edge of the element,
@@ -1273,16 +1297,18 @@ class Matrix(object):
         # This element is A*d + B, A is precisely 0, d is large, therefore B' == 0.
         conjugateMatrix.B = 0 
 
-        return (distance, conjugateMatrix)
+        return Conjugate(d=distance, transferMatrix=conjugateMatrix)
 
     def magnification(self):
         """The magnification of the element
 
         Returns
         -------
-        magnification : array
+        magnification : namedtuple (transverse, angular)
+            You can access via indexes or .transverse and .angular
             index [0] output object is A in the matrix and
             index [1] is D in the matrix.
+
 
         Examples
         --------
@@ -1304,9 +1330,9 @@ class Matrix(object):
         """
 
         if self.isImaging:
-            return (self.A, self.D)
+            return Magnification(self.A, self.D)
         else:
-            return (None, None)
+            return Magnification(None, None)
 
     def flipOrientation(self):
         """We flip the element around (as in, we turn a lens around front-back).
@@ -1533,8 +1559,6 @@ class CurvedMirror(Matrix):
     """
 
     def __init__(self, R, diameter=float('+Inf'), label=''):
-        warnings.warn("The sign of the radius of curvature in CurvedMirror was changed \
-in version 1.2.8 to maintain the sign convention", UserWarning)
         super(CurvedMirror, self).__init__(A=1, B=0, C=2 / float(R), D=1,
                                            physicalLength=0,
                                            apertureDiameter=diameter,
