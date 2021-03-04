@@ -59,7 +59,14 @@ def printClassHierarchy(aClass):
     printAllChilds(aClass)
     print("}")
 
+
 def printModuleClasses(moduleName):
     for name, obj in inspect.getmembers(sys.modules[moduleName]):
         if inspect.isclass(obj) and obj.__module__.startswith(moduleName):
             print(obj)
+
+
+def warnDeprecatedObjectReferences():
+    warnings.warn("Object references (fanAngle, fanNumber, rayNumber) will be removed from ImagingPath in future "
+                  "versions. Create an ObjectRays(...) instead and provide it to the display "
+                  "with ImagingPath.display(rays=...)", category=DeprecationWarning)

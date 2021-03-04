@@ -78,9 +78,9 @@ class ImagingPath(MatrixGroup):
 
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
-        self.fanAngle = 0.1  # full fan angle for rays
-        self.fanNumber = 9  # number of rays in fan
-        self.rayNumber = 3  # number of points on object
+        self._fanAngle = 0.1  # full fan angle for rays
+        self._fanNumber = 9  # number of rays in fan
+        self._rayNumber = 3  # number of points on object
 
         # Constants when calculating field stop
         self.precision = 0.000001
@@ -112,6 +112,33 @@ class ImagingPath(MatrixGroup):
             raise ValueError("The object height can't be negative.")
         self._objectHeight = objectHeight
         self.figure.designParams['limitObjectToFieldOfView'] = False
+
+    @property
+    def fanAngle(self):
+        return self._fanAngle
+
+    @fanAngle.setter
+    def fanAngle(self, value):
+        warnDeprecatedObjectReferences()
+        self._fanAngle = value
+
+    @property
+    def fanNumber(self):
+        return self._fanNumber
+
+    @fanNumber.setter
+    def fanNumber(self, value):
+        warnDeprecatedObjectReferences()
+        self._fanNumber = value
+
+    @property
+    def rayNumber(self):
+        return self._rayNumber
+
+    @rayNumber.setter
+    def rayNumber(self, value):
+        warnDeprecatedObjectReferences()
+        self._rayNumber = value
 
     def chiefRay(self, y=None):
         r"""This function returns the chief ray for a height y at object.
