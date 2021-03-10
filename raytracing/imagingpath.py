@@ -916,10 +916,11 @@ class ImagingPath(MatrixGroup):
             if not self.figure.designParams['onlyPrincipalAndAxialRays']:
                 self.figure.designParams['showFOV'] = False
             else:
-                warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+                warnings.warn('No rays were provided for the display. '
+                              'Using principal and axial rays.', category=Warning)
                 if self.principalRay() is None and self.axialRay() is None:
                     warnings.warn('Principal and axial rays are not defined for this system. '
-                                  'Using default ObjectRays.')
+                                  'Using default ObjectRays.', category=Warning)
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
             defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
