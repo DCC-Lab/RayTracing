@@ -89,9 +89,9 @@ class ImagingPath(MatrixGroup):
 
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
-        self._fanAngle = 0.1  # full fan angle for rays
-        self._fanNumber = 3  # number of rays in fan
-        self._rayNumber = 3  # number of points on object
+        self.fanAngle = None  # full fan angle for rays
+        self.fanNumber = 3  # number of points on object
+        self.rayNumber = 3  # number of rays in fan
 
         # Constants when calculating field stop
         self.precision = 0.000001
@@ -943,12 +943,15 @@ class ImagingPath(MatrixGroup):
             if not self.figure.designParams['onlyPrincipalAndAxialRays']:
                 self.figure.designParams['showFOV'] = False
             else:
-                warnings.warn('No rays were provided for the display. Using principal and axial rays.')
+                warnings.warn('No rays were provided for the display. '
+                              'Using principal and axial rays.', category=Warning)
                 if self.principalRay() is None and self.axialRay() is None:
                     warnings.warn('Principal and axial rays are not defined for this system. '
-                                  'Using default ObjectRays.')
+                                  'Using default ObjectRays.', category=Warning)
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
+            if self.fanAngle is None:
+                self.fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
             defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
                                        halfAngle=self.fanAngle, T=self.rayNumber, H=self.fanNumber)
             raysList.append(defaultObject)
@@ -984,7 +987,7 @@ class ImagingPath(MatrixGroup):
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
                      interactive=False, filePath=filePath)
 
-    def displayWithObject(self, diameter, z=0, fanAngle=0.1, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+    def displayWithObject(self, diameter, z=0, fanAngle=None, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -998,6 +1001,8 @@ class ImagingPath(MatrixGroup):
         """
 
         self._objectHeight = diameter
+        if fanAngle is None:
+            fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
         rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber, z=z)
 
         self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
