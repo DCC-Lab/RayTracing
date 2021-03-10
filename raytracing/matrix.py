@@ -861,20 +861,24 @@ class Matrix(object):
         the array in #processes different lists.
         """
 
-        if processes is None:
-            processes = multiprocessing.cpu_count()
+        try:
+            if processes is None:
+                processes = multiprocessing.cpu_count()
 
-        theExplicitList = list(inputRays)
-        manyInputRays = [(theExplicitList[i::processes], progress) for i in range(processes)]
+            theExplicitList = list(inputRays)
+            manyInputRays = [(theExplicitList[i::processes], progress) for i in range(processes)]
 
-        with multiprocessing.Pool(processes=processes) as pool:
-            outputRays = pool.starmap(self.traceManyThrough, manyInputRays)
+            with multiprocessing.Pool(processes=processes) as pool:
+                outputRays = pool.starmap(self.traceManyThrough, manyInputRays)
 
-        outputRaysList = []
-        for rays in outputRays:
-            outputRaysList += rays.rays
+            outputRaysList = []
+            for rays in outputRays:
+                outputRaysList += rays.rays
 
-        return Rays(rays=outputRaysList)
+            return Rays(rays=outputRaysList)
+        except:
+            warnings.warn("Multiprocessing failed. Falling back to slower code.", UserWarning)
+            return self.traceManyThrough(inputRays=inputRays, progress=progress)
 
     def profileFromRayTraces(self, rayTraces, z=float("+inf")):
         outputRays = Rays()
