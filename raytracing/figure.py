@@ -87,7 +87,7 @@ class Figure:
             if style in self.styles.keys():
                 self.designParams = self.styles[style]
             else:
-                raise ValueError("Available styles are : {}".format(self.styles.keys()))
+                raise ValueError("Available styles are : {0}".format(self.styles.keys()))
 
         newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
                            'imageColor': imageColor, 'objectColor': objectColor,
@@ -112,7 +112,7 @@ class Figure:
                 note1 = "FOV: {0:.2f}".format(self.path.objectHeight)
             else:
                 warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True. The object height is "
-                              "instead set to the default value of {}.".format(self.path.objectHeight),
+                              "instead set to the default value of {0:.1f}.".format(self.path.objectHeight),
                               category=Warning)
                 self.designParams['limitObjectToFieldOfView'] = False
 
@@ -122,7 +122,7 @@ class Figure:
             else:
                 if self.designParams['limitObjectToFieldOfView']:
                     warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True. The object height is "
-                                  "instead set to the default value of {}.".format(self.path.objectHeight),
+                                  "instead set to the default value of {0:.1f}.".format(self.path.objectHeight),
                                   category=Warning)
                     self.designParams['limitObjectToFieldOfView'] = False
 
@@ -193,7 +193,7 @@ class Figure:
         for rays in self.raysList:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                objectKey = 'Object/Image (z={})'.format(rays.z) if rays.z != 0 else 'Object/Image'
+                objectKey = 'Object/Image (z={0:.2f})'.format(rays.z) if rays.z != 0 else 'Object/Image'
                 color = 'b' if rays.color is None else rays.color
                 self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z, color=color, label=rays.label)]
                 if rays.color is None:
@@ -202,7 +202,7 @@ class Figure:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
                                                                                         fill=False, color=color))
             if instance is 'LampRays':
-                lampKey = 'Lamp (z={})'.format(rays.z) if rays.z != 0 else 'Lamp'
+                lampKey = 'Lamp (z={0:.2f})'.format(rays.z) if rays.z != 0 else 'Lamp'
                 self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z, label=rays.label)]
 
     def setLinesFromRaysList(self):
@@ -214,13 +214,13 @@ class Figure:
                 if rays.z == 0:
                     self.lineGroups['Object/Image'].extend(rayTrace)
                 else:
-                    self.lineGroups['Object/Image (z={})'.format(rays.z)] = rayTrace
+                    self.lineGroups['Object/Image (z={0:.1f})'.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 if rays.z == 0:
                     self.lineGroups['Lamp'].extend(rayTrace)
                 else:
-                    self.lineGroups['Lamp (z={})'.format(rays.z)] = rayTrace
+                    self.lineGroups['Lamp (z={0:.2f})'.format(rays.z)] = rayTrace
             elif instance not in self.lineGroups.keys():
                 self.lineGroups[instance] = rayTrace
             else:
@@ -284,7 +284,7 @@ class Figure:
                 label = pointOfInterest['label']
                 if len(physicalElements) > 1:
                     label = '{' + label.strip('$') + '}'
-                    label = '${}_{}$'.format(label, groupIndex)
+                    label = '${0}_{1}$'.format(label, groupIndex)
                 if zStr in labels:
                     labels[zStr] = labels[zStr] + ", " + label
                 else:
