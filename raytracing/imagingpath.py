@@ -124,6 +124,33 @@ class ImagingPath(MatrixGroup):
         self._objectHeight = objectHeight
         self.figure.designParams['limitObjectToFieldOfView'] = False
 
+    @property
+    def fanAngle(self):
+        return self._fanAngle
+
+    @fanAngle.setter
+    def fanAngle(self, value):
+        warnDeprecatedObjectReferences()
+        self._fanAngle = value
+
+    @property
+    def fanNumber(self):
+        return self._fanNumber
+
+    @fanNumber.setter
+    def fanNumber(self, value):
+        warnDeprecatedObjectReferences()
+        self._fanNumber = value
+
+    @property
+    def rayNumber(self):
+        return self._rayNumber
+
+    @rayNumber.setter
+    def rayNumber(self, value):
+        warnDeprecatedObjectReferences()
+        self._rayNumber = value
+
     def chiefRay(self, y=None):
         r"""This function returns the chief ray for a height y at object.
         The chief ray for height y is the ray that goes

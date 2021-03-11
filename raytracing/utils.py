@@ -9,6 +9,8 @@ or radians with angle*degPerRad or angle*radPerDeg """
 degPerRad = 180.0 / math.pi
 radPerDeg = math.pi / 180.0
 
+warnings.simplefilter("default", DeprecationWarning)
+
 
 def isAlmostZero(value, epsilon=1e-3):
     return abs(value) < epsilon
@@ -59,7 +61,14 @@ def printClassHierarchy(aClass):
     printAllChilds(aClass)
     print("}")
 
+
 def printModuleClasses(moduleName):
     for name, obj in inspect.getmembers(sys.modules[moduleName]):
         if inspect.isclass(obj) and obj.__module__.startswith(moduleName):
             print(obj)
+
+
+def warnDeprecatedObjectReferences():
+    warnings.warn("Object references (fanAngle, fanNumber, rayNumber) will be removed from ImagingPath in future "
+                  "versions. Create an ObjectRays(...) instead and provide it to the display "
+                  "with ImagingPath.display(rays=...)", category=DeprecationWarning)
