@@ -2,6 +2,8 @@ from .matrixgroup import *
 from .materials import *
 from math import *
 import matplotlib.transforms as transforms
+from numpy import linspace
+import matplotlib.pyplot as plt
 
 """
 General classes for making special lenses: achromat doublet lenses
@@ -88,6 +90,7 @@ class AchromatDoubletLens(MatrixGroup):
         self.mat1 = mat1
         self.mat2 = mat2
         self.url = url
+        self.wavelengthRef = wavelengthRef
 
         if self.mat1 is not None and self.mat2 is not None :
             if wavelength is not None:
@@ -137,6 +140,11 @@ class AchromatDoubletLens(MatrixGroup):
                   "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
+    @property
+    def designFocalLength(self):
+        """ The design focal length of this lens. """
+        return self.fa
+    
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
 
@@ -154,7 +162,22 @@ class AchromatDoubletLens(MatrixGroup):
                 SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
                 SphericalInterface(R=self.R3)]
 
-      
+    def showChromaticAberrations(self, wavelengths=None):
+        if wavelengths is None:
+            wavelengths = linspace(0.4, 0.8, 100)
+        
+        focalLengths = []
+        for l in wavelengths:
+            lens = type(self)(wavelength=l)
+            f,f = lens.effectiveFocalLengths()
+            focalLengths.append(f-self.designFocalLength)
+        plt.plot(wavelengths*1000, focalLengths)
+        plt.xlabel(r"Wavelength [$\mu$m]")
+        plt.ylabel(r"Focal shift [mm]")
+        plt.title(r"Lens: {0}, design f={1} mm at $\lambda$={2:.1f} nm".format(self.label, self.designFocalLength, self.wavelengthRef*1000))
+        plt.show()
+
+
 class SingletLens(MatrixGroup):
     """
     General singlet lens with an effective focal length of f, back focal
@@ -189,7 +212,8 @@ class SingletLens(MatrixGroup):
         A link to find more info for the lens
     label : string
         The name of the lens
-
+    wavelength : float, in micron
+        The wavelength used for the calculations.
 
     Notes
     -----
@@ -210,6 +234,7 @@ class SingletLens(MatrixGroup):
         self.n = n
         self.mat = mat
         self.url = url
+        self.wavelengthRef = wavelengthRef
 
         if self.mat is not None:
             if wavelength is not None:
@@ -255,6 +280,11 @@ class SingletLens(MatrixGroup):
                   "{1:0.1f}".format(corner2 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
+    @property
+    def designFocalLength(self):
+        """ The design focal length of this lens. """
+        return self.f
+
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
 
@@ -272,6 +302,20 @@ class SingletLens(MatrixGroup):
         return [SphericalInterface(R=self.R1, L=self.tc, n=self.n),
                 SphericalInterface(R=self.R2)]
 
+    def showChromaticAberrations(self, wavelengths=None):
+        if wavelengths is None:
+            wavelengths = linspace(0.4, 0.8, 100)
+        
+        focalLengths = []
+        for l in wavelengths:
+            lens = type(self)(wavelength=l)
+            f,f = lens.effectiveFocalLengths()
+            focalLengths.append(f-self.designFocalLength)
+        plt.plot(wavelengths*1000, focalLengths)
+        plt.xlabel(r"Wavelength [$\mu$m]")
+        plt.ylabel(r"Focal shift [mm]")
+        plt.title(r"Lens: {0}, design f={1} mm at $\lambda$={2:.1f} nm".format(self.label, self.designFocalLength, self.wavelengthRef*1000))
+        plt.show()
 
 class Objective(MatrixGroup):
 
