@@ -125,7 +125,18 @@ and you will get the following ray histograms:
 
 <img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
 
+Finally, it is possible to obtain the chromatic aberrations for the compound lens (achromatic doublets from Thorlabs and Edmund optics, and singlet lens because the materials are known). The following command will give you the focal shift as a function of wavelength:
+```python
+from raytracing import *
+
+thorlabs.AC254_100_A().showChromaticAberrations()
+```
+
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:25%;" />
+
+
 ## Documentation
+
 All the documentation is [available online](https://raytracing.readthedocs.io/). 
 
 The class hierarchy for optical elements (with parameters and defaults) is:
