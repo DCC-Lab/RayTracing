@@ -8,7 +8,7 @@ import multiprocessing
 import sys
 import math
 import warnings
-from numpy import sqrt, isnan
+from numpy import sqrt, isnan, arctan2, sin, arcsin
 
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
@@ -123,7 +123,7 @@ class Matrix(object):
 
     __epsilon__ = 1e-5  # Anything smaller is zero
     
-    useNonParaxialCalculations = True
+    useNonParaxialCalculations = False
 
     def __init__(
             self,
@@ -1808,12 +1808,21 @@ class AsphericInterface(DielectricInterface):
         try:
             dr = 0.01
             dz = self.z(r+dr/2) - self.z(r-dr/2)
-            return dz/dr
+            return dz, dr
         except:
-            return None
-        
-    # def mul_ray_nonparaxial(self, rightSideRay):
+            return None, None
 
+    def angle(self, r):
+        dz, dr = self.dzdr(r)
+        if dz is not None:
+            return -arctan2(dz, dr)        
+        return None
+
+    def mul_ray_nonparaxial(self, rightSideRay):
+        angleNormal = self.angle(r=rightSideRay.y)
+        incidentAngle = rightSideRay.theta - angleNormal
+        refractedAngle = arcsin(self.n1/self.n2*sin(incidentAngle))
+        return Ray(y=rightSideRay.y, theta=refractedAngle+angleNormal)
 
 class ThickLens(Matrix):
     r"""A thick lens of first radius R1 and then R2, with an index n
