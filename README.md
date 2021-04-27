@@ -15,7 +15,7 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 > *Equal contributions.
 > Permalink: https://doi.org/10.1117/1.NPh.8.1.010801
 
-The tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
+The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in french, with english subtitles) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
 The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
@@ -125,15 +125,15 @@ and you will get the following ray histograms:
 
 <img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
 
-Finally, it is possible to obtain the chromatic aberrations for the compound lens (achromatic doublets from Thorlabs and Edmund optics, and singlet lens because the materials are known). The following command will give you the focal shift as a function of wavelength:
+Finally, it is possible to obtain the chromatic aberrations for compound lenses (achromatic doublets from Thorlabs and Edmund optics, and singlet lens because the materials are known). The following command will give you the focal shift as a function of wavelength (as a graph or values):
 ```python
 from raytracing import *
 
 thorlabs.AC254_100_A().showChromaticAberrations()
+wavelengths, shifts = thorlabs.AC254_100_A().focalShifts()
 ```
 
 <img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:25%;" />
-
 
 ## Documentation
 
