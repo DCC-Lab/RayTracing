@@ -121,6 +121,8 @@ class Matrix(object):
     """
 
     __epsilon__ = 1e-5  # Anything smaller is zero
+    
+    useNonParaxialCalculations = True
 
     def __init__(
             self,
@@ -237,6 +239,18 @@ class Matrix(object):
             raise TypeError(
                 "Unrecognized right side element in multiply: '{0}'\
                  cannot be multiplied by a Matrix".format(rightSide))
+
+    def nonParaxialTransfer(self, ray):
+        """ We are offering the possibility to use a non-paraxial calculation
+        for calculations beyond the paraxial approximation.  It is surprisingly
+        simple: in fact, the non paraxial transfer matrix depends on the ray height
+        and angle, but close to the axis it will always tend to  the paraxial matrix.
+        Hence, we always set the ABCD elements to the paraxial expression, in order to
+        be able to compute all first order  general properties such as conjugate
+        planes, the aperture stop, field of view etc... But when needed, we request
+        the non-paraxial expressions. """
+
+        return self.mul_ray(ray)
 
     def mul_matrix(self, rightSideMatrix: 'Matrix'):
         r""" This function is used to combine two elements into a single matrix.
@@ -389,11 +403,12 @@ class Matrix(object):
         as "isBlocked = True" but the propagation can still be calculated.
         """
 
-        outputRay = Ray()
-
         if rightSideRay.isNotBlocked:
-            outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
-            outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+            if Matrix.useNonParaxialCalculations:
+                outputRay = self.mul_ray_nonparaxial(rightSideRay)
+            else:
+                outputRay = self.mul_ray_paraxial(rightSideRay)
+
             outputRay.z = self.L + rightSideRay.z
             outputRay.apertureDiameter = self.apertureDiameter
 
@@ -405,6 +420,15 @@ class Matrix(object):
             outputRay = rightSideRay
 
         return outputRay
+
+    def mul_ray_paraxial(self, rightSideRay):
+        outputRay = Ray()
+        outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
+        outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+        return outputRay
+
+    def mul_ray_nonparaxial(self, rightSideRay):
+        return self.mul_ray_paraxial(rightSideRay)
 
     def mul_beam(self, rightSideBeam):
         """This function calculates the multiplication of a coherent beam with complex radius
@@ -1737,6 +1761,39 @@ class DielectricInterface(Matrix):
         self.D = self.n1 / self.n2
 
         return self
+
+class AsphericInterface(DielectricInterface):
+    """An aspheric dielectric interface of radius R, and a conical factor
+    kappa with an index n1  before and n2 after the interface.
+
+    We use the following definitions:
+    https://en.wikipedia.org/wiki/Aspheric_lens
+
+    Parameters
+    ----------
+    n1 : float
+        The refraction index before the surface
+    n2 : float
+        The refraction index after the interface
+    R : float (Optional, default infinity)
+        The radius of the dielectric interface
+    kappa : float (default 0, sphere)
+        The conical parameter of the interface
+
+    Notes
+    -----
+    A convex interface from the perspective of the ray has R > 0
+    """
+
+    def __init__(self, n1, n2, R=float('+Inf'), kappa = 0,
+                 diameter=float('+Inf'), label=''):
+        self.kappa = kappa
+        super(AsphericInterface, self).__init__(n1=n1, n2=n2, 
+                                                R=R, kappa = kappa,
+                                                diameter=float('+Inf'),
+                                                label='')
+
+    # def mul_ray_nonparaxial(self, rightSideRay):
 
 
 class ThickLens(Matrix):
