@@ -162,16 +162,22 @@ class AchromatDoubletLens(MatrixGroup):
                 SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
                 SphericalInterface(R=self.R3)]
 
-    def showChromaticAberrations(self, wavelengths=None):
+    def focalShifts(self, wavelengths=None):
         if wavelengths is None:
             wavelengths = linspace(0.4, 0.8, 100)
         
-        focalLengths = []
+        focalShifts = []
         for l in wavelengths:
             lens = type(self)(wavelength=l)
             f,f = lens.effectiveFocalLengths()
-            focalLengths.append(f-self.designFocalLength)
-        plt.plot(wavelengths*1000, focalLengths)
+            focalShifts.append(f-self.designFocalLength)
+        
+        return wavelengths*1000, focalShifts
+
+    def showChromaticAberrations(self, wavelengths=None):
+        wavelengths, focalShifts = self.focalShifts(wavelengths=wavelengths)
+
+        plt.plot(wavelengths, focalShifts)
         plt.xlabel(r"Wavelength [$\mu$m]")
         plt.ylabel(r"Focal shift [mm]")
         plt.title(r"Lens: {0}, design f={1} mm at $\lambda$={2:.1f} nm".format(self.label, self.designFocalLength, self.wavelengthRef*1000))
@@ -302,16 +308,22 @@ class SingletLens(MatrixGroup):
         return [SphericalInterface(R=self.R1, L=self.tc, n=self.n),
                 SphericalInterface(R=self.R2)]
 
-    def showChromaticAberrations(self, wavelengths=None):
+    def focalShifts(self, wavelengths=None):
         if wavelengths is None:
             wavelengths = linspace(0.4, 0.8, 100)
         
-        focalLengths = []
+        focalShifts = []
         for l in wavelengths:
             lens = type(self)(wavelength=l)
             f,f = lens.effectiveFocalLengths()
-            focalLengths.append(f-self.designFocalLength)
-        plt.plot(wavelengths*1000, focalLengths)
+            focalShifts.append(f-self.designFocalLength)
+        
+        return wavelengths*1000, focalShifts
+
+    def showChromaticAberrations(self, wavelengths=None):
+        wavelengths, focalShifts = self.focalShifts(wavelengths=wavelengths)
+
+        plt.plot(wavelengths, focalShifts)
         plt.xlabel(r"Wavelength [$\mu$m]")
         plt.ylabel(r"Focal shift [mm]")
         plt.title(r"Lens: {0}, design f={1} mm at $\lambda$={2:.1f} nm".format(self.label, self.designFocalLength, self.wavelengthRef*1000))
