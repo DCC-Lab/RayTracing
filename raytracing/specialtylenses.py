@@ -163,6 +163,15 @@ class AchromatDoubletLens(MatrixGroup):
                 SphericalInterface(R=self.R3)]
 
     def focalShifts(self, wavelengths=None):
+        """ The chromatic aberration shifts to the focal distance from the
+        design focal length for a range of wavelengths.
+
+        Parameters
+        ----------
+        wavelengths : list or list like
+            Wavelengths in microns defaults to visible
+        """
+
         if wavelengths is None:
             wavelengths = linspace(0.4, 0.8, 100)
         
@@ -175,6 +184,15 @@ class AchromatDoubletLens(MatrixGroup):
         return wavelengths*1000, focalShifts
 
     def showChromaticAberrations(self, wavelengths=None):
+        """ Show the chromatic aberrations focal shifts for this lens
+        as obtained from the function focalShifts()
+        
+        Parameters
+        ----------
+        wavelengths : list or list like
+            Wavelengths in microns defaults to visible
+
+         """
         wavelengths, focalShifts = self.focalShifts(wavelengths=wavelengths)
 
         plt.plot(wavelengths, focalShifts)
@@ -309,6 +327,15 @@ class SingletLens(MatrixGroup):
                 SphericalInterface(R=self.R2)]
 
     def focalShifts(self, wavelengths=None):
+        """ The chromatic aberration shifts to the focal distance from the
+        design focal length for a range of wavelengths.
+
+        Parameters
+        ----------
+        wavelengths : list or list like
+            Wavelengths in microns defaults to visible
+        """
+
         if wavelengths is None:
             wavelengths = linspace(0.4, 0.8, 100)
         
@@ -321,6 +348,15 @@ class SingletLens(MatrixGroup):
         return wavelengths*1000, focalShifts
 
     def showChromaticAberrations(self, wavelengths=None):
+        """ Show the chromatic aberrations focal shifts for this lens
+        as obtained from the function focalShifts()
+        
+        Parameters
+        ----------
+        wavelengths : list or list like
+            Wavelengths in microns defaults to visible
+
+         """
         wavelengths, focalShifts = self.focalShifts(wavelengths=wavelengths)
 
         plt.plot(wavelengths, focalShifts)
