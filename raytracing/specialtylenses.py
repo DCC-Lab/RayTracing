@@ -83,7 +83,7 @@ class CompoundLens(MatrixGroup):
         wavelengths, focalShifts = self.focalShifts(wavelengths=wavelengths)
 
         plt.plot(wavelengths, focalShifts)
-        plt.xlabel(r"Wavelength [$\mu$m]")
+        plt.xlabel(r"Wavelength [nm]")
         plt.ylabel(r"Focal shift [mm]")
         plt.title(r"Lens: {0}, design f={1} mm at $\lambda$={2:.1f} nm".format(self.label, self.designFocalLength, self.wavelengthRef*1000))
         plt.show()
