@@ -68,6 +68,16 @@ class TestAsphericInterface(envtest.RaytracingTestCase):
             self.assertAlmostEqual(paraxialOut.y, nonparaxialOut.y, 3)
             self.assertAlmostEqual(paraxialOut.theta, nonparaxialOut.theta, 3)
 
+    def testOpticalPath(self):
+        Matrix.useNonParaxialCalculations = True
+        path = ImagingPath()
+
+        path.append(Space(d=10))
+        path.append(AsphericInterface(R=10, kappa=-1, n1=1, n2=1.5))
+        path.append(Space(d=2))
+        path.append(AsphericInterface(R=-10, kappa=-1, n1=1.5, n2=1.0))
+        path.append(Space(d=20))
+        path.display(ObjectRays(diameter=8, halfAngle=0,H=21, T=1))
 
 if __name__ == '__main__':
     envtest.main()

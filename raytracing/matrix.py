@@ -166,7 +166,7 @@ class Matrix(object):
 
         if areAbsolutelyNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
             raise ValueError("The matrix has inconsistent values: \
-                determinant is incorrect considering front and back indices.")
+determinant {0} is incorrect considering front and back indices {1} {2}.".format(self.determinant, frontIndex, backIndex))
 
     @property
     def isIdentity(self):
