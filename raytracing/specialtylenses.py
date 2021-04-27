@@ -5,14 +5,13 @@ import matplotlib.transforms as transforms
 from numpy import linspace
 import matplotlib.pyplot as plt
 
-"""
-General classes for making special lenses: achromat doublet lenses
-and objective lenses. Each of these remain an approximation of the
-actual optical element: for instance, achromats are approximated
-and do not exhibit chromatic aberrations because there is a single
-index of refraction (at the design wavelength). Similarly, objectives
-are approximated to have the same physical characteristics but do not
-exhibit field curvature, aberrations and all.
+""" 
+General classes for making special compound lenses: achromat doublet
+lenses, singlet lenses, and objective lenses. Each of these remain an
+approximation of the actual optical element. Similarly, objectives
+are approximated to have the same physical characteristics but do not exhibit
+field curvature, aberrations and all: they are treated as black boxes
+to reproduce the known characteristics of the objectives.
 
 Each class is the base class for specific manufacturers class:
 for instance, thorlabs achromats or edmund optics achromats both 
@@ -24,7 +23,6 @@ the Objective() class.
 class CompoundLens(MatrixGroup):
     def __init__(self, elements, designFocalLength, wavelengthRef=None, url=None, label=''):
         """ A base class for any lens that we make from its individual elements
-        
         """
         super(CompoundLens, self).__init__(elements=elements, label=label)
 
