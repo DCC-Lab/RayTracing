@@ -1,3 +1,5 @@
+import re
+
 """ Materials and their indices of refraction
 
 Everything here comes from the excellent site http://refractiveindex.info.
@@ -7,14 +9,30 @@ The link with the Python formulas is in the Data section, [Expressions for n]
 
 class Material:
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         raise TypeError("Use Material subclass, not Material")
+    
+    @classmethod
+    def abbeNumber(cls):
+        return None
 
+    @classmethod
+    def Vd(cls):
+        return cls.abbe()
+
+    @classmethod
+    def all(cls):
+        materials = []
+        for materialClass in cls.__subclasses__():
+            matchObj = re.match(r".+\.(\S+)'", "{0}".format(materialClass))
+            if matchObj is not None:
+                materials.extend(matchObj.groups(1))
+        return materials
 
 class N_BK7(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BK7.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -26,7 +44,7 @@ class N_BK7(Material):
 class N_SF2(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF2.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -36,7 +54,7 @@ class N_SF2(Material):
 class N_SF8(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF8.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -47,7 +65,7 @@ class N_SF8(Material):
 class SF2(Material):
     """  All data from https://refractiveindex.info/tmp/data/glass/schott/SF2.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -58,7 +76,7 @@ class SF2(Material):
 class SF5(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/SF5.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -69,7 +87,7 @@ class SF5(Material):
 class N_SF5(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF5.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -80,7 +98,7 @@ class N_SF5(Material):
 class N_SF6HT(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF6HT.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -91,7 +109,7 @@ class N_SF6HT(Material):
 class N_SF10(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF10.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -102,7 +120,7 @@ class N_SF10(Material):
 class N_SF11(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF11.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -112,7 +130,7 @@ class N_SF11(Material):
 class N_SF57(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF57.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -122,7 +140,7 @@ class N_SF57(Material):
 class N_BAF10(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BAF10.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -133,7 +151,7 @@ class N_BAF10(Material):
 class E_BAF11(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/hikari/E-BAF11.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -144,7 +162,7 @@ class E_BAF11(Material):
 class N_BAK1(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BAK1.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -155,7 +173,7 @@ class N_BAK1(Material):
 class N_BAK4(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BAK4.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -166,7 +184,7 @@ class N_BAK4(Material):
 class FK51A(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-FK51A.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -177,7 +195,7 @@ class FK51A(Material):
 class LAFN7(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/LAFN7.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -188,7 +206,7 @@ class LAFN7(Material):
 class N_LASF9(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-LASF9.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -199,7 +217,7 @@ class N_LASF9(Material):
 class N_LAK22(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-LAK22.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -210,7 +228,7 @@ class N_LAK22(Material):
 class N_SSK5(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SSK5.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -221,7 +239,7 @@ class N_SSK5(Material):
 class E_FD10(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/hoya/E-FD10.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
@@ -232,7 +250,7 @@ class E_FD10(Material):
 class FusedSilica(Material):
     """ All data from https://refractiveindex.info/tmp/data/main/SiO2/Malitson.html """
     @classmethod
-    def n(self, wavelength):
+    def n(cls, wavelength):
         if wavelength > 10 or wavelength < 0.01:
             raise ValueError("Wavelength must be in microns")
         x = wavelength
