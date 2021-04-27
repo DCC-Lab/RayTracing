@@ -8,6 +8,7 @@ import multiprocessing
 import sys
 import math
 import warnings
+from numpy import sqrt, isnan
 
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
@@ -1779,7 +1780,11 @@ class AsphericInterface(DielectricInterface):
         The radius of the dielectric interface
     kappa : float (default 0, sphere)
         The conical parameter of the interface
-
+        kappa < -1    : hyperbola
+        kappa == -1   : parabola
+        -1 < kappa < 0: prolate ellipse
+        kappa == 0    : sphere
+        kappa > 0     : oblate ellipse
     Notes
     -----
     A convex interface from the perspective of the ray has R > 0
@@ -1788,11 +1793,25 @@ class AsphericInterface(DielectricInterface):
     def __init__(self, n1, n2, R=float('+Inf'), kappa = 0,
                  diameter=float('+Inf'), label=''):
         self.kappa = kappa
-        super(AsphericInterface, self).__init__(n1=n1, n2=n2, 
-                                                R=R, kappa = kappa,
+        super(AsphericInterface, self).__init__(n1=n1, n2=n2, R=R,
                                                 diameter=float('+Inf'),
                                                 label='')
 
+    def z(self, r):
+        z = r*r/(self.R*(1+sqrt(1-(1+self.kappa)*r*r/self.R/self.R)))   
+        if isnan(z):
+            return None
+        else:
+            return z
+
+    def dzdr(self, r):
+        try:
+            dr = 0.01
+            dz = self.z(r+dr/2) - self.z(r-dr/2)
+            return dz/dr
+        except:
+            return None
+        
     # def mul_ray_nonparaxial(self, rightSideRay):
 
 
