@@ -199,6 +199,9 @@ class Surface(Component):
     @property
     def bezierCurves(self) -> List[BezierCurve]:
         h = self.halfHeight
+        if h > self.surface.R:
+            h = self.surface.R
+            
         v1 = self.x
 
         if self.surface.R == float("+inf"):
@@ -238,6 +241,9 @@ class SurfacePair(Component):
 
     def getPathA(self) -> List[BezierCurve]:
         h = self.halfHeight
+        if h > self.surfaceA.R:
+            h = self.surfaceA.R
+
         v1 = self.x
 
         if type(self.surfaceA).__name__ == 'ConicalInterface':
@@ -265,6 +271,9 @@ class SurfacePair(Component):
 
     def getPathB(self) -> List[BezierCurve]:
         h = self.halfHeight
+        if h > self.surfaceB.R:
+            h = self.surfaceB.R
+
         v2 = self.x + self.surfaceA.L
 
         if type(self.surfaceB).__name__ == 'ConicalInterface':
