@@ -29,6 +29,11 @@ class Material:
                 materials.extend(matchObj.groups(1))
         return materials
 
+class Air(Material):
+    @classmethod
+    def n(cls, wavelength):
+        return 1.0
+
 class N_BK7(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BK7.html """
     @classmethod

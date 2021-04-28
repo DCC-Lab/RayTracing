@@ -1,4 +1,5 @@
 import envtest  # modifies path
+from raytracing import *
 from raytracing.zemax import ZMXReader
 from numpy import linspace, pi
 
@@ -28,12 +29,24 @@ class TestZemax(envtest.RaytracingTestCase):
         self.assertIsNotNone(self.zmx)
         surface = self.zmx.surfaceInfo(index=1)
         self.assertTrue( surface.number == 1)
-        self.assertAlmostEqual( surface.R, 1.593625498007969800E-002)
+        self.assertAlmostEqual( surface.R, 62.75, 1)
         self.assertAlmostEqual( surface.spacing, 4.0) 
 
     def testSurfaces(self):
         self.assertIsNotNone(self.zmx)
         self.assertTrue(len(self.zmx.surfaces()) == 5)
+
+    def testMatrixGroup(self):
+        group = self.zmx.matrixGroup()
+        self.assertIsNotNone(group)
+        f1, f2 = group.effectiveFocalLengths()
+        self.assertAlmostEqual(f1, 100, 0)
+        self.assertAlmostEqual(f2, 100, 0)
+
+    def testAllMaterials(self): 
+        mat = self.zmx.identifyMaterial('NBK-7')       
+        self.assertIsNotNone(mat)
+        self.assertTrue(isinstance(mat, N_BK7))
 
 if __name__ == '__main__':
     envtest.main()

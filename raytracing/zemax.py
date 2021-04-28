@@ -11,6 +11,7 @@ class Surface(NamedTuple):
 class ZMXReader:
     def __init__(self, filepath):
         self.filepath = filepath
+        self.name = filepath
         self.lines = []
         with open(self.filepath,"r") as reader:     
             while True:
@@ -20,6 +21,36 @@ class ZMXReader:
                 else:
                     fields = re.split(r"\s+", line.strip())                    
                     self.lines.append({"NAME":fields[0], "PARAM":fields[1:]})
+
+    def matrixGroup(self):
+        group = MatrixGroup(label=self.name)
+
+        previousSurface = None
+        for surface in self.surfaces():
+            if surface.number != 0:
+                mat1 = previousSurface.mat
+                mat2 = surface.mat
+                interface = DielectricInterface(R=surface.R, 
+                                    n1=mat1.n(0.5),
+                                    n2=mat2.n(0.5))
+                spacing = Space(d=surface.spacing, n=mat2.n(0.5))
+                group.append(interface)
+                group.append(spacing)
+
+            previousSurface = surface
+        return group
+
+    def identifyMaterial(self, matname):
+        if matname is None:
+            return Air()
+
+        matname = matname.replace('-','')
+        for className in Material.all():
+            shortName = className.replace('_','')
+            if re.match(matname,shortName):
+                cls = globals()[className]
+                return cls()
+        return None
 
     def surfaces(self):
         surfaces = []
@@ -38,12 +69,18 @@ class ZMXReader:
             return None
 
         if "GLAS" in rawInfo:
-            mat = rawInfo["GLAS"][0]
+            mat = self.identifyMaterial(rawInfo["GLAS"][0])
         else:
-            mat = None
+            mat = Air()
 
+        curvature = float(rawInfo["CURV"][0])
+        if curvature == 0.0:
+            radius = float("+inf")
+        else:
+            radius = 1/curvature
+            
         return Surface(number=index, 
-                       R=float(rawInfo["CURV"][0]),
+                       R=radius,
                        mat=mat,
                        spacing=float(rawInfo["DISZ"][0]))
 
