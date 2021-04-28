@@ -241,18 +241,6 @@ determinant {0} is incorrect considering front and back indices {1} {2}.".format
                 "Unrecognized right side element in multiply: '{0}'\
                  cannot be multiplied by a Matrix".format(rightSide))
 
-    def nonParaxialTransfer(self, ray):
-        """ We are offering the possibility to use a non-paraxial calculation
-        for calculations beyond the paraxial approximation.  It is surprisingly
-        simple: in fact, the non paraxial transfer matrix depends on the ray height
-        and angle, but close to the axis it will always tend to  the paraxial matrix.
-        Hence, we always set the ABCD elements to the paraxial expression, in order to
-        be able to compute all first order  general properties such as conjugate
-        planes, the aperture stop, field of view etc... But when needed, we request
-        the non-paraxial expressions. """
-
-        return self.mul_ray(ray)
-
     def mul_matrix(self, rightSideMatrix: 'Matrix'):
         r""" This function is used to combine two elements into a single matrix.
         The multiplication of two ABCD matrices calculates the total ABCD matrix of the system.
@@ -429,6 +417,14 @@ determinant {0} is incorrect considering front and back indices {1} {2}.".format
         return outputRay
 
     def mul_ray_nonparaxial(self, rightSideRay):
+        """ We are offering the possibility to use a non-paraxial calculation for
+        calculations beyond the paraxial approximation.  It is surprisingly simple: in
+        fact, the non paraxial transfer matrix depends on the ray height and angle,
+        but close to the axis it will always tend to the paraxial matrix. Hence, we
+        always set the ABCD elements to the paraxial expression, in order to be able
+        to compute all first order  general properties such as conjugate planes, the
+        aperture stop, field of view etc... But when trace the rays, we request the
+        non-paraxial expressions. """
         return self.mul_ray_paraxial(rightSideRay)
 
     def mul_beam(self, rightSideBeam):
@@ -1807,7 +1803,7 @@ class AsphericInterface(DielectricInterface):
 
     def z(self, y):
         """ This z represents the surface of the interface 
-        as a function of r, the distance from the axis.  
+        as a function of y, the distance from the axis.  
 
         Obtained from https://en.wikipedia.org/wiki/Aspheric_lens
 
