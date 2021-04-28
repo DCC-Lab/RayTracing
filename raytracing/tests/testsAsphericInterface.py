@@ -21,7 +21,7 @@ class TestAsphericInterface(envtest.RaytracingTestCase):
     def testProperties(self):
         asphere = AsphericInterface(R=10, kappa=0, n1=1, n2=1.5)
         self.assertIsNotNone(asphere)
-        self.assertAlmostEqual(asphere.angle(r=0), 0)
+        self.assertAlmostEqual(asphere.surfaceNormal(y=0), 0)
         # self.assertAlmostEqual(asphere.angle(r=9.9), 1.57)
 
         # for r in linspace(-10,10,100):
@@ -30,7 +30,7 @@ class TestAsphericInterface(envtest.RaytracingTestCase):
     def testNormalIncidenceRefraction(self):
         asphere = AsphericInterface(R=10, kappa=0, n1=1, n2=1.5)
         paraxialRay = Ray(y=0, theta=0)
-        self.assertAlmostEqual(asphere.angle(r=paraxialRay.y),0)
+        self.assertAlmostEqual(asphere.surfaceNormal(y=paraxialRay.y),0)
 
         paraxialOut = asphere.mul_ray_paraxial(paraxialRay)
         nonparaxialOut = asphere.mul_ray_nonparaxial(paraxialRay)
@@ -40,7 +40,7 @@ class TestAsphericInterface(envtest.RaytracingTestCase):
     def testOnAxisUpwardIncidenceRefraction(self):
         asphere = AsphericInterface(R=10, kappa=0, n1=1, n2=1.5)
         paraxialRay = Ray(y=0, theta=0.1)
-        self.assertAlmostEqual(asphere.angle(r=paraxialRay.y),0)
+        self.assertAlmostEqual(asphere.surfaceNormal(y=paraxialRay.y),0)
 
         paraxialOut = asphere.mul_ray_paraxial(paraxialRay)
         nonparaxialOut = asphere.mul_ray_nonparaxial(paraxialRay)
@@ -78,6 +78,17 @@ class TestAsphericInterface(envtest.RaytracingTestCase):
         path.append(AsphericInterface(R=-10, kappa=-1, n1=1.5, n2=1.0))
         path.append(Space(d=20))
         path.display(ObjectRays(diameter=8, halfAngle=0,H=21, T=1))
+
+    # def testAnAxicon(self):
+    #     Matrix.useNonParaxialCalculations = True
+    #     path = ImagingPath()
+
+    #     path.append(Space(d=10))
+    #     path.append(AsphericInterface(R=0.01, kappa=-131, n1=1.0, n2=1.5))
+    #     path.append(Space(d=5))
+    #     path.append(DielectricInterface(n1=1.5, n2=1.0))
+    #     path.append(Space(d=20))
+    #     path.display(ObjectRays(diameter=0.1, halfAngle=0,H=21, T=1))
 
 if __name__ == '__main__':
     envtest.main()

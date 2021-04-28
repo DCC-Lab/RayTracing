@@ -1765,7 +1765,15 @@ class DielectricInterface(Matrix):
 
 class AsphericInterface(DielectricInterface):
     """An aspheric dielectric interface of radius R, and a conical factor
-    kappa with an index n1  before and n2 after the interface.
+    kappa with an index n1  before and n2 after the interface.  The plan here is
+    simple: in the paraxial approximation, any conical  surface will look like a
+    spherical surface, therefore we set the elements the exactly that: a spherical
+    surface of radius R. For all calculations involving aperture stops, image
+    conjuagtes, etc... we will always use the paraxial form of this matrix (the
+    non-paraxial rays are just a correction). However, when we trace the rays,
+    then that's a different story: we will use the mul_ray_nonparaxial function
+    that is not a matrix multiplication but close to the axis, it gives similar
+    results to the mul_ray_paraxial function.
 
     We use the following definitions:
     https://en.wikipedia.org/wiki/Aspheric_lens
@@ -1797,32 +1805,52 @@ class AsphericInterface(DielectricInterface):
                                                 diameter=float('+Inf'),
                                                 label='')
 
-    def z(self, r):
-        z = r*r/(self.R*(1+sqrt(1-(1+self.kappa)*r*r/self.R/self.R)))   
+    def z(self, y):
+        """ This z represents the surface of the interface 
+        as a function of r, the distance from the axis.  
+
+        Obtained from https://en.wikipedia.org/wiki/Aspheric_lens
+
+        """
+        z = y*y/(self.R*(1+sqrt(1-(1+self.kappa)*y*y/self.R/self.R)))   
         if isnan(z):
             return None
         else:
             return z
 
-    def dzdr(self, r):
+    def dzdr(self, y):
+        """ This approximates the slope of the surface which 
+        we can then use to calculate the tangente or normal 
+        to the surface """
         try:
-            dr = 0.01
-            dz = self.z(r+dr/2) - self.z(r-dr/2)
-            return dz, dr
+            dy = 0.000001
+            dz = self.z(y+dy/2) - self.z(y-dy/2)
+            return dz, dy
         except:
             return None, None
 
-    def angle(self, r):
-        dz, dr = self.dzdr(r)
+    def surfaceNormal(self, y):
+        """ Returns the surface normal at y, pointing backward.
+        """ 
+        dz, dy = self.dzdr(y)
         if dz is not None:
-            return -arctan2(dz, dr)        
+            return -arctan2(dz, dy)        
         return None
 
     def mul_ray_nonparaxial(self, rightSideRay):
-        angleNormal = self.angle(r=rightSideRay.y)
+        """ Instead of performing a matrix multiplication like
+        mul_ray_paraxial, we pass the inputray and transform it any which way we want.
+        In this case, this is simple: we find the normal to the surface at the height
+        of the ray, then apply Snell's law of refraction, n₁sinθ₁ = n₂sinθ₂, without
+        forgetting  that these angles are with respect to the surface normal, so 
+        we need to correct them before returning.
+
+        """
+        angleNormal = self.surfaceNormal(y=rightSideRay.y)
+
         incidentAngle = rightSideRay.theta - angleNormal
         refractedAngle = arcsin(self.n1/self.n2*sin(incidentAngle))
-        return Ray(y=rightSideRay.y, theta=refractedAngle+angleNormal)
+        return Ray(y=rightSideRay.y, theta=refractedAngle+angleNormal,z=rightSideRay.z)
 
 class ThickLens(Matrix):
     r"""A thick lens of first radius R1 and then R2, with an index n
