@@ -1842,7 +1842,7 @@ class AsphericInterface(DielectricInterface):
         (between -pi/2 and pi/2).
         The angle is measured with respect to the optical axis
         (i.e. the propagation axis).  For incidence on a convex
-        interface above axis, the angle will be negative.
+        interface above axis (y>0), the angle will be negative.
         """ 
         dz, dy = self.dzdr(y)
         if dz is not None:
