@@ -193,14 +193,15 @@ class Surface(Component):
     def __init__(self, surface, halfHeight, x=0.0, color='k'):
         super(Surface, self).__init__(color=color, fill=False)
         self.surface = surface
+        if halfHeight > abs(surface.R):
+            halfHeight = abs(surface.R)
         self.halfHeight = halfHeight
+
         self.x = x
 
     @property
     def bezierCurves(self) -> List[BezierCurve]:
         h = self.halfHeight
-        if h > self.surface.R:
-            h = self.surface.R
             
         v1 = self.x
 
@@ -241,8 +242,6 @@ class SurfacePair(Component):
 
     def getPathA(self) -> List[BezierCurve]:
         h = self.halfHeight
-        if h > self.surfaceA.R:
-            h = self.surfaceA.R
 
         v1 = self.x
 
@@ -271,8 +270,6 @@ class SurfacePair(Component):
 
     def getPathB(self) -> List[BezierCurve]:
         h = self.halfHeight
-        if h > self.surfaceB.R:
-            h = self.surfaceB.R
 
         v2 = self.x + self.surfaceA.L
 
