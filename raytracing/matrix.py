@@ -398,9 +398,6 @@ determinant {0} is incorrect considering front and back indices {1} {2}.".format
             else:
                 outputRay = self.mul_ray_paraxial(rightSideRay)
 
-            outputRay.z = self.L + rightSideRay.z
-            outputRay.apertureDiameter = self.apertureDiameter
-
             if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
                 outputRay.isBlocked = True
             else:
@@ -414,6 +411,9 @@ determinant {0} is incorrect considering front and back indices {1} {2}.".format
         outputRay = Ray()
         outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
         outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
+        outputRay.z = self.L + rightSideRay.z
+        outputRay.apertureDiameter = self.apertureDiameter
+
         return outputRay
 
     def mul_ray_nonparaxial(self, rightSideRay):
@@ -1846,7 +1846,11 @@ class AsphericInterface(DielectricInterface):
 
         incidentAngle = rightSideRay.theta - angleNormal
         refractedAngle = arcsin(self.n1/self.n2*sin(incidentAngle))
-        return Ray(y=rightSideRay.y, theta=refractedAngle+angleNormal,z=rightSideRay.z)
+
+        ray = Ray(y=rightSideRay.y, theta=refractedAngle+angleNormal,z=self.L + rightSideRay.z)
+        ray.apertureDiameter = rightSideRay.apertureDiameter
+
+        return ray
 
 class ThickLens(Matrix):
     r"""A thick lens of first radius R1 and then R2, with an index n
