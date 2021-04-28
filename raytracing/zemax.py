@@ -1,5 +1,12 @@
 from raytracing import *
 import re
+from struct import *
+
+class Surface(NamedTuple):
+    number:int
+    R:float
+    mat:Material = None
+    spacing:float = 0
 
 class ZMXReader:
     def __init__(self, filepath):
@@ -26,6 +33,21 @@ class ZMXReader:
         return surfaces
 
     def surfaceInfo(self, index):
+        rawInfo = self.rawSurfaceInfo(index)
+        if rawInfo is None:
+            return None
+
+        if "GLAS" in rawInfo:
+            mat = rawInfo["GLAS"][0]
+        else:
+            mat = None
+
+        return Surface(number=index, 
+                       R=float(rawInfo["CURV"][0]),
+                       mat=mat,
+                       spacing=float(rawInfo["DISZ"][0]))
+
+    def rawSurfaceInfo(self, index):
         startMarkerFound = False
 
         surface = {}

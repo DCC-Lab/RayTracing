@@ -10,19 +10,26 @@ class TestZemax(envtest.RaytracingTestCase):
     def testCreation(self):
         self.assertIsNotNone(self.zmx)
 
-    def testSurface0(self):
+    def testSurface0Raw(self):
         self.assertIsNotNone(self.zmx)
-        surface = self.zmx.surfaceInfo(index=0)
+        surface = self.zmx.rawSurfaceInfo(index=0)
         self.assertTrue( surface["SURF"] == 0)
         self.assertAlmostEqual( float(surface["CURV"][0]), 0.0)
         self.assertAlmostEqual( float(surface["DISZ"][0]), float("+inf")) 
 
-    def testSurface1(self):
+    def testSurface1Raw(self):
         self.assertIsNotNone(self.zmx)
-        surface = self.zmx.surfaceInfo(index=1)
+        surface = self.zmx.rawSurfaceInfo(index=1)
         self.assertTrue( surface["SURF"] == 1)
         self.assertAlmostEqual( float(surface["CURV"][0]), 1.593625498007969800E-002)
         self.assertAlmostEqual( float(surface["DISZ"][0]), 4.0) 
+
+    def testSurface1Info(self):
+        self.assertIsNotNone(self.zmx)
+        surface = self.zmx.surfaceInfo(index=1)
+        self.assertTrue( surface.number == 1)
+        self.assertAlmostEqual( surface.R, 1.593625498007969800E-002)
+        self.assertAlmostEqual( surface.spacing, 4.0) 
 
     def testSurfaces(self):
         self.assertIsNotNone(self.zmx)
