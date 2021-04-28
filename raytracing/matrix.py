@@ -1816,17 +1816,33 @@ class AsphericInterface(DielectricInterface):
 
     def dzdr(self, y):
         """ This approximates the slope of the surface which 
-        we can then use to calculate the tangente or normal 
+        we can then use to calculate the tangent or normal 
         to the surface """
-        try:
-            dy = 0.000001
-            dz = self.z(y+dy/2) - self.z(y-dy/2)
-            return dz, dy
-        except:
+
+        if self.z(y) is None:
             return None, None
+
+        dy1 = 0.000001
+        dy2 = 0.000001
+        z1 = self.z(y+dy1)
+        if z1 is None:
+            dy1 = 0
+            z1 = self.z(y) 
+
+        z2 = self.z(y-dy2)
+        if z2 is None:
+            dy2 = 0
+            z2 = self.z(y) 
+
+        dz = z1-z2
+        return dz, dy1+dy2
 
     def surfaceNormal(self, y):
         """ Returns the surface normal at y, pointing backward.
+        (between -pi/2 and pi/2).
+        The angle is measured with respect to the optical axis
+        (i.e. the propagation axis).  For incidence on a convex
+        interface above axis, the angle will be negative.
         """ 
         dz, dy = self.dzdr(y)
         if dz is not None:
