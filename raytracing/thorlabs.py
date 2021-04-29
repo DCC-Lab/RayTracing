@@ -413,7 +413,7 @@ class AC254_100_A(AchromatDoubletLens):
     """
 
     def __init__(self, wavelength=None):
-        super(AC254_100_A,self).__init__(fa=100.1,fb=97.1, R1=62.8,R2=-45.7, R3=-128.2, 
+        super(AC254_100_A,self).__init__(fa=100.1,fb=97.1, R1=62.75,R2=-45.71, R3=-128.23, 
                                     tc1=4.0, tc2=2.5, te=4.7, n1=None, mat1=N_BK7, n2=None, mat2=SF5, diameter=25.4,
                                     url='https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120',
                                     label="AC254-100-A", wavelength=wavelength, wavelengthRef=0.5876)

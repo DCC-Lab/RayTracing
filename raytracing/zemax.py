@@ -55,13 +55,13 @@ class ZMXReader:
             mat1 = previousSurface.mat
             mat2 = surface.mat
             interface = DielectricInterface(R=surface.R, 
-                                n1=mat1.n(0.5),
-                                n2=mat2.n(0.5),
+                                n1=mat1.n(0.5876),
+                                n2=mat2.n(0.5876),
                                 diameter=surface.diameter)
             group.append(interface)
 
             if not isinstance(mat2, Air):
-                spacing = Space(d=surface.spacing, n=mat2.n(0.5))
+                spacing = Space(d=surface.spacing, n=mat2.n(0.5876))
                 group.append(spacing)
 
             previousSurface = surface

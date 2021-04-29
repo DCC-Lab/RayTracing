@@ -50,6 +50,16 @@ class TestZemax(envtest.RaytracingTestCase):
         path.append(Space(d=100))
         path.display(rays=ObjectRays(diameter=20))
 
+    def testMatrixGroup(self):
+        design = self.zmx.matrixGroup()
+        self.assertIsNotNone(design)
+        lens = thorlabs.AC254_100_A()
+
+        self.assertAlmostEqual(design.effectiveFocalLengths().f1, lens.effectiveFocalLengths().f1, 3)
+        self.assertAlmostEqual(design.effectiveFocalLengths().f2, lens.effectiveFocalLengths().f1, 3)
+        self.assertAlmostEqual(design.backFocalLength(), lens.backFocalLength(), 3)
+        self.assertAlmostEqual(design.frontFocalLength(), lens.frontFocalLength(), 3)
+
     def testAllMaterials(self): 
         mat = self.zmx.identifyMaterial('NBK-7')       
         self.assertIsNotNone(mat)
