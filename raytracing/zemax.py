@@ -3,11 +3,14 @@ import re
 from struct import *
 
 class Surface(NamedTuple):
-    number:int
-    R:float
+    number:int = 0
+    R:float = float("+inf")
     diameter:float = float("+inf")
     mat:Material = None
     spacing:float = 0
+
+def areMatching(regex, text):
+    return re.match(regex, text, re.IGNORECASE) is not None
 
 class ZMXReader:
     def __init__(self, filepath):
@@ -30,7 +33,7 @@ class ZMXReader:
         self.factor = 1
         if units is None:
             self.factor = 1
-        elif re.match("IN", units, re.IGNORECASE) is not None:
+        elif areMatching("IN", units):
             self.factor = 25.4
 
     def determineEncoding(self, filepath):
@@ -47,7 +50,7 @@ class ZMXReader:
     def matrixGroup(self):
         group = MatrixGroup(label=self.name)
 
-        previousSurface = Surface(mat=Air(),number=0,R=0)
+        previousSurface = Surface(mat=Air())
         for surface in self.lensSurfaces():
             mat1 = previousSurface.mat
             mat2 = surface.mat
@@ -78,7 +81,7 @@ class ZMXReader:
         matname = matname.replace('-','')
         for className in Material.all():
             shortName = className.replace('_','')
-            if re.match(matname,shortName):
+            if areMatching(matname, shortName):
                 cls = globals()[className]
                 return cls()
         return None
@@ -168,6 +171,6 @@ class ZMXReader:
 
     def value(self, key, index=0):
         for line in self.lines:
-            if line["NAME"] == key:
+            if areMatching(line["NAME"],key):
                 return line["PARAM"][index]
         return None
