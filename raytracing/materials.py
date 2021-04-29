@@ -29,6 +29,14 @@ class Material:
                 materials.extend(matchObj.groups(1))
         return materials
 
+    def __str__(self):
+        className = type(self)
+        matchObj = re.match(r".+\.(\S+)'", "{0}".format(className))
+        if matchObj is not None:
+            return matchObj.groups(1)[0]
+        else:
+            return "Unknown"
+
 class Air(Material):
     @classmethod
     def n(cls, wavelength):

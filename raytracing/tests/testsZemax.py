@@ -42,11 +42,25 @@ class TestZemax(envtest.RaytracingTestCase):
         f1, f2 = group.effectiveFocalLengths()
         self.assertAlmostEqual(f1, 100, 0)
         self.assertAlmostEqual(f2, 100, 0)
+        self.assertTrue(len(group.elements)==5)
+
+        path = OpticalPath()
+        path.append(Space(d=300))
+        path.append(group)
+        path.append(Space(d=100))
+        path.display(ObjectRays(diameter=20))
 
     def testAllMaterials(self): 
         mat = self.zmx.identifyMaterial('NBK-7')       
         self.assertIsNotNone(mat)
         self.assertTrue(isinstance(mat, N_BK7))
+
+    def testPrescription(self): 
+        print(self.zmx.prescription())
+
+    def testOtherFile(self):
+        zmx = ZMXReader("../specifications/zmax_49270.zmx")
+        self.assertIsNotNone(zmx)
 
 if __name__ == '__main__':
     envtest.main()

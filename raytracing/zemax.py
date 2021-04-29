@@ -5,6 +5,7 @@ from struct import *
 class Surface(NamedTuple):
     number:int
     R:float
+    diameter:float = float("+inf")
     mat:Material = None
     spacing:float = 0
 
@@ -13,7 +14,10 @@ class ZMXReader:
         self.filepath = filepath
         self.name = filepath
         self.lines = []
-        with open(self.filepath,"r") as reader:     
+
+        encoding = self.determineEncoding(filepath)
+
+        with open(self.filepath,"r",encoding=encoding) as reader:     
             while True:
                 line = reader.readline()
                 if len(line) == 0 or line is None:
@@ -22,23 +26,49 @@ class ZMXReader:
                     fields = re.split(r"\s+", line.strip())                    
                     self.lines.append({"NAME":fields[0], "PARAM":fields[1:]})
 
+        units = self.parameter("UNIT")
+        self.factor = 1
+        if units == 'IN':
+            self.factor = 25.4
+
+    def determineEncoding(self, filepath):
+        """ The zemax files can be in UTF-16 (e.g., Edmund Optics)
+        We try to open it as UTF-16, we will get an error if it cannot.
+        """
+        with open(self.filepath,"r",encoding='utf-16') as reader:     
+            try:
+                line = reader.readline()
+                return "utf-16"
+            except:
+                return "utf-8"
+
     def matrixGroup(self):
         group = MatrixGroup(label=self.name)
 
         previousSurface = None
         for surface in self.surfaces():
-            if surface.number != 0:
+            if surface.spacing != float("+inf") and surface.spacing > 0.001 :
                 mat1 = previousSurface.mat
                 mat2 = surface.mat
                 interface = DielectricInterface(R=surface.R, 
                                     n1=mat1.n(0.5),
-                                    n2=mat2.n(0.5))
-                spacing = Space(d=surface.spacing, n=mat2.n(0.5))
+                                    n2=mat2.n(0.5),
+                                    diameter=surface.diameter)
                 group.append(interface)
-                group.append(spacing)
+
+                if not isinstance(mat2, Air):
+                    spacing = Space(d=surface.spacing, n=mat2.n(0.5))
+                    group.append(spacing)
 
             previousSurface = surface
+
         return group
+
+    def prescription(self):
+        prescription = "\n{0:>10}\t{1:>10}\t{2:>10}\t{3:>10}\n".format("R","Material","d","diameter")
+        for surface in self.surfaces():
+            prescription += "{0:>10.2f}\t{1:>10}\t{2:>10.2f}\t{3:>10.2f}\n".format(surface.R, str(surface.mat), surface.spacing, surface.diameter)
+        return prescription
 
     def identifyMaterial(self, matname):
         if matname is None:
@@ -77,12 +107,17 @@ class ZMXReader:
         if curvature == 0.0:
             radius = float("+inf")
         else:
-            radius = 1/curvature
-            
+            radius = 1/curvature*self.factor
+        
+        diameter = 2*float(rawInfo["DIAM"][0])*self.factor
+
+        spacing = float(rawInfo["DISZ"][0])*self.factor
+
         return Surface(number=index, 
                        R=radius,
                        mat=mat,
-                       spacing=float(rawInfo["DISZ"][0]))
+                       spacing=spacing,
+                       diameter=diameter)
 
     def rawSurfaceInfo(self, index):
         startMarkerFound = False
@@ -95,6 +130,7 @@ class ZMXReader:
                     if index == int(line["PARAM"][0]):
                         startMarkerFound = True
                         surface["SURF"] = int(index)
+                        # if float(line["PARAM"][0]) == float("+inf"):
                         continue 
                 else:
                     break
@@ -107,3 +143,9 @@ class ZMXReader:
             return None
 
         return surface
+
+    def parameter(self, key):
+        for line in self.lines:
+            if line["NAME"] == key:
+                return line["PARAM"]
+        return None
