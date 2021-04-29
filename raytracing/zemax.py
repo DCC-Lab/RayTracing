@@ -9,8 +9,8 @@ class Surface(NamedTuple):
     mat:Material = None
     spacing:float = 0
 
-def areMatching(regex, text):
-    return re.match(regex, text, re.IGNORECASE) is not None
+def areTheSame(a, b):
+    return a.lower() == b.lower()
 
 class ZMXReader:
     def __init__(self, filepath):
@@ -33,7 +33,7 @@ class ZMXReader:
         self.factor = 1
         if units is None:
             self.factor = 1
-        elif areMatching("IN", units):
+        elif areTheSame("IN", units):
             self.factor = 25.4
 
     def determineEncoding(self, filepath):
@@ -81,7 +81,7 @@ class ZMXReader:
         matname = matname.replace('-','')
         for className in Material.all():
             shortName = className.replace('_','')
-            if areMatching(matname, shortName):
+            if areTheSame(matname, shortName):
                 cls = globals()[className]
                 return cls()
         return None
@@ -171,6 +171,6 @@ class ZMXReader:
 
     def value(self, key, index=0):
         for line in self.lines:
-            if areMatching(line["NAME"],key):
+            if areTheSame(line["NAME"],key):
                 return line["PARAM"][index]
         return None
