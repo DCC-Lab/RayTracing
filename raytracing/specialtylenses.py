@@ -86,6 +86,9 @@ class CompoundLens(MatrixGroup):
         plt.title(r"Lens: {0}, design f={1} mm at $\lambda$={2:.1f} nm".format(self.label, self.designFocalLength, self.wavelengthRef*1000))
         plt.show()
 
+    @classmethod
+    def all(cls):
+        return allSubclasses(cls)
 
 class AchromatDoubletLens(CompoundLens):
     """ 

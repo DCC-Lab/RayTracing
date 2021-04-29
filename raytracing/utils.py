@@ -49,6 +49,14 @@ def deprecated(reason: str):
 
     return deprecatedFunc
 
+def allSubclasses(aClass):
+    subc = []
+    for child in aClass.__subclasses__():
+        if len(child.__subclasses__()) == 0:
+            subc.append(child.__name__)
+        else:
+            subc.extend(allSubclasses(child))
+    return subc
 
 def printClassHierarchy(aClass):
     def printAllChilds(aClass):
