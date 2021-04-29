@@ -36,6 +36,18 @@ class ZMXReader:
         elif areTheSame("IN", units):
             self.factor = 25.4
 
+        wavelengths = self.designWavelengths()
+        self.designWavelength = wavelengths[len(wavelengths)//2]
+
+    def designWavelengths(self):
+        wavelengths = self.value("WAVM", index=1)
+        if isinstance(wavelengths, list):
+            while float(wavelengths[-1]) == 0.55:
+                wavelengths.pop()
+            return [ float(x) for x in wavelengths]
+        else:
+            return [float(wavelengths)]
+
     def determineEncoding(self, filepath):
         """ The zemax files can be in UTF-16 (e.g., Edmund Optics)
         We try to open it as UTF-16, we will get an error if it cannot.
@@ -50,18 +62,19 @@ class ZMXReader:
     def matrixGroup(self):
         group = MatrixGroup(label=self.name)
 
+        wavelength = self.designWavelength
         previousSurface = Surface(mat=Air())
         for surface in self.lensSurfaces():
             mat1 = previousSurface.mat
             mat2 = surface.mat
             interface = DielectricInterface(R=surface.R, 
-                                n1=mat1.n(0.5876),
-                                n2=mat2.n(0.5876),
+                                n1=mat1.n(wavelength),
+                                n2=mat2.n(wavelength),
                                 diameter=surface.diameter)
             group.append(interface)
 
             if not isinstance(mat2, Air):
-                spacing = Space(d=surface.spacing, n=mat2.n(0.5876))
+                spacing = Space(d=surface.spacing, n=mat2.n(wavelength))
                 group.append(spacing)
 
             previousSurface = surface
@@ -170,7 +183,11 @@ class ZMXReader:
         return surface
 
     def value(self, key, index=0):
+        values = []
         for line in self.lines:
             if areTheSame(line["NAME"],key):
-                return line["PARAM"][index]
-        return None
+                values.append(line["PARAM"][index])
+        if len(values) == 1:
+            return values[0]
+
+        return values

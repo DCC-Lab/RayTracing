@@ -68,6 +68,10 @@ class TestZemax(envtest.RaytracingTestCase):
     def testPrescription(self): 
         print(self.zmx.prescription())
 
+    def testWAVM(self): 
+        self.assertTrue(self.zmx.designWavelengths() == [4.861E-1, 5.876E-1, 6.563E-1])
+        self.assertAlmostEqual(self.zmx.designWavelength, 0.5876)
+
     def testEdmundFile(self):
         zmx = ZMXReader("../specifications/zmax_49270.zmx")
         self.assertIsNotNone(zmx)
