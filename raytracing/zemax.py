@@ -26,9 +26,11 @@ class ZMXReader:
                     fields = re.split(r"\s+", line.strip())                    
                     self.lines.append({"NAME":fields[0], "PARAM":fields[1:]})
 
-        units = self.parameter("UNIT")
+        units = self.value("UNIT")
         self.factor = 1
-        if units == 'IN':
+        if units is None:
+            self.factor = 1
+        elif re.match("IN", units, re.IGNORECASE) is not None:
             self.factor = 25.4
 
     def determineEncoding(self, filepath):
@@ -45,20 +47,19 @@ class ZMXReader:
     def matrixGroup(self):
         group = MatrixGroup(label=self.name)
 
-        previousSurface = None
-        for surface in self.surfaces():
-            if surface.spacing != float("+inf") and surface.spacing > 0.001 :
-                mat1 = previousSurface.mat
-                mat2 = surface.mat
-                interface = DielectricInterface(R=surface.R, 
-                                    n1=mat1.n(0.5),
-                                    n2=mat2.n(0.5),
-                                    diameter=surface.diameter)
-                group.append(interface)
+        previousSurface = Surface(mat=Air(),number=0,R=0)
+        for surface in self.lensSurfaces():
+            mat1 = previousSurface.mat
+            mat2 = surface.mat
+            interface = DielectricInterface(R=surface.R, 
+                                n1=mat1.n(0.5),
+                                n2=mat2.n(0.5),
+                                diameter=surface.diameter)
+            group.append(interface)
 
-                if not isinstance(mat2, Air):
-                    spacing = Space(d=surface.spacing, n=mat2.n(0.5))
-                    group.append(spacing)
+            if not isinstance(mat2, Air):
+                spacing = Space(d=surface.spacing, n=mat2.n(0.5))
+                group.append(spacing)
 
             previousSurface = surface
 
@@ -66,7 +67,7 @@ class ZMXReader:
 
     def prescription(self):
         prescription = "\n{0:>10}\t{1:>10}\t{2:>10}\t{3:>10}\n".format("R","Material","d","diameter")
-        for surface in self.surfaces():
+        for surface in self.lensSurfaces():
             prescription += "{0:>10.2f}\t{1:>10}\t{2:>10.2f}\t{3:>10.2f}\n".format(surface.R, str(surface.mat), surface.spacing, surface.diameter)
         return prescription
 
@@ -81,6 +82,25 @@ class ZMXReader:
                 cls = globals()[className]
                 return cls()
         return None
+
+    def lensSurfaces(self):
+        lensSurfaces = []
+        firstSurfaceFound = False
+        previousSurface = None
+        for surface in self.surfaces():
+            if not isinstance(surface.mat, Air):
+                firstSurfaceFound = True
+            
+            if isinstance(surface.mat, Air):
+                if firstSurfaceFound:
+                    lensSurfaces.append(surface)
+                    break
+                else:
+                    continue
+
+            if firstSurfaceFound:
+                lensSurfaces.append(surface)
+        return lensSurfaces
 
     def surfaces(self):
         surfaces = []
@@ -109,7 +129,10 @@ class ZMXReader:
         else:
             radius = 1/curvature*self.factor
         
-        diameter = 2*float(rawInfo["DIAM"][0])*self.factor
+        if "DIAM" in rawInfo:
+            diameter = 2*float(rawInfo["DIAM"][0])*self.factor
+        else:
+            diameter = float("+inf")
 
         spacing = float(rawInfo["DISZ"][0])*self.factor
 
@@ -130,7 +153,6 @@ class ZMXReader:
                     if index == int(line["PARAM"][0]):
                         startMarkerFound = True
                         surface["SURF"] = int(index)
-                        # if float(line["PARAM"][0]) == float("+inf"):
                         continue 
                 else:
                     break
@@ -144,8 +166,8 @@ class ZMXReader:
 
         return surface
 
-    def parameter(self, key):
+    def value(self, key, index=0):
         for line in self.lines:
             if line["NAME"] == key:
-                return line["PARAM"]
+                return line["PARAM"][index]
         return None

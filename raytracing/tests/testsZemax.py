@@ -48,7 +48,7 @@ class TestZemax(envtest.RaytracingTestCase):
         path.append(Space(d=300))
         path.append(group)
         path.append(Space(d=100))
-        path.display(ObjectRays(diameter=20))
+        path.display(rays=ObjectRays(diameter=20))
 
     def testAllMaterials(self): 
         mat = self.zmx.identifyMaterial('NBK-7')       
@@ -58,9 +58,10 @@ class TestZemax(envtest.RaytracingTestCase):
     def testPrescription(self): 
         print(self.zmx.prescription())
 
-    def testOtherFile(self):
+    def testEdmundFile(self):
         zmx = ZMXReader("../specifications/zmax_49270.zmx")
         self.assertIsNotNone(zmx)
+        print(zmx.prescription())
 
 if __name__ == '__main__':
     envtest.main()
