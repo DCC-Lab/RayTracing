@@ -43,7 +43,7 @@ class Material:
             mat = globals()[materialName]()
             nmat = mat.n(wavelength)
             if abs(n-nmat) < tolerance:
-                match.append((materialName, nmat))
+                match.append((materialName, nmat, mat.abbeNumber()))
         return match
 
 class Air(Material):
