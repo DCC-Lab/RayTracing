@@ -36,21 +36,18 @@ class TestZemax(envtest.RaytracingTestCase):
         self.assertIsNotNone(self.zmx)
         self.assertTrue(len(self.zmx.surfaces()) == 5)
 
-    def testMatrixGroup(self):
-        group = self.zmx.matrixGroup()
-        self.assertIsNotNone(group)
-        f1, f2 = group.effectiveFocalLengths()
-        self.assertAlmostEqual(f1, 100, 0)
-        self.assertAlmostEqual(f2, 100, 0)
-        self.assertTrue(len(group.elements)==5)
+    def testMatrixGroupLensProperties(self):
+        design = self.zmx.matrixGroup()
+        self.assertIsNotNone(design)
+        lens = thorlabs.AC254_100_A()
 
-        path = OpticalPath()
-        path.append(Space(d=300))
-        path.append(group)
-        path.append(Space(d=100))
-        path.display(rays=ObjectRays(diameter=20))
+        self.assertAlmostEqual(design.effectiveFocalLengths().f1, lens.effectiveFocalLengths().f1, 3)
+        self.assertAlmostEqual(design.effectiveFocalLengths().f2, lens.effectiveFocalLengths().f1, 3)
+        self.assertAlmostEqual(design.backFocalLength(), lens.backFocalLength(), 3)
+        self.assertAlmostEqual(design.frontFocalLength(), lens.frontFocalLength(), 3)
+        self.assertAlmostEqual(design.L, lens.L, 2)
 
-    def testMatrixGroup(self):
+    def testMatrixGroup2(self):
         design = self.zmx.matrixGroup()
         self.assertIsNotNone(design)
         lens = thorlabs.AC254_100_A()
