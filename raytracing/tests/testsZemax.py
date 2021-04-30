@@ -70,7 +70,7 @@ class TestZemax(envtest.RaytracingTestCase):
             mat = self.zmx.identifyMaterial('garbage')       
 
     def testPrescription(self): 
-        print(self.zmx.prescription())
+        self.assertIsNotNone(self.zmx.prescription())
 
     def testWAVM(self): 
         self.assertTrue(self.zmx.designWavelengths() == [4.861E-1, 5.876E-1, 6.563E-1])
@@ -79,7 +79,7 @@ class TestZemax(envtest.RaytracingTestCase):
     def testEdmundFile(self):
         zmx = ZMXReader("../specifications/zmax_49270.zmx")
         self.assertIsNotNone(zmx)
-        print(zmx.prescription())
+        # print(zmx.prescription())
 
 if __name__ == '__main__':
     envtest.main()
