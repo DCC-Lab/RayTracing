@@ -117,7 +117,13 @@ subclass of Material, see materials.py for examples.".format(name, Material.all(
 class Air(Material):
     @classmethod
     def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
         return 1.0
+
+    @classmethod
+    def abbeNumber(cls):
+        return 0.0
 
 class N_BK7(Material):
     """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-BK7.html """
