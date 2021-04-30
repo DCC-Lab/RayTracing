@@ -4,6 +4,54 @@ import re
 
 Everything here comes from the excellent site http://refractiveindex.info.
 The link with the Python formulas is in the Data section, [Expressions for n]
+
+Thorlabs has a list of glasses they use in their achromatic doublets:
+https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=6973
+Not all glasses are entered here, simply because of the time commitment.
+
+Thorlabs glasses
+Substrate "Range"  "Abbe Number"
+
+CaF2    180 nm - 8.0 µm 95.31
+UVFS    185 nm - 2.1 µm 67.82
+N-BK7   350 nm - 2 µm   64.17
+N-K5    350 nm - 2.1 µm 59.48
+N-KZFS5 350 nm - 2.1 µm 39.7
+N-LAK22 350 nm - 2.1 µm 55.89
+N-SK2   350 nm - 2.3 µm 56.65
+N-SSK2  350 nm - 2.3 µm 53.27
+N-SSK5  350 nm - 2.2 µm 50.88
+SF2 350 nm - 2.2 µm 33.85
+SF5 350 nm - 2.3 µm 32.21
+ZnS 370 nm - 13 µm  19.86
+FD10 (SF10) 400 nm - 2.3 µm 28.41
+LAFN7   400 nm - 2 µm   34.95
+N-BAF10 400 nm - 2.1 µm 47.11
+N-BAF4  400 nm - 2.1 µm 43.72
+N-BAF52 400 nm - 2.1 µm 46.6
+N-BAK4  400 nm - 2.2 µm 43.72
+N-BALF4 400 nm - 2.3 µm 53.87
+N-F2    400 nm - 2.1 µm 36.36
+N-KZFS8 400 nm - 2.2 µm 34.7
+N-LAK10 400 nm - 2 µm   50.62
+N-SF1   400 nm - 2 µm   29.62
+N-SF2   400 nm - 2.3 µm 33.82
+N-SF4   400 nm - 2.1 µm 27.38
+N-SF5   400 nm - 2.2 µm 32.25
+N-SF6HT 400 nm - 2.1 µm 25.36
+N-SF8   400 nm - 2.1 µm 31.31
+N-SF10  400 nm - 2.3 µm 28.53
+N-SSK8  400 nm - 2.1 µm 49.83
+SF6HT   400 nm - 2.3 µm 25.43
+SF10    400 nm - 2.3 µm 28.41
+N-SF11  420 nm - 2.3 µm 25.68
+N-SF56  450 nm - 2.2 µm 26.1
+N-SF57  450 nm - 2.1 µm 23.78
+ZnSe    600 nm - 16 µm  -
+Silicon 1.2 µm - 8.0 µm -
+Germanium   2.0 - 16 µm -
+E-BAF11 -   48.31
+
 """
 
 
@@ -37,7 +85,7 @@ class Material:
         else:
             return "Unknown"
     @classmethod
-    def findMaterial(cls, n, wavelength, tolerance=0.01):
+    def findMaterial(cls, n, wavelength, tolerance=0.05):
         match = []
         for materialName in cls.all():
             mat = globals()[materialName]()
