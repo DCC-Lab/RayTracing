@@ -1,4 +1,5 @@
 import re
+from .utils import *
 
 """ Materials and their indices of refraction
 
@@ -84,8 +85,27 @@ class Material:
             return matchObj.groups(1)[0]
         else:
             return "Unknown"
+
     @classmethod
-    def findMaterial(cls, n, wavelength, tolerance=0.05):
+    def findByName(self, name):
+        """ Identify the material and match it with a class used in Raytracing.
+        This can fail if we do not have that material in the materials.py. """
+        if name is None:
+            return Air()
+
+        simplifiedName = name.replace('-','')
+        for className in Material.all():
+            shortName = className.replace('_','')
+            if areTheSame(simplifiedName, shortName):
+                cls = globals()[className]
+                return cls()
+
+        raise ValueError("The requested material '{0}' is not recognized\
+in the list of materials of raytracing: {1}.  You need to implement it as a\
+subclass of Material, see materials.py for examples.".format(name, Material.all()))
+
+    @classmethod
+    def findByIndex(cls, n, wavelength, tolerance=0.05):
         match = []
         for materialName in cls.all():
             mat = globals()[materialName]()
@@ -186,6 +206,19 @@ class N_SF5(Material):
 
     def abbeNumber(cls):
         return 32.25
+
+class N_SF6(Material):
+    """ All data from https://refractiveindex.info/tmp/data/glass/schott/N-SF6HT.html """
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n=(1+1.55912923/(1-0.0121481001/x**2)+0.284246288/(1-0.0534549042/x**2)+0.968842926/(1-112.174809/x**2))**.5
+        return n
+
+    def abbeNumber(cls):
+        return 29.51
 
 
 class N_SF6HT(Material):

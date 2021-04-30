@@ -3,17 +3,25 @@ import re
 from struct import *
 
 class Surface(NamedTuple):
+    """ A Zemax surface-tuple, to somplify management """
     number:int = 0
     R:float = float("+inf")
     diameter:float = float("+inf")
     mat:Material = None
     spacing:float = 0
 
-def areTheSame(a, b):
-    return a.lower() == b.lower()
-
 class ZMXReader:
     def __init__(self, filepath):
+        """
+        Zemax file (ZMX) reader for compound lenses.  The reader is not 
+        complete, but it can return a `MatrixGroup` that will behave like a
+        compound lens with the spherical interfaces and spacing between
+        elements.
+
+        It is not particularly robust.  Many parameters are currently ignored
+        and it could fail for files not from Thorlabs or Edmund (the only
+        files tested).
+        """
         self.filepath = filepath
         self.name = filepath
         self.lines = []
@@ -40,6 +48,10 @@ class ZMXReader:
         self.designWavelength = wavelengths[len(wavelengths)//2]
 
     def designWavelengths(self):
+        """ Obtain the design wavelength(s) from the file.
+        Thorlabs appears to leave many useless wavelengths (0.55 µm) so
+        we remove them. """
+
         wavelengths = self.value("WAVM", index=1)
         if isinstance(wavelengths, list):
             while float(wavelengths[-1]) == 0.55:
@@ -60,6 +72,9 @@ class ZMXReader:
                 return "utf-8"
 
     def matrixGroup(self):
+        """ Build and return a MatrixGroup with the interfaces and spacing
+        as prescribed.
+        """
         group = MatrixGroup(label=self.name)
 
         wavelength = self.designWavelength
@@ -82,22 +97,14 @@ class ZMXReader:
         return group
 
     def prescription(self):
+        """ Print a text-based prescription, mostly for information purposes """
         prescription = "\n{0:>10}\t{1:>10}\t{2:>10}\t{3:>10}\n".format("R","Material","d","diameter")
         for surface in self.lensSurfaces():
             prescription += "{0:>10.2f}\t{1:>10}\t{2:>10.2f}\t{3:>10.2f}\n".format(surface.R, str(surface.mat), surface.spacing, surface.diameter)
         return prescription
 
     def identifyMaterial(self, matname):
-        if matname is None:
-            return Air()
-
-        matname = matname.replace('-','')
-        for className in Material.all():
-            shortName = className.replace('_','')
-            if areTheSame(matname, shortName):
-                cls = globals()[className]
-                return cls()
-        return None
+        return Material.findByName(name=matname)
 
     def lensSurfaces(self):
         lensSurfaces = []

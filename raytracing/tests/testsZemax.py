@@ -60,10 +60,14 @@ class TestZemax(envtest.RaytracingTestCase):
         self.assertAlmostEqual(design.backFocalLength(), lens.backFocalLength(), 3)
         self.assertAlmostEqual(design.frontFocalLength(), lens.frontFocalLength(), 3)
 
-    def testAllMaterials(self): 
+    def testMaterials(self): 
         mat = self.zmx.identifyMaterial('NBK-7')       
         self.assertIsNotNone(mat)
         self.assertTrue(isinstance(mat, N_BK7))
+
+    def testMaterialMissing(self): 
+        with self.assertRaises(ValueError):
+            mat = self.zmx.identifyMaterial('garbage')       
 
     def testPrescription(self): 
         print(self.zmx.prescription())

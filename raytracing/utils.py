@@ -30,14 +30,15 @@ def areRelativelyAlmostEqual(left, right, epsilon=1e-3):
     relTol2 = absDiff / abs(right)
     return relTol1 < epsilon or relTol2 < epsilon
 
-
 def areAbsolutelyNotEqual(left, right, epsilon=1e-3):
     return abs(left - right) > epsilon
-
 
 def areRelativelyNotEqual(left, right, epsilon=1e-3):
     return not areRelativelyAlmostEqual(left, right, epsilon)
 
+def areTheSame(a, b):
+    """ Simplification to match strings in case-insensitive manner """
+    return a.lower() == b.lower()
 
 def deprecated(reason: str):
     def deprecatedFunc(func):
