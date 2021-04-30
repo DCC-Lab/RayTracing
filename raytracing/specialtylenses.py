@@ -2,15 +2,16 @@ from .matrixgroup import *
 from .materials import *
 from math import *
 import matplotlib.transforms as transforms
+from numpy import linspace
+import matplotlib.pyplot as plt
 
-"""
-General classes for making special lenses: achromat doublet lenses
-and objective lenses. Each of these remain an approximation of the
-actual optical element: for instance, achromats are approximated
-and do not exhibit chromatic aberrations because there is a single
-index of refraction (at the design wavelength). Similarly, objectives
-are approximated to have the same physical characteristics but do not
-exhibit field curvature, aberrations and all.
+""" 
+General classes for making special compound lenses: achromat doublet
+lenses, singlet lenses, and objective lenses. Each of these remain an
+approximation of the actual optical element. Similarly, objectives
+are approximated to have the same physical characteristics but do not exhibit
+field curvature, aberrations and all: they are treated as black boxes
+to reproduce the known characteristics of the objectives.
 
 Each class is the base class for specific manufacturers class:
 for instance, thorlabs achromats or edmund optics achromats both 
@@ -19,8 +20,74 @@ the Objective() class.
 
 """
 
+class CompoundLens(MatrixGroup):
+    def __init__(self, elements, designFocalLength, wavelengthRef=None, url=None, label=''):
+        """ A base class for any lens that we make from its individual elements
+        """
+        super(CompoundLens, self).__init__(elements=elements, label=label)
 
-class AchromatDoubletLens(MatrixGroup):
+        self.designFocalLength = designFocalLength
+        self.url = url
+        self.wavelengthRef = wavelengthRef
+
+    def pointsOfInterest(self, z):
+        """ List of points of interest for this element as a dictionary:
+
+        Parameters
+        ----------
+        z : float
+            The position
+        """
+        (f1, f2) = self.focusPositions(z)
+        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
+
+    @property
+    def forwardSurfaces(self) -> List[Interface]:
+        """ Must be overridden by subclasses """
+
+        return None
+
+    def focalShifts(self, wavelengths=None):
+        """ The chromatic aberration shifts to the focal distance from the
+        design focal length for a range of wavelengths.
+
+        Parameters
+        ----------
+        wavelengths : list or list like
+            Wavelengths in microns defaults to visible
+        """
+
+        if wavelengths is None:
+            wavelengths = linspace(0.4, 0.8, 100)
+        
+        focalShifts = []
+        for l in wavelengths:
+            lens = type(self)(wavelength=l)
+            f,f = lens.effectiveFocalLengths()
+            focalShifts.append(f-self.designFocalLength)
+        
+        return wavelengths*1000, focalShifts
+
+    def showChromaticAberrations(self, wavelengths=None):
+        """ Show the chromatic aberrations focal shifts for this lens
+        as obtained from the function focalShifts()
+        
+        Parameters
+        ----------
+        wavelengths : list or list like
+            Wavelengths in microns defaults to visible
+
+         """
+        wavelengths, focalShifts = self.focalShifts(wavelengths=wavelengths)
+
+        plt.plot(wavelengths, focalShifts,'k-')
+        plt.xlabel(r"Wavelength [nm]")
+        plt.ylabel(r"Focal shift [mm]")
+        plt.title(r"Lens: {0}, design f={1} mm at $\lambda$={2:.1f} nm".format(self.label, self.designFocalLength, self.wavelengthRef*1000))
+        plt.show()
+
+
+class AchromatDoubletLens(CompoundLens):
     """ 
     General Achromat doublet lens with an effective focal length of fa, back focal
     length of fb.  The values fa and fb are used to validate the final focal lengths
@@ -87,7 +154,6 @@ class AchromatDoubletLens(MatrixGroup):
         self.n2 = n2
         self.mat1 = mat1
         self.mat2 = mat2
-        self.url = url
 
         if self.mat1 is not None and self.mat2 is not None :
             if wavelength is not None:
@@ -106,7 +172,11 @@ class AchromatDoubletLens(MatrixGroup):
         elements.append(DielectricInterface(n1=self.n1, n2=self.n2, R=R2, diameter=diameter))
         elements.append(Space(d=tc2, n=self.n2))
         elements.append(DielectricInterface(n1=self.n2, n2=1, R=R3, diameter=diameter))
-        super(AchromatDoubletLens, self).__init__(elements=elements, label=label)
+        super(AchromatDoubletLens, self).__init__(elements=elements, 
+                                                  designFocalLength=fa, 
+                                                  wavelengthRef=wavelengthRef,
+                                                  url=url, 
+                                                  label=label)
         self.apertureDiameter = diameter
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
@@ -137,25 +207,14 @@ class AchromatDoubletLens(MatrixGroup):
                   "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
 
-    def pointsOfInterest(self, z):
-        """ List of points of interest for this element as a dictionary:
-
-        Parameters
-        ----------
-        z : float
-            The position
-        """
-        (f1, f2) = self.focusPositions(z)
-        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
-
     @property
     def forwardSurfaces(self) -> List[Interface]:
         return [SphericalInterface(R=self.R1, L=self.tc1, n=self.n1),
                 SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
                 SphericalInterface(R=self.R3)]
 
-      
-class SingletLens(MatrixGroup):
+
+class SingletLens(CompoundLens):
     """
     General singlet lens with an effective focal length of f, back focal
     length of fb.  The values f and fb are used to validate the final focal lengths
@@ -189,7 +248,8 @@ class SingletLens(MatrixGroup):
         A link to find more info for the lens
     label : string
         The name of the lens
-
+    wavelength : float, in micron
+        The wavelength used for the calculations.
 
     Notes
     -----
@@ -209,7 +269,6 @@ class SingletLens(MatrixGroup):
         self.te = te
         self.n = n
         self.mat = mat
-        self.url = url
 
         if self.mat is not None:
             if wavelength is not None:
@@ -224,7 +283,12 @@ class SingletLens(MatrixGroup):
         elements.append(DielectricInterface(n1=1, n2=self.n, R=R1, diameter=diameter))
         elements.append(Space(d=tc, n=self.n))
         elements.append(DielectricInterface(n1=self.n, n2=1, R=R2, diameter=diameter))
-        super(SingletLens, self).__init__(elements=elements, label=label)
+
+        super(SingletLens, self).__init__(elements=elements, 
+                                          designFocalLength=f, 
+                                          wavelengthRef=wavelengthRef,
+                                          url=url, 
+                                          label=label)
         self.apertureDiameter = diameter
 
         if abs(self.tc - self.L) / self.L > 0.02:
@@ -254,18 +318,6 @@ class SingletLens(MatrixGroup):
             msg = "Singlet {2}: obtained thickness {0:.1f} does not match expected " \
                   "{1:0.1f}".format(corner2 - corner1, self.te, self.label)
             warnings.warn(msg, UserWarning)
-
-    def pointsOfInterest(self, z):
-        """ List of points of interest for this element as a dictionary:
-
-        Parameters
-        ----------
-        z : float
-            The position
-
-        """
-        (f1, f2) = self.focusPositions(z)
-        return [{'z': f1, 'label': '$F_f$'}, {'z': f2, 'label': '$F_b$'}]
 
     @property
     def forwardSurfaces(self) -> List[Interface]:

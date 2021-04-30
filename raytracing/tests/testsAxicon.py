@@ -86,12 +86,14 @@ class TestAxicon(envtest.RaytracingTestCase):
         self.assertEqual(outputRay.theta, axicon.deviationAngle())
         self.assertTrue(outputRay.theta > 0)
 
+    @envtest.expectedFailure
     def testMulMatrix(self):
         matrix = Matrix()
         axicon = Axicon(2.6543, 1.2*degrees)
         with self.assertRaises(TypeError):
             axicon.mul_matrix(matrix)
 
+    @envtest.expectedFailure
     def testDifferentMultiplications(self):
         ray = Ray()
         beam = GaussianBeam(w=1, R=10, n=1.67)
