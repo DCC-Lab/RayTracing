@@ -14,11 +14,11 @@ class TestAsphericInterface(envtest.RaytracingTestCase):
         asphere = AsphericInterface(R=10, kappa=-1.0, n1=1, n2=1.5)
         self.assertIsNotNone(asphere)
         self.assertAlmostEqual(asphere.R, 10)
-        self.assertAlmostEqual(asphere.kappa, 1)
+        self.assertAlmostEqual(asphere.kappa, -1)
         self.assertAlmostEqual(asphere.n1, 1)
         self.assertAlmostEqual(asphere.n2, 1.5)
 
-    def testProperties(self):
+    def testProperties2(self):
         asphere = AsphericInterface(R=10, kappa=0, n1=1, n2=1.5)
         self.assertIsNotNone(asphere)
         self.assertAlmostEqual(asphere.surfaceNormal(y=0), 0)
