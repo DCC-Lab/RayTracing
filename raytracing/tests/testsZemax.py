@@ -2,6 +2,7 @@ import envtest  # modifies path
 from raytracing import *
 from raytracing.zemax import ZMXReader
 from numpy import linspace, pi
+from raytracing.materials import *
 
 inf = float("+inf")
 
@@ -58,13 +59,13 @@ class TestZemax(envtest.RaytracingTestCase):
         self.assertAlmostEqual(design.frontFocalLength(), lens.frontFocalLength(), 3)
 
     def testMaterials(self): 
-        mat = self.zmx.identifyMaterial('NBK-7')       
+        mat = Material.findByName(name='NBK-7')       
         self.assertIsNotNone(mat)
         self.assertTrue(isinstance(mat, N_BK7))
 
     def testMaterialMissing(self): 
         with self.assertRaises(ValueError):
-            mat = self.zmx.identifyMaterial('garbage')       
+            mat = Material.findByName(name='garbage')       
 
     def testPrescription(self): 
         self.assertIsNotNone(self.zmx.prescription())

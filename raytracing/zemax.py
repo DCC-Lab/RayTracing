@@ -103,9 +103,6 @@ class ZMXReader:
             prescription += "{0:>10.2f}\t{1:>10}\t{2:>10.2f}\t{3:>10.2f}\n".format(surface.R, str(surface.mat), surface.spacing, surface.diameter)
         return prescription
 
-    def identifyMaterial(self, matname):
-        return Material.findByName(name=matname)
-
     def lensSurfaces(self):
         lensSurfaces = []
         firstSurfaceFound = False
@@ -142,7 +139,7 @@ class ZMXReader:
             return None
 
         if "GLAS" in rawInfo:
-            mat = self.identifyMaterial(rawInfo["GLAS"][0])
+            mat = Material.findByName(name=rawInfo["GLAS"][0])
         else:
             mat = Air()
 
