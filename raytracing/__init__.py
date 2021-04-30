@@ -41,6 +41,7 @@ from .components import *
 """ Specialty lenses : objectives and achromats, but we keep the namespace for the vendor lenses """
 from .specialtylenses import *
 from .axicon import *
+from .aspherics import *
 
 from . import thorlabs
 from . import eo
