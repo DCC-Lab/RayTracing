@@ -63,6 +63,7 @@ else:
     for i in showExamples:
         entry = examples.all[i-1]
         print("\nScript '{0}.py' - begin source code".format(entry["name"]))
+        plt.imshow(entry["bmpSourceCode"])
         print(entry["terminalSourceCode"],end='')
         print("\nScript '{0}.py' - end source code".format(entry["name"]))
         print("\nScript '{0}.py' - begin output".format(entry["name"]))

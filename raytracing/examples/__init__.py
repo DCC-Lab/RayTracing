@@ -4,7 +4,9 @@ import importlib
 
 from pygments import highlight
 from pygments.lexers import PythonLexer
-from pygments.formatters import TerminalFormatter
+from pygments.formatters import TerminalFormatter, BmpImageFormatter
+
+import PIL
 
 """ This module is only here to support examples, so it dynamically
 loads all files that appear to be example files from the directory.
@@ -29,4 +31,6 @@ for file in allFiles:
                      "description":module.DESCRIPTION,
                      "code":module.exempleCode,
                      "sourceCode":srcCode,
-                     "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter())})
+                     "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
+                     "bmpSourceCode":highlight(srcCode, PythonLexer(), BmpImageFormatter())
+                     })
