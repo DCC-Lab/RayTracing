@@ -8,19 +8,18 @@ An ImagingPath assumes an object (in blue) at the front edge of the path.
 You can see the image conjugate (in red) at the focal plane of the second
 lens.
 """
-DIFFICULTY  = 2
 
 from raytracing import *
 
 def exempleCode():
-	path = ImagingPath()
-	path.label = TITLE
-	path.append(Space(d=5))
-	path.append(Lens(f=5))
-	path.append(Space(d=20))
-	path.append(Lens(f=5))
-	path.append(Space(d=10))
-	path.display(comments=DESCRIPTION)
+    path = ImagingPath()
+    path.label = TITLE
+    path.append(Space(d=5))
+    path.append(Lens(f=5))
+    path.append(Space(d=20))
+    path.append(Lens(f=5))
+    path.append(Space(d=10))
+    path.display(comments=DESCRIPTION)
 
 if __name__ == "__main__":
-	exempleCode()
+    exempleCode()
