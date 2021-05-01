@@ -14,7 +14,7 @@ import sys
 import argparse
 import re
 
-from . import examples # __all__ will gather all example files dynamically
+from . import examples # 'all' will gather all example files dynamically
 
 # We start by figuring out what the user really wants. If they don't know,
 # we offer some help
@@ -31,19 +31,39 @@ showExamples = args['examples']
 printClasses = args['classes']
 listExamples = args['list']
 
+if showExamples == 'all':
+    showExamples = range(1, len(examples.all))
+else:
+    showExamples = [int(y) for y in showExamples.split(',')]
+
 if printClasses:
     printClassHierarchy(Rays)
     printClassHierarchy(Matrix)
-    exit(0)
 elif listExamples:
     # List example code
+    topDir      = os.path.dirname(os.path.realpath(examples.__file__))
+    print("All example code on your machine is found at: {0}".format(topDir))
     for i, entry in enumerate(examples.all):
         print("{0:2d}. {1}.py {2}".format(i+1, entry["name"], entry["title"]))
-    exit(0)
 else:
     # Run examples
+
+    # Some decent parameters for plots
+    # See https://matplotlib.org/api/font_manager_api.html#matplotlib.font_manager.FontProperties.set_size
+    params = {'legend.fontsize': 'x-large',
+              'figure.figsize': (10, 7),
+             'axes.labelsize': 'x-large',
+             'axes.titlesize':'x-large',
+             'xtick.labelsize':'x-large',
+             'ytick.labelsize':'x-large',
+             'font.family':'helvetica'}
+    plt.rcParams.update(params)
+
+    print("Running example code : {0}".format(showExamples))
+
     for i in showExamples:
-        print(i)
         entry = examples.all[i]
+        print("Script '{0}.py'\nBegin output".format(entry["name"]))
         entry["code"]()
+        print("Script '{0}.py'\nEnd output".format(entry["name"]))
 
