@@ -16,7 +16,7 @@ import re
 
 from io import BytesIO
 from PIL import Image
-from matplotlib.pyplot import imshow
+import matplotlib.pyplot as plt
 from . import examples # 'all' will gather all example files dynamically
 
 # We start by figuring out what the user really wants. If they don't know,
@@ -68,7 +68,7 @@ else:
         print("\nScript '{0}.py' - begin source code".format(entry["name"]))
         print(entry["terminalSourceCode"],end='')
         print("\nScript '{0}.py' - end source code".format(entry["name"]))
-        imshow(np.asarray(Image.open(BytesIO(entry["bmpSourceCode"]))))
+        plt.imshow(np.asarray(Image.open(BytesIO(entry["bmpSourceCode"]))))
         print("\nScript '{0}.py' - begin output".format(entry["name"]))
         entry["code"]()        
         print("Script '{0}.py' - end output".format(entry["name"]))

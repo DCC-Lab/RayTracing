@@ -18,8 +18,8 @@ def exempleCode():
     path.append(Space(180))
     path.append(obj)
     path.append(Space(10))
-    path.displayWithObject(diameter=20, fanAngle=0.005, comments=DESCRIPTION+__SRC_CODE)
-
+    
+    path.displayWithObject(diameter=20, fanAngle=0.005, comments=DESCRIPTION)
 
 if __name__ == "__main__":
     exempleCode()

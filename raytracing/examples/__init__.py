@@ -6,7 +6,8 @@ from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import TerminalFormatter, BmpImageFormatter
 
-import PIL
+from PIL import Image
+from io import BytesIO
 
 """ This module is only here to support examples, so it dynamically
 loads all files that appear to be example files from the directory.
@@ -26,6 +27,10 @@ for file in allFiles:
             srcCode = f.readlines()
         srcCode = ''.join(srcCode)
         module.__SRC_CODE = srcCode
+
+        bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
+        module.__IMG_CODE = Image.open(BytesIO(bmpSrcCode))
+
         all.append({"name":name, 
                      "title":module.TITLE,
                      "description":module.DESCRIPTION,
