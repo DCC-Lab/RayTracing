@@ -1,5 +1,7 @@
-TITLE       = ""
+TITLE       = "Obtained the forward and backward conjugates"
 DESCRIPTION = """
+This example does not show a plot, it calculates the position
+of the object and images.
 """
 
 from raytracing import *
@@ -10,7 +12,6 @@ def exempleCode():
     M3 = M2 * M1
     print(M3.forwardConjugate())
     print(M3.backwardConjugate())
-    path.display(comments=DESCRIPTION)
 
 if __name__ == "__main__":
     exempleCode()

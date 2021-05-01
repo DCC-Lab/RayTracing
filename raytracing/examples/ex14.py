@@ -14,11 +14,11 @@ def exempleCode():
     print("Distance between entrance and exit planes: ", obj.L)
 
     path = ImagingPath()
-    path.label = "Demo #14 Path with generic objective"
+    path.label = "Path with generic objective"
     path.append(Space(180))
     path.append(obj)
     path.append(Space(10))
-    path.displayWithObject(diameter=20, fanAngle=0.005, comments=DESCRIPTION)
+    path.displayWithObject(diameter=20, fanAngle=0.005, comments=DESCRIPTION+__SRC_CODE)
 
 
 if __name__ == "__main__":

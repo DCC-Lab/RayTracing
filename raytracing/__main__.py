@@ -32,7 +32,7 @@ printClasses = args['classes']
 listExamples = args['list']
 
 if showExamples == 'all':
-    showExamples = range(1, len(examples.all))
+    showExamples = range(1, len(examples.all)+1)
 else:
     showExamples = [int(y) for y in showExamples.split(',')]
 
@@ -60,10 +60,11 @@ else:
     plt.rcParams.update(params)
 
     print("Running example code : {0}".format(showExamples))
-
     for i in showExamples:
-        entry = examples.all[i]
-        print("Script '{0}.py'\nBegin output".format(entry["name"]))
-        entry["code"]()
-        print("Script '{0}.py'\nEnd output".format(entry["name"]))
-
+        entry = examples.all[i-1]
+        print("\nScript '{0}.py' - begin source code".format(entry["name"]))
+        print(entry["terminalSourceCode"],end='')
+        print("\nScript '{0}.py' - end source code".format(entry["name"]))
+        print("\nScript '{0}.py' - begin output".format(entry["name"]))
+        entry["code"]()        
+        print("Script '{0}.py' - end output".format(entry["name"]))
