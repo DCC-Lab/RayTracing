@@ -65,13 +65,14 @@ class Material:
     
     @classmethod
     def abbeNumber(cls):
-        """ Abbe number of the glass. """
+        """ Abbe number of the glass, which is a measure of how dispersive
+        the glass is."""
         return None
 
     @classmethod
     def Vd(cls):
         """ Synonym of Abbe number of the glass. """
-        return cls.abbe()
+        return cls.abbeNumber()
 
     @classmethod
     def all(cls):
