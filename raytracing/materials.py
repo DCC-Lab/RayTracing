@@ -107,8 +107,8 @@ class Material:
                 cls = globals()[className]
                 return cls()
 
-        raise ValueError("The requested material '{0}' is not recognized\
-in the list of materials of raytracing: {1}.  You need to implement it as a\
+        raise ValueError("The requested material '{0}' is not recognized \
+in the list of materials of raytracing: {1}.  You need to implement it as a \
 subclass of Material, see materials.py for examples.".format(name, Material.all()))
 
     @classmethod
@@ -218,6 +218,7 @@ class N_SF5(Material):
         n=(1+1.52481889/(1-0.011254756/x**2)+0.187085527/(1-0.0588995392/x**2)+1.42729015/(1-129.141675/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 32.25
 
@@ -231,6 +232,7 @@ class N_SF6(Material):
         n=(1+1.55912923/(1-0.0121481001/x**2)+0.284246288/(1-0.0534549042/x**2)+0.968842926/(1-112.174809/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 29.51
 
@@ -245,6 +247,7 @@ class N_SF6HT(Material):
         n=(1+1.77931763/(1-0.0133714182/x**2)+0.338149866/(1-0.0617533621/x**2)+2.08734474/(1-174.01759/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 25.36
 
@@ -258,6 +261,7 @@ class N_SF10(Material):
         n=(1+1.62153902/(1-0.0122241457/x**2)+0.256287842/(1-0.0595736775/x**2)+1.64447552/(1-147.468793/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 28.53
 
@@ -271,6 +275,7 @@ class N_SF11(Material):
         n=(1+1.73759695/(1-0.013188707/x**2)+0.313747346/(1-0.0623068142/x**2)+1.89878101/(1-155.23629/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 25.68
 
@@ -284,6 +289,7 @@ class N_SF57(Material):
         n=(1+1.87543831/(1-0.0141749518/x**2)+0.37375749/(1-0.0640509927/x**2)+2.30001797/(1-177.389795/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 23.78
 
@@ -297,6 +303,7 @@ class N_BAF10(Material):
         n=(1+1.5851495/(1-0.00926681282/x**2)+0.143559385/(1-0.0424489805/x**2)+1.08521269/(1-105.613573/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 47.11
 
@@ -310,6 +317,7 @@ class E_BAF11(Material):
         n=(2.71954649-0.0100472501*x**2+0.0200301385*x**-2+0.000465868302*x**-4-7.51633336e-06*x**-6+1.77544989e-06*x**-8)**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 46.48
 
@@ -323,6 +331,7 @@ class N_BAK1(Material):
         n=(1+1.12365662/(1-0.00644742752/x**2)+0.309276848/(1-0.0222284402/x**2)+0.881511957/(1-107.297751/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 57.55
 
@@ -336,6 +345,7 @@ class N_BAK4(Material):
         n=(1+1.28834642/(1-0.00779980626/x**2)+0.132817724/(1-0.0315631177/x**2)+0.945395373/(1-105.965875/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 55.97
 
@@ -349,6 +359,7 @@ class FK51A(Material):
         n=(1+0.971247817/(1-0.00472301995/x**2)+0.216901417/(1-0.0153575612/x**2)+0.904651666/(1-168.68133/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 84.47
 
@@ -363,6 +374,7 @@ class LAFN7(Material):
         n=(1+1.66842615/(1-0.0103159999/x**2)+0.298512803/(1-0.0469216348/x**2)+1.0774376/(1-82.5078509/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 34.95
 
@@ -376,6 +388,7 @@ class N_LASF9(Material):
         n=(1+2.00029547/(1-0.0121426017/x**2)+0.298926886/(1-0.0538736236/x**2)+1.80691843/(1-156.530829/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 32.17
 
@@ -389,6 +402,7 @@ class N_LAK22(Material):
         n=(1+1.14229781/(1-0.00585778594/x**2)+0.535138441/(1-0.0198546147/x**2)+1.04088385/(1-100.834017/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 55.89
 
@@ -403,6 +417,7 @@ class N_SSK5(Material):
         n=(1+1.59222659/(1-0.00920284626/x**2)+0.103520774/(1-0.0423530072/x**2)+1.05174016/(1-106.927374/x**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 50.88
 
@@ -416,6 +431,7 @@ class E_FD10(Material):
         n=(2.881518-0.013228312*x**2+0.03145559*x**-2+0.0026851666*x**-4-0.00022577544*x**-6+2.4693268e-05*x**-8)**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 28.32
 
@@ -429,5 +445,6 @@ class FusedSilica(Material):
         n=(1+0.6961663/(1-(0.0684043/x)**2)+0.4079426/(1-(0.1162414/x)**2)+0.8974794/(1-(9.896161/x)**2))**.5
         return n
 
+    @classmethod
     def abbeNumber(cls):
         return 67.82

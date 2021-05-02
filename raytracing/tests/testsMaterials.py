@@ -6,10 +6,32 @@ class TestMaterial(envtest.RaytracingTestCase):
     def testMaterialInvalid(self):
         self.assertRaises(TypeError, Material.n, 5)
 
-
 class TestMaterialSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.materials = Material.__subclasses__()
+
+    def testMaterialsList(self):
+        self.assertTrue(len(self.materials) > 10)
+
+    def testMaterialsList2(self):
+        self.assertTrue(Material.all())
+
+    def testFindMaterialByName(self):
+        self.assertIsNotNone(Material.findByName('NSF10'))
+
+    def testFindMaterialByIndex(self):
+        match = Material.findByIndex(n=1.6, wavelength=0.5, tolerance=0.1)
+        self.assertIsNotNone(match)
+        self.assertTrue(len(match) > 2)
+
+        match = Material.findByIndex(n=5.6, wavelength=0.5, tolerance=0.1)
+        self.assertIsNotNone(match)
+        self.assertTrue(len(match) == 0)
+
+    def testMaterialAbbeNumber(self):
+        for material in self.materials:
+            self.assertIsNotNone(material().abbeNumber())
+            self.assertIsNotNone(material().Vd())
 
     def testMaterialSubclassesTypeError(self):
         fails = []
