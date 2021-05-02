@@ -61,7 +61,7 @@ class ZMXReader:
             return [float(wavelengths)]
 
     def determineEncoding(self, filepath):
-        """ The zemax files can be in UTF-16 (e.g., Edmund Optics)
+        """ Zemax files can be in UTF-16 (e.g., Edmund Optics)
         We try to open it as UTF-16, we will get an error if it cannot.
         """
         with open(self.filepath,"r",encoding='utf-16') as reader:     
@@ -72,9 +72,9 @@ class ZMXReader:
                 return "utf-8"
 
     def matrixGroup(self):
-        """ Build and return a MatrixGroup with the interfaces and spacing
-        as prescribed.
-        """
+        """ Build and return a raytracing MatrixGroup with the interfaces and
+        spacing as prescribed. """
+
         group = MatrixGroup(label=self.name)
 
         wavelength = self.designWavelength
@@ -97,13 +97,23 @@ class ZMXReader:
         return group
 
     def prescription(self):
-        """ Print a text-based prescription, mostly for information purposes """
+        """ Print a text-based prescription, mostly for information purposes. """
         prescription = "\n{0:>10}\t{1:>10}\t{2:>10}\t{3:>10}\n".format("R","Material","d","diameter")
         for surface in self.lensSurfaces():
             prescription += "{0:>10.2f}\t{1:>10}\t{2:>10.2f}\t{3:>10.2f}\n".format(surface.R, str(surface.mat), surface.spacing, surface.diameter)
         return prescription
 
     def lensSurfaces(self):
+        """ Make sense of surfaceInfo from the Zemax file to figure
+        out what makes up a lens.
+        
+        This will not be particularly robust: it assumes it is a compound lens
+        but that is sufficient for now.
+
+        Returns
+        -------
+        List of Surface elements that make up the lens.
+        """
         lensSurfaces = []
         firstSurfaceFound = False
         previousSurface = None
@@ -123,6 +133,13 @@ class ZMXReader:
         return lensSurfaces
 
     def surfaces(self):
+        """ List of all surface elements from the Zemax file.
+
+        Returns
+        -------
+
+        List of Surfaces
+        """
         surfaces = []
         for i in range(1000):
             surface = self.surfaceInfo(i)
@@ -134,6 +151,20 @@ class ZMXReader:
         return surfaces
 
     def surfaceInfo(self, index):
+        """ Make sense of rawSurfaceInfo from the Zemax file to put it together
+        into a Surface-namedtuple that makes more sense.
+        
+        1. We figure out the material and replace it with Raytracing Material subclass.
+        2. We convert CURV into a radius.
+        3. We use DIAM as the diameter of the element.  For some reason DIAM is half
+        the diameter.
+        4. The distance to the next interface is read as well. 
+
+        Returns
+        -------
+        A Surface Named-tuple.
+
+        """
         rawInfo = self.rawSurfaceInfo(index)
         if rawInfo is None:
             return None
@@ -163,6 +194,11 @@ class ZMXReader:
                        diameter=diameter)
 
     def rawSurfaceInfo(self, index):
+        """ Extract the raw information for surfaces from the file.
+        All SURF elements from the file are extracted in order.
+        No analysis is performed: making sense of the information
+        in the context of a lens is the job of `surfaceInfo`.
+        """
         startMarkerFound = False
 
         surface = {}
@@ -187,6 +223,12 @@ class ZMXReader:
         return surface
 
     def value(self, key, index=0):
+        """ Convenience function to access the information in the file
+        with the Zemax 4-letter parameters.
+
+        If an element has several items, element [index] is 
+        returned, defaults to zero.
+        """
         values = []
         for line in self.lines:
             if areTheSame(line["NAME"],key):
