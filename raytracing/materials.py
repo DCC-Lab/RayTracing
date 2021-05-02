@@ -59,18 +59,23 @@ E-BAF11 -   48.31
 class Material:
     @classmethod
     def n(cls, wavelength):
+        """ The index of a material is implemented as a classmethod. 
+        Return the value for the wavelength in microns."""
         raise TypeError("Use Material subclass, not Material")
     
     @classmethod
     def abbeNumber(cls):
+        """ Abbe number of the glass. """
         return None
 
     @classmethod
     def Vd(cls):
+        """ Synonym of Abbe number of the glass. """
         return cls.abbe()
 
     @classmethod
     def all(cls):
+        """ Returns the class names of all materials implemented. """
         materials = []
         for materialClass in cls.__subclasses__():
             matchObj = re.match(r".+\.(\S+)'", "{0}".format(materialClass))
@@ -79,6 +84,7 @@ class Material:
         return materials
 
     def __str__(self):
+        """ Print the name of the class as a string """
         className = type(self)
         matchObj = re.match(r".+\.(\S+)'", "{0}".format(className))
         if matchObj is not None:
@@ -106,6 +112,7 @@ subclass of Material, see materials.py for examples.".format(name, Material.all(
 
     @classmethod
     def findByIndex(cls, n, wavelength, tolerance=0.05):
+        """ Identify the material based on a index value and a tolerance."""
         match = []
         for materialName in cls.all():
             mat = globals()[materialName]()
