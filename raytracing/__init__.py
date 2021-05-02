@@ -46,6 +46,8 @@ from . import thorlabs
 from . import eo
 from . import olympus
 
+from .zemax import *
+
 from .utils import *
 
 """ Synonym of Matrix: Element 

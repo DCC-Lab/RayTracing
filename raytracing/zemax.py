@@ -73,7 +73,13 @@ class ZMXReader:
 
     def matrixGroup(self):
         """ Build and return a raytracing MatrixGroup with the interfaces and
-        spacing as prescribed. """
+        spacing as prescribed. 
+
+        Returns
+        -------
+        group : MatrixGroup
+            The created group that acts like a lens.
+        """
 
         group = MatrixGroup(label=self.name)
 
@@ -97,7 +103,14 @@ class ZMXReader:
         return group
 
     def prescription(self):
-        """ Print a text-based prescription, mostly for information purposes. """
+        """ A text-based prescription, mostly for information purposes. 
+
+        Returns
+        -------
+        prescription : multi-line string
+            A prescription in text-based form
+
+        """
         prescription = "\n{0:>10}\t{1:>10}\t{2:>10}\t{3:>10}\n".format("R","Material","d","diameter")
         for surface in self.lensSurfaces():
             prescription += "{0:>10.2f}\t{1:>10}\t{2:>10.2f}\t{3:>10.2f}\n".format(surface.R, str(surface.mat), surface.spacing, surface.diameter)
@@ -112,7 +125,7 @@ class ZMXReader:
 
         Returns
         -------
-        List of Surface elements that make up the lens.
+        lensSurfaces : List of Surface elements that make up the lens.
         """
         lensSurfaces = []
         firstSurfaceFound = False

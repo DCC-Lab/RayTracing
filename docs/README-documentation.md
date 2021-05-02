@@ -116,7 +116,7 @@ Defined pages in the website are the content of the following files:
 The online documentation can be updated directly from the [RayTracing project](https://readthedocs.org/projects/raytracing/) on ReadTheDocs by the project administrators (currently dccote, jlbegin and elaheparham) to match the release from PyPI. The build is currently set on the master branch.
 To build a released version, an admistrator must go to the [Build](https://readthedocs.org/projects/raytracing/builds/) on ReadTheDocs, select the version and push Build Version. 
 
-Remember before bulding online the new documentation version, you should check if all the documentations and examples are working properly. So, run `.../raytracing/tests/TestModule.py` and if there are no errors, the documentation is working properly. 
+Remember before bulding online the new documentation version, you should check if all the documentations and examples are working properly. So, run `.../raytracing/tests/testsDocTestModule.py` and if there are no errors, the documentation is working properly. 
 If there is an error you should go to the line that raises the error and fix it before publishing the new version.
 
 ### Build local

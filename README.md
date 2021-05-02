@@ -23,6 +23,14 @@ We have tried to separate the calculation code (i.e. the matrices and subclasses
 
 If you want to perform calculations with coherent laser beams, then you use `GaussianBeam` and `LaserPath`. Everything is essentially the same, except that the formalism does not allow for the gaussian beam to be "blocked", hence any calculation of stops with aperture are not available in `LaserPath`. That part of the code is less developed, but it is nevertheless available.
 
+## What's new?
+
+To get information about what is new, currently the best place is the [release page on GitHub.](https://github.com/DCC-Lab/RayTracing/releases)
+
+The article above is fully compatible with all 1.3.x versions.  As long as the API does not change, versions will be 1.3.x.
+
+
+
 ## Installing and upgrading
 
 You need `matplotlib`, which is a fairly standard Python module. If you do not have it,  installing [Anaconda](https://www.anaconda.com/download/) is your best option. Python 3.6 or later is required. There are several ways to install the module:
