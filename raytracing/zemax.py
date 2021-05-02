@@ -11,17 +11,20 @@ class Surface(NamedTuple):
     spacing:float = 0
 
 class ZMXReader:
-    def __init__(self, filepath):
-        """
-        Zemax file (ZMX) reader for compound lenses.  The reader is not 
-        complete, but it can return a `MatrixGroup` that will behave like a
-        compound lens with the spherical interfaces and spacing between
-        elements.
+    """
+    Zemax file (ZMX) reader for compound lenses.  The reader is not 
+    complete, but it can return a `MatrixGroup` that will behave like a
+    compound lens with the spherical interfaces and spacing between
+    elements.
 
-        It is not particularly robust.  Many parameters are currently ignored
-        and it could fail for files not from Thorlabs or Edmund (the only
-        files tested).
-        """
+    This only works with ZMX files, not ZMF files.  The ZMX files are 
+    text-based and the ZMF files are binary without documentation.
+
+    It is not particularly robust: many parameters are currently ignored
+    and it could fail for files not from Thorlabs or Edmund (the only
+    files tested).
+    """
+    def __init__(self, filepath):
         self.filepath = filepath
         self.name = filepath
         self.lines = []
