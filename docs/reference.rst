@@ -194,6 +194,7 @@ Materials
     :toctree: modules
 
     Material
+    Air
     N_BK7
     N_SF2
     SF2
