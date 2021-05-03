@@ -536,16 +536,15 @@ class Matrix(object):
         return [self]
 
     def opticalInvariant(self, ray1, ray2, z=0):
-        """
-        The optical invariant is a quantity that is conserved
-        for any two rays in the system. It is very general and
-        any two rays can be used. It is often seen with the
-        chief ray and marginal ray in an imaging system, in which
-        case it is called the Lagrange invariant. 
-        In ImagingPath(), the principal and axial rays can be used,
-        in which case the optical invariant is called the Lagrange Invariant,
-        and is the maximal optical invariant between two rays that guarantees 
-        neither one will be blocked.
+        """ The optical invariant is a quantity that is conserved for any two
+        rays in the system. It is very general and any two rays can be used. At a
+        given position z, it is  simply n✕(θ₁y₂ - θ₂y₁), where n is the index at that
+        z.
+        
+        In an ImagingPath, it will often be calculated with the principal and
+        axial rays, in which case the optical invariant is called the Lagrange
+        Invariant. The Lagrange invariant is the maximal optical invariant
+        that guarantees neither rays will be blocked.
 
         Parameters
         ----------
