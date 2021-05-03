@@ -5,7 +5,10 @@ from contextlib import redirect_stdout
 import unittest
 import tempfile
 import matplotlib.pyplot as plt
+from unittest.mock import Mock, patch
 
+#Use with patch('matplotlib.pyplot.show', new=mock.Mock()):
+# or @patch('matplotlib.pyplot.show', new=mock.Mock())
 
 class RaytracingTestCase(unittest.TestCase):
     tempDir = os.path.join(tempfile.gettempdir(), "tempDir")

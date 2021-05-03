@@ -326,7 +326,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
     @envtest.skipIf(not testSaveHugeFile, "Don't test saving a lot of rays")
     def testSaveHugeFile(self):
         fileName = self.tempFilePath('hugeFile.pkl')
-        nbRays = 100_000
+        nbRays = 10_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
         self.assertSaveNotFailed(rays, fileName)
@@ -342,7 +342,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
     @envtest.skipIf(not testSaveHugeFile, "Don't test saving then loading a lot of rays")
     def testSaveThenLoadHugeFile(self):
-        nbRays = 100_000
+        nbRays = 10_000
         raysList = [Ray(y, y / nbRays) for y in range(nbRays)]
         rays = Rays(raysList)
         raysLoad = Rays()

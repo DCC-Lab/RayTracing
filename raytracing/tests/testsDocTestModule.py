@@ -1,12 +1,12 @@
 import envtest
 import doctest
 import raytracing
-from unittest import mock
+from unittest.mock import Mock, patch
 
 ## if a new python file is added to the module, please add it in a new line
 
 
-with mock.patch('matplotlib.pyplot.show', new=mock.Mock()):
+with patch('matplotlib.pyplot.show', new=Mock()):
     doctest.testmod(m=raytracing.axicon,verbose=False)
     doctest.testmod(m=raytracing.components,verbose=False)
     doctest.testmod(m=raytracing.eo,verbose=False)
