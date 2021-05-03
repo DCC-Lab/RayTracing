@@ -512,7 +512,7 @@ class ImagingPath(MatrixGroup):
         >>> path.append(Lens(f=10,diameter=10,label="f=10"))
         >>> path.append(Space(d=10))
         >>> print('The (position,diameter) of entrance pupil:', path.entrancePupil())
-        The (position,diameter) of entrance pupil: (20.0, 5.0)
+        The (position,diameter) of entrance pupil: Stop(z=20.0, diameter=5.0)
 
         """
 

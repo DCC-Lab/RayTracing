@@ -966,13 +966,13 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=0,label='Lens')
         >>> f1=M1.focalDistances()
         >>> print('focal distances:' , f1)
-        focal distances: (5.0, 5.0)
+        focal distances: FocalLengths(f1=5.0, f2=5.0)
 
         This function has the same out put as effectiveFocalLengths()
 
         >>> f2=M1.effectiveFocalLengths()
         >>> print('focal distances:' , f2)
-        focal distances: (5.0, 5.0)
+        focal distances: FocalLengths(f1=5.0, f2=5.0)
         """
 
         return self.effectiveFocalLengths()
@@ -1005,12 +1005,12 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=0,label='Lens')
         >>> f2=M1.effectiveFocalLengths()
         >>> print('focal distances:' , f2)
-        focal distances: (5.0, 5.0)
+        focal distances: FocalLengths(f1=5.0, f2=5.0)
 
         This function has the same out put as effectiveFocalLengths()
         >>> f1=M1.focalDistances()
         >>> print('focal distances:' , f1)
-        focal distances: (5.0, 5.0)
+        focal distances: FocalLengths(f1=5.0, f2=5.0)
 
         """
 
@@ -1149,13 +1149,13 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=4,frontVertex=-1,backVertex=5,label='Lens')
         >>> Position0=M1.focusPositions(z=0)
         >>> print('focal positions (F,B):' , Position0)
-        focal positions (F,B): (-5.0, 9.0)
+        focal positions (F,B): CardinalPoint(z1=-5.0, z2=9.0)
 
         And if we move object 2 units:
 
         >>> Position2=M1.focusPositions(z=2)
         >>> print('focal positions (F,B):' , Position2)
-        focal positions (F,B): (-3.0, 11.0)
+        focal positions (F,B): CardinalPoint(z1=-3.0, z2=11.0)
 
         See Also
         --------
@@ -1190,7 +1190,7 @@ class Matrix(object):
         >>> M1= Matrix(A=1,B=0,C=-1/5,D=1,physicalLength=3,frontVertex=-1,backVertex=5,label='Lens')
         >>> Position0=M1.principalPlanePositions(z=0)
         >>> print('PP positions (F,B):' , Position0)
-        PP positions (F,B): (0.0, 3.0)
+        PP positions (F,B): PrincipalPlanes(z1=0.0, z2=3.0)
 
         See Also
         --------

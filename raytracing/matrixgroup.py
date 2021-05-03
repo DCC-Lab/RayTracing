@@ -241,11 +241,11 @@ class MatrixGroup(Matrix):
         >>> from raytracing import *
         >>> system = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         >>> print(f"Initial magnification: {system.magnification()}")
-        Initial magnification: (-1.0, -1.0)
+        Initial magnification: Magnification(transverse=-1.0, angular=-1.0)
 
         >>> system[3:] = MatrixGroup([Space(5), Lens(5), Space(5)])
         >>> print(f"Final magnification: {system.magnification()}")
-        Final magnification: (-0.5, -2.0)
+        Final magnification: Magnification(transverse=-0.5, angular=-2.0)
 
         See Also
         --------
