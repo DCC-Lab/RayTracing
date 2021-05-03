@@ -31,8 +31,6 @@ class TestAchromatDoubletLens(envtest.RaytracingTestCase):
         diff = abs(thorlabs_focal_value_855 - thorlabs_focal_value_700)
 
         diffFocal = abs((-1 / achromat855.C) - (-1 / achromat700.C))
-        print(-1 / achromat855.C, -1 / achromat700.C)
-        print(diff, diffFocal)
 
         self.assertAlmostEqual(diff, diffFocal, places=3)
 
