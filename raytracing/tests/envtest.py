@@ -7,12 +7,18 @@ import tempfile
 import matplotlib.pyplot as plt
 from unittest.mock import Mock, patch
 
-#Use with patch('matplotlib.pyplot.show', new=mock.Mock()):
-# or @patch('matplotlib.pyplot.show', new=mock.Mock())
+#Use with patch('matplotlib.pyplot.show', new=Mock()):
+# or @patch('matplotlib.pyplot.show', new=Mock())
+
+perfTestKey = "RAYTRACING_PERF_TESTS"
+performanceTests = False
+if perfTestKey in os.environ:
+    performanceTests = os.environ[perfTestKey]
+else:
+    performanceTests = False
 
 class RaytracingTestCase(unittest.TestCase):
     tempDir = os.path.join(tempfile.gettempdir(), "tempDir")
-
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
 
@@ -108,7 +114,6 @@ def skipUnless(condition: object, reason: str):
 
 def expectedFailure(func):
     return unittest.expectedFailure(func)
-
 
 # append module root directory to sys.path
 sys.path.insert(0,
