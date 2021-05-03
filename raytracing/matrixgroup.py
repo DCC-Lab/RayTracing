@@ -403,7 +403,7 @@ class MatrixGroup(Matrix):
         """Trace the input ray from first element until after the last element,
         indicating if the ray was blocked or not.
 
-        Parameter
+        Parameters
         ---------
         inputRay : object of ray class
             A ray with height y and angle theta
