@@ -10,8 +10,6 @@ than by looking at the plot. Set SHOWPLOT to True to see the effect (acts like a
 
 
 class TestTransforms(unittest.TestCase):
-    SHOWPLOT = True
-
     def tearDown(self) -> None:
         """ Deletes the Figure in memory between each test. """
         plt.close()
@@ -66,11 +64,10 @@ class TestTransforms(unittest.TestCase):
         transform = transforms.Affine2D().translate(10, 0)
         drawing.set_transform(transform + axes.transData)
 
-        if self.SHOWPLOT:
-            axes.set_ylim(-10, 10)
-            axes.set_xlim(0, 20)
-            plt.title("Graphic at x=5 + Translate x=+10")
-            plt.show()
+        axes.set_ylim(-10, 10)
+        axes.set_xlim(0, 20)
+        plt.title("Graphic at x=5 + Translate x=+10")
+        plt.show()
 
     @patch("matplotlib.pyplot.show", new=Mock())
     def testTranslateOverwrite(self):
@@ -90,11 +87,10 @@ class TestTransforms(unittest.TestCase):
         transform = transforms.Affine2D().translate(15, 0)
         drawing.set_transform(transform + axes.transData)
 
-        if self.SHOWPLOT:
-            axes.set_ylim(-10, 10)
-            axes.set_xlim(0, 20)
-            plt.title("Graphic at x=5 + Translate x=+15 (Overwrites previous +10)")
-            plt.show()
+        axes.set_ylim(-10, 10)
+        axes.set_xlim(0, 20)
+        plt.title("Graphic at x=5 + Translate x=+15 (Overwrites previous +10)")
+        plt.show()
 
     @patch("matplotlib.pyplot.show", new=Mock())
     def testCenterOfDrawingNotUpdatedAfterTranslate(self):
@@ -132,11 +128,10 @@ class TestTransforms(unittest.TestCase):
         transform = transforms.Affine2D().scale(2, 2)
         drawing.set_transform(transform + axes.transData)
 
-        if self.SHOWPLOT:
-            axes.set_ylim(-10, 10)
-            axes.set_xlim(-10, 10)
-            plt.title("Scale Transform\nGraphic is (0.1 x 10) + Scale (2 x 2)")
-            plt.show()
+        axes.set_ylim(-10, 10)
+        axes.set_xlim(-10, 10)
+        plt.title("Scale Transform\nGraphic is (0.1 x 10) + Scale (2 x 2)")
+        plt.show()
 
     @patch("matplotlib.pyplot.show", new=Mock())
     def testScaleTransformAlsoScalesPosition(self):
@@ -153,11 +148,10 @@ class TestTransforms(unittest.TestCase):
         transform = transforms.Affine2D().scale(2, 2)
         drawing.set_transform(transform + axes.transData)
 
-        if self.SHOWPLOT:
-            axes.set_ylim(-10, 10)
-            axes.set_xlim(0, 20)
-            plt.title("Scale Transform\nGraphic is (0.1 x 10) + Scale (2 x 2)")
-            plt.show()
+        axes.set_ylim(-10, 10)
+        axes.set_xlim(0, 20)
+        plt.title("Scale Transform\nGraphic is (0.1 x 10) + Scale (2 x 2)")
+        plt.show()
 
     @patch("matplotlib.pyplot.show", new=Mock())
     def testScaleTransformAlsoScalesPositionAfterTranslate(self):
@@ -175,11 +169,10 @@ class TestTransforms(unittest.TestCase):
         transform = transforms.Affine2D().translate(10, 0) + transforms.Affine2D().scale(2, 2)
         drawing.set_transform(transform + axes.transData)
 
-        if self.SHOWPLOT:
-            axes.set_ylim(-10, 10)
-            axes.set_xlim(0, 20)
-            plt.title("Scale Transform\nGraphic is (0.1 x 10) at x=0 + Translate x=10 + Scale (2 x 2)")
-            plt.show()
+        axes.set_ylim(-10, 10)
+        axes.set_xlim(0, 20)
+        plt.title("Scale Transform\nGraphic is (0.1 x 10) at x=0 + Translate x=10 + Scale (2 x 2)")
+        plt.show()
 
     @patch("matplotlib.pyplot.show", new=Mock())
     def testScaleTransformDoesNotScalePositionBeforeTranslate(self):
@@ -197,11 +190,10 @@ class TestTransforms(unittest.TestCase):
         transform = transforms.Affine2D().scale(2, 2) + transforms.Affine2D().translate(10, 0)
         drawing.set_transform(transform + axes.transData)
 
-        if self.SHOWPLOT:
-            axes.set_ylim(-10, 10)
-            axes.set_xlim(0, 20)
-            plt.title("Scale Transform\nGraphic is (0.1 x 10) at x=0 + Scale (2 x 2) + Translate x=10")
-            plt.show()
+        axes.set_ylim(-10, 10)
+        axes.set_xlim(0, 20)
+        plt.title("Scale Transform\nGraphic is (0.1 x 10) at x=0 + Scale (2 x 2) + Translate x=10")
+        plt.show()
 
     @patch("matplotlib.pyplot.show", new=Mock())
     def testScaleTransformOnTranslatedDrawing(self):
@@ -226,12 +218,11 @@ class TestTransforms(unittest.TestCase):
         transform = transforms.Affine2D().scale(2, 2) + transforms.Affine2D().translate(10, 0)
         drawing.set_transform(transform + axes.transData)
 
-        if self.SHOWPLOT:
-            axes.set_ylim(-10, 10)
-            axes.set_xlim(0, 20)
-            plt.title("Scale Transform after translation requires a reset\nGraphic is (0.1 x 10) at x=0 + Scale (2 x "
-                      "2) + Translate x=10")
-            plt.show()
+        axes.set_ylim(-10, 10)
+        axes.set_xlim(0, 20)
+        plt.title("Scale Transform after translation requires a reset\nGraphic is (0.1 x 10) at x=0 + Scale (2 x "
+                  "2) + Translate x=10")
+        plt.show()
 
 if __name__ == '__main__':
     unittest.main()
