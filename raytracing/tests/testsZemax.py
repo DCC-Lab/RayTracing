@@ -73,8 +73,8 @@ class TestZemax(envtest.RaytracingTestCase):
     def testEdmundFile(self):
         zmx = ZMXReader("../specifications/AC254-125-A-Zemax(ZMX).zmx")
         self.assertIsNotNone(zmx)
-        print(zmx.prescription())
-        print(zmx.matrixGroup().effectiveFocalLengths())
+        #print(zmx.prescription())
+        #print(zmx.matrixGroup().effectiveFocalLengths())
 
 if __name__ == '__main__':
     envtest.main()
