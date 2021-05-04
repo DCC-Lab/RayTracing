@@ -728,7 +728,8 @@ class ImagingPath(MatrixGroup):
 
     def imageSize(self):
         """The image size is the object field of view multiplied by magnification.
-        This value is independent from the height of the object.
+        This value is independent from the height of the object. If the FOV
+        is infinite, then the objectHeight is used.
 
         Returns
         -------
@@ -755,7 +756,11 @@ class ImagingPath(MatrixGroup):
             return float("+inf")
 
         magnification = conjugateMatrix.A
-        return abs(fieldOfView * magnification)
+
+        if np.isfinite(fieldOfView):
+            return abs(fieldOfView * magnification)
+        elif self.objectHeight > 0:
+            return abs(self.objectHeight * magnification)
 
     def lagrangeInvariant(self):
         """
