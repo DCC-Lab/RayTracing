@@ -419,7 +419,7 @@ class AC254_100_A(AchromatDoubletLens):
                                     label="AC254-100-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_125_A(AchromatDoubletLens):
-    """ AC254_125_A
+    """ AC254-125-A
 
     .. csv-table::
         :header: Parameter, value
@@ -460,7 +460,7 @@ class AC254_125_A(AchromatDoubletLens):
                                     label="AC254-125-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_150_A(AchromatDoubletLens):
-    """ AC254_150_A
+    """ AC254-150-A
 
     .. csv-table::
         :header: Parameter, value
@@ -491,7 +491,7 @@ class AC254_150_A(AchromatDoubletLens):
                                     label="AC254-150-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_200_A(AchromatDoubletLens):
-    """ AC254_200_A
+    """ AC254-200-A
 
     .. csv-table::
         :header: Parameter, value
@@ -522,7 +522,7 @@ class AC254_200_A(AchromatDoubletLens):
                                     label="AC254-200-A", wavelength=wavelength, wavelengthRef= 0.5876)
 
 class AC254_250_A(AchromatDoubletLens):
-    """ AC254_250_A
+    """ AC254-250-A
 
     .. csv-table::
         :header: Parameter, value
@@ -553,7 +553,7 @@ class AC254_250_A(AchromatDoubletLens):
                                     label="AC254-250-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_300_A(AchromatDoubletLens):
-    """ AC254_300_A
+    """ AC254-300-A
 
     .. csv-table::
         :header: Parameter, value
@@ -584,7 +584,7 @@ class AC254_300_A(AchromatDoubletLens):
                                     label="AC254-300-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_400_A(AchromatDoubletLens):
-    """ AC254_400_A
+    """ AC254-400-A
 
     .. csv-table::
         :header: Parameter, value
@@ -615,7 +615,7 @@ class AC254_400_A(AchromatDoubletLens):
                                     label="AC254-400-A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class AC254_500_A(AchromatDoubletLens):
-    """ AC254_500_A
+    """ AC254-500-A
 
     .. csv-table::
         :header: Parameter, value
@@ -646,7 +646,7 @@ class AC254_500_A(AchromatDoubletLens):
                                     label="AC254-500-A", wavelength=wavelength, wavelengthRef= 0.5876)
 
 class AC254_050_B(AchromatDoubletLens):
-    """ AC254_050_B
+    """ AC254-050-B
 
     .. csv-table::
         :header: Parameter, value
@@ -678,7 +678,7 @@ class AC254_050_B(AchromatDoubletLens):
 
 
 class AC508_075_B(AchromatDoubletLens):
-    """ AC508_075_B
+    """ AC508-075-B
 
     .. csv-table::
         :header: Parameter, value
@@ -709,7 +709,7 @@ class AC508_075_B(AchromatDoubletLens):
                                     label="AC508-075-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_080_B(AchromatDoubletLens):
-    """ AC508_080_B
+    """ AC508-080-B
 
     .. csv-table::
         :header: Parameter, value
@@ -740,7 +740,7 @@ class AC508_080_B(AchromatDoubletLens):
                                     label="AC508-080-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_100_B(AchromatDoubletLens):
-    """ AC508_100_B
+    """ AC508-100-B
 
     .. csv-table::
         :header: Parameter, value
@@ -771,7 +771,7 @@ class AC508_100_B(AchromatDoubletLens):
                                     label="AC508-100-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_150_B(AchromatDoubletLens):
-    """ AC508_150_B
+    """ AC508-150-B
 
     .. csv-table::
         :header: Parameter, value
@@ -802,7 +802,7 @@ class AC508_150_B(AchromatDoubletLens):
                                     label="AC508-150-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_200_B(AchromatDoubletLens):
-    """ AC508_200_B
+    """ AC508-200-B
 
     .. csv-table::
         :header: Parameter, value
@@ -833,7 +833,7 @@ class AC508_200_B(AchromatDoubletLens):
                                     label="AC508-200-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_250_B(AchromatDoubletLens):
-    """ AC508_250_B
+    """ AC508-250-B
 
     .. csv-table::
         :header: Parameter, value
@@ -864,7 +864,7 @@ class AC508_250_B(AchromatDoubletLens):
                                     label="AC508-250-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_300_B(AchromatDoubletLens):
-    """ AC508_300_B
+    """ AC508-300-B
 
     .. csv-table::
         :header: Parameter, value
@@ -895,7 +895,7 @@ class AC508_300_B(AchromatDoubletLens):
                                     label="AC508-300-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_400_B(AchromatDoubletLens):
-    """ AC508_400_B
+    """ AC508-400-B
 
     .. csv-table::
         :header: Parameter, value
@@ -926,7 +926,7 @@ class AC508_400_B(AchromatDoubletLens):
                                     label="AC508-400-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_500_B(AchromatDoubletLens):
-    """ AC508_500_B
+    """ AC508-500-B
 
     .. csv-table::
         :header: Parameter, value
@@ -957,7 +957,7 @@ class AC508_500_B(AchromatDoubletLens):
                                     label="AC508-500-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_750_B(AchromatDoubletLens):
-    """ AC508_750_B
+    """ AC5s08-750-B
 
     .. csv-table::
         :header: Parameter, value
@@ -988,7 +988,7 @@ class AC508_750_B(AchromatDoubletLens):
                                     label="AC508-750-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class AC508_1000_B(AchromatDoubletLens):
-    """ AC508_1000_B
+    """ AC508-1000-B
 
     .. csv-table::
         :header: Parameter, value
@@ -1019,7 +1019,7 @@ class AC508_1000_B(AchromatDoubletLens):
                                     label="AC508-1000-B", wavelength=wavelength, wavelengthRef=0.855)
 
 class LA1608_A(SingletLens):
-    """ LA1608_A
+    """ LA1608-A
 
     .. csv-table::
         :header: Parameter, value
@@ -1045,7 +1045,7 @@ class LA1608_A(SingletLens):
                                       label="LA1608_A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class LA1134_A(SingletLens):
-    """ LA1134_A
+    """ LA1134-A
 
     .. csv-table::
         :header: Parameter, value
@@ -1071,7 +1071,7 @@ class LA1134_A(SingletLens):
                                       label="LA1134_A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class LA1131_A(SingletLens):
-    """ LA1131_A
+    """ LA1131-A
 
     .. csv-table::
         :header: Parameter, value
@@ -1097,7 +1097,7 @@ class LA1131_A(SingletLens):
                                       label="LA1131_A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class LA1422_A(SingletLens):
-    """ LA1422_A
+    """ LA1422-A
 
     .. csv-table::
         :header: Parameter, value
@@ -1123,7 +1123,7 @@ class LA1422_A(SingletLens):
                                       label="LA1422_A", wavelength=wavelength, wavelengthRef=0.5876)
         
 class LA1805_A(SingletLens):
-    """ LA1805_A
+    """ LA1805-A
 
     .. csv-table::
         :header: Parameter, value
@@ -1149,7 +1149,7 @@ class LA1805_A(SingletLens):
                                       label="LA1805_A", wavelength=wavelength, wavelengthRef=0.5876)
 
 class LA1274_A(SingletLens):
-    """ LA1274_A
+    """ LA1274-A
 
     .. csv-table::
         :header: Parameter, value
