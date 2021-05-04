@@ -440,17 +440,15 @@ class AC254_125_A(AchromatDoubletLens):
 
     Notes
     -----
-    More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
-
-    As of May 31 2020, the calculated edge thickness does not match
-    the product page. There does not seem to be another place where 
-    the information can be validated (the PDF doesn't show the edge thickness).
-    https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120.
-
-    Because everything else is fine in all calculations, to avoid
-    warnings, we are setting te=5.3 mm, even if the web site says 5.0 mm.
-    All properties are correct except that, and te has no impact on calculations
-    (it is just a sanity check).
+        More info: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120
+        As of May 31 2020, the calculated edge thickness does not match
+        the product page. There does not seem to be another place where
+        the information can be validated (the PDF doesn't show the edge thickness).
+        https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=120.
+        Because everything else is fine in all calculations, to avoid
+        warnings, we are setting te=5.3 mm, even if the web site says 5.0 mm.
+        All properties are correct except that, and it has no impact on calculations
+        (it is just a sanity check).
     """
 
     def __init__(self, wavelength= None):
