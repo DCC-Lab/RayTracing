@@ -29,6 +29,12 @@ autosummary_generate = True
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.napoleon', 'recommonmark', 'sphinx_rtd_theme']
+autodoc_default_flags = ['members', 'show-inheritance']
+autodoc_default_options = {
+    "members": True,
+    "inherited-members": False,
+    "show-inheritance": True,
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
