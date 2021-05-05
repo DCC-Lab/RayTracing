@@ -57,6 +57,16 @@ class XLUMPlanFLN20X(Objective):
     https://patents.google.com/patent/US6501603B2/en
 
     .. csv-table::
+        :header: Header,   R,   D,   Nd,  υd
+         1,  −4.8742, 4.8257, 1.75500, 52.32
+         2, −5.4698,  0.2000, ,
+
+    .. csv-table::
+        :header: StringOnly,   R,   D,   Nd,  υd
+         "1",  "−4.8742", "4.8257", "1.75500", "52.32"
+         "2", "−5.4698",  "0.2000", "", ""
+
+    .. csv-table::
         :header: #,   R,   D,   Nd,  υd
          1,  −4.8742, 4.8257, 1.75500, 52.32
          2, −5.4698,  0.2000
