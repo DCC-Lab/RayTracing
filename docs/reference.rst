@@ -213,3 +213,12 @@ Materials
     N_SSK5
     E_FD10
     FusedSilica
+
+Zemax reader
+------------------
+
+.. autosummary::
+    :template: autoClass.rst
+    :toctree: modules
+
+    ZMXReader
