@@ -769,7 +769,7 @@ class ImagingPath(MatrixGroup):
             return abs(self.objectHeight * magnification)
 
         fieldOfView = self.fieldOfView()
-        if np.isfinite(fieldOfView):
+        if not np.isfinite(fieldOfView):
             warnings.warn('Field of view is infinite. You can pass useObject=True to use the finite objectHeight.', category=Warning)
 
         return abs(fieldOfView * magnification)
