@@ -1367,6 +1367,24 @@ class Matrix(object):
             :width: 70%
             :align: center
 
+        Test1
+
+        .. image:: ../../images/flipOrientation_after.png
+            :width: 70%
+            :align: center
+
+        Test2
+
+        .. image:: ../../../images/flipOrientation_after.png
+            :width: 70%
+            :align: center
+
+        Test3
+
+        .. image:: ../../../../images/flipOrientation_after.png
+            :width: 70%
+            :align: center
+
         See Also
         --------
         raytracing.Matrix
