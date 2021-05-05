@@ -484,6 +484,16 @@ class ImagingPath(MatrixGroup):
 
             return Stop(z=apertureStopPosition, diameter=apertureStopDiameter)
 
+    def hasApertureStop(self):
+        """ Returns True if this ImagingPath has an aperture stop.
+        The presence of a single finite diameter element is usually sufficient
+        to have an aperture stop."""
+
+        dist, diam = self.apertureStop()
+        if dist is not None:
+            return True
+        return False
+    
     def entrancePupil(self):
         """The entrance pupil is the image of the aperture stop
         as seen from the object. To obtain this image, we simply
@@ -628,6 +638,20 @@ class ImagingPath(MatrixGroup):
 
         return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
 
+    def hasFieldStop(self):
+        """ Returns True if this ImagingPath has a field stop.
+        
+        The presence of a single finite diameter element is not sufficient
+        to have a field stop: we must have at least two finite aperture 
+        elements (maybe more depending on position) to have a field stop.
+        If the system has no field stop, then the fieldOfView will be infinite.
+        """
+
+        dist, diam = self.fieldStop()
+        if dist is not None:
+            return True
+        return False
+
     def fieldOfView(self):
         """The field of view is the length visible before the chief
         rays on either side are blocked by the field stop.
@@ -726,9 +750,19 @@ class ImagingPath(MatrixGroup):
 
         return chiefRay.y
 
-    def imageSize(self):
-        """The image size is the object field of view multiplied by magnification.
-        This value is independent from the height of the object.
+    def imageSize(self, useObject=False):
+        """ The actual formal definition of image size is the object field of
+        view multiplied by magnification. This value is independent from the height of
+        the object. However, if the FOV is infinite, this may not be what the user is
+        expecting. In this case a warning is printed and we offer the possibility to
+        use `objectHeight` from the class.
+        
+        Parameters
+        ----------
+
+        useObject : bool default  False
+            Whether or not we use the finite `objectHeight` provided in the class
+            instead of the field of view to calculate the image size.
 
         Returns
         -------
@@ -749,12 +783,19 @@ class ImagingPath(MatrixGroup):
         size of the image : 9.999998574656525
 
         """
-        fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
         if conjugateMatrix is None:
             return float("+inf")
 
         magnification = conjugateMatrix.A
+
+        if useObject:
+            return abs(self.objectHeight * magnification)
+
+        fieldOfView = self.fieldOfView()
+        if not np.isfinite(fieldOfView):
+            warnings.warn('Field of view is infinite. You can pass useObject=True to use the finite objectHeight.', category=Warning)
+
         return abs(fieldOfView * magnification)
 
     def lagrangeInvariant(self):
@@ -909,7 +950,7 @@ class ImagingPath(MatrixGroup):
         raise ValueError('The position of the rays does not fit in any spaces.')
 
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None):
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None): #pragma: no cover 
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -987,7 +1028,7 @@ class ImagingPath(MatrixGroup):
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
                      interactive=False, filePath=filePath)
 
-    def displayWithObject(self, diameter, z=0, fanAngle=None, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+    def displayWithObject(self, diameter, z=0, fanAngle=None, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None): #pragma: no cover 
         """ Display the optical system and trace the rays.
 
         Parameters
