@@ -484,6 +484,16 @@ class ImagingPath(MatrixGroup):
 
             return Stop(z=apertureStopPosition, diameter=apertureStopDiameter)
 
+    def hasApertureStop(self):
+        """ Returns True if this ImagingPath has an aperture stop.
+        The presence of a single finite diameter element is usually sufficient
+        to have an aperture stop."""
+
+        dist, diam = self.apertureStop()
+        if dist is not None:
+            return True
+        return False
+    
     def entrancePupil(self):
         """The entrance pupil is the image of the aperture stop
         as seen from the object. To obtain this image, we simply
@@ -627,6 +637,20 @@ class ImagingPath(MatrixGroup):
                     break
 
         return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
+
+    def hasFieldStop(self):
+        """ Returns True if this ImagingPath has a field stop.
+        
+        The presence of a single finite diameter element is not sufficient
+        to have a field stop: we must have at least two finite aperture 
+        elements (maybe more depending on position) to have a field stop.
+        If the system has no field stop, then the fieldOfView will be infinite.
+        """
+
+        dist, diam = self.fieldStop()
+        if dist is not None:
+            return True
+        return False
 
     def fieldOfView(self):
         """The field of view is the length visible before the chief
