@@ -1,9 +1,8 @@
-TITLE       = "A single lens f = 50 mm, infinite diameter"
-DESCRIPTION = """
-Here we have a single lens of focal length f=50 mm. An object
-(in blue) is positionned at 100 mm in front of the lens. The image
-conjugate (in red) is seen 100 mm after the lens, as expected.
-"""
+TITLE       = "A single lens f = 50 mm, infinite diameter" 
+DESCRIPTION = """  Here we have a single lens of focal length f=50 mm. It has
+an infinite diameter. An default object (in blue) is positionned at 100 mm in
+front of the lens. The image conjugate (in red) is seen 100 mm after the lens,
+as expected. """
 
 from raytracing import *
 
