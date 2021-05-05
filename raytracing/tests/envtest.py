@@ -6,6 +6,7 @@ import unittest
 import tempfile
 import matplotlib.pyplot as plt
 from unittest.mock import Mock, patch
+import numpy as np
 
 #Use with patch('matplotlib.pyplot.show', new=Mock()):
 # or @patch('matplotlib.pyplot.show', new=Mock())
