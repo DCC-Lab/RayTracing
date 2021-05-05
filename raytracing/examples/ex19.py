@@ -4,7 +4,7 @@ DESCRIPTION = """
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
     cavity = LaserCavity(label="")
     cavity.append(Space(d=160))
     cavity.append(DielectricSlab(thickness=100, n=1.8))
@@ -24,7 +24,7 @@ def exempleCode():
         print(q)
 
     # Show
-    cavity.display(comments=DESCRIPTION)
+    cavity.display(comments=comments)
 
 if __name__ == "__main__":
     exempleCode()

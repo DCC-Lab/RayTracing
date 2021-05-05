@@ -4,7 +4,7 @@ DESCRIPTION = """
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
     # Demo #18: Laser beam and vendor lenses
     path = LaserPath()
     path.label = TITLE
@@ -19,7 +19,7 @@ def exempleCode():
     path.append(Space(d=180))
     path.append(olympus.LUMPlanFL40X())
     path.append(Space(d=10))
-    path.display(beams=[GaussianBeam(w=0.001)], comments=DESCRIPTION)
+    path.display(beams=[GaussianBeam(w=0.001)], comments=comments)
 
 if __name__ == "__main__":
     exempleCode()

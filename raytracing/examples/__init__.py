@@ -25,6 +25,8 @@ for file in allFiles:
         module = importlib.import_module(".{0}".format(name),package="raytracing.examples")
         with open("{0}/{1}".format(topDir, file)) as f:
             srcCode = f.readlines()
+        # The last three lines are always the main() call
+        srcCode = srcCode[:-3]
         srcCode = ''.join(srcCode)
         module.__SRC_CODE = srcCode
 
@@ -33,9 +35,8 @@ for file in allFiles:
 
         all.append({"name":name, 
                      "title":module.TITLE,
-                     "description":module.DESCRIPTION,
                      "code":module.exempleCode,
                      "sourceCode":srcCode,
                      "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
-                     "bmpSourceCode":highlight(srcCode, PythonLexer(), BmpImageFormatter())
+                     "bmpSourceCode":Image.open(BytesIO(bmpSrcCode))
                      })

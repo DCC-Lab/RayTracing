@@ -4,7 +4,7 @@ DESCRIPTION = """
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
     # Demo #14: Generic objectives
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2,
                     magnification=40, fieldNumber=1.4, label="Objective")
@@ -19,7 +19,7 @@ def exempleCode():
     path.append(obj)
     path.append(Space(10))
     
-    path.displayWithObject(diameter=20, fanAngle=0.005, comments=DESCRIPTION)
+    path.displayWithObject(diameter=20, fanAngle=0.005, comments=comments)
 
 if __name__ == "__main__":
     exempleCode()

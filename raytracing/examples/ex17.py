@@ -4,7 +4,7 @@ DESCRIPTION = """
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
     # Demo #17: Vendor lenses
     path = ImagingPath()
     path.label = TITLE
@@ -19,7 +19,7 @@ def exempleCode():
     path.append(Space(180))
     path.append(olympus.LUMPlanFL40X())
     path.append(Space(10))
-    path.display(comments=DESCRIPTION)
+    path.display(comments=comments)
 
 if __name__ == "__main__":
     exempleCode()

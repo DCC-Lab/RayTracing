@@ -4,7 +4,7 @@ DESCRIPTION = """
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
     path = ImagingPath()
     path.fanAngle = 0.05
     path.append(Space(d=20))
@@ -15,7 +15,7 @@ def exempleCode():
     (focal, focal) = path.effectiveFocalLengths()
     bfl = path.backFocalLength()
     path.label = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}".format(focal, bfl)
-    path.display(comments=DESCRIPTION)
+    path.display(comments=comments)
 
 if __name__ == "__main__":
     exempleCode()

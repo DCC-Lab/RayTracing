@@ -44,7 +44,7 @@ if printClasses:
     printClassHierarchy(Matrix)
 elif listExamples:
     # List example code
-    topDir      = os.path.dirname(os.path.realpath(examples.__file__))
+    topDir = os.path.dirname(os.path.realpath(examples.__file__))
     print("All example code on your machine is found at: {0}".format(topDir))
     for i, entry in enumerate(examples.all):
         print("{0:2d}. {1}.py {2}".format(i+1, entry["name"], entry["title"]))
@@ -68,7 +68,7 @@ else:
         print("\nScript '{0}.py' - begin source code".format(entry["name"]))
         print(entry["terminalSourceCode"],end='')
         print("\nScript '{0}.py' - end source code".format(entry["name"]))
-        plt.imshow(np.asarray(Image.open(BytesIO(entry["bmpSourceCode"]))))
+        #plt.imshow(np.asarray(Image.open(BytesIO(entry["bmpSourceCode"]))))
         print("\nScript '{0}.py' - begin output".format(entry["name"]))
-        entry["code"]()        
+        entry["code"](comments=entry["bmpSourceCode"])        
         print("Script '{0}.py' - end output".format(entry["name"]))

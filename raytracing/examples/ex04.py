@@ -8,7 +8,7 @@ rays are blocked.
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(d=10))
@@ -16,7 +16,7 @@ def exempleCode():
     path.append(Space(d=3))
     path.append(Aperture(diameter=3))
     path.append(Space(d=17))
-    path.display(comments=DESCRIPTION)
+    path.display(comments=comments)
 
 if __name__ == "__main__":
     exempleCode()

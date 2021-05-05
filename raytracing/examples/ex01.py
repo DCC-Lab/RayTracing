@@ -7,13 +7,13 @@ conjugate (in red) is seen 100 mm after the lens, as expected.
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
 	path = ImagingPath()
 	path.label = TITLE
 	path.append(Space(d=100))
 	path.append(Lens(f=50))
 	path.append(Space(d=100))
-	path.display(comments=DESCRIPTION)
+	path.display(comments=comments)
 
 if __name__ == "__main__":
 	exempleCode()

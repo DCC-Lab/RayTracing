@@ -6,7 +6,7 @@ of the object and images.
 
 from raytracing import *
 
-def exempleCode():
+def exempleCode(comments=None):
     M1 = Space(d=10)
     M2 = Lens(f=5)
     M3 = M2 * M1
