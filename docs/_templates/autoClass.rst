@@ -5,7 +5,6 @@
 .. autoclass:: {{ objname }}
    :no-undoc-members:
    :show-inheritance:
-   :inherited-members:
 
    {% block methods %}
 
