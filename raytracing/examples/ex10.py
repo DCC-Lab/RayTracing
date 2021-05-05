@@ -1,4 +1,4 @@
-TITLE       = ""
+TITLE       = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}"
 DESCRIPTION = """
 """
 
@@ -14,7 +14,7 @@ def exempleCode(comments=None):
     path.append(Space(d=40))
     (focal, focal) = path.effectiveFocalLengths()
     bfl = path.backFocalLength()
-    path.label = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}".format(focal, bfl)
+    path.label = TITLE.format(focal, bfl)
     path.display(comments=comments)
 
 if __name__ == "__main__":
