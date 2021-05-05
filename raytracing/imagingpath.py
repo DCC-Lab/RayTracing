@@ -726,10 +726,19 @@ class ImagingPath(MatrixGroup):
 
         return chiefRay.y
 
-    def imageSize(self):
-        """The image size is the object field of view multiplied by magnification.
-        This value is independent from the height of the object. If the FOV
-        is infinite, then the objectHeight is used.
+    def imageSize(self, useObject=False):
+        """ The actual formal definition of image size is the object field of
+        view multiplied by magnification. This value is independent from the height of
+        the object. However, if the FOV is infinite, this may not be what the user is
+        expecting. In this case a warning is printed and we offer the possibility to
+        use `objectHeight` from the class.
+        
+        Parameters
+        ----------
+
+        useObject : bool default  False
+            Whether or not we use the finite `objectHeight` provided in the class
+            instead of the field of view to calculate the image size.
 
         Returns
         -------
@@ -750,17 +759,20 @@ class ImagingPath(MatrixGroup):
         size of the image : 9.999998574656525
 
         """
-        fieldOfView = self.fieldOfView()
         (distance, conjugateMatrix) = self.forwardConjugate()
         if conjugateMatrix is None:
             return float("+inf")
 
         magnification = conjugateMatrix.A
 
-        if np.isfinite(fieldOfView):
-            return abs(fieldOfView * magnification)
-        elif self.objectHeight > 0:
+        if useObject:
             return abs(self.objectHeight * magnification)
+
+        fieldOfView = self.fieldOfView()
+        if np.isfinite(fieldOfView):
+            warnings.warn('Field of view is infinite. You can pass useObject=True to use the finite objectHeight.', category=Warning)
+
+        return abs(fieldOfView * magnification)
 
     def lagrangeInvariant(self):
         """

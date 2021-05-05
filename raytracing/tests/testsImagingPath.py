@@ -165,16 +165,22 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path.append(Aperture(20))
         self.assertEqual(path.imageSize(), inf)
 
-    def testFiniteImageSize(self):
-        path = ImagingPath()
-        path.append(Space(d=200))
-        path.append(Lens(f=50))
-        self.assertIsNotNone(path.imageSize())
-        self.assertTrue(np.isfinite(path.imageSize()))
 
     def testImageSizeInfinite(self):
         path = ImagingPath(System4f(f1=10, f2=2, diameter1=10))
         self.assertEqual(path.imageSize(), inf)
+
+    def testFiniteImageSizeWithObject(self):
+        path = ImagingPath()
+        path.append(Space(d=200))
+        path.append(Lens(f=50))
+        imageSize = path.imageSize(useObject=True)
+        self.assertIsNotNone(imageSize)
+        self.assertTrue(np.isfinite(imageSize))
+
+        imageSize = path.imageSize(useObject=False)
+        self.assertIsNotNone(imageSize)
+        self.assertTrue(not np.isfinite(imageSize))
 
     def testImageSize(self):
         path = ImagingPath(System4f(f1=10, f2=20, diameter1=10, diameter2=20))
