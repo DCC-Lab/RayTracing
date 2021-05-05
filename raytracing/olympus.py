@@ -58,6 +58,7 @@ class XLUMPlanFLN20X(Objective):
 
     .. csv-table::
         :header: #,   R,   D,   Nd,  υd
+
          1,  −4.8742, 4.8257, 1.75500, 52.32
          2, −5.4698,  0.2000, , 
          3, −8.2501,  3.5000, 1.56907, 71.30
@@ -84,12 +85,13 @@ class XLUMPlanFLN20X(Objective):
         24,  −12.9456, , ,
 
     β = −20X    NA = 0.8    F = 9 mm    WD = 1.4 mm
-    Condition (1) value:    D/F =   8.099
-    Condition (4) value:    | υdpe − υdne | =   20.09
-    Condition (5) value:    | υdpi − υdni | =   28.59 − 29.42
-    Condition (6) value:    rn/rp   =   0.891
-    Condition (7) value:    F/Fg2a  =   −0.311
-    Condition (8) value:    F/Fg2c  =   −0.02
+
+    - Condition (1) value:    D/F =   8.099
+    - Condition (4) value:    | υdpe − υdne | =   20.09
+    - Condition (5) value:    | υdpi − υdni | =   28.59 − 29.42
+    - Condition (6) value:    rn/rp   =   0.891
+    - Condition (7) value:    F/Fg2a  =   −0.311
+    - Condition (8) value:    F/Fg2c  =   −0.02
 
     """
     def __init__(self):
