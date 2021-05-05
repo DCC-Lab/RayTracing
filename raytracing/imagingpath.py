@@ -950,7 +950,7 @@ class ImagingPath(MatrixGroup):
         raise ValueError('The position of the rays does not fit in any spaces.')
 
     def display(self, rays=None, raysList=None, removeBlocked=True, comments=None,
-                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None):
+                onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None, interactive=True, filePath=None): #pragma: no cover 
         """ Display the optical system and trace the rays.
 
         Parameters
@@ -1028,7 +1028,7 @@ class ImagingPath(MatrixGroup):
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
                      interactive=False, filePath=filePath)
 
-    def displayWithObject(self, diameter, z=0, fanAngle=None, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None):
+    def displayWithObject(self, diameter, z=0, fanAngle=None, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None): #pragma: no cover 
         """ Display the optical system and trace the rays.
 
         Parameters

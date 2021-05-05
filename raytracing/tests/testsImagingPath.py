@@ -52,6 +52,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         mirror = CurvedMirror(10)
         path = ImagingPath([space, slab, mirror])
         self.assertTupleEqual(path.apertureStop(), (None, inf))
+        self.assertFalse(path.hasApertureStop())
 
     def testApertureStop(self):
         f1 = 10
@@ -59,6 +60,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         elements = [Space(f1), Lens(f1, 1000), Space(f1 + f2), Lens(f2, 700), Space(f2)]
         fourF = ImagingPath(elements)
         self.assertTupleEqual(fourF.apertureStop(), (40, 700))
+        self.assertTrue(fourF.hasApertureStop())
 
     def testApertureStopNamedTuple(self):
         f1 = 10
@@ -76,6 +78,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         elements = [space, tLens, space2, lens]
         path = ImagingPath(elements)
         self.assertTupleEqual(path.entrancePupil(), (None, None))
+        self.assertFalse(path.hasApertureStop())
 
     def testEntrancePupilAIs0(self):
         space = Space(2)
@@ -104,14 +107,18 @@ class TestImagingPath(envtest.RaytracingTestCase):
         space2 = Space(20)
         path = ImagingPath([space, lens, space2, lens, space])
         self.assertTupleEqual(path.fieldStop(), fieldStop)
+        self.assertFalse(path.hasFieldStop())
+        self.assertFalse(path.hasApertureStop())
 
-    def testFieldStopFiniteDiameter(self):
+    def testFieldStopInfiniteDiameterWithOneFiniteDiameter(self):
         fieldStop = (None, inf)
         space = Space(10)
         lens = Lens(10)
         space2 = Space(20)
-        path = ImagingPath([Lens(10, 450), space2, lens, space])
+        path = ImagingPath([Lens(f=10, diameter=450), space2, lens, space])
         self.assertTupleEqual(path.fieldStop(), fieldStop)
+        self.assertFalse(path.hasFieldStop())
+        self.assertTrue(path.hasApertureStop())
 
     def testFieldStop_1(self):
         space = Space(10)
@@ -120,6 +127,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         lens2 = Lens(10, 50)
         path = ImagingPath([space, lens, space2, lens2, space])
         self.assertTupleEqual(path.fieldStop(), (10, 100))
+        self.assertTrue(path.hasFieldStop())
 
     def testFieldStop_2(self):
         space = Space(10)
@@ -128,6 +136,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         lens2 = Lens(10, 50)
         path = ImagingPath([space, lens, space2, lens2, space])
         self.assertTupleEqual(path.fieldStop(), (30, 50))
+        self.assertTrue(path.hasFieldStop())
 
     def testFieldStopNamedTuple(self):
         space = Space(10)
@@ -137,6 +146,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path = ImagingPath([space, lens, space2, lens2, space])
         self.assertEqual(path.fieldStop().z, 30)
         self.assertEqual(path.fieldStop().diameter, 50)
+        self.assertTrue(path.hasFieldStop())
 
     def testEntrancePupilNoBackwardConjugate(self):
         path = ImagingPath()
