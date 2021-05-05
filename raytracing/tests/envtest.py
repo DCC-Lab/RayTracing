@@ -22,6 +22,9 @@ class RaytracingTestCase(unittest.TestCase):
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
 
+    def setUp(self):
+        np.random.seed(0)
+        
     def tearDown(self) -> None:
         self.clearMatplotlibPlots()
 
