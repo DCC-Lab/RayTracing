@@ -27,7 +27,7 @@
 .. autosummary::
     :template: autoFunction.rst
     :toctree: methods/{{ objname }}
-    :no-index:
+    :noindex:
 
     {% for item in methods %}
     {%- if item in inherited_members %}
