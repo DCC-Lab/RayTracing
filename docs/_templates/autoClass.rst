@@ -12,8 +12,9 @@
 {% if methods %}
 .. rubric:: Methods
 
-.. autosummary:: methods/{{ objname }}
+.. autosummary::
     :template: autoFunction.rst
+    :toctree: methods/{{ objname }}
 
     {% for item in methods %}
     {%- if item not in inherited_members %}
@@ -23,8 +24,9 @@
 
 .. rubric:: Inherited Methods
 
-.. autosummary:: methods/{{ objname }}
+.. autosummary::
     :template: autoInheritedFunction.rst
+    :toctree: methods/{{ objname }}
 
     {% for item in methods %}
     {%- if item in inherited_members %}
