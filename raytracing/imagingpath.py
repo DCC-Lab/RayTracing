@@ -445,7 +445,7 @@ class ImagingPath(MatrixGroup):
 
         >>> path.display()
 
-        .. image:: ../../../images/apertureStop.png
+        .. image:: ../images/apertureStop.png
             :width: 70%
             :align: center
 
@@ -570,7 +570,7 @@ class ImagingPath(MatrixGroup):
 
         >>> path.display()
 
-        .. image:: ../../../images/apertureStop.png
+        .. image:: ../images/apertureStop.png
             :width: 70%
             :align: center
 

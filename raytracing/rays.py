@@ -172,7 +172,7 @@ class Rays:
         >>> plt.xlabel('Height of Rays')
         >>> plt.show()
 
-        .. image:: ../../../images/Histogram.png
+        .. image:: ../images/Histogram.png
                     :width: 70%
                     :align: center
 
@@ -251,7 +251,7 @@ class Rays:
         >>> plt.xlabel('Angle of Rays')
         >>> plt.show()
 
-        .. image:: ../../../images/AngleHist.png
+        .. image:: ../images/AngleHist.png
                     :width: 70%
                     :align: center
 
@@ -305,7 +305,7 @@ class Rays:
         >>> inputRays = RandomUniformRays(yMin=minHeight, yMax=maxHeight, thetaMin=minTheta,thetaMax=maxTheta, maxCount=nRays)
         >>> inputRays.display()
 
-        .. image:: ../../../images/displayRays.png
+        .. image:: ../images/displayRays.png
                     :width: 70%
                     :align: center
 
