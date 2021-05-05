@@ -892,7 +892,7 @@ class ImagingPath(MatrixGroup):
         z = 0
         for i, element in enumerate(self.elements):
             if z < zStart < z + element.L:
-                assert type(element).__name__ is 'Space', 'The position of the rays cannot be in the same ' \
+                assert type(element).__name__ == 'Space', 'The position of the rays cannot be in the same ' \
                                                           'position of another element.'
                 if backwards:
                     newElements = [Space(zStart - z)]
