@@ -730,7 +730,7 @@ class Matrix(object):
         >>> print('The properties of the first input ray:\n', Tr[0][0])
         The properties of the first input ray:
          y =  0.000
-        theta =  0.827
+        theta =  0.153
         z = 0.000
 
 
@@ -738,7 +738,7 @@ class Matrix(object):
         >>> print('The properties of the first output ray:\n', Tr[0][1])
         The properties of the first output ray:
          y =  0.000
-        theta =  0.827
+        theta =  0.153
         z = 2.000
 
         See Also
