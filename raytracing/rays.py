@@ -712,9 +712,7 @@ class RandomUniformRays(RandomRays):
         if len(self._rays) == self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
-        np.random.seed(0)
         theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
-        np.random.seed(0)
         y = self.yMin + np.random.random() * (self.yMax - self.yMin)
         ray = Ray(y=y, theta=theta)
         self.append(ray)
@@ -769,8 +767,8 @@ class RandomLambertianRays(RandomRays):
         while (True):
             theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
             intensity = np.cos(theta)
-            seed = np.random.random()
-            if seed < intensity:
+            randomValue = np.random.random()
+            if randomValue < intensity:
                 break
 
         y = self.yMin + np.random.random() * (self.yMax - self.yMin)
