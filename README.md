@@ -2,7 +2,7 @@
 
 by Prof. [Daniel Côté](mailto:dccote@cervo.ulaval.ca?subject=Raytracing%20python%20module) and his group http://www.dcclab.ca
 
-This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider aberrations (spherical or chromatic). Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays and gaussian laser beams. 
+This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider spherical aberrations but can compute chromatic aberrations for simple cases when the materials are known. Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays and gaussian laser beams. 
 
 It is not a package to do "Rendering in 3D with raytracing".
 
@@ -54,10 +54,12 @@ This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as 
 
 You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib. You can create a group of elements with `MatrixGroup` for instance a telescope, a retrofocus or any group of optical elements you would like to treat as a "group".  The Thorlabs and Edmund optics lenses, for instance, are defined as `MatrixGroups`.
 
-This will show you a few examples of things you can do:
+This will show you a list of examples of things you can do:
 
 ```shell
-python -m raytracing
+python -m raytracing -l           # List examples
+python -m raytracing -e all       # Run all of them
+python -m raytracing -e 1,2,4,6   # Only run 1,2,4 and 6
 ```
 
 or request help with:

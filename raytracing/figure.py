@@ -596,9 +596,17 @@ class MplFigure(Figure):
     def create(self, comments=None, title=None):
         if comments is not None:
             self.figure, (self.axes, self.axesComments) = plt.subplots(2, 1, figsize=(10, 7))
+            plt.subplots_adjust(hspace=0.3)
+            
             self.axesComments.axis('off')
-            self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
+            if isinstance(comments, str):
+                self.axesComments.text(0., 1.0, comments, transform=self.axesComments.transAxes,
                                    fontsize=10*self.fontScale, verticalalignment='top')
+            else:
+                origin = (0,0)
+                extent = (-2, 2, 2, -2)
+                self.axesComments.imshow(comments, origin='upper')
+
         else:
             self.figure, self.axes = plt.subplots(figsize=(10, 7))
 
