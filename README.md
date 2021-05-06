@@ -54,10 +54,12 @@ This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as 
 
 You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib. You can create a group of elements with `MatrixGroup` for instance a telescope, a retrofocus or any group of optical elements you would like to treat as a "group".  The Thorlabs and Edmund optics lenses, for instance, are defined as `MatrixGroups`.
 
-This will show you a few examples of things you can do:
+This will show you a list of examples of things you can do:
 
 ```shell
-python -m raytracing
+python -m raytracing -l           # List examples
+python -m raytracing -e all       # Run all of them
+python -m raytracing -e 1,2,4,6   # Only run 1,2,4 and 6
 ```
 
 or request help with:
