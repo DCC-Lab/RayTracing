@@ -2,7 +2,7 @@
 
 by Prof. [Daniel Côté](mailto:dccote@cervo.ulaval.ca?subject=Raytracing%20python%20module) and his group http://www.dcclab.ca
 
-This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider aberrations (spherical or chromatic). Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays and gaussian laser beams. 
+This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider spherical aberrations but can compute chromatic aberrations for simple cases when the materials are known. Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays and gaussian laser beams. 
 
 It is not a package to do "Rendering in 3D with raytracing".
 
