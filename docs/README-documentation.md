@@ -22,7 +22,13 @@ class Ray:
     Simple static functions are defined to obtain a group of rays: fans
     originate from the same height but sweep a range of angles; fan groups
     are fans originating from different heights.
-    
+
+    And the result is shown in the following figure:
+
+    .. image::  /images/something.png
+        :width: 70%
+        :align: center
+
     Parameters
     ----------
     y : float
@@ -75,6 +81,18 @@ class Ray:
         self.isBlocked: bool = False
         self.apertureDiameter: float = float("+Inf")
 ```
+
+## Including an image
+
+You can include an image with the command:
+
+```reStructuredText
+    .. image::  /images/something.png
+        :width: 70%
+        :align: center
+```
+
+Store images in `docs/images/`. Use an **absolute path** to refer to them from the docs directory. For instance use: `/images/something.png`.  Note the `/` at the beginning: it really means "relative to `docs`").
 
 ## Publishing documentation (maintainers only)
 
