@@ -89,9 +89,9 @@ class ImagingPath(MatrixGroup):
 
         self._objectHeight = 10.0  # object height (full).
         self.objectPosition = 0.0  # always at z=0 for now.
-        self.fanAngle = None  # full fan angle for rays
-        self.fanNumber = 3  # number of points on object
-        self.rayNumber = 3  # number of rays in fan
+        self._fanAngle = None  # full fan angle for rays
+        self._fanNumber = 3  # number of points on object
+        self._rayNumber = 3  # number of rays in fan
 
         # Constants when calculating field stop
         self.precision = 0.000001
