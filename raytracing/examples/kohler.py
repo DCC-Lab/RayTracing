@@ -2,9 +2,10 @@ import envexamples
 
 from raytracing import *
 
-'''
-This code compares the same system with and without Kohler illumination. The overlay of conjugate planes can determine indeed if the light source is imaged with the sample or not, significantly reducing the quality of the images. 
-'''
+''' This code compares the same system with and without Kohler illumination.
+The overlay of conjugate planes can determine indeed if the light source is
+imaged with the sample or not, significantly reducing the quality of the
+images.  '''
 
 illumination = ImagingPath()
 illumination.design(fontScale=1.5)
