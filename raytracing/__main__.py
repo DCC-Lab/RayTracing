@@ -30,28 +30,26 @@ ap.add_argument("-l", "--list", required=False, action='store_const',
                 const=True, help="List all the accessible examples")
 
 args = vars(ap.parse_args())
-showExamples = args['examples']
+runExamples = args['examples']
 printClasses = args['classes']
 listExamples = args['list']
 
-if showExamples == 'all':
-    showExamples = range(1, len(examples.all)+1)
+if runExamples == 'all':
+    runExamples = range(1, len(examples.all)+1)
 else:
-    showExamples = [int(y) for y in showExamples.split(',')]
+    runExamples = [int(y) for y in runExamples.split(',')]
 
 if printClasses:
     printClassHierarchy(Rays)
     printClassHierarchy(Matrix)
-elif listExamples:
-    # List example code
+
+if listExamples:
     topDir = os.path.dirname(os.path.realpath(examples.__file__))
     print("All example code on your machine is found at: {0}".format(topDir))
     for i, entry in enumerate(examples.all):
         print("{0:2d}. {1}.py {2}".format(i+1, entry["name"], entry["title"]))
     print(".... and more complete examples at {0}".format(topDir))
-else:
-    # Run examples
-
+elif runExamples:
     # Some decent parameters for plots
     # See https://matplotlib.org/api/font_manager_api.html#matplotlib.font_manager.FontProperties.set_size
     params = {'legend.fontsize': 'x-large',
@@ -63,8 +61,8 @@ else:
              'font.family':'helvetica'}
     plt.rcParams.update(params)
 
-    print("Running example code : {0}".format(showExamples))
-    for i in showExamples:
+    print("Running example code : {0}".format(runExamples))
+    for i in runExamples:
         entry = examples.all[i-1]
         print("\nScript '{0}.py' - begin source code".format(entry["name"]))
         print(entry["terminalSourceCode"],end='')
