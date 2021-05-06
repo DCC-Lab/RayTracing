@@ -92,7 +92,7 @@ You can include an image with the command:
         :align: center
 ```
 
-Store images in `docs/images/`. Use an absolute path to refer to them from the docs directory. For instance `/images/something.png`.
+Store images in `docs/images/`. Use an **absolute path** to refer to them from the docs directory. For instance use: `/images/something.png`.  Note the `/` at the beginning: it really means "relative to `docs`").
 
 ## Publishing documentation (maintainers only)
 
