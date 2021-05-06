@@ -25,7 +25,7 @@
 .. rubric:: Inherited Methods
 
 .. autosummary::
-    :template: autoFunction.rst
+    :template: autoInheritedFunction.rst
     :toctree: methods/{{ objname }}
 
     {% for item in methods %}

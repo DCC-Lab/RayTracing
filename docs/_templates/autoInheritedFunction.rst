@@ -2,4 +2,3 @@
 
 .. autofunction:: {{ fullname }}
     :noindex:
-

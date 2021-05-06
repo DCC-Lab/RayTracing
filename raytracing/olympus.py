@@ -84,7 +84,7 @@ class XLUMPlanFLN20X(Objective):
         23,  −275.8289,   4.3000,  1.59551, 39.29
         24,  −12.9456, , ,
 
-    β = −20X    NA = 0.8    F = 9 mm    WD = 1.4 mm
+    β = −20X,    NA = 0.8,    F = 9 mm,    WD = 1.4 mm
 
     - Condition (1) value:    D/F =   8.099
     - Condition (4) value:    | υdpe − υdne | =   20.09
