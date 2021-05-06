@@ -31,7 +31,7 @@ for file in allFiles:
             srcCode = f.readlines()
         # The last three lines are always the main() call
         srcCode = srcCode[:-3]
-        srcCode = ''.join(srcCode)
+        srcCode = str.join('', srcCode)
         module.__SRC_CODE = srcCode
 
         bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
