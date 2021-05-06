@@ -25,7 +25,6 @@ def exempleCode(comments=None):
     for q in qs:
         print(q)
 
-    # Show
     cavity.display(comments=comments)
 
 if __name__ == "__main__":
