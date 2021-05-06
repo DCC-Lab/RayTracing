@@ -1,5 +1,12 @@
 TITLE       = "Laser beam and vendor lenses"
 DESCRIPTION = """
+It is possible to propagate gaussian beams using a LaserPath instead of an imaging
+path.  The formalism makes use of the same matrices, but the GaussianBeam is
+different from a ray: it is a complex radius of curvature (q), but all the complexity
+is hidden in the GaussianBeam class (although you can access q, w, zo, etc..).
+Note that any diffraction of the beam from edges of element is not considered
+because the formalism does not allow it: a gaussian beam remains a gaussian beam
+and therefore will not be clipped by lenses.
 """
 
 from raytracing import *

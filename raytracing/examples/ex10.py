@@ -1,12 +1,14 @@
-TITLE       = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}"
-DESCRIPTION = """
-"""
+TITLE       = "Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}"
+DESCRIPTION = """ A retrofocus is a system of lenses organized in such a way
+that the effective focal length is shorter than the back focal length (i.e.
+the distance between the surface of the lens and the focal spot). It consists
+of a diverging lens followed by a converging lens. This is used to obtain a
+short focal length in situations where distances are constrained. """
 
 from raytracing import *
 
 def exempleCode(comments=None):
     path = ImagingPath()
-    path.fanAngle = 0.05
     path.append(Space(d=20))
     path.append(Lens(f=-10, label='Div'))
     path.append(Space(d=7))

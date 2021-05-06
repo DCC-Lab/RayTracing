@@ -1,11 +1,13 @@
 TITLE       = "An optical system with vendor lenses"
 DESCRIPTION = """
+All vendor lenses could be used just like any other elements. Remember to 
+check backFocalLength() and effectiveFocalLengths() to understand that the focal
+point is not "f_e" after the lens but rather "BFL" after the lens.
 """
 
 from raytracing import *
 
 def exempleCode(comments=None):
-    # Demo #17: Vendor lenses
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(d=50))

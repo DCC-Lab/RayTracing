@@ -1,6 +1,11 @@
 TITLE       = "Thick diverging lens built from individual elements"
-DESCRIPTION = """
-"""
+DESCRIPTION = """ If you build a lens from individual elements
+(DielectricInterface, Space and  DielectrcInterface), then the rays inside the
+lens may be blocked from the finite diameter (in this case, Space() has a
+finite diameter of 25 mm).  The drawing on the graph is not as elegant, but
+the physics is more correct.  Notice the upward rays from the green point is
+actually blocked inside.  However, notice that again the rays are refracting
+at the vertex, in accord with the paraxial approximation. """
 
 from raytracing import *
 

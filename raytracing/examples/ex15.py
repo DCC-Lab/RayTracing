@@ -1,11 +1,12 @@
-TITLE       = "Path with LUMPlanFL40X"
-DESCRIPTION = """
+TITLE       = "Model Olympus objective LUMPlanFL40X"
+DESCRIPTION = """ Using the Objective class of Raytracing, we have used the
+specifications of the LUMPlanFL40X objective to model it for use. It can be
+used in any system, and it can be flipped with the flip() command if needed.
 """
 
 from raytracing import *
 
 def exempleCode(comments=None):
-    # Demo #15: Olympus objective LUMPlanFL40X
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(180))

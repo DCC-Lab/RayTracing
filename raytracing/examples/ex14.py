@@ -1,11 +1,14 @@
-TITLE       = ""
-DESCRIPTION = """
-"""
+TITLE       = "Generic objectives"
+
+DESCRIPTION = """ It is possible to define microscopy Objectives that will
+behave similarly to real objectives (with a finite thickness, a back aperture,
+etc...).  Using the specifications of an objective, one can use the Objective
+class to model essentially any objective. Real objectives from manufacturers
+(Olympus, Nikon) are included in the module."""
 
 from raytracing import *
 
 def exempleCode(comments=None):
-    # Demo #14: Generic objectives
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2,
                     magnification=40, fieldNumber=1.4, label="Objective")
     print("Focal distances: ", obj.focalDistances())

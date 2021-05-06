@@ -1,5 +1,7 @@
 TITLE       = "Cavity round trip and calculated laser modes"
 DESCRIPTION = """
+Although less developed in the raytracing module, it is also possible to calculate
+eigenmodes of laser cavities.
 """
 
 from raytracing import *
