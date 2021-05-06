@@ -80,7 +80,7 @@ class ImagingPath(MatrixGroup):
 
         And the following figure will be plotted:
 
-        .. image:: ../images/ImagingPath.png
+        .. image:: /images/ImagingPath.png
                     :width: 70%
                     :align: center
     """
@@ -445,7 +445,7 @@ class ImagingPath(MatrixGroup):
 
         >>> path.display()
 
-        .. image:: ../images/apertureStop.png
+        .. image:: /images/apertureStop.png
             :width: 70%
             :align: center
 
@@ -580,7 +580,7 @@ class ImagingPath(MatrixGroup):
 
         >>> path.display()
 
-        .. image:: ../images/apertureStop.png
+        .. image:: /images/apertureStop.png
             :width: 70%
             :align: center
 
