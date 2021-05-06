@@ -1356,16 +1356,15 @@ class Matrix(object):
 
         The original object:
 
-        .. image:: ../../../images/flipOrientation_before.png
+        .. image:: /images/flipOrientation_before.png
             :width: 70%
             :align: center
 
         The flipped object:
 
-        .. image:: ../../../images/flipOrientation_after.png
+        .. image:: /images/flipOrientation_after.png
             :width: 70%
             :align: center
-
 
         See Also
         --------

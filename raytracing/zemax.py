@@ -129,6 +129,7 @@ class ZMXReader:
         Returns
         -------
         lensSurfaces : List of Surface elements that make up the lens.
+
         """
         lensSurfaces = []
         firstSurfaceFound = False
@@ -153,8 +154,8 @@ class ZMXReader:
 
         Returns
         -------
-
         List of Surfaces
+
         """
         surfaces = []
         for i in range(1000):
@@ -172,8 +173,7 @@ class ZMXReader:
         
         1. We figure out the material and replace it with Raytracing Material subclass.
         2. We convert CURV into a radius.
-        3. We use DIAM as the diameter of the element.  For some reason DIAM is half
-        the diameter.
+        3. We use DIAM as the diameter of the element. For some reason DIAM is half the diameter.
         4. The distance to the next interface is read as well. 
 
         Returns
