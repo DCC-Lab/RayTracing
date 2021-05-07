@@ -2,9 +2,9 @@ import envtest
 import unittest
 import os
 from collections import Counter
+import numpy as np
 
-
-class TestUnittestSkipMethodsWrapper(unittest.TestCase):
+class TestUnittestSkipMethodsWrapper(envtest.RaytracingTestCase):
 
     @envtest.skip("Skipped")
     def testSkip(self):
@@ -31,9 +31,9 @@ class TestUnittestSkipMethodsWrapper(unittest.TestCase):
         self.fail()
 
 
-class TestEnvtestClass(unittest.TestCase):
+class TestEnvtestClass(envtest.RaytracingTestCase):
     tempDir = envtest.RaytracingTestCase.tempDir
-
+    randomNumbersFromSeed0 = [0.5488135039273248, 0.7151893663724195, 0.6027633760716439, 0.5448831829968969, 0.4236547993389047, 0.6458941130666561, 0.4375872112626925, 0.8917730007820798, 0.9636627605010293, 0.3834415188257777]
     def clearTempDir(self):
         if os.path.exists(self.tempDir):
             for file in os.listdir(self.tempDir):
@@ -42,15 +42,30 @@ class TestEnvtestClass(unittest.TestCase):
 
     def setUp(self) -> None:
         self.clearTempDir()
+        super().setUp()
 
     def tearDown(self) -> None:  # Just in case the directory doesn't get properly deleted at the end of a test.
         self.clearTempDir()
+        super().tearDown()
 
     def assertEmptyDirectory(self, path, delete: bool = True):
         self.assertTrue(os.path.exists(path))
         self.assertListEqual(os.listdir(path), [])
         if delete:
             os.rmdir(path)
+
+    def testRandomNumbersSeed(self):
+        a = []
+        for i in range(10):
+            a.append(np.random.random())
+
+        np.random.seed(0)
+        b = []
+        for i in range(10):
+            b.append(np.random.random())
+
+        self.assertEqual(a,b)
+        self.assertEqual(a,self.randomNumbersFromSeed0)
 
     def testTemptempDir(self):
         self.assertTrue(self.tempDir.endswith("tempDir"))

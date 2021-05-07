@@ -1,17 +1,27 @@
-TITLE       = ""
-DESCRIPTION = """
-"""
+TITLE       = "Kohler illumination"
+DESCRIPTION = """ Kohler illumination is a strategy to obtain the most uniform
+illumination at the sample.  Instead of imaging the lamp filament on the
+sample, one images the lamp at the back of the objective, which will then
+project the Fourier transform of the illumination pattern at the object plane.
+Notice that the object (the lamp) has an image at the back focal plane of the
+objective. """
 
 from raytracing import *
 
-def exempleCode(comments=None):
-    path = ImagingPath()
+def exempleCode(comments=DESCRIPTION):
+    fobj, dObj, f2, d2, f3, d3 = 9, 20, 200, 50, 100, 50
+
+    path = OpticalPath()
+    path.append(Space(d=f3))
+    path.append(Lens(f=f3, diameter=d3))
+    path.append(Space(d=f3))
+    path.append(Space(d=f2))
+    path.append(Lens(f=f2, diameter=d2))
+    path.append(Space(d=f2))
+    path.append(Space(d=fobj))
+    path.append(Lens(f=fobj, diameter=dObj))
+    path.append(Space(d=fobj))
     path.label = TITLE
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 180))
-    path.append(Lens(f=180, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=180))
     path.display(comments=comments)
 
 if __name__ == "__main__":

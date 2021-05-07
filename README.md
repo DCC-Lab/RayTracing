@@ -54,7 +54,7 @@ This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as 
 
 You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib. You can create a group of elements with `MatrixGroup` for instance a telescope, a retrofocus or any group of optical elements you would like to treat as a "group".  The Thorlabs and Edmund optics lenses, for instance, are defined as `MatrixGroups`.
 
-This will show you a list of examples of things you can do:
+This will show you a list of examples of things you can do (more on that in the Examples section):
 
 ```shell
 python -m raytracing -l           # List examples
@@ -68,19 +68,21 @@ or request help with:
 python -m raytracing -h
 ```
 
-In your code, (such as the `test.py` or `demo.py`  files included in the [source](https://pypi.org/project/raytracing/)), you would do this:
+In your code, you would do this:
 
 ```python
 from raytracing import *
 
 path = ImagingPath()
-path.append(Space(d=100))
+path.append(Space(d=50))
 path.append(Lens(f=50, diameter=25))
 path.append(Space(d=120))
 path.append(Lens(f=70))
 path.append(Space(d=100))
 path.display()
 ```
+
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simple.png" alt="simple" style="zoom:25%;" />
 
 You can also call `display()` on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
 
@@ -90,6 +92,10 @@ from raytracing import *
 thorlabs.AC254_050_A().display()
 eo.PN_33_921().display()
 ```
+
+![e0](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/e0.png)
+
+![thorlabs](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/thorlabs.png)
 
 Finally, an addition as of 1.2.0 is the ability to obtain the intensity profile of a given source from the object plane at the exit plane of an `OpticalPath`. This is in fact really simple: by tracing a large number of rays, with the number of rays at y and θ being proportionnal to the intensity, one can obtain the intensity profile by plotting the histogram of rays reaching a given height at the image plane. `Rays` are small classes that return a `Ray` that satisfies the condition of the class.  Currently, there is `UniformRays`,`RandomUniformRays` `LambertianRays` and `RandomLambertianRays` (a Lambertian distribution follows a cosθ distribution, it is a common diffuse surface source).  They appear like iterators and can easily be used like this example script:
 
@@ -143,7 +149,7 @@ thorlabs.AC254_100_A().showChromaticAberrations()
 wavelengths, shifts = thorlabs.AC254_100_A().focalShifts()
 ```
 
-<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:25%;" />
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:100%;" />
 
 ## Documentation
 
@@ -170,7 +176,8 @@ You may obtain help by:
    4. Thorlabs lenses: Achromat doublet lenses from Thorlabs.
    5. Edmund Optics lenses: Achromat doublet lenses from Edmund Optics
    6. Olympus objectives: A few objectives from Olympus.
-   7. Glasses: A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
+   7. Glasses: A few glasses used by Thorlabs to make achromatic doublets. They all have a single function `n(wavelength)` that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
+   8. Zemax ZMX file reader: to read text-based Zemax files of lenses.
 2. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
 3. look at the examples with `python -m raytracing` 
 4. simply look at the code.
@@ -232,449 +239,79 @@ class Matrix(builtins.object)
 
 ## Examples
 
-In the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/examples) directory, you can run `demo.py` to see a variety of systems, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view. However, you can also run the module directly with `python -m raytracing`, which will run the following code (`__main__.py`) to give you a flavour of what is possible (note: in the US, it will give you a flavor of what is possible instead):
+You can list several examples `python -m raytracing -l`:
 
-```python
-from .imagingpath import *
-from .laserpath import *
-
-from .specialtylenses import *
-from .axicon import *
-import raytracing.thorlabs as thorlabs
-import raytracing.eo as eo
-import raytracing.olympus as olympus
-
-import argparse
-ap = argparse.ArgumentParser(prog='python -m raytracing')
-ap.add_argument("-e", "--examples", required=False, default='all', help="Specific example numbers, separated by a comma")
-
-args = vars(ap.parse_args())
-examples = args['examples']
-
-if examples == 'all':
-    examples = range(1,30)
-else:
-    examples = [ int(y) for y in examples.split(',')]
-
-if 1 in examples:
-    path = ImagingPath()
-    path.label = "Demo #1: lens f = 5cm, infinite diameter"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display(comments= """Demo #1: lens with f=5 cm, infinite diameter
-
-    An object at z=0 (front edge) is used. It is shown in blue. The image (or any intermediate images) are shown in red.\n\
-    This will use the default objectHeight and fanAngle but they can be changed with:
-    path.objectHeight = 1.0
-    path.fanAngle = 0.5
-    path.fanNumber = 5
-    path.rayNumber = 3
-
-    Code:
-    path = ImagingPath()
-    path.label = "Demo #1: lens f = 5cm, infinite diameter"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    """)
-
-if 2 in examples:
-    path = ImagingPath()
-    path.label = "Demo #2: Two lenses, infinite diameters"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=20))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display(comments="""Demo #2: Two lenses, infinite diameters
-    An object at z=0 (front edge) is used with default properties (see Demo #1).
-
-    Code:
-    path = ImagingPath()
-    path.label = "Demo #2: Two lenses, infinite diameters"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=20))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()
-    """)
-    # or
-    #path.save("Figure 2.pdf")
-
-if 3 in examples:
-    path = ImagingPath()
-    path.label = "Demo #3: Finite lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=2.5))
-    path.append(Space(d=3))
-    path.append(Space(d=17))
-    path.display(comments="""Demo #3: A finite lens
-    An object at z=0 (front edge) is used with default properties (see Demo #1). Notice the aperture stop (AS)
-    identified at the lens which blocks the cone of light. There is no field stop to restrict the field of view,
-    which is why we must use the default object and cannot restrict the field of view. Notice how the default
-    rays are blocked.
-
-    path = ImagingPath()
-    path.objectHeight = 1.0    # object height (full).
-    path.objectPosition = 0.0  # always at z=0 for now.
-    path.fanAngle = 0.5        # full fan angle for rays
-    path.fanNumber = 9         # number of rays in fan
-    path.rayNumber = 3         # number of points on object
-    path.label = "Demo #3: Finite lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=2.5))
-    path.append(Space(d=3))
-    path.append(Space(d=17))
-    path.display()
-    """)
-if 4 in examples:
-    path = ImagingPath()
-    path.label = "Demo #4: Aperture behind lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=3))
-    path.append(Space(d=3))
-    path.append(Aperture(diameter=3))
-    path.append(Space(d=17))
-    path.display(comments="""Demo #4: Aperture behind lens
-
-    Notice the aperture stop (AS) identified after the lens, not at the lens. Again, since there is no field stop,
-    we cannot restrict the object to the field of view because it is infinite.
-
-    Code:
-    path = ImagingPath()
-    path.label = "Demo #4: Aperture behind lens"
-    path.append(Space(d=10))
-    path.append(Lens(f=5, diameter=3))
-    path.append(Space(d=3))
-    path.append(Aperture(diameter=3))
-    path.append(Space(d=17))
-    path.display()
-    """)
-if 5 in examples:
-    path = ImagingPath()
-    path.label = "Demo #5: Simple microscope system"
-    path.fanAngle = 0.1        # full fan angle for rays
-    path.fanNumber = 5         # number of rays in fan
-    path.rayNumber = 5         # number of points on object
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display(limitObjectToFieldOfView=True, comments="""# Demo #5: Simple microscope system
-    The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
-    the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
-    when displaying, which will set the objectHeight to the field of view, but will still trace all the rays using our parameters.
-
-    path = ImagingPath()
-    path.label = "Demo #5: Simple microscope system"
-    path.fanAngle = 0.1        # full fan angle for rays
-    path.fanNumber = 5         # number of rays in fan
-    path.rayNumber = 5         # number of points on object
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display()
-    """)
-if 6 in examples:
-    path = ImagingPath()
-    path.label = "Demo #6: Simple microscope system, only principal rays"
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display(limitObjectToFieldOfView=True, onlyChiefAndMarginalRays=True,
-        comments="""# Demo #6: Simple microscope system, only principal rays
-    The aperture stop (AS) is at the entrance of the objective lens, and the tube lens, in this particular microscope, is
-    the field stop (FS) and limits the field of view. Because the field stop exists, we can use limitObjectToFieldOfView=True
-    when displaying, which will set the objectHeight to the field of view. We can also require that only the principal rays are drawn: chief ray
-    marginal ray (or axial ray).
-
-    path = ImagingPath()
-    path.label = "Demo #6: Simple microscope system, only principal rays"
-    path.append(Space(d=4))
-    path.append(Lens(f=4, diameter=0.8, label='Obj'))
-    path.append(Space(d=4 + 18))
-    path.append(Lens(f=18, diameter=5.0, label='Tube Lens'))
-    path.append(Space(d=18))
-    path.display()
-    """)
-if 7 in examples:
-    path = ImagingPath()
-    path.label = "Demo #7: Focussing through a dielectric slab"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=3))
-    path.append(DielectricSlab(n=1.5, thickness=4))
-    path.append(Space(d=10))
-    path.display(comments=path.label+"""\n
-    path = ImagingPath()
-    path.label = "Demo #7: Focussing through a dielectric slab"
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=3))
-    path.append(DielectricSlab(n=1.5, thickness=4))
-    path.append(Space(d=10))"""
-    )
-if 8 in examples:
-    # Demo #8: Virtual image
-    path = ImagingPath()
-    path.label = "Demo #8: Virtual image at -2f with object at f/2"
-    path.append(Space(d=2.5))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display(comments=path.label+"""\n
-    path = ImagingPath()
-    path.label = "Demo #8: Virtual image at -2f with object at f/2"
-    path.append(Space(d=2.5))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.display()""")
-if 9 in examples:
-    # Demo #9: Infinite telecentric 4f telescope
-    path = ImagingPath()
-    path.label = "Demo #9: Infinite telecentric 4f telescope"
-    path.append(Space(d=5))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=5))
-    path.display(comments=path.label+"""\n
-    path = ImagingPath()
-    path.label = "Demo #9: Infinite telecentric 4f telescope"
-    path.append(Space(d=5))
-    path.append(Lens(f=5))
-    path.append(Space(d=10))
-    path.append(Lens(f=5))
-    path.append(Space(d=5))
-    """)
-if 10 in examples:
-    path = ImagingPath()
-    path.fanAngle = 0.05
-    path.append(Space(d=20))
-    path.append(Lens(f=-10, label='Div'))
-    path.append(Space(d=7))
-    path.append(Lens(f=10, label='Foc'))
-    path.append(Space(d=40))
-    (focal,focal) = path.effectiveFocalLengths()
-    bfl = path.backFocalLength()
-    path.label = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}".format(focal, bfl)
-    path.display(comments=path.label+"""\n
-    A retrofocus has a back focal length longer than the effective focal length. It comes from a diverging lens followed by a converging
-    lens. We can always obtain the effective focal lengths and the back focal length of a system.
-
-    path = ImagingPath()
-    path.fanAngle = 0.05
-    path.append(Space(d=20))
-    path.append(Lens(f=-10, label='Div'))
-    path.append(Space(d=7))
-    path.append(Lens(f=10, label='Foc'))
-    path.append(Space(d=40))
-    (focal,focal) = path.effectiveFocalLengths()
-    bfl = path.backFocalLength()
-    path.label = "Demo #10: Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}".format(focal, bfl)
-    path.display()
-    """)
-if 11 in examples:
-    # Demo #11: Thick diverging lens
-    path = ImagingPath()
-    path.label = "Demo #11: Thick diverging lens"
-    path.objectHeight = 20
-    path.append(Space(d=50))
-    path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
-    path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label+"""\n
-    path = ImagingPath()
-    path.label = "Demo #11: Thick diverging lens"
-    path.objectHeight = 20
-    path.append(Space(d=50))
-    path.append(ThickLens(R1=-20, R2=20, n=1.55, thickness=10, diameter=25, label='Lens'))
-    path.append(Space(d=50))
-    path.display()""")
-if 12 in examples:
-    # Demo #12: Thick diverging lens built from individual elements
-    path = ImagingPath()
-    path.label = "Demo #12: Thick diverging lens built from individual elements"
-    path.objectHeight = 20
-    path.append(Space(d=50))
-    path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
-    path.append(Space(d=10, diameter=25, label='Lens'))
-    path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
-    path.append(Space(d=50))
-    path.display(onlyChiefAndMarginalRays=True, comments=path.label+"""\n
-    path = ImagingPath()
-    path.label = "Demo #12: Thick diverging lens built from individual elements"
-    path.objectHeight = 20
-    path.append(Space(d=50))
-    path.append(DielectricInterface(R=-20, n1=1.0, n2=1.55, diameter=25, label='Front'))
-    path.append(Space(d=10, diameter=25, label='Lens'))
-    path.append(DielectricInterface(R=20, n1=1.55, n2=1.0, diameter=25, label='Back'))
-    path.append(Space(d=50))
-    path.display()""")
-
-if 13 in examples:
-    # Demo #13, forward and backward conjugates
-    # We can obtain the position of the image for any matrix
-    # by using forwardConjugate(): it calculates the distance
-    # after the element where the image is, assuming an object
-    # at the front surface.
-    M1 = Space(d=10)
-    M2 = Lens(f=5)
-    M3 = M2*M1
-    print(M3.forwardConjugate())
-    print(M3.backwardConjugate())
-if 14 in examples:
-    # Demo #14: Generic objectives
-    obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2, label="Objective")
-    print("Focal distances: ", obj.focalDistances())
-    print("Position of PP1 and PP2: ", obj.principalPlanePositions(z=0))
-    print("Focal spots positions: ", obj.focusPositions(z=0))
-    print("Distance between entrance and exit planes: ", obj.L)
-
-    path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 10.0
-    path.label = "Demo #14 Path with generic objective"
-    path.append(Space(180))
-    path.append(obj)
-    path.append(Space(10))
-    path.display(comments=path.label+"""
-    path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 10.0
-    path.label = "Path with generic objective"
-    path.append(Space(180))
-    path.append(obj)
-    path.append(Space(10))
-    path.display()""")
-if 15 in examples:
-    # Demo #15: Olympus objective LUMPlanFL40X
-    path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 10.0
-    path.label = "Demo #15 Path with LUMPlanFL40X"
-    path.append(Space(180))
-    path.append(olympus.LUMPlanFL40X())
-    path.display(comments=path.label+"""
-    path = ImagingPath()
-    path.fanAngle = 0.0
-    path.fanNumber = 1
-    path.rayNumber = 15
-    path.objectHeight = 10.0
-    path.label = "Path with LUMPlanFL40X"
-    path.append(Space(180))
-    path.append(olympus.LUMPlanFL40X())
-    path.append(Space(10))
-    path.display()""")
-if 16 in examples:
-    # Demo #16: Vendor lenses
-    thorlabs.AC254_050_A().display()
-    eo.PN_33_921().display()
-if 17 in examples:
-    # Demo #17: Vendor lenses
-    path = ImagingPath()
-    path.label = "Demo #17: Vendor Lenses"
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=150))
-    path.append(eo.PN_33_921())
-    path.append(Space(d=50))
-    path.append(eo.PN_88_593())
-    path.append(Space(180))
-    path.append(olympus.LUMPlanFL40X())
-    path.append(Space(10))
-    path.display(comments=path.label+"""\n
-    path = ImagingPath()
-    path.label = "Demo #17: Vendor Lenses"
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=150))
-    path.append(eo.PN_33_921())
-    path.append(Space(d=50))
-    path.append(eo.PN_88_593())
-    path.append(Space(180))
-    path.append(olympus.LUMPlanFL40X())
-    path.append(Space(10))
-    path.display()""")
-if 18 in examples:
-    # Demo #18: Laser beam and vendor lenses
-    path = LaserPath()
-    path.label = "Demo #18: Laser beam and vendor lenses"
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=150))
-    path.append(eo.PN_33_921())
-    path.append(Space(d=50))
-    path.append(eo.PN_88_593())
-    path.append(Space(d=180))
-    path.append(olympus.LUMPlanFL40X())
-    path.append(Space(d=10))
-    path.display(inputBeam=GaussianBeam(w=0.001), comments="""
-    path = LaserPath()
-    path.label = "Demo #18: Laser beam and vendor lenses"
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=50))
-    path.append(thorlabs.AC254_050_A())
-    path.append(Space(d=150))
-    path.append(eo.PN_33_921())
-    path.append(Space(d=50))
-    path.append(eo.PN_88_593())
-    path.append(Space(d=180))
-    path.append(olympus.LUMPlanFL40X())
-    path.append(Space(d=10))
-    path.display()""")
-if 19 in examples:
-    cavity = LaserPath(label="Laser cavity: round trip\nCalculated laser modes")
-    cavity.isResonator = True
-    cavity.append(Space(d=160))
-    cavity.append(DielectricSlab(thickness=100, n=1.8))
-    cavity.append(Space(d=160))
-    cavity.append(CurvedMirror(R=400))
-    cavity.append(Space(d=160))
-    cavity.append(DielectricSlab(thickness=100, n=1.8))
-    cavity.append(Space(d=160))
-
-    # Calculate all self-replicating modes (i.e. eigenmodes)
-    (q1,q2) = cavity.eigenModes()
-    print(q1,q2)
-
-    # Obtain all physical (i.e. finite) self-replicating modes
-    qs = cavity.laserModes()
-    for q in qs:
-        print(q)
-
-    # Show
-    cavity.display()
+```shell
+All example code on your machine is found at: /somedirectory/on/your/machine
+ 1. ex01.py A single lens f = 50 mm, infinite diameter
+ 2. ex02.py Two lenses, infinite diameters
+ 3. ex03.py Finite-diameter lens
+ 4. ex04.py Aperture behind lens acting as Field Stop
+ 5. ex05.py Simple microscope system
+ 6. ex06.py Kohler illumination
+ 7. ex07.py Focussing through a dielectric slab
+ 8. ex08.py Virtual image at -f with object at f/2
+ 9. ex09.py Infinite telecentric 4f telescope
+10. ex10.py Retrofocus $f_e$={0:.1f} cm, and BFL={1:.1f}
+11. ex11.py Thick diverging lens computed from the Lensmaker equation
+12. ex12.py Thick diverging lens built from individual elements
+13. ex13.py Obtain the forward and backward conjugates
+14. ex14.py Generic objectives
+15. ex15.py Model Olympus objective LUMPlanFL40X
+16. ex16.py Commercial doublets from Thorlabs and Edmund
+17. ex17.py An optical system with vendor lenses
+18. ex18.py Laser beam and vendor lenses
+19. ex19.py Cavity round trip and calculated laser modes
+.... and more complete examples at /somedirectory/on/your/machine
 ```
 
-![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simpleObjectImage.png)
-![Microscope](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/microscopeSimple.png)
-![Illumination](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/kholerIllumination.png)
+ You can run them all with `python -m raytracing -e all` (see them all below) to get a flavour of what is possible (note: in the US, it will give you a flavor of what is possible instead). Notice the command will tell you where the directory with all the tests is on your machine. **You will find more complete examples** in that [examples](https://github.com/DCC-Lab/RayTracing/tree/master/raytracing/examples) directory, distributed with the module.  For instance, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view.
+
+
+
+![ex01](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex01.png)
+
+![ex02](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex02.png)
+
+![ex03](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex03.png)
+
+![ex04](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex04.png)
+
+![ex05](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex05.png)
+
+![ex06](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex06.png)
+
+![ex07](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex07.png)
+
+![ex08](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex08.png)
+
+![ex09](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex09.png)
+
+![ex10](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex10.png)
+
+![ex11](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex11.png)
+
+![ex12](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex12.png)
+
+![ex14](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex14.png)
+
+![ex15](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex15.png)
+
+![ex16.1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex16.1.png)
+
+![ex16.2](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex16.2.png)
+
+![ex16.3](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex16.3.png)
+
+![ex17](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex17.png)
+
+![ex18](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex18.png)
 
 ## Known limitations
 
 There are no known bugs in the actual calculations, but there are bugs or limitations in the display:
 
-1. It is not easy to put several labels on a graph without any overlap.  I am still working on it.
+1. It is not easy to put several labels on a graph without any overlap. We are still working on it.
 2. It is also not easy to figure out what "the right size" should be for an arrow head, the font, the position of a label, the size of the "ticks" on the aperture.
 3. Labelling focal points with appropriate secondary labels should be possible, maybe a superscript?
 4. The y-scale is not always set appropriately when the elements have infinite diameters: the rays will go beyond the element drawn on the figure.

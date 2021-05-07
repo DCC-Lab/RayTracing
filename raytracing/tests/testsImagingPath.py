@@ -201,18 +201,16 @@ class TestImagingPath(envtest.RaytracingTestCase):
         filePath = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.saveFigure(filePath=filePath, comments=comments)
+        path.saveFigure(rays=ObjectRays(diameter=10), filePath=filePath, comments=comments)
         if not os.path.exists(filePath):
             self.fail("No file saved (with comments)")
-        os.remove(filePath)
 
     def testSaveWithoutComments(self):
         filePath = self.tempFilePath("test.png")
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.saveFigure(filePath=filePath)
+        path.saveFigure(rays=ObjectRays(diameter=10), filePath=filePath)
         if not os.path.exists(filePath):
             self.fail("No file saved (without comments)")
-        os.remove(filePath)
 
     def testChiefRayNoApertureStop(self):
         path = ImagingPath(System2f(10))

@@ -47,7 +47,11 @@ if __name__ == "__main__":
         with open(self.printHelloWorld, "w") as f:
             f.write(code)
         processCompleted = subprocess.run([self.exec, self.printHelloWorld], capture_output=True, universal_newlines=True)
-        self.assertEqual(processCompleted.stdout.strip(), "Hello Toto\nHello Toto Jr.")
+        
+        output = processCompleted.stdout.strip()
+        possibility1 = "Hello Toto\nHello Toto Jr."
+        possibility2 = "Hello Toto Jr.\nHello Toto"
+        self.assertTrue(output == possibility1 or output == possibility2)
 
 
 if __name__ == '__main__':

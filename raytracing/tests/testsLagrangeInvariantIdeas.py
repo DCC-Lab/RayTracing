@@ -64,6 +64,7 @@ class TestLagrange(envtest.RaytracingTestCase):
         # path.display()
         path.reportEfficiency(nRays=10000)
 
+    @envtest.patch('matplotlib.pyplot.show', new=envtest.Mock())
     def testObjective(self):
         path = ImagingPath(label="Objective")
         path.append(Aperture(diameter=22.5))
@@ -75,7 +76,7 @@ class TestLagrange(envtest.RaytracingTestCase):
         self.assertAlmostEqual( abs(path.magnification()[0]), 20)
         self.assertAlmostEqual( path.imageSize(), 22.5,3)
         path.reportEfficiency(nRays=10000)
-        path.display()
+        path.display(rays=ObjectRays(diameter=10))
 
 if __name__ == '__main__':
     envtest.main()

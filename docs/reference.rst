@@ -53,6 +53,7 @@ Rays
     :toctree: modules
 
     Rays
+    ObjectRays
     UniformRays
     RandomRays
     LambertianRays
@@ -194,6 +195,7 @@ Materials
     :toctree: modules
 
     Material
+    Air
     N_BK7
     N_SF2
     SF2
