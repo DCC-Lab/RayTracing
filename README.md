@@ -54,7 +54,7 @@ This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as 
 
 You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib. You can create a group of elements with `MatrixGroup` for instance a telescope, a retrofocus or any group of optical elements you would like to treat as a "group".  The Thorlabs and Edmund optics lenses, for instance, are defined as `MatrixGroups`.
 
-This will show you a list of examples of things you can do:
+This will show you a list of examples of things you can do (more on that in the Examples section):
 
 ```shell
 python -m raytracing -l           # List examples
@@ -68,13 +68,13 @@ or request help with:
 python -m raytracing -h
 ```
 
-In your code, (such as the `test.py` or `demo.py`  files included in the [source](https://pypi.org/project/raytracing/)), you would do this:
+In your code, you would do this:
 
 ```python
 from raytracing import *
 
 path = ImagingPath()
-path.append(Space(d=100))
+path.append(Space(d=50))
 path.append(Lens(f=50, diameter=25))
 path.append(Space(d=120))
 path.append(Lens(f=70))
@@ -82,7 +82,7 @@ path.append(Space(d=100))
 path.display()
 ```
 
-<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/inputProfile.png" alt="inputProfile" style="zoom:25%;" />
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simple.png" alt="simple" style="zoom:25%;" />
 
 You can also call `display()` on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
 
@@ -149,7 +149,7 @@ thorlabs.AC254_100_A().showChromaticAberrations()
 wavelengths, shifts = thorlabs.AC254_100_A().focalShifts()
 ```
 
-<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:25%;" />
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:100%;" />
 
 ## Documentation
 
@@ -176,7 +176,8 @@ You may obtain help by:
    4. Thorlabs lenses: Achromat doublet lenses from Thorlabs.
    5. Edmund Optics lenses: Achromat doublet lenses from Edmund Optics
    6. Olympus objectives: A few objectives from Olympus.
-   7. Glasses: A few glasses used by Thorlabs to make achromatic doublets. They all have a single function n(wavelength) that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
+   7. Glasses: A few glasses used by Thorlabs to make achromatic doublets. They all have a single function `n(wavelength)` that returns the index at that wavelength.  All data obtained from http://refractiveindex.info.
+   8. Zemax ZMX file reader: to read text-based Zemax files of lenses.
 2. typing (interactively): `help(Matrix)`,`help(MatrixGroup)` `help(Ray)`,`help(ImagingPath)` to get the API, 
 3. look at the examples with `python -m raytracing` 
 4. simply look at the code.
@@ -241,7 +242,7 @@ class Matrix(builtins.object)
 You can list several examples `python -m raytracing -l`:
 
 ```shell
-All example code on your machine is found at: /Users/dccote/GitHub/RayTracing/raytracing/examples
+All example code on your machine is found at: /somedirectory/on/your/machine
  1. ex01.py A single lens f = 50 mm, infinite diameter
  2. ex02.py Two lenses, infinite diameters
  3. ex03.py Finite-diameter lens
@@ -261,12 +262,10 @@ All example code on your machine is found at: /Users/dccote/GitHub/RayTracing/ra
 17. ex17.py An optical system with vendor lenses
 18. ex18.py Laser beam and vendor lenses
 19. ex19.py Cavity round trip and calculated laser modes
-.... and more complete examples at /Users/dccote/GitHub/RayTracing/raytracing/examples
+.... and more complete examples at /somedirectory/on/your/machine
 ```
 
- You can run them all with `python -m raytracing -e all` (see them all below).
-
- **You will also find more complete examples** in the [examples](https://github.com/DCC-Lab/RayTracing/tree/master/raytracing/examples) directory, distributed with the module.  For instance, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view. However, you can also run the module directly with `python -m raytracing`, which will run the following code (`__main__.py`) to give you a flavour of what is possible (note: in the US, it will give you a flavor of what is possible instead):
+ You can run them all with `python -m raytracing -e all` (see them all below) to get a flavour of what is possible (note: in the US, it will give you a flavor of what is possible instead). Notice the command will tell you where the directory with all the tests is on your machine. **You will find more complete examples** in that [examples](https://github.com/DCC-Lab/RayTracing/tree/master/raytracing/examples) directory, distributed with the module.  For instance, `illuminator.py` to see a Kohler illuminator, and `invariant.py` to see an example of the role of lens diameters to determine the field of view.
 
 
 
@@ -307,14 +306,6 @@ All example code on your machine is found at: /Users/dccote/GitHub/RayTracing/ra
 ![ex17](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex17.png)
 
 ![ex18](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex18.png)
-
-
-
-
-
-
-
-![Figure1](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simpleObjectImage.png)
 
 ## Known limitations
 
