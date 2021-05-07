@@ -1028,13 +1028,19 @@ class ImagingPath(MatrixGroup):
                      limitObjectToFieldOfView=limitObjectToFieldOfView,
                      interactive=False, filePath=filePath)
 
-    def displayWithObject(self, diameter, z=0, fanAngle=None, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None): #pragma: no cover 
+    def displayWithObject(self, diameter, fanAngle=None, fanNumber=3, rayNumber=3, removeBlocked=True, comments=None): #pragma: no cover 
         """ Display the optical system and trace the rays.
 
         Parameters
         ----------
         diameter : float
             Diameter of the object.
+        fanAngle : float (default=None)
+            the half angle for the rays.  If None, it will be chosen optimally
+        fanNumber : float (default=3)
+            the number of rays originating from a point
+        rayNumber : float (default=3)
+            the number of points on the object from which rays will emerge
         removeBlocked : bool (Optional)
             If True, the blocked rays are removed (default=False)
         comments : string
@@ -1044,7 +1050,7 @@ class ImagingPath(MatrixGroup):
         self._objectHeight = diameter
         if fanAngle is None:
             fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
-        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber, z=z)
+        rays = ObjectRays(diameter, halfAngle=fanAngle, H=fanNumber, T=rayNumber)
 
         self.display(rays=rays, raysList=None, removeBlocked=removeBlocked, comments=comments,
                      onlyPrincipalAndAxialRays=False,
