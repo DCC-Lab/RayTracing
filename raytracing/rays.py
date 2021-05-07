@@ -794,8 +794,6 @@ class ObjectRays(UniformRays):
         The number of rays to trace for each point source (ray fan) across `halfAngle`.
     halfAngle: float
         The half angle of each ray fan.
-    z: float
-        Position of the object in the optical path.
     rayColors
         Specify a color or a set of colors for the traced rays.
     color
@@ -806,9 +804,8 @@ class ObjectRays(UniformRays):
         Label to display over the object in the imaging path.
 
     """
-    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, z=0, rayColors=None, color=None, label=None):
+    def __init__(self, diameter, halfAngle=1.0, H=3, T=3, rayColors=None, color=None, label=None):
         super(ObjectRays, self).__init__(yMax=diameter/2, yMin=-diameter/2, thetaMax=halfAngle, thetaMin=-halfAngle, M=H, N=T)
-        self.z = z
         self.rayColors = rayColors
         self.color = color
         self.label = label
