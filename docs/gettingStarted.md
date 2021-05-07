@@ -23,7 +23,7 @@ This will import `Ray` , `GaussianBeam`,  and several `Matrix` elements such as 
 
 You create an `ImagingPath` or a `LaserPath`, which you then populate with optical elements such as `Space`, `Lens` or `Aperture` or vendor lenses. You can then adjust the path properties (object height in `ImagingPath` for instance or inputBeam for `LaserPath`) and display in matplotlib. You can create a group of elements with `MatrixGroup` for instance a telescope, a retrofocus or any group of optical elements you would like to treat as a "group".  The Thorlabs and Edmund optics lenses, for instance, are defined as `MatrixGroups`.
 
-This will show you a list of examples of things you can do:
+This will show you a list of examples of things you can do (more on that in the Examples section):
 
 ```shell
 python -m raytracing -l           # List examples
@@ -51,9 +51,7 @@ path.append(Space(d=100))
 path.display()
 ```
 
-<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/inputProfile.png" alt="inputProfile" style="zoom:25%;" />
-
-![simple](../../../Desktop/simple.png)
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simple.png" alt="simple" style="zoom:25%;" />
 
 You can also call `display()` on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
 
@@ -63,6 +61,10 @@ from raytracing import *
 thorlabs.AC254_050_A().display()
 eo.PN_33_921().display()
 ```
+
+![e0](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/e0.png)
+
+![thorlabs](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/thorlabs.png)
 
 Finally, an addition as of 1.2.0 is the ability to obtain the intensity profile of a given source from the object plane at the exit plane of an `OpticalPath`. This is in fact really simple: by tracing a large number of rays, with the number of rays at y and θ being proportionnal to the intensity, one can obtain the intensity profile by plotting the histogram of rays reaching a given height at the image plane. `Rays` are small classes that return a `Ray` that satisfies the condition of the class.  Currently, there is `UniformRays`,`RandomUniformRays` `LambertianRays` and `RandomLambertianRays` (a Lambertian distribution follows a cosθ distribution, it is a common diffuse surface source).  They appear like iterators and can easily be used like this example script:
 
@@ -109,6 +111,7 @@ and you will get the following ray histograms:
 <img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/outputProfile.png" alt="outputProfile" style="zoom:25%;" />
 
 Finally, it is possible to obtain the chromatic aberrations for compound lenses (achromatic doublets from Thorlabs and Edmund optics, and singlet lens because the materials are known). The following command will give you the focal shift as a function of wavelength (as a graph or values):
+
 ```python
 from raytracing import *
 
@@ -116,5 +119,4 @@ thorlabs.AC254_100_A().showChromaticAberrations()
 wavelengths, shifts = thorlabs.AC254_100_A().focalShifts()
 ```
 
-<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:50%;" />
-
+<img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/chromaticaberrations.png" alt="chromatic" style="zoom:100%;" />
