@@ -875,8 +875,8 @@ class Matrix(object):
                 outputRaysList += rays.rays
 
             return Rays(rays=outputRaysList)
-        except:
-            warnings.warn("Multiprocessing failed. Falling back to slower code.", UserWarning)
+        except Exception as err:
+            warnings.warn("Multiprocessing failed with: '{0}'. Falling back to slower code.".format(err), UserWarning)
             return self.traceManyThrough(inputRays=inputRays, progress=progress)
 
     def profileFromRayTraces(self, rayTraces, z=float("+inf")):
