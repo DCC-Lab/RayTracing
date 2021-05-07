@@ -6,6 +6,10 @@ from unittest.mock import Mock, patch
 from raytracing import *
 
 class TestExamples(envtest.RaytracingTestCase):
+    def testExamplesArePresent(self):
+        import raytracing.examples as ex
+        self.assertTrue(len(ex.all) > 0)
+
     @patch("matplotlib.pyplot.show", new=Mock())
     def testExamplesRun(self):
         import raytracing.examples as ex
@@ -23,6 +27,12 @@ class TestExamples(envtest.RaytracingTestCase):
         import raytracing.examples as ex
         for ex in ex.all:
             self.assertIsNotNone(ex["bmpSourceCode"])
+
+    def testScriptsRun(self):
+        import raytracing.examples as ex
+        for scripts in ex.allLong:
+            os.system('{0} {1}'.format(sys.executable, scripts["path"]))
+
 
 if __name__ == '__main__':
     envtest.main()

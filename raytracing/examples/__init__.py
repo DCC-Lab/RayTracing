@@ -22,6 +22,7 @@ allFiles    = os.listdir(topDir)
 allFiles.sort()
 
 all = []
+allLong = []
 for file in allFiles:
     matchObj = re.match(r'^(ex\d+)\.py$', file)
     if matchObj:
@@ -44,3 +45,21 @@ for file in allFiles:
                      "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
                      "bmpSourceCode":Image.open(BytesIO(bmpSrcCode))
                      })
+    else:
+        matchObj = re.match(r'^(.+)\.py$', file)
+        if matchObj:
+            # Other more complete examples:
+            name = matchObj.group(1)
+            with open("{0}/{1}".format(topDir, file)) as f:
+                srcCode = f.readlines()
+
+            srcCode = str.join('', srcCode)
+            bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
+
+            allLong.append({"name":name, 
+                         "sourceCode":srcCode,
+                         "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
+                         "bmpSourceCode":Image.open(BytesIO(bmpSrcCode)),
+                         "path":"{0}/{1}".format(topDir, file)
+                         })
+
