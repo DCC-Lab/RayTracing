@@ -53,6 +53,7 @@ Rays
     :toctree: modules
 
     Rays
+    ObjectRays
     UniformRays
     RandomRays
     LambertianRays
