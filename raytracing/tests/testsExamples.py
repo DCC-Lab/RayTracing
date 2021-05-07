@@ -30,7 +30,7 @@ class TestExamples(envtest.RaytracingTestCase):
         for ex in ex.all:
             self.assertIsNotNone(ex["bmpSourceCode"])
 
-    @envtest.skip("Longtest")
+    @envtest.skipIf(not envtest.performanceTests, "Skipping long tests")
     def testScriptsRun(self):
         import raytracing.examples as ex
         for scripts in ex.allLong:
