@@ -116,8 +116,8 @@ class TestBeam(envtest.RaytracingTestCase):
 
     def testPerformance(self):
         path = LaserPath()
-        path.append(Space(100))
-        beamIn = GaussianBeam(w=0.01, R=1, n=1.5, wavelength=0.400e-3)
+        path.append(Space(d=100))
+        beamIn = GaussianBeam(w=0.01, R=1, wavelength=0.400e-3)
 
         path.trace(beamIn)
 
