@@ -5,18 +5,9 @@ mpl.use('Agg')
 from matplotlib import patches, transforms
 from unittest.mock import Mock, patch
 
-import io
-import contextlib
-
 from raytracing import *
 
 class TestExamples(envtest.RaytracingTestCase):
-    def setUp(self):
-        ferr = io.StringIO()
-        fout = io.StringIO()
-        contextlib.redirect_stderr(ferr)
-        contextlib.redirect_stdout(fout)
-        super().setUp()
 
     def testExamplesArePresent(self):
         import raytracing.examples as ex
