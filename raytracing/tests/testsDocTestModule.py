@@ -3,7 +3,15 @@ import doctest
 import raytracing
 from unittest.mock import Mock, patch
 
+import io
+import contextlib
+
 ## if a new python file is added to the module, please add it in a new line
+
+ferr = io.StringIO()
+fout = io.StringIO()
+contextlib.redirect_stderr(ferr)
+contextlib.redirect_stdout(fout)
 
 with patch('matplotlib.pyplot.show', new=Mock()):
     doctest.testmod(m=raytracing.axicon,verbose=False)
