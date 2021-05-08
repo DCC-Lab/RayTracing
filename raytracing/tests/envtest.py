@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 from unittest.mock import Mock, patch
 import numpy as np
 
+import io
+import contextlib
+
 #Use with patch('matplotlib.pyplot.show', new=Mock()):
 # or @patch('matplotlib.pyplot.show', new=Mock())
 
@@ -20,14 +23,24 @@ else:
 
 class RaytracingTestCase(unittest.TestCase):
     tempDir = os.path.join(tempfile.gettempdir(), "tempDir")
+    setupCalled = False
+
     def __init__(self, tests=()):
         super(RaytracingTestCase, self).__init__(tests)
 
     def setUp(self):
+        super().setUp()
+
+        # Seed with same seed every time
         np.random.seed(0)
-        
+
+        self.setupCalled = True
+
     def tearDown(self) -> None:
         self.clearMatplotlibPlots()
+
+    def testProperlySetup(self):
+        self.assertTrue(self.setupCalled, msg="You must call super().setUp() in your own setUp()")
 
     @classmethod
     def clearMatplotlibPlots(cls):
