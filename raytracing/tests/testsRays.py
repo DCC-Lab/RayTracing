@@ -256,6 +256,7 @@ class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testRays.rays)
         time.sleep(0.5)  # Make sure everything is ok
+        super().setUp()
 
     def testLoadFileDoesntExists(self):
         file = r"this file\doesn't\exist"

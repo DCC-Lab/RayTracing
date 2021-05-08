@@ -541,6 +541,7 @@ class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
         with open(self.fileName, 'wb') as file:
             pickle.Pickler(file).dump(self.testMG.elements)
         time.sleep(0.5)  # Make sure everything is ok
+        super().setUp()
 
     def assertSaveNotFailed(self, matrixGroup: MatrixGroup, name: str):
         self.assertDoesNotRaise(matrixGroup.save, None, name)

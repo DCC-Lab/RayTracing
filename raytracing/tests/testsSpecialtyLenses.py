@@ -73,6 +73,7 @@ class TestAchromatDoubletLens(envtest.RaytracingTestCase):
 class TestAchromatDoubletLensSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = AchromatDoubletLens.__subclasses__()
+        super().setUp()
 
     def testSubclassesInit(self):
         fails = []
@@ -134,6 +135,7 @@ class TestSingletLens(envtest.RaytracingTestCase):
 class TestSingletLensSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = SingletLens.__subclasses__()
+        super().setUp()
 
     def testSubclassesInit(self):
         fails = []
@@ -230,6 +232,7 @@ class TestObjectives(envtest.RaytracingTestCase):
 class TestObjectivesSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = Objective.__subclasses__()
+        super().setUp()
 
     def testSubclassesInit(self):
         fails = []
