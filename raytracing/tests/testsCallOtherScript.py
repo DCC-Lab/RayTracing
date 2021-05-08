@@ -49,9 +49,9 @@ if __name__ == "__main__":
             f.write(code)
         processCompleted = subprocess.run([self.exec, self.printHelloWorld], capture_output=True, universal_newlines=True)
         
-        output = processCompleted.stdout.strip()
-        possibility1 = "Hello Toto\nHello Toto Jr."
-        possibility2 = "Hello Toto Jr.\nHello Toto"
+        output = processCompleted.stdout
+        possibility1 = "Hello Toto\nHello Toto Jr.\n"
+        possibility2 = "Hello Toto Jr.\nHello Toto\n"
         self.assertTrue(output == possibility1 or output == possibility2)
 
 
