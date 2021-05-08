@@ -6,6 +6,7 @@ import os
 
 class TestCallScript(envtest.RaytracingTestCase):
     def setUp(self):
+        super().setUp()
         self.exec = sys.executable
         self.encoding = sys.stdout.encoding
         self.emptyFile = self.tempFilePath('script.py')
@@ -19,7 +20,7 @@ class TestCallScript(envtest.RaytracingTestCase):
     def testCallFileNotFound(self):
         file = " fileDoesNotExist.py"  # Leading space important
 
-        processReturn = subprocess.run([self.exec, file])
+        processReturn = subprocess.run([self.exec, file], capture_output=True)
         self.assertEqual(processReturn.returncode, 2)
 
     def testCallScript(self):
