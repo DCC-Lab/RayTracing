@@ -32,16 +32,7 @@ class Conjugate(NamedTuple):
     d: float = None
     transferMatrix:'Matrix' = None
 
-
-def warningLineFormat(message, category, filename, lineno, line=None):
-    return '\n%s:%s\n%s:%s\n' % (filename, lineno, category.__name__, message)
-
-
-warnings.formatwarning = warningLineFormat
-
-
 # todo: fix docstrings since draw-related methods were removed
-
 
 class Matrix(object):
     r"""A matrix and an optical element that can transform a ray or another
