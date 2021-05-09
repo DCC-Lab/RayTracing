@@ -17,14 +17,6 @@ of curvature q and the same matrices.
 The class hierarchy can be obtained with `python -m raytracing --classes`
 """
 
-import warnings
-
-def warningLineFormat(message, category, filename, lineno, line=None):
-    return '\n{0}:{1}\n{2}:{3}\n'.format(filename, lineno, category.__name__, message)
-
-warnings.formatwarning = warningLineFormat
-# warnings.filterwarnings("ignore")
-
 import math
 
 """ We import almost everything by default, in the general namespace because it is simpler for everyone """
@@ -58,6 +50,13 @@ from .zemax import *
 
 from .utils import *
 
+import os
+
+if "RAYTRACING_EXPERT" in os.environ:
+    expertMode()
+else:
+    beginnerMode()
+    
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)

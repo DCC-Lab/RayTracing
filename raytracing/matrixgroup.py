@@ -70,9 +70,8 @@ class MatrixGroup(Matrix):
         if len(self.elements) != 0:
             lastElement = self.elements[-1]
             if lastElement.backIndex != matrix.frontIndex:
-                if isinstance(matrix, Space):  # For Space(), we fix it
-                    msg = "Fixing mismatched indices between last element and appended Space(). Use Space(d=someDistance, n=someIndex)."
-                    warnings.warn(msg, UserWarning)
+                if isinstance(matrix, Space):  
+                    # For Space(), we fix it
                     matrix.frontIndex = lastElement.backIndex
                     matrix.backIndex = matrix.frontIndex
                 else:

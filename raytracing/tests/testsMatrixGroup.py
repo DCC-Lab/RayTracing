@@ -121,11 +121,12 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
             warnings.simplefilter("error")
             self.assertDoesNotRaise(mg.append, UserWarning, otherElement)
 
+    @envtest.skip("We do not emit this warning anymore")
     def testAppendRefractionIndicesMismatch(self):
         mg = MatrixGroup()
-        element = DielectricInterface(1, 1.33, 10)
+        element = DielectricInterface(n1=1, n2=1.33, R=10)
         mg.append(element)
-        otherElement = Space(10)
+        otherElement = Space(d=10)
         with self.assertWarns(UserWarning):
             mg.append(otherElement)
 

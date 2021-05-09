@@ -13,7 +13,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         lineno = 10
         category = UserWarning
         warningsMessage = warningLineFormat(message, category, filename, lineno)
-        self.assertEqual(warningsMessage, "\ntest.py:10\nUserWarning:This is a test.\n")
+        self.assertEqual(warningsMessage, "\ntest.py: 10\nUserWarning: This is a test.\n")
 
     def testMatrix(self):
         m = Matrix()
@@ -196,10 +196,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix(A=1, B=0, C=0, D=1)
         beam = GaussianBeam(w=1, n=1.2)
 
-        with self.assertRaises(UserWarning):
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("error")
-                m * beam
+        with self.assertRaises(RuntimeError):
+            m * beam
 
     def testMatrixProductGaussianBeamWavelengthOut(self):
         m = Matrix(A=1, B=0, C=0, D=1, )

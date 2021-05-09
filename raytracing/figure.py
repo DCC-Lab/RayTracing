@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from .graphics import *
 from .ray import Ray
 import itertools
-import warnings
+from .utils import *
 import sys
 
 """ Graphics key constants """
@@ -113,7 +113,7 @@ class Figure:
             else:
                 warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True. The object height is "
                               "instead set to the default value of {0:.1f}.".format(self.path.objectHeight),
-                              category=Warning)
+                              category=BeginnerHint)
                 self.designParams['limitObjectToFieldOfView'] = False
 
             imageSize = self.path.imageSize()
@@ -123,14 +123,14 @@ class Figure:
                 if self.designParams['limitObjectToFieldOfView']:
                     warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True. The object height is "
                                   "instead set to the default value of {0:.1f}.".format(self.path.objectHeight),
-                                  category=Warning)
+                                  category=BeginnerHint)
                     self.designParams['limitObjectToFieldOfView'] = False
 
         if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
             if stopPosition is None or self.path.principalRay() is None:
                 warnings.warn("No aperture stop in the system: cannot use onlyPrincipalAndAxialRays=True since they "
-                              "are not defined. Showing the default ObjectRays instead. ", category=Warning)
+                              "are not defined. Showing the default ObjectRays instead. ", category=BeginnerHint)
                 self.designParams['onlyPrincipalAndAxialRays'] = False
 
         label = Label(x=0.05, y=0.02, text=note1, fontsize=12*self.fontScale,

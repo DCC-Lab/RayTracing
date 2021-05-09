@@ -9,7 +9,27 @@ or radians with angle*degPerRad or angle*radPerDeg """
 degPerRad = 180.0 / math.pi
 radPerDeg = math.pi / 180.0
 
-warnings.simplefilter("default", DeprecationWarning)
+class BeginnerHint(UserWarning):
+    pass
+
+class ExpertNote(UserWarning):
+    pass
+
+def warningLineFormat(message, category, filename, lineno, line=None):
+    return '\n{0}: {1}\n{2}: {3}\n'.format(filename, lineno, category.__name__, message)
+
+def beginnerMode():
+    warnings.formatwarning = warningLineFormat
+    warnings.filterwarnings("always", category=BeginnerHint)
+    warnings.filterwarnings("default", category=ExpertNote)
+    warnings.filterwarnings("default", category=DeprecationWarning)
+
+def expertMode():
+    print("Expert mode ON")
+    warnings.formatwarning = warningLineFormat
+    warnings.filterwarnings("ignore", category=BeginnerHint)
+    warnings.filterwarnings("once", category=ExpertNote)
+    warnings.filterwarnings("once", category=DeprecationWarning)
 
 
 def isAlmostZero(value, epsilon=1e-3):

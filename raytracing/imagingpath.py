@@ -794,7 +794,7 @@ class ImagingPath(MatrixGroup):
 
         fieldOfView = self.fieldOfView()
         if not np.isfinite(fieldOfView):
-            warnings.warn('Field of view is infinite. You can pass useObject=True to use the finite objectHeight.', category=Warning)
+            warnings.warn('Field of view is infinite. You can pass useObject=True to use the finite objectHeight.', category=BeginnerHint)
 
         return abs(fieldOfView * magnification)
 
@@ -985,10 +985,10 @@ class ImagingPath(MatrixGroup):
                 self.figure.designParams['showFOV'] = False
             else:
                 warnings.warn('No rays were provided for the display. '
-                              'Using principal and axial rays.', category=Warning)
+                              'Using principal and axial rays.', category=BeginnerHint)
                 if self.principalRay() is None and self.axialRay() is None:
                     warnings.warn('Principal and axial rays are not defined for this system. '
-                                  'Using default ObjectRays.', category=Warning)
+                                  'Using default ObjectRays.', category=BeginnerHint)
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
             if self.fanAngle is None:

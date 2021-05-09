@@ -2,6 +2,7 @@ from .ray import *
 from .gaussianbeam import *
 from .rays import *
 from .interface import *
+from .utils import *
 
 from typing import List
 import multiprocessing
@@ -434,7 +435,7 @@ class Matrix(object):
         if rightSideBeam.n != self.frontIndex:
             msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
                 rightSideBeam.n, self.frontIndex)
-            warnings.warn(msg, UserWarning)
+            raise RuntimeError(msg)
 
         qprime = (complex(self.A) * q + complex(self.B)) / (complex(self.C) * q + complex(self.D))
 
@@ -867,7 +868,7 @@ class Matrix(object):
 
             return Rays(rays=outputRaysList)
         except Exception as err:
-            warnings.warn("Multiprocessing failed with: '{0}'. Falling back to slower code.".format(err), UserWarning)
+            warnings.warn("Multiprocessing failed with: '{0}'. Falling back to slower code.".format(err), ExpertNote)
             return self.traceManyThrough(inputRays=inputRays, progress=progress)
 
     def profileFromRayTraces(self, rayTraces, z=float("+inf")):
