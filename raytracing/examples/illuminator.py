@@ -18,5 +18,5 @@ path.append(Space(d=9))
 path.showLabels=True
 print(path.fieldStop())
 print(path.fieldOfView())
-path.display(onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
-path.saveFigure("Illumination.png", onlyChiefAndMarginalRays=True, limitObjectToFieldOfView=True)
+path.display(onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=True)
+#path.saveFigure("Illumination.png", onlyPrincipalAndAxialRays=True, limitObjectToFieldOfView=True)

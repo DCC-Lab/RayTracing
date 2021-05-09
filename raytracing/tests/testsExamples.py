@@ -30,15 +30,12 @@ class TestExamples(envtest.RaytracingTestCase):
         for ex in ex.all:
             self.assertIsNotNone(ex["bmpSourceCode"])
 
-    @envtest.skipIf(not envtest.performanceTests, "Skipping long tests")
+    @envtest.skipUnless(envtest.performanceTests, "Skipping long performance tests")
     def testScriptsRun(self):
         import raytracing.examples as ex
         for scripts in ex.allLong:
-            os.system('{0} {1}'.format(sys.executable, scripts["path"]))
-
-    # def testRedirectStdout(self):
-    #         parser = target.parse_args([])
-           
+            err = os.system('{0} {1}'.format(sys.executable, scripts["path"]))
+            self.assertTrue(err == 0)
     
 
 

@@ -40,8 +40,7 @@ if __name__ == "__main__":
 
     test_functions = {
         "naive" : path.traceManyThrough,
-        "chunks-multiprocessing" : path.traceManyThroughInParallel,
-        "one-block-multiprocessing" : path.traceManyThroughInParallelNoChunks
+        "chunks-multiprocessing" : path.traceManyThroughInParallel
     }
 
     fig, ax = pyplot.subplots()
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     )
     ax.legend(handles = [patches.Patch(facecolor=color, label='Color Patch') for color in ["tab:blue", "tab:orange", "tab:green", "tab:red"]],
                 labels = list(test_functions.keys()))
-    fig.savefig("parallel_time_smallcounts.pdf", transparent=True, bbox_inches="tight")
+    fig.savefig("parallel_time_smallcounts.png", transparent=True, bbox_inches="tight")
     pyplot.show()
 
     ######################################################################
