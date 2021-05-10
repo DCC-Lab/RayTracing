@@ -9,7 +9,7 @@ arrow) at the focal plan of the objective.
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(d=4))
@@ -20,4 +20,4 @@ def exempleCode(comments=None):
     path.display(ObjectRays(diameter=1, halfAngle=0.5),comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

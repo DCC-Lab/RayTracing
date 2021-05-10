@@ -1,4 +1,5 @@
-'''
+TITLE       = "The effect of lens diameters on collection efficiency"
+DESCRIPTION = """
 In any imaging system, lens diameters are of great importance as
 they dictate the position of the Aperture Stop(AS) and Field Stop(FS). 
 We recall that the AS controls the light acceptance and that a 
@@ -16,9 +17,8 @@ paths containing different lens diameter.
      AS is on the second lens, which is suboptimal.
 (c). The last one shows that both lenses are big enough to make the first 
      lens the AS and the detector's camera the FS.
-'''
+"""
 
-import envexamples
 from raytracing import *
 import gc
 
@@ -33,15 +33,13 @@ def imagingPathPreset(a=10, b=10, title=""):
     
     return path
 
-
-# Input from the expected field of view
-inputRays = RandomUniformRays(yMax = 5, 
-                              yMin = -5,
-                              thetaMin = -0.5,
-                              thetaMax = +0.5,
-                              maxCount=1000000)
-
-if __name__ == "__main__":
+def exampleCode():
+    # Input from the expected field of view
+    inputRays = RandomUniformRays(yMax = 5, 
+                                  yMin = -5,
+                                  thetaMin = -0.5,
+                                  thetaMax = +0.5,
+                                  maxCount=1000000)
 
     # Three paths with different sets of lens diameter. 
     path1 = imagingPathPreset(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
@@ -68,3 +66,6 @@ if __name__ == "__main__":
     path3.display(interactive=False)
     outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
     path3.reportEfficiency()
+
+if __name__ == "__main__":
+    exampleCode()

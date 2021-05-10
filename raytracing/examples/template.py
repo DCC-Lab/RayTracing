@@ -4,9 +4,9 @@ DESCRIPTION = """
 
 from raytracing import *
 
-def exempleCode():
+def exampleCode():
 	pass
     # path.display(comments=DESCRIPTION)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

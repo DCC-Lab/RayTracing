@@ -9,7 +9,7 @@ at the vertex, in accord with the paraxial approximation. """
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     # Demo #12: Thick diverging lens built from individual elements
     path = ImagingPath()
     path.label = TITLE
@@ -22,4 +22,4 @@ def exempleCode(comments=None):
 
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

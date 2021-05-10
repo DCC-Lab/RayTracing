@@ -3,25 +3,46 @@ import envexamples
 from raytracing import *
 import matplotlib.pyplot as plt
 
-"""
-To obtain and plot the intensity of a point source at the pinhole of a confocal microscope (with variable pinhole size)
- as a function of position of focal spot by sending a large number of rays in the system (changing the position of the
- focal spot provides an optical sectioning process).
-"""
+""" To obtain and plot the intensity of a point source at the pinhole of a
+confocal microscope (with variable pinhole size) as a function of position of
+focal spot by sending a large number of rays in the system (changing the
+position of the focal spot provides an optical sectioning process). """
 
 # Focal spot radius (Airy disk radius)
 focalRadius = 0.000250
-# Dictionary of pinhole factors with an empty list which will subsequently contain the transmission efficiency
-# for each focal spot position
+# Dictionary of pinhole factors with an empty list which will subsequently
+# contain the transmission efficiency for each focal spot position
 pinholeModifier = {1 / 3: [], 1: [], 3: []}
 # list of all relative positions from the ideal focal spot position in nm
 positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -300, -500, -800, -1000]
 # Number of total rays produced by the focal spot
 nRays = 100000
-# Production of rays from a focal spot with a radius determined by focalRadius
+# Production of rays from a focal spot with a radius determined by
+# focalRadius
 inputRays = RandomUniformRays(yMax=focalRadius, yMin=-focalRadius, maxCount=nRays)
 # Focal length of the objective
 objFocalLength = 5
+
+def exampleCode():
+
+    for pinhole in pinholeModifier:
+        print("\nComputing transmission for pinhole size {0:0.1f}".format(pinhole))
+
+        efficiencyValues = []
+        for z in positions:
+            print(".",end='')
+            newPosition = 5 + (z * 0.000001)
+            efficiency = illuminationPath(pinholeFactor=pinhole, focalSpotPosition=newPosition)
+            efficiencyValues.append(efficiency)
+        pinholeModifier[pinhole] = efficiencyValues
+
+    plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Small pinhole', linestyle='dashed')
+    plt.plot(positions, pinholeModifier[1], 'k-', label='Ideal pinhole')
+    plt.plot(positions, pinholeModifier[3], 'k--', label='Large pinhole', linestyle='dotted')
+    plt.ylabel('Transmission efficiency')
+    plt.xlabel('Position of the focal spot (nm)')
+    plt.legend()
+    plt.show()
 
 def path(focalSpotPosition=objFocalLength): 
     illumination = ImagingPath()
@@ -84,22 +105,5 @@ def illuminationPath(pinholeFactor=None, focalSpotPosition=None):
 
     return outputRays.count / inputRays.count
 
-
-for pinhole in pinholeModifier:
-    print("\nComputing transmission for pinhole size {0:0.1f}".format(pinhole))
-
-    efficiencyValues = []
-    for z in positions:
-        print(".",end='')
-        newPosition = 5 + (z * 0.000001)
-        efficiency = illuminationPath(pinholeFactor=pinhole, focalSpotPosition=newPosition)
-        efficiencyValues.append(efficiency)
-    pinholeModifier[pinhole] = efficiencyValues
-
-plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Small pinhole', linestyle='dashed')
-plt.plot(positions, pinholeModifier[1], 'k-', label='Ideal pinhole')
-plt.plot(positions, pinholeModifier[3], 'k--', label='Large pinhole', linestyle='dotted')
-plt.ylabel('Transmission efficiency')
-plt.xlabel('Position of the focal spot (nm)')
-plt.legend()
-plt.show()
+if __name__ == "__main__":
+    exampleCode()

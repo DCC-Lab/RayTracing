@@ -9,6 +9,7 @@ import multiprocessing
 import sys
 import math
 import warnings
+from numpy import isfinite
 
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
@@ -140,7 +141,7 @@ class Matrix(object):
         if apertureDiameter <= 0:
             raise ValueError("The aperture diameter must be strictly positive.")
         self.apertureDiameter = apertureDiameter
-
+        self.apertureRadius = apertureDiameter/2.0
         # First and last interfaces. Used for BFL and FFL
         self.frontVertex = frontVertex
         self.backVertex = backVertex
@@ -383,18 +384,18 @@ class Matrix(object):
 
         outputRay = Ray()
 
-        if rightSideRay.isNotBlocked:
+        if rightSideRay.isBlocked:
+            outputRay = rightSideRay
+        else:
             outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
             outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
             outputRay.z = self.L + rightSideRay.z
             outputRay.apertureDiameter = self.apertureDiameter
 
-            if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
+            if abs(rightSideRay.y) > self.apertureRadius:
                 outputRay.isBlocked = True
             else:
                 outputRay.isBlocked = rightSideRay.isBlocked
-        else:
-            outputRay = rightSideRay
 
         return outputRay
 
@@ -443,7 +444,7 @@ class Matrix(object):
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
 
-        if abs(outputBeam.w) > self.apertureDiameter / 2:
+        if abs(outputBeam.w) > self.apertureRadius:
             outputBeam.isClipped = True
         else:
             outputBeam.isClipped = rightSideBeam.isClipped
@@ -641,7 +642,7 @@ class Matrix(object):
         rayTrace = []
         if isinstance(ray, Ray):
             if self.L > 0:
-                if abs(ray.y) > self.apertureDiameter / 2:
+                if abs(ray.y) > self.apertureRadius:
                     ray.isBlocked = True
                 rayTrace.append(ray)
 
@@ -1397,7 +1398,7 @@ class Matrix(object):
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
         if self.apertureDiameter != float('+Inf'):
-            halfHeight = self.apertureDiameter / 2.0  # real half height
+            halfHeight = self.apertureRadius  # real half height
         return halfHeight
 
     def display(self):
@@ -1505,7 +1506,7 @@ class Lens(Matrix):
             The half height of the optical element
         """
         if self.apertureDiameter != float('+Inf'):
-            self._physicalHalfHeight = self.apertureDiameter / 2.0  # real half height
+            self._physicalHalfHeight = self.apertureRadius  # real half height
         return self._physicalHalfHeight
 
     @property

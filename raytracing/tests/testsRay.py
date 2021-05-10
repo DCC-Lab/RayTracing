@@ -8,6 +8,7 @@ class TestRay(envtest.RaytracingTestCase):
 
     def testRay(self):
         ray = Ray()
+        
         self.assertIsNotNone(ray)
         self.assertEqual(ray.y, 0)
         self.assertEqual(ray.theta, 0)

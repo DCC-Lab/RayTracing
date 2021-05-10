@@ -8,7 +8,7 @@ class to model essentially any objective. Real objectives from manufacturers
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     obj = Objective(f=10, NA=0.8, focusToFocusLength=60, backAperture=18, workingDistance=2,
                     magnification=40, fieldNumber=1.4, label="Objective")
     print("Focal distances: ", obj.focalDistances())
@@ -25,4 +25,4 @@ def exempleCode(comments=None):
     path.displayWithObject(diameter=20, fanAngle=0.005, comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

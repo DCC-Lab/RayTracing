@@ -21,10 +21,11 @@ topDir      = os.path.dirname(os.path.realpath(__file__))
 allFiles    = os.listdir(topDir)
 allFiles.sort()
 
-all = []
-allLong = []
+short = []
+long = []
 for file in allFiles:
-    matchObj = re.match(r'^(ex\d+)\.py$', file)
+    pattern = r'^(ex\d+|fig.+)\.py$'
+    matchObj = re.match(pattern, file)
     if matchObj:
         name = matchObj.group(1)
         module = importlib.import_module(".{0}".format(name),package="raytracing.examples")
@@ -38,9 +39,9 @@ for file in allFiles:
         bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
         module.__IMG_CODE = Image.open(BytesIO(bmpSrcCode))
 
-        all.append({"name":name, 
+        short.append({"name":name, 
                      "title":module.TITLE,
-                     "code":module.exempleCode,
+                     "code":module.exampleCode,
                      "sourceCode":srcCode,
                      "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
                      "bmpSourceCode":Image.open(BytesIO(bmpSrcCode))
@@ -50,16 +51,18 @@ for file in allFiles:
         if matchObj:
             # Other more complete examples:
             name = matchObj.group(1)
+            if name in ["__init__","template", "envexamples"]:
+                continue
+
             with open("{0}/{1}".format(topDir, file)) as f:
                 srcCode = f.readlines()
 
             srcCode = str.join('', srcCode)
             bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
 
-            allLong.append({"name":name, 
+            long.append({"name":name, 
                          "sourceCode":srcCode,
                          "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
                          "bmpSourceCode":Image.open(BytesIO(bmpSrcCode)),
                          "path":"{0}/{1}".format(topDir, file)
                          })
-

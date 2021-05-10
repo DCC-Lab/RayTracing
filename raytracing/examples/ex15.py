@@ -6,7 +6,7 @@ used in any system, and it can be flipped with the flip() command if needed.
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(180))
@@ -15,4 +15,4 @@ def exempleCode(comments=None):
     path.displayWithObject(diameter=10, fanAngle=0.005, comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

@@ -11,7 +11,7 @@ calculated: you would need to build a MatrixGroup with all elements to do so
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(d=50))
@@ -20,4 +20,4 @@ def exempleCode(comments=None):
     path.displayWithObject(diameter=20, comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()
