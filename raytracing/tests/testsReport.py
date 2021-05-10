@@ -13,7 +13,8 @@ class TestReport(envtest.RaytracingTestCase):
     
     def setUp(self):
         self.stdout = io.StringIO()
-
+        super().setUp()
+        
     def testCreationNoASNoFS(self):
         f = 50
         path = ImagingPath()
