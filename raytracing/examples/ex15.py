@@ -15,4 +15,5 @@ def exampleCode(comments=None):
     path.displayWithObject(diameter=10, fanAngle=0.005, comments=comments)
 
 if __name__ == "__main__":
+    import envexamples
     exampleCode()

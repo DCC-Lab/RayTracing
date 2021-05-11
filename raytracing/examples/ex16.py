@@ -15,4 +15,5 @@ def exampleCode(comments=None):
     eo.PN_33_921().display()
 
 if __name__ == "__main__":
+    import envexamples
     exampleCode()
