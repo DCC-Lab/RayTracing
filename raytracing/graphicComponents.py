@@ -193,7 +193,10 @@ class Surface(Component):
     def __init__(self, surface, halfHeight, x=0.0, color='k'):
         super(Surface, self).__init__(color=color, fill=False)
         self.surface = surface
-        self.halfHeight = halfHeight
+        if np.isfinite(halfHeight):
+            self.halfHeight = halfHeight
+        else:
+            raise ValueError("halfHeight must be finite")
         self.x = x
 
     @property
@@ -222,7 +225,12 @@ class SurfacePair(Component):
 
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
-        self.halfHeight = halfHeight
+
+        if np.isfinite(halfHeight):
+            self.halfHeight = halfHeight
+        else:
+            raise ValueError("halfHeight must be finite")
+
         self.x = x
         self.corners = None
 
