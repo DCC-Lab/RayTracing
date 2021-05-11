@@ -28,7 +28,7 @@ setuptools.setup(
     keywords='optics optical lens ray tracing matrix matrices aperture field stop\
     monte carlo design raytracing zemax chromatic aberrations',
     packages=setuptools.find_packages(),
-    install_requires=['matplotlib>=3', 'numpy'],
+    install_requires=['matplotlib>=3', 'numpy','pygments'],
     python_requires='>=3.6',
     package_data = {
         # If any package contains *.txt or *.rst files, include them:
