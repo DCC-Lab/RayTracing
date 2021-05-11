@@ -256,7 +256,7 @@ class Ray:
         return description
 
     def __eq__(self, other):
-        """Define rays to be equal if they the same height and angle."""
+        """Define rays to be equal if they have the same height and angle."""
 
         if not isinstance(other, Ray):
             return False
