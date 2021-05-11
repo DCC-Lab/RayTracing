@@ -448,11 +448,11 @@ class GraphicOf:
         instance = type(element).__name__
         if type(element) is Objective or issubclass(type(element), Objective):
             return ObjectiveGraphic(element, x=x)
-        if instance is 'Lens':
+        if instance == 'Lens':
             return LensGraphic(element, x=x, minSize=minSize)
-        if instance is 'Space':
+        if instance == 'Space':
             return None
-        if instance is 'Aperture':
+        if instance == 'Aperture':
             return ApertureGraphic(element, x=x)
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
