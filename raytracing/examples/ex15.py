@@ -4,9 +4,9 @@ specifications of the LUMPlanFL40X objective to model it for use. It can be
 used in any system, and it can be flipped with the flip() command if needed.
 """
 
-from raytracing import *
 
 def exampleCode(comments=None):
+    from raytracing import ImagingPath, Space, olympus
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(180))

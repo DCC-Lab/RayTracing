@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 the current version of the module """
 
 # Append module root directory to sys.path
-sys.path.insert(0, os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) ))
+sys.path.insert(0, os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) )) )
 
 try:
     import raytracing
