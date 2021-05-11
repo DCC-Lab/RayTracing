@@ -28,6 +28,7 @@ class TestExamples(envtest.RaytracingTestCase):
         for ex in ex.short:
             self.assertTrue(len(ex["title"])!=0)
             self.assertTrue(len(ex["sourceCode"])!=0)
+            ex["code"]()
 
     def testExamplesHaveSrcCode(self):
         import raytracing.examples as ex
@@ -39,7 +40,7 @@ class TestExamples(envtest.RaytracingTestCase):
         for ex in ex.short:
             self.assertIsNotNone(ex["bmpSourceCode"])
 
-    # @envtest.skipUnless(envtest.performanceTests, "Skipping long performance tests")
+    @envtest.skipUnless(envtest.performanceTests, "Skipping long performance tests")
     def testScriptsRun(self):
         import raytracing.examples as ex
         for scripts in ex.long:
