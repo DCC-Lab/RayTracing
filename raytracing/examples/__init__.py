@@ -44,7 +44,8 @@ for file in allFiles:
                      "code":module.exampleCode,
                      "sourceCode":srcCode,
                      "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
-                     "bmpSourceCode":Image.open(BytesIO(bmpSrcCode))
+                     "bmpSourceCode":Image.open(BytesIO(bmpSrcCode)),
+                     "path":"{0}/{1}".format(topDir, file)
                      })
     else:
         matchObj = re.match(r'^(.+)\.py$', file)
