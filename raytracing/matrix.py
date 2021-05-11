@@ -1397,7 +1397,7 @@ class Matrix(object):
             The half height of the optical element
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
-        if self.apertureDiameter != float('+Inf'):
+        if self.apertureRadius != float('+Inf'):
             halfHeight = self.apertureRadius  # real half height
         return halfHeight
 
@@ -1505,7 +1505,7 @@ class Lens(Matrix):
         halfHeight : float
             The half height of the optical element
         """
-        if self.apertureDiameter != float('+Inf'):
+        if self.apertureRadius != float('+Inf'):
             self._physicalHalfHeight = self.apertureRadius  # real half height
         return self._physicalHalfHeight
 
