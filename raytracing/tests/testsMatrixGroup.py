@@ -282,7 +282,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
 
     def testLargestDiameterNoFiniteAperture(self):
         mg = MatrixGroup([Space(10), Lens(5)])
-        self.assertEqual(mg.largestDiameter, float("+inf"))
+        self.assertEqual(mg.largestDiameter, 8)
 
     def testLargestDiameterWithEmptyGroup(self):
         m = MatrixGroup()
