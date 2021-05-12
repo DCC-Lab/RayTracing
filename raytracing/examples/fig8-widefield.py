@@ -45,7 +45,7 @@ def exampleCode(comments=None):
     path1 = imagingPathPreset(a=15, b=15, title="Vignetting with FS poorly placed because of second lens diameter")
     outputRays = path1.traceManyThrough(inputRays)
     efficiency = 100*outputRays.count/inputRays.count
-    path1.display(interactive=False)
+    path1.display(ObjectRays(diameter=4,H=3,T=5, halfAngle=0.15), removeBlocked=False)
     outputRays.display("Output profile with vignetting {0:.0f}% efficiency".format(efficiency), showTheta=False)
     path1.reportEfficiency()
 
@@ -54,7 +54,7 @@ def exampleCode(comments=None):
     path2 = imagingPathPreset(a=40, b=15, title="Suboptimal AS at second lens, but without vignetting")
     outputRays = path2.traceManyThrough(inputRays)
     efficiency = 100*outputRays.count/inputRays.count
-    path2.display(interactive=False)
+    path2.display(ObjectRays(diameter=4,H=3,T=5, halfAngle=0.15), removeBlocked=False)
     outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
     path2.reportEfficiency()
 
@@ -63,9 +63,10 @@ def exampleCode(comments=None):
     path3 = imagingPathPreset(a=25, b=50, title="Better AS at first lens and FS at Camera")
     outputRays = path3.traceManyThrough(inputRays)
     efficiency = 100*outputRays.count/inputRays.count
-    path3.display(interactive=False)
+    path3.display(ObjectRays(diameter=4,H=3,T=5, halfAngle=0.15), removeBlocked=False)
     outputRays.display("Output profile {0:.0f}% efficiency".format(efficiency), showTheta=False)
     path3.reportEfficiency()
 
 if __name__ == "__main__":
+    import envexamples
     exampleCode()
