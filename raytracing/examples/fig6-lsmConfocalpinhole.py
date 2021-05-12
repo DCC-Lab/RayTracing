@@ -43,7 +43,7 @@ pinholeModifier = {1 / 3: [], 1: [], 3: []}
 positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -300, -500, -800, -1000]
 
 # Number of total rays produced by the focal spot
-nRays = 10_000
+nRays = 1_000
 
 # Production of rays in the angle range of the scanning element.
 scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=100)
@@ -145,7 +145,7 @@ def rayEfficiency(pinholeFactor=None, focalSpotPosition2=None):
     return outputRays2.count / inputRays.count
 
 
-def exampleCode():
+def exampleCode(comments=None):
     # Pinhole sectioning
     for pinhole in pinholeModifier:
         print("\nComputing transmission for pinhole size {0:0.1f}".format(pinhole))

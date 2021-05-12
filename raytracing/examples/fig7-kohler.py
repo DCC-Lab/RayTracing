@@ -6,7 +6,7 @@ images.  '''
 
 from raytracing import *
 
-def exampleCode():
+def exampleCode(comments=None):
 	illumination = ImagingPath()
 	illumination.design(fontScale=1.5)
 	illumination.append(Space(d=20))

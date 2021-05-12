@@ -33,7 +33,7 @@ def imagingPathPreset(a=10, b=10, title=""):
     
     return path
 
-def exampleCode():
+def exampleCode(comments=None):
     # Input from the expected field of view
     inputRays = RandomUniformRays(yMax = 5, 
                                   yMin = -5,
