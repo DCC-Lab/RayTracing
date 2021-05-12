@@ -839,6 +839,9 @@ class ImagingPath(MatrixGroup):
         import matplotlib.patches as p
 
         principal = self.principalRay()
+        if principal is None:
+            print("There is no Field Stop in this system. We cannot produce a report.")
+            return
         axial = self.axialRay()
         Iap = abs(self.lagrangeInvariant()) # corresponds to Zhe in the article
 
@@ -892,7 +895,7 @@ class ImagingPath(MatrixGroup):
         print(" Collection efficiency from ratio of system to source invariants: {0:.1f}%".format(Iap/Is*100))
         stopPosition, stopDiameter = self.apertureStop()
         print(" Efficiency limited by {0:.1f} mm diameter of AS at z={1:.1f}".format(stopDiameter, stopPosition))
-        print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(Is/Iap))
+        #print(" For 100% efficiency, the system would require an increase of {0:.2f}⨉ in detection NA with same FOV".format(Is/Iap))
         print("\nVignetting")
         print("----------")
         print("Relative efficiency: {0:.1f}% of maximum for this system".format(100*len(notBlocked)/(len(vignettedBlocked)+len(notBlocked))))
