@@ -132,6 +132,9 @@ def skipUnless(condition: object, reason: str):
 def expectedFailure(func):
     return unittest.expectedFailure(func)
 
+def patchMatplotLib():
+    return patch('matplotlib.pyplot.show', new=Mock())
+     
 # append module root directory to sys.path
 sys.path.insert(0,
                 os.path.dirname(
