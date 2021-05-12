@@ -34,6 +34,9 @@ class TestAchromatDoubletLens(envtest.RaytracingTestCase):
 
         self.assertAlmostEqual(diff, diffFocal, places=3)
 
+    def testAchromatDiameter(self):
+        self.assertAlmostEqual(thorlabs.AC254_100_A().displayHalfHeight(), 25.4/2)
+
     def testWarnThickness(self):
         with self.assertWarns(ExpertNote):
             achromat = AchromatDoubletLens(fa=125.0, fb=122.0, R1=77.6, R2=-55.9, R3=-160.8, tc1=4.0, tc2=2.8, te=5.0,
