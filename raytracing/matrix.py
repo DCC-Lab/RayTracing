@@ -141,7 +141,7 @@ class Matrix(object):
         if apertureDiameter <= 0:
             raise ValueError("The aperture diameter must be strictly positive.")
         self.apertureDiameter = apertureDiameter
-        self.apertureRadius = apertureDiameter/2.0
+
         # First and last interfaces. Used for BFL and FFL
         self.frontVertex = frontVertex
         self.backVertex = backVertex
@@ -392,7 +392,7 @@ class Matrix(object):
             outputRay.z = self.L + rightSideRay.z
             outputRay.apertureDiameter = self.apertureDiameter
 
-            if abs(rightSideRay.y) > self.apertureRadius:
+            if abs(rightSideRay.y) > self.apertureDiameter/2:
                 outputRay.isBlocked = True
             else:
                 outputRay.isBlocked = rightSideRay.isBlocked
@@ -444,7 +444,7 @@ class Matrix(object):
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
 
-        if abs(outputBeam.w) > self.apertureRadius:
+        if abs(outputBeam.w) > self.apertureDiameter/2:
             outputBeam.isClipped = True
         else:
             outputBeam.isClipped = rightSideBeam.isClipped
@@ -642,7 +642,7 @@ class Matrix(object):
         rayTrace = []
         if isinstance(ray, Ray):
             if self.L > 0:
-                if abs(ray.y) > self.apertureRadius:
+                if abs(ray.y) > self.apertureDiameter/2:
                     ray.isBlocked = True
                 rayTrace.append(ray)
 
@@ -1397,8 +1397,9 @@ class Matrix(object):
             The half height of the optical element
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
-        if self.apertureRadius != float('+Inf'):
-            halfHeight = self.apertureRadius  # real half height
+
+        if self.apertureDiameter != float('+Inf'):
+            halfHeight = self.apertureDiameter/2  # real half height
         return halfHeight
 
     def display(self):
@@ -1505,8 +1506,8 @@ class Lens(Matrix):
         halfHeight : float
             The half height of the optical element
         """
-        if self.apertureRadius != float('+Inf'):
-            self._physicalHalfHeight = self.apertureRadius  # real half height
+        if self.apertureDiameter != float('+Inf'):
+            self._physicalHalfHeight = self.apertureDiameter/2  # real half height
         return self._physicalHalfHeight
 
     @property
