@@ -28,7 +28,10 @@ class TestExamples(envtest.RaytracingTestCase):
         for ex in ex.short:
             self.assertTrue(len(ex["title"])!=0)
             self.assertTrue(len(ex["sourceCode"])!=0)
-            ex["code"]()
+            print(".", end='', file=sys.stderr)
+            print(ex["name"], end='', file=sys.stderr)
+            with envtest.redirect_stdout(self.stdout):
+                ex["code"]()
 
     def testExamplesHaveSrcCode(self):
         import raytracing.examples as ex
@@ -44,7 +47,7 @@ class TestExamples(envtest.RaytracingTestCase):
     def testScriptsRun(self):
         import raytracing.examples as ex
         for scripts in ex.long:
-            err = os.system('{0} {1}'.format(sys.executable, scripts["path"]))
+            err = subprocess.run([sys.executable,  scripts["path"]], capture_output=True)
             self.assertTrue(err == 0)
     
 
