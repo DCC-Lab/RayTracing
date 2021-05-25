@@ -16,6 +16,7 @@ spot by sending a large number of rays in the system  (changing the position
 of the focal spot provides an optical sectioning process).
 """
 
+import envexamples
 from raytracing import *
 import matplotlib.pyplot as plt
 import numpy as np
@@ -43,7 +44,8 @@ pinholeModifier = {1 / 3: [], 1: [], 3: []}
 positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -300, -500, -800, -1000]
 
 # Number of total rays produced by the focal spot
-nRays = 1_000
+# increase for better resolution
+nRays = 10000
 
 # Production of rays in the angle range of the scanning element.
 scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=100)
