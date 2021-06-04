@@ -57,6 +57,9 @@ class CompoundLens(MatrixGroup):
             Wavelengths in microns defaults to visible
         """
 
+        if self.designFocalLength is None:
+            raise("The design focal length of this lens was not set upon creation. Set it with self.designFocalLength=xx.")
+
         if wavelengths is None:
             wavelengths = linspace(0.4, 0.8, 100)
         
