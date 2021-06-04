@@ -346,6 +346,17 @@ class MatrixGroupGraphic(MatrixGraphic):
         return self._components
 
     @property
+    def standAloneGraphics(self):
+        graphics = []
+        z = 0
+        for element in self.matrixGroup.elements:
+            graphic = GraphicOf(element, x=z + self.x)
+            if graphic is not None:
+                graphics.append(graphic)
+            z += element.L
+        return graphics
+
+    @property
     def pointsOfInterest(self):
         """
         Labels of general points of interest are drawn below the
