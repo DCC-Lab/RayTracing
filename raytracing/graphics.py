@@ -124,6 +124,7 @@ class LampGraphic(Graphic):
 class MatrixGraphic(Graphic):
     def __init__(self, matrix, x=0.0, fixedWidth=False):
         self.matrix = matrix
+        self.displayComponents = False
         super(MatrixGraphic, self).__init__(x=x, fixedWidth=fixedWidth, label=self.matrix.label)
 
     @property
@@ -260,7 +261,10 @@ class MatrixGraphic(Graphic):
         from .imagingpath import ImagingPath
         path = ImagingPath(elements=[self.matrix])
         figure = MplFigure(path)
-        figure.graphicGroups['elements'] = [self]
+        figure.graphicGroups['Elements'] = [self]
+        if self.displayComponents:
+            path.elements = self.matrix
+            figure.setGraphicsFromOpticalPath()
         figure.create(title="Element properties")
         figure.display2D(interactive=False)
 
@@ -323,9 +327,10 @@ class SurfacesGraphic(MatrixGraphic):
 
 
 class MatrixGroupGraphic(MatrixGraphic):
-    def __init__(self, matrixGroup, x=0.0):
-        self.matrixGroup = matrixGroup
+    def __init__(self, matrixGroup, x=0.0, displayComponents=True):
         super().__init__(matrixGroup, x=x)
+        self.matrixGroup = matrixGroup
+        self.displayComponents = displayComponents
 
     @property
     def L(self):
@@ -339,17 +344,6 @@ class MatrixGroupGraphic(MatrixGraphic):
         if self._components is None:
             self._components = self.mainComponents
         return self._components
-
-    @property
-    def standAloneGraphics(self):
-        graphics = []
-        z = 0
-        for element in self.matrixGroup.elements:
-            graphic = GraphicOf(element, x=z + self.x)
-            if graphic is not None:
-                graphics.append(graphic)
-            z += element.L
-        return graphics
 
     @property
     def pointsOfInterest(self):
@@ -397,7 +391,7 @@ class MatrixGroupGraphic(MatrixGraphic):
 class ObjectiveGraphic(MatrixGroupGraphic):
     def __init__(self, objective, x=0.0):
         self.matrixGroup = objective
-        super().__init__(objective, x=x)
+        super().__init__(objective, x=x, displayComponents=False)
 
     @property
     def components(self):
@@ -453,6 +447,6 @@ class GraphicOf:
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         if issubclass(type(element), MatrixGroup):
-            return MatrixGroupGraphic(element, x=x).standAloneGraphics
+            return MatrixGroupGraphic(element, x=x)
         else:
             return MatrixGraphic(element, x=x)
