@@ -23,8 +23,8 @@ class Figure:
         self.path = opticalPath
         self.raysList = []
 
-        self.graphicGroups = {'Principal/axial rays': [], 'Object/Image': [], 'Lamp': [], 'Elements': []}
-        self.lineGroups = {'Principal/axial rays': [], 'Object/Image': [], 'Lamp': []}
+        self.graphicGroups = {kPrincipalKey: [], kObjectImageKey: [], kLampKey: [], kElementsKey: []}
+        self.lineGroups = {kPrincipalKey: [], kObjectImageKey: [], kLampKey: []}
         self.labels = []
         self.points = []
         self.annotations = []
@@ -149,23 +149,23 @@ class Figure:
         rays = []
         if principalRay is not None:
             rays.append(principalRay)
-            self.graphicGroups['Principal/axial rays'].append(ObjectGraphic(principalRay.y * 2,
+            self.graphicGroups[kPrincipalKey].append(ObjectGraphic(principalRay.y * 2,
                                                        fill=False, color=self.designParams['FOVColors'][0]))
-            self.graphicGroups['Principal/axial rays'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
+            self.graphicGroups[kPrincipalKey].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
                                                        fill=False, color=self.designParams['FOVColors'][1]))
 
         if axialRay is not None:
             rays.append(axialRay)
         if rays:
-            self.lineGroups['Principal/axial rays'].extend(self.rayTraceLines(rays, lineWidth=1.5))
+            self.lineGroups[kPrincipalKey].extend(self.rayTraceLines(rays, lineWidth=1.5))
 
     def setGraphicsFromOpticalPath(self):
-        self.graphicGroups['Elements'] = self.graphicsOfElements
+        self.graphicGroups[kElementsKey] = self.graphicsOfElements
 
         if self.path.showEntrancePupil:
             (pupilPosition, pupilDiameter) = self.path.entrancePupil()
             if pupilPosition is not None:
-                self.graphicGroups['Elements'].append(self.graphicOfEntrancePupil)
+                self.graphicGroups[kElementsKey].append(self.graphicOfEntrancePupil)
 
         if self.path.showPointsOfInterest:
             self.points.extend(self.pointsOfInterest)
@@ -203,7 +203,7 @@ class Figure:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
                                                                                         fill=False, color=color))
             if instance is 'LampRays':
-                lampKey = 'Lamp (z={0:.2f})'.format(rays.z) if rays.z != 0 else 'Lamp'
+                lampKey = 'Lamp (z={0:.2f})'.format(rays.z) if rays.z != 0 else kLampKey
                 self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z, label=rays.label)]
 
     def setLinesFromRaysList(self):
@@ -213,13 +213,13 @@ class Figure:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
                 if rays.z == 0:
-                    self.lineGroups['Object/Image'].extend(rayTrace)
+                    self.lineGroups[kObjectImageKey].extend(rayTrace)
                 else:
                     self.lineGroups[kObjectImageZKey.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 if rays.z == 0:
-                    self.lineGroups['Lamp'].extend(rayTrace)
+                    self.lineGroups[kLampKey].extend(rayTrace)
                 else:
                     self.lineGroups['Lamp (z={0:.2f})'.format(rays.z)] = rayTrace
             elif instance not in self.lineGroups.keys():
@@ -530,10 +530,10 @@ class Figure:
         if self.designParams['showFOV']:
             self.designParams['showObjectImage'] = False
         else:
-            self.setGroupVisibility('Principal/axial rays', False)
+            self.setGroupVisibility(kPrincipalKey, False)
 
         if not self.designParams['showObjectImage']:
-            self.setGroupVisibility('Object/Image', False)
+            self.setGroupVisibility(kObjectImageKey, False)
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
@@ -548,7 +548,7 @@ class Figure:
     def displayGaussianBeam(self, beams=None,
                             title=None, comments=None, backend='matplotlib', display3D=False, filepath=None):
         self.lineGroups['rays'] = []
-        self.graphicGroups['Elements'] = self.graphicsOfElements
+        self.graphicGroups[kElementsKey] = self.graphicsOfElements
         for beam in beams:
             self.lineGroups['rays'].extend(self.beamTraceLines(beam))
             self.annotations.extend(self.beamWaistAnnotations(beam))
@@ -688,8 +688,8 @@ class MplFigure(Figure):
 
     def initVisibilityCheckBoxes(self):
         visibility = self.visibility
-        if 'Elements' in visibility.keys():
-            visibility.pop('Elements')
+        if kElementsKey in visibility.keys():
+            visibility.pop(kElementsKey)
 
         subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
         self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
