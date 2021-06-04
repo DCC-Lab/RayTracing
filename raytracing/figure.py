@@ -9,6 +9,7 @@ import sys
 """ Graphics key constants """
 kPrincipalKey = "Principal/axial rays"
 kObjectImageKey = "Object/Image"
+kObjectImageZKey = "Object/Image (z={0:.1f})"
 kLampKey = "Lamp"
 kElementsKey = "Elements"
 
@@ -193,7 +194,7 @@ class Figure:
         for rays in self.raysList:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                objectKey = 'Object/Image (z={0:.2f})'.format(rays.z) if rays.z != 0 else 'Object/Image'
+                objectKey = kObjectImageZKey.format(rays.z) if rays.z != 0 else kObjectImageKey
                 color = 'b' if rays.color is None else rays.color
                 self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z, color=color, label=rays.label)]
                 if rays.color is None:
@@ -214,7 +215,7 @@ class Figure:
                 if rays.z == 0:
                     self.lineGroups['Object/Image'].extend(rayTrace)
                 else:
-                    self.lineGroups['Object/Image (z={0:.1f})'.format(rays.z)] = rayTrace
+                    self.lineGroups[kObjectImageZKey.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 if rays.z == 0:
