@@ -68,3 +68,20 @@ OpticalPath = ImagingPath
 __version__ = "1.3.6"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
+def checkLatestVersion():
+    import json
+    import urllib.request
+    from distutils.version import StrictVersion
+
+    url = "https://pypi.org/pypi/raytracing/json"
+    req = urllib.request.Request(url)
+    with urllib.request.urlopen(req) as response:
+        data = json.load(response)
+        versions = sorted(data["releases"].keys(),key=StrictVersion)
+        latestVersion = versions[-1]
+        if __version__ < latestVersion:
+            print("Latest version {0} available on PyPi (you are using {1}).")
+            print("run `pip install --upgrade raytracing` to update.".format(latestVersion, __version__))
+
+checkLatestVersion()
+
