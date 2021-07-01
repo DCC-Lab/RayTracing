@@ -6,7 +6,7 @@ eigenmodes of laser cavities.
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     cavity = LaserCavity(label="")
     cavity.append(Space(d=160))
     cavity.append(DielectricSlab(thickness=100, n=1.8))
@@ -28,4 +28,4 @@ def exempleCode(comments=None):
     cavity.display(comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

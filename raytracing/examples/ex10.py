@@ -7,7 +7,7 @@ short focal length in situations where distances are constrained. """
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     path = ImagingPath()
     path.append(Space(d=20))
     path.append(Lens(f=-10, label='Div'))
@@ -20,4 +20,4 @@ def exempleCode(comments=None):
     path.display(comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

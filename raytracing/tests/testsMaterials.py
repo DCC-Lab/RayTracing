@@ -9,6 +9,7 @@ class TestMaterial(envtest.RaytracingTestCase):
 class TestMaterialSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.materials = Material.__subclasses__()
+        super().setUp()
 
     def testMaterialsList(self):
         self.assertTrue(len(self.materials) > 10)

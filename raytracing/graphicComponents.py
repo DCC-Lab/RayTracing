@@ -193,7 +193,10 @@ class Surface(Component):
     def __init__(self, surface, halfHeight, x=0.0, color='k'):
         super(Surface, self).__init__(color=color, fill=False)
         self.surface = surface
-        self.halfHeight = halfHeight
+        if np.isfinite(halfHeight):
+            self.halfHeight = halfHeight
+        else:
+            raise ValueError("halfHeight must be finite")
         self.x = x
 
     @property
@@ -226,7 +229,12 @@ class SurfacePair(Component):
 
         self.surfaceA = surfaceA
         self.surfaceB = surfaceB
-        self.halfHeight = halfHeight
+
+        if np.isfinite(halfHeight):
+            self.halfHeight = halfHeight
+        else:
+            raise ValueError("halfHeight must be finite")
+
         self.x = x
         self.corners = None
 
@@ -292,7 +300,7 @@ class SurfacePair(Component):
                     BezierCurve([(v2, -h), (self.corners[0], -h)])]
 
         R2 = self.surfaceB.R
-        if h / abs(R1) <= 1.0:
+        if h / abs(R2) <= 1.0:
             phi2 = math.asin(h / abs(R2))
         else:
             phi2 = np.pi/2

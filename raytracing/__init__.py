@@ -50,6 +50,13 @@ from .zemax import *
 
 from .utils import *
 
+import os
+
+if "RAYTRACING_EXPERT" in os.environ:
+    expertMode()
+else:
+    beginnerMode()
+    
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)
@@ -58,6 +65,6 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.3.5"
+__version__ = "1.3.6"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 

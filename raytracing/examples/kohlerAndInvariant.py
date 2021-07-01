@@ -10,13 +10,13 @@ DESCRIPTION
 
 def displayMultiple(paths: list,
                     limitObjectToFieldOfView=False,
-                    onlyChiefAndMarginalRays=False,
+                    onlyPrincipalAndAxialRays=False,
                     removeBlockedRaysCompletely=False,
                     comments=None):
     fig, axes = plt.subplots(figsize=(10, 7))
     for path in paths:
         path.createRayTracePlot(axes=axes, limitObjectToFieldOfView=False,
-                                onlyChiefAndMarginalRays=False,
+                                onlyPrincipalAndAxialRays=False,
                                 removeBlockedRaysCompletely=False)
     # can only def callbacks for only one path
     axes.callbacks.connect('ylim_changed', paths[0].updateDisplay)

@@ -10,7 +10,7 @@ poin (the distance is given from the front of the element). """
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     M1 = Space(d=10)
     M2 = Lens(f=5)
     M3 = M2 * M1
@@ -18,4 +18,4 @@ def exempleCode(comments=None):
     print("Object is at distance and transfer matrix: {0} ".format(M3.backwardConjugate()))
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

@@ -11,7 +11,7 @@ and therefore will not be clipped by lenses.
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     # Demo #18: Laser beam and vendor lenses
     path = LaserPath()
     path.label = TITLE
@@ -29,4 +29,4 @@ def exempleCode(comments=None):
     path.display(beams=[GaussianBeam(w=0.001)], comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

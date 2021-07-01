@@ -34,20 +34,23 @@ class TestAchromatDoubletLens(envtest.RaytracingTestCase):
 
         self.assertAlmostEqual(diff, diffFocal, places=3)
 
+    def testAchromatDiameter(self):
+        self.assertAlmostEqual(thorlabs.AC254_100_A().displayHalfHeight(), 25.4/2)
+
     def testWarnThickness(self):
-        with self.assertWarns(UserWarning):
+        with self.assertWarns(ExpertNote):
             achromat = AchromatDoubletLens(fa=125.0, fb=122.0, R1=77.6, R2=-55.9, R3=-160.8, tc1=4.0, tc2=2.8, te=5.0,
                                            n1=N_BK7.n(0.5876), n2=N_SF5.n(0.5876), diameter=25.4,
                                            url='https://www.test.com', label="testThickness Doublet")
 
     def testWarnBackFocalLength(self):
-        with self.assertWarns(UserWarning):
+        with self.assertWarns(ExpertNote):
             achromat = AchromatDoubletLens(fa=30.0, fb=22.9, R1=20.89, R2=-16.73, R3=-79.8, tc1=12, tc2=2.0, te=8.8,
                                            n1=N_BAF10.n(0.5876), n2=N_SF6HT.n(0.5876), diameter=25.4,
                                            url='https://www.test.com', label="TestBackFocalLength Doublet")
 
     def testWarnEffectiveFocalLength(self):
-        with self.assertWarns(UserWarning):
+        with self.assertWarns(ExpertNote):
             achromat = AchromatDoubletLens(fa=150.00, fb=126.46, R1=92.05, R2=-72.85, R3=-305.87, tc1=23.2, tc2=23.1,
                                            te=36.01, n1=1.6700, n2=1.8467, diameter=75, url="https://www.test.com",
                                            label="TestEffectiveFocalLength Doublet")
@@ -73,6 +76,7 @@ class TestAchromatDoubletLens(envtest.RaytracingTestCase):
 class TestAchromatDoubletLensSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = AchromatDoubletLens.__subclasses__()
+        super().setUp()
 
     def testSubclassesInit(self):
         fails = []
@@ -114,18 +118,18 @@ class TestSingletLens(envtest.RaytracingTestCase):
         self.assertIsNotNone(achromat)
 
     def testWarnThickness(self):
-        with self.assertWarns(UserWarning):
+        with self.assertWarns(ExpertNote):
             achromat = SingletLens(f=63.52, fb=62.41, R1=77.6, R2=-55.9, tc=4.0, te=5.0, n=N_BK7.n(0.5876),
                                    diameter=25.4, url='https://www.test.com', label="testThickness Singlet")
 
     def testWarnBackFocalLength(self):
-        with self.assertWarns(UserWarning):
+        with self.assertWarns(ExpertNote):
             achromat = SingletLens(f=15.9, fb=22.9, R1=20.89, R2=-16.73, tc=12, te=1.9, n=N_BAF10.n(0.5876),
                                    diameter=25.4, url='https://www.test.com',
                                    label="TestBackFocalLength Singlet")
 
     def testWarnEffectiveFocalLength(self):
-        with self.assertWarns(UserWarning):
+        with self.assertWarns(ExpertNote):
             achromat = SingletLens(f=150.00, fb=57.82, R1=92.05, R2=-72.85, tc=23.2, te=4.8, n=1.6700,
                                    diameter=75, url="https://www.test.com",
                                    label="TestEffectiveFocalLength Singlet")
@@ -134,6 +138,7 @@ class TestSingletLens(envtest.RaytracingTestCase):
 class TestSingletLensSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = SingletLens.__subclasses__()
+        super().setUp()
 
     def testSubclassesInit(self):
         fails = []
@@ -175,13 +180,10 @@ class TestObjectives(envtest.RaytracingTestCase):
         self.assertIsNotNone(objective)
 
     def testWarnNotFullyTested(self):
-        Objective.warningDisplayed = False
-
-        with self.assertWarns(FutureWarning):
+        with self.assertWarns(ExpertNote):
             objective = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
                                   magnification=40, fieldNumber=22, label='TestWarn Objective', url="https://www.test.com")
 
-        self.assertTrue(Objective.warningDisplayed)
 
     def testFlipOrientation(self):
         original = Objective(f=180 / 40, NA=0.8, focusToFocusLength=40, backAperture=7, workingDistance=2,
@@ -230,6 +232,7 @@ class TestObjectives(envtest.RaytracingTestCase):
 class TestObjectivesSubclasses(envtest.RaytracingTestCase):
     def setUp(self) -> None:
         self.subclasses = Objective.__subclasses__()
+        super().setUp()
 
     def testSubclassesInit(self):
         fails = []

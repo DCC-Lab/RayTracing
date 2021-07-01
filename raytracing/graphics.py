@@ -62,6 +62,10 @@ class Graphic:
             componentMaxY = np.max(np.abs(component.xy), axis=0)[1]
             if componentMaxY > halfHeight:
                 halfHeight = componentMaxY
+
+        if halfHeight == float("+inf"):
+            raise ValueError("Half height cannot be infinite")
+            
         return halfHeight
 
     @property

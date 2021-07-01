@@ -187,7 +187,7 @@ class AchromatDoubletLens(CompoundLens):
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
             msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1 + self.tc2, self.L)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
@@ -195,12 +195,12 @@ class AchromatDoubletLens(CompoundLens):
         if abs((f - fa) / fa) > 0.01:
             msg = "Doublet {2}: Obtained effective focal length {0:.4} is not within 1% of " \
                   "expected {1:.4}".format(f, fa, self.label)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
         BFL = self.backFocalLength()
         if abs((BFL - fb) / fb) > 0.01:
             msg = "Doublet {2}: Obtained back focal length {0:.4} is not within 1% of " \
                   "expected {1:.4}".format(BFL, fb, self.label)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
 
         h = self.largestDiameter / 2.0
         phi1 = math.asin(h / abs(self.R1))
@@ -211,7 +211,7 @@ class AchromatDoubletLens(CompoundLens):
         if abs(((corner3 - corner1) / self.te) - 1.0) > 0.05:
             msg = "Doublet {2}: obtained thickness {0:.1f} does not match expected " \
                   "{1:0.1f}".format(corner3 - corner1, self.te, self.label)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
 
     @property
     def forwardSurfaces(self) -> List[Interface]:
@@ -299,7 +299,7 @@ class SingletLens(CompoundLens):
 
         if abs(self.tc - self.L) / self.L > 0.02:
             msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1, self.L)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
 
         # After having built the lens, we confirm that the expected effective
         # focal length (fa) is actually within 1% of the calculated focal length
@@ -307,12 +307,12 @@ class SingletLens(CompoundLens):
         if abs((f_f - f) / f) > 0.01:
             msg = "Singlet {2}: Obtained effective focal length {0:.4} is not within 1% of " \
                   "expected {1:.4}".format(f_f, fb, self.label)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
         BFL = self.backFocalLength()
         if abs((BFL - fb) / fb) > 0.01:
             msg = "Singlet {2}: Obtained back focal length {0:.4} is not within 1% of " \
                   "expected {1:.4}".format(BFL, fb, self.label)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
 
         h = self.largestDiameter / 2.0
         phi1 = math.asin(h / abs(self.R1))
@@ -323,7 +323,7 @@ class SingletLens(CompoundLens):
         if abs(((corner2 - corner1) / self.te) - 1.0) > 0.05:
             msg = "Singlet {2}: obtained thickness {0:.1f} does not match expected " \
                   "{1:0.1f}".format(corner2 - corner1, self.te, self.label)
-            warnings.warn(msg, UserWarning)
+            warnings.warn(msg, ExpertNote)
 
     @property
     def forwardSurfaces(self) -> List[Interface]:
@@ -352,7 +352,6 @@ class Objective(MatrixGroup):
         The name of the lens
 
     """
-    warningDisplayed = False
 
     def __init__(self, f, NA, focusToFocusLength, backAperture, workingDistance, magnification=None, fieldNumber=None, url=None, label=''):
         """ General microscope objective, approximately correct.
@@ -395,12 +394,10 @@ class Objective(MatrixGroup):
         self.backVertex = self.focusToFocusLength - self.workingDistance
         self.apertureDiameter = self.backAperture
 
-        if not Objective.warningDisplayed:
-            msg = "Objective class not fully tested. \
+        msg = "Objective class not fully tested. \
 No guarantee that apertures and field of view will exactly \
 reproduce the objective."
-            warnings.warn(msg, FutureWarning)
-            Objective.warningDisplayed = True
+        warnings.warn(msg, ExpertNote)
 
     def maximumOpticalInvariant(self):
         if self.magnification is None or self.fieldNumber is None:

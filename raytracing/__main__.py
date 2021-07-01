@@ -28,27 +28,40 @@ ap.add_argument("-c", "--classes", required=False, action='store_const',
                 const=True, help="Print the class hierarchy in graphviz format")
 ap.add_argument("-l", "--list", required=False, action='store_const',
                 const=True, help="List all the accessible examples")
+ap.add_argument("-t", "--tests", required=False, action='store_const',
+                const=True, help="Run all Unit tests")
 
 args = vars(ap.parse_args())
 runExamples = args['examples']
+runTests = args['tests']
 printClasses = args['classes']
 listExamples = args['list']
 
 if runExamples == 'all':
-    runExamples = range(1, len(examples.all)+1)
+    runExamples = range(1, len(examples.short)+1)
+elif runExamples == '':
+    runExamples = []
 else:
     runExamples = [int(y) for y in runExamples.split(',')]
 
 if printClasses:
     printClassHierarchy(Rays)
     printClassHierarchy(Matrix)
-
-if listExamples:
+elif runTests:
+    moduleDir = os.path.dirname(os.path.realpath(__file__))
+    err = os.system('cd {0}/tests; {1} -m unittest'.format(moduleDir, sys.executable))
+elif listExamples:
     topDir = os.path.dirname(os.path.realpath(examples.__file__))
-    print("All example code on your machine is found at: {0}".format(topDir))
-    for i, entry in enumerate(examples.all):
+    all = []
+    all.extend(examples.short)
+    all.extend(examples.short)
+    
+    print("\nAll examples")
+    print("==============")
+    for i, entry in enumerate(examples.short):
         print("{0:2d}. {1}.py {2}".format(i+1, entry["name"], entry["title"]))
-    print(".... and more complete examples at {0}".format(topDir))
+
+    print("\nMore examples code available in: {0}".format(topDir))
 elif runExamples:
     # Some decent parameters for plots
     # See https://matplotlib.org/api/font_manager_api.html#matplotlib.font_manager.FontProperties.set_size
@@ -63,10 +76,11 @@ elif runExamples:
 
     print("Running example code : {0}".format(runExamples))
     for i in runExamples:
-        entry = examples.all[i-1]
+        entry = examples.short[i-1]
         print("\nScript '{0}.py' - begin source code".format(entry["name"]))
         print(entry["terminalSourceCode"],end='')
         print("\nScript '{0}.py' - end source code".format(entry["name"]))
         print("\nScript '{0}.py' - begin output".format(entry["name"]))
         entry["code"](comments=entry["bmpSourceCode"])        
         print("Script '{0}.py' - end output".format(entry["name"]))
+

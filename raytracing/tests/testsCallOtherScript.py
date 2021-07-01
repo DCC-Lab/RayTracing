@@ -6,6 +6,7 @@ import os
 
 class TestCallScript(envtest.RaytracingTestCase):
     def setUp(self):
+        super().setUp()
         self.exec = sys.executable
         self.encoding = sys.stdout.encoding
         self.emptyFile = self.tempFilePath('script.py')
@@ -19,7 +20,7 @@ class TestCallScript(envtest.RaytracingTestCase):
     def testCallFileNotFound(self):
         file = " fileDoesNotExist.py"  # Leading space important
 
-        processReturn = subprocess.run([self.exec, file])
+        processReturn = subprocess.run([self.exec, file], capture_output=True)
         self.assertEqual(processReturn.returncode, 2)
 
     def testCallScript(self):
@@ -48,9 +49,9 @@ if __name__ == "__main__":
             f.write(code)
         processCompleted = subprocess.run([self.exec, self.printHelloWorld], capture_output=True, universal_newlines=True)
         
-        output = processCompleted.stdout.strip()
-        possibility1 = "Hello Toto\nHello Toto Jr."
-        possibility2 = "Hello Toto Jr.\nHello Toto"
+        output = processCompleted.stdout
+        possibility1 = "Hello Toto\nHello Toto Jr.\n"
+        possibility2 = "Hello Toto Jr.\nHello Toto\n"
         self.assertTrue(output == possibility1 or output == possibility2)
 
 

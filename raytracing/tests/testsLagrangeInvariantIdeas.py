@@ -64,6 +64,7 @@ class TestLagrange(envtest.RaytracingTestCase):
         # path.display()
         path.reportEfficiency(nRays=10000)
 
+    @envtest.redirectStdOutToFile
     @envtest.patch('matplotlib.pyplot.show', new=envtest.Mock())
     def testObjective(self):
         path = ImagingPath(label="Objective")

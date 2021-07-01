@@ -8,7 +8,7 @@ objective. """
 
 from raytracing import *
 
-def exempleCode(comments=DESCRIPTION):
+def exampleCode(comments=DESCRIPTION):
     fobj, dObj, f2, d2, f3, d3 = 9, 20, 200, 50, 100, 50
 
     path = OpticalPath()
@@ -25,4 +25,4 @@ def exempleCode(comments=DESCRIPTION):
     path.display(comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

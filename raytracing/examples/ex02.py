@@ -8,7 +8,7 @@ plane of the second lens. """
 
 from raytracing import *
 
-def exempleCode(comments=None):
+def exampleCode(comments=None):
     path = ImagingPath()
     path.label = TITLE
     path.append(Space(d=50))
@@ -19,4 +19,4 @@ def exempleCode(comments=None):
     path.display(comments=comments)
 
 if __name__ == "__main__":
-    exempleCode()
+    exampleCode()

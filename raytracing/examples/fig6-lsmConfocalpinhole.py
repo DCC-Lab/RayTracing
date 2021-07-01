@@ -1,31 +1,31 @@
-import envexamples
+TITLE       = "Optical section and depth of field from pinhole"
+DESCRIPTION = """
+The following code contains finding of the scanning position
+of the focal spot and optimal pinhole size. In a confocal laser scanning
+microscope, the scanning components define  the covered field-of-view (FOV) at
+the sample plane. Here,  we show a one-dimensional example with a polygonal
+mirror of 36 facets that rotates rapidly to scan the beam along the horizontal
+direction.  It produces a meachnical  sweep of 10 degrees, or 0.1750 rad,
+between each facets.  Therefore, the laser beam covers a total optical scan
+angle of 20 degrees. In this example, the object is considered to be the laser
+beam at the polygonal mirror plane.  The output profile shows on its x-axis
+the width of the FOV under the objective.  At the same time, it is possible to
+obtain and plot the intensity of a point source at the pinhole of a confocal
+microscope (with variable pinhole size) as a function of position of focal
+spot by sending a large number of rays in the system  (changing the position
+of the focal spot provides an optical sectioning process).
+"""
+
+try:
+    import envexamples
+except:
+    pass
+
 from raytracing import *
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-"""
-The following code contains finding of the scanning position of the focal spot and optimal pinhole size.
-In a confocal laser scanning microscope, the scanning components define 
-the covered field-of-view (FOV) at the sample plane. Here, 
-we show a one-dimensional example with a polygonal mirror
-of 36 facets that rotates rapidly to scan the beam along the horizontal direction. 
-It produces a meachnical  sweep of 10 degrees, or 0.1750 rad, between each facets. 
-Therefore, the laser beam covers a total optical scan angle of 20 degrees.
-In this example, the object is considered to be the laser beam at the polygonal mirror plane. 
-The output profile shows on its x-axis the width of the FOV under the objective. 
-At the same time, it is possible to obtain and plot the intensity of a point source at
-the pinhole of a confocal microscope (with variable pinhole size) as a function
-of position of focal spot by sending a large number of rays in the system 
-(changing the position of the focal spot provides an optical sectioning process).
-
-
-
-
-"""
-"""
-All the "1" indices relates to the Laser scanning position calculations while "2" relates to the confocal pinhole size calculation.
-"""
 # List of the scan angle of the ray making it throught the system. 
 thetas = []
 
@@ -48,16 +48,17 @@ pinholeModifier = {1 / 3: [], 1: [], 3: []}
 positions = [1000, 800, 500, 300, 150, 100, 50, 25, 0, -25, -50, -100, -150, -300, -500, -800, -1000]
 
 # Number of total rays produced by the focal spot
-nRays = 100000
+# increase for better resolution
+nRays = 10000
 
 # Production of rays in the angle range of the scanning element.
-scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=nRays)
+scanRays = UniformRays(yMax=0, thetaMax=scanAngle, M=1, N=100)
 
 # Production of rays from a focal spot with a radius determined by focalRadius
 inputRays = RandomUniformRays(yMax=focalRadius, yMin=-focalRadius, maxCount=nRays)
 
 # Focal length of the objective
-focalSpotPosition=objFocalLength = 5
+focalSpotPosition = objFocalLength = 5
 
 class UISUPLAPO60XW(Objective):
 
@@ -88,20 +89,6 @@ def illuminationPath1():
 
     return illumination1
     
-path1 = illuminationPath1()
-outputRays1 = path1.traceManyThrough(scanRays)
-for i in range(len(outputRays1)):
-    thetas.append(scanRays[i].theta*180/np.pi)
-    positions1.append(outputRays1[i].y*1000)
-    scanRays.displayProgress()
-
-plt.plot(thetas,positions1)
-plt.xlabel('Scan angle (degrees)', fontsize=20)
-plt.ylabel('Scanning position of the focal spot (µm)', fontsize=20)
-plt.show()
-
-#-----------------------------------------------------------
-
 def path(focalSpotPosition=objFocalLength): 
     illumination2 = ImagingPath()
     illumination2.append(Space(d=focalSpotPosition))
@@ -164,24 +151,41 @@ def rayEfficiency(pinholeFactor=None, focalSpotPosition2=None):
     return outputRays2.count / inputRays.count
 
 
-for pinhole in pinholeModifier:
-    print("\nComputing transmission for pinhole size {0:0.1f}".format(pinhole))
+def exampleCode(comments=None):
+    # Pinhole sectioning
+    for pinhole in pinholeModifier:
+        print("\nComputing transmission for pinhole size {0:0.1f}".format(pinhole))
 
-    efficiencyValues = []
-    for z in positions:
-        print(".",end='')
-        newPosition = 5 + (z * 0.000001)
-        efficiency = rayEfficiency(pinholeFactor=pinhole, focalSpotPosition2=newPosition)
-        efficiencyValues.append(efficiency)
-    pinholeModifier[pinhole] = efficiencyValues
-
-
-plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Small pinhole', linestyle='dashed')
-plt.plot(positions, pinholeModifier[1], 'k-', label='Ideal pinhole')
-plt.plot(positions, pinholeModifier[3], 'k--', label='Large pinhole', linestyle='dotted')
-plt.ylabel('Transmission efficiency', fontsize=20)
-plt.xlabel('Position of the focal spot (nm)', fontsize=20)
-plt.legend()
-plt.show()
+        efficiencyValues = []
+        for z in positions:
+            print(".",end='')
+            newPosition = 5 + (z * 0.000001)
+            efficiency = rayEfficiency(pinholeFactor=pinhole, focalSpotPosition2=newPosition)
+            efficiencyValues.append(efficiency)
+        pinholeModifier[pinhole] = efficiencyValues
 
 
+    plt.plot(positions, pinholeModifier[1 / 3], 'k:', label='Small pinhole', linestyle='dashed')
+    plt.plot(positions, pinholeModifier[1], 'k-', label='Ideal pinhole')
+    plt.plot(positions, pinholeModifier[3], 'k--', label='Large pinhole', linestyle='dotted')
+    plt.ylabel('Transmission efficiency', fontsize=20)
+    plt.xlabel('Position of the focal spot (nm)', fontsize=20)
+    plt.legend()
+    plt.show()
+
+    #-----------------------------------------------------------
+    # Position of ray versus scan angle
+    path1 = illuminationPath1()
+    outputRays1 = path1.traceManyThrough(scanRays)
+    for i in range(len(outputRays1)):
+        thetas.append(scanRays[i].theta*180/np.pi)
+        positions1.append(outputRays1[i].y*1000)
+        scanRays.displayProgress()
+
+    plt.plot(thetas,positions1)
+    plt.xlabel('Scan angle (degrees)', fontsize=20)
+    plt.ylabel('Scanning position of the focal spot (µm)', fontsize=20)
+    plt.show()
+
+if __name__ == "__main__":
+    exampleCode()

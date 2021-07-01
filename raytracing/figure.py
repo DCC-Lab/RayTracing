@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 from .graphics import *
 from .ray import Ray
 import itertools
-import warnings
+from .utils import *
 import sys
 
 """ Graphics key constants """
 kPrincipalKey = "Principal/axial rays"
 kObjectImageKey = "Object/Image"
+kObjectImageZKey = "Object/Image (z={0:.1f})"
 kLampKey = "Lamp"
 kElementsKey = "Elements"
 
@@ -22,8 +23,8 @@ class Figure:
         self.path = opticalPath
         self.raysList = []
 
-        self.graphicGroups = {'Principal/axial rays': [], 'Object/Image': [], 'Lamp': [], 'Elements': []}
-        self.lineGroups = {'Principal/axial rays': [], 'Object/Image': [], 'Lamp': []}
+        self.graphicGroups = {kPrincipalKey: [], kObjectImageKey: [], kLampKey: [], kElementsKey: []}
+        self.lineGroups = {kPrincipalKey: [], kObjectImageKey: [], kLampKey: []}
         self.labels = []
         self.points = []
         self.annotations = []
@@ -113,7 +114,7 @@ class Figure:
             else:
                 warnings.warn("Infinite field of view: cannot use limitObjectToFieldOfView=True. The object height is "
                               "instead set to the default value of {0:.1f}.".format(self.path.objectHeight),
-                              category=Warning)
+                              category=BeginnerHint)
                 self.designParams['limitObjectToFieldOfView'] = False
 
             imageSize = self.path.imageSize()
@@ -123,14 +124,14 @@ class Figure:
                 if self.designParams['limitObjectToFieldOfView']:
                     warnings.warn("Infinite image size: cannot use limitObjectToFieldOfView=True. The object height is "
                                   "instead set to the default value of {0:.1f}.".format(self.path.objectHeight),
-                                  category=Warning)
+                                  category=BeginnerHint)
                     self.designParams['limitObjectToFieldOfView'] = False
 
         if self.designParams['onlyPrincipalAndAxialRays']:
             (stopPosition, stopDiameter) = self.path.apertureStop()
             if stopPosition is None or self.path.principalRay() is None:
                 warnings.warn("No aperture stop in the system: cannot use onlyPrincipalAndAxialRays=True since they "
-                              "are not defined. Showing the default ObjectRays instead. ", category=Warning)
+                              "are not defined. Showing the default ObjectRays instead. ", category=BeginnerHint)
                 self.designParams['onlyPrincipalAndAxialRays'] = False
 
         label = Label(x=0.05, y=0.02, text=note1, fontsize=12*self.fontScale,
@@ -148,23 +149,23 @@ class Figure:
         rays = []
         if principalRay is not None:
             rays.append(principalRay)
-            self.graphicGroups['Principal/axial rays'].append(ObjectGraphic(principalRay.y * 2,
+            self.graphicGroups[kPrincipalKey].append(ObjectGraphic(principalRay.y * 2,
                                                        fill=False, color=self.designParams['FOVColors'][0]))
-            self.graphicGroups['Principal/axial rays'].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
+            self.graphicGroups[kPrincipalKey].extend(self.graphicsOfConjugatePlanes(principalRay.y * 2,
                                                        fill=False, color=self.designParams['FOVColors'][1]))
 
         if axialRay is not None:
             rays.append(axialRay)
         if rays:
-            self.lineGroups['Principal/axial rays'].extend(self.rayTraceLines(rays, lineWidth=1.5))
+            self.lineGroups[kPrincipalKey].extend(self.rayTraceLines(rays, lineWidth=1.5))
 
     def setGraphicsFromOpticalPath(self):
-        self.graphicGroups['Elements'] = self.graphicsOfElements
+        self.graphicGroups[kElementsKey] = self.graphicsOfElements
 
         if self.path.showEntrancePupil:
             (pupilPosition, pupilDiameter) = self.path.entrancePupil()
             if pupilPosition is not None:
-                self.graphicGroups['Elements'].append(self.graphicOfEntrancePupil)
+                self.graphicGroups[kElementsKey].append(self.graphicOfEntrancePupil)
 
         if self.path.showPointsOfInterest:
             self.points.extend(self.pointsOfInterest)
@@ -193,7 +194,7 @@ class Figure:
         for rays in self.raysList:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
-                objectKey = 'Object/Image (z={0:.2f})'.format(rays.z) if rays.z != 0 else 'Object/Image'
+                objectKey = kObjectImageZKey.format(rays.z) if rays.z != 0 else kObjectImageKey
                 color = 'b' if rays.color is None else rays.color
                 self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z, color=color, label=rays.label)]
                 if rays.color is None:
@@ -202,7 +203,7 @@ class Figure:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
                                                                                         fill=False, color=color))
             if instance is 'LampRays':
-                lampKey = 'Lamp (z={0:.2f})'.format(rays.z) if rays.z != 0 else 'Lamp'
+                lampKey = 'Lamp (z={0:.2f})'.format(rays.z) if rays.z != 0 else kLampKey
                 self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z, label=rays.label)]
 
     def setLinesFromRaysList(self):
@@ -212,13 +213,13 @@ class Figure:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
                 if rays.z == 0:
-                    self.lineGroups['Object/Image'].extend(rayTrace)
+                    self.lineGroups[kObjectImageKey].extend(rayTrace)
                 else:
-                    self.lineGroups['Object/Image (z={0:.1f})'.format(rays.z)] = rayTrace
+                    self.lineGroups[kObjectImageZKey.format(rays.z)] = rayTrace
             elif instance is 'LampRays':
                 self.designParams['showObjectImage'] = False
                 if rays.z == 0:
-                    self.lineGroups['Lamp'].extend(rayTrace)
+                    self.lineGroups[kLampKey].extend(rayTrace)
                 else:
                     self.lineGroups['Lamp (z={0:.2f})'.format(rays.z)] = rayTrace
             elif instance not in self.lineGroups.keys():
@@ -529,10 +530,10 @@ class Figure:
         if self.designParams['showFOV']:
             self.designParams['showObjectImage'] = False
         else:
-            self.setGroupVisibility('Principal/axial rays', False)
+            self.setGroupVisibility(kPrincipalKey, False)
 
         if not self.designParams['showObjectImage']:
-            self.setGroupVisibility('Object/Image', False)
+            self.setGroupVisibility(kObjectImageKey, False)
 
         if backend is 'matplotlib':
             mplFigure = self.mplFigure
@@ -547,7 +548,7 @@ class Figure:
     def displayGaussianBeam(self, beams=None,
                             title=None, comments=None, backend='matplotlib', display3D=False, filepath=None):
         self.lineGroups['rays'] = []
-        self.graphicGroups['Elements'] = self.graphicsOfElements
+        self.graphicGroups[kElementsKey] = self.graphicsOfElements
         for beam in beams:
             self.lineGroups['rays'].extend(self.beamTraceLines(beam))
             self.annotations.extend(self.beamWaistAnnotations(beam))
@@ -687,8 +688,8 @@ class MplFigure(Figure):
 
     def initVisibilityCheckBoxes(self):
         visibility = self.visibility
-        if 'Elements' in visibility.keys():
-            visibility.pop('Elements')
+        if kElementsKey in visibility.keys():
+            visibility.pop(kElementsKey)
 
         subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
         self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())

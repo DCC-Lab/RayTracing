@@ -2,12 +2,14 @@ from .ray import *
 from .gaussianbeam import *
 from .rays import *
 from .interface import *
+from .utils import *
 
 from typing import List
 import multiprocessing
 import sys
 import math
 import warnings
+from numpy import isfinite
 
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
@@ -32,16 +34,7 @@ class Conjugate(NamedTuple):
     d: float = None
     transferMatrix:'Matrix' = None
 
-
-def warningLineFormat(message, category, filename, lineno, line=None):
-    return '\n%s:%s\n%s:%s\n' % (filename, lineno, category.__name__, message)
-
-
-warnings.formatwarning = warningLineFormat
-
-
 # todo: fix docstrings since draw-related methods were removed
-
 
 class Matrix(object):
     r"""A matrix and an optical element that can transform a ray or another
@@ -391,18 +384,18 @@ class Matrix(object):
 
         outputRay = Ray()
 
-        if rightSideRay.isNotBlocked:
+        if rightSideRay.isBlocked:
+            outputRay = rightSideRay
+        else:
             outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
             outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
             outputRay.z = self.L + rightSideRay.z
             outputRay.apertureDiameter = self.apertureDiameter
 
-            if abs(rightSideRay.y) > abs(self.apertureDiameter / 2.0):
+            if abs(rightSideRay.y) > self.apertureDiameter/2:
                 outputRay.isBlocked = True
             else:
                 outputRay.isBlocked = rightSideRay.isBlocked
-        else:
-            outputRay = rightSideRay
 
         return outputRay
 
@@ -443,7 +436,7 @@ class Matrix(object):
         if rightSideBeam.n != self.frontIndex:
             msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
                 rightSideBeam.n, self.frontIndex)
-            warnings.warn(msg, UserWarning)
+            raise RuntimeError(msg)
 
         qprime = (complex(self.A) * q + complex(self.B)) / (complex(self.C) * q + complex(self.D))
 
@@ -451,7 +444,7 @@ class Matrix(object):
         outputBeam.z = self.L + rightSideBeam.z
         outputBeam.n = self.backIndex
 
-        if abs(outputBeam.w) > self.apertureDiameter / 2:
+        if abs(outputBeam.w) > self.apertureDiameter/2:
             outputBeam.isClipped = True
         else:
             outputBeam.isClipped = rightSideBeam.isClipped
@@ -649,7 +642,7 @@ class Matrix(object):
         rayTrace = []
         if isinstance(ray, Ray):
             if self.L > 0:
-                if abs(ray.y) > self.apertureDiameter / 2:
+                if abs(ray.y) > self.apertureDiameter/2:
                     ray.isBlocked = True
                 rayTrace.append(ray)
 
@@ -875,8 +868,8 @@ class Matrix(object):
                 outputRaysList += rays.rays
 
             return Rays(rays=outputRaysList)
-        except:
-            warnings.warn("Multiprocessing failed. Falling back to slower code.", UserWarning)
+        except Exception as err:
+            warnings.warn("Multiprocessing failed with: '{0}'. Falling back to slower code.".format(err), ExpertNote)
             return self.traceManyThrough(inputRays=inputRays, progress=progress)
 
     def profileFromRayTraces(self, rayTraces, z=float("+inf")):
@@ -1404,8 +1397,9 @@ class Matrix(object):
             The half height of the optical element
         """
         halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
+
         if self.apertureDiameter != float('+Inf'):
-            halfHeight = self.apertureDiameter / 2.0  # real half height
+            halfHeight = self.apertureDiameter/2  # real half height
         return halfHeight
 
     def display(self):
@@ -1513,7 +1507,7 @@ class Lens(Matrix):
             The half height of the optical element
         """
         if self.apertureDiameter != float('+Inf'):
-            self._physicalHalfHeight = self.apertureDiameter / 2.0  # real half height
+            self._physicalHalfHeight = self.apertureDiameter/2  # real half height
         return self._physicalHalfHeight
 
     @property
