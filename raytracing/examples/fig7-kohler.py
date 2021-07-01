@@ -4,6 +4,8 @@ The overlay of conjugate planes can determine indeed if the light source is
 imaged with the sample or not, significantly reducing the quality of the
 images.  '''
 
+from raytracing import *
+
 def exampleCode(comments=None):
     illumination = ImagingPath()
     illumination.design(fontScale=1.5)
@@ -28,5 +30,4 @@ def exampleCode(comments=None):
 
 if __name__ == "__main__":
     import envexamples
-    from raytracing import *
     exampleCode()
