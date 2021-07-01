@@ -183,8 +183,8 @@ class Figure:
         z = 0
         for element in self.path.elements:
             graphic = GraphicOf(element, x=z, minSize=maxRayHeight)
-            if type(graphic) is list:  # MatrixGroup creates stand-alone graphics for now
-                graphics.extend(graphic)
+            if type(graphic) is MatrixGroupGraphic:  # MatrixGroup creates stand-alone graphics for now
+                graphics.extend(graphic.standAloneGraphics)
             elif graphic is not None:
                 graphics.append(graphic)
             z += element.L

@@ -533,6 +533,10 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         system4f = System4f(10, 10)
         self.assertEqual(mg, system4f)
 
+    def testMatrixGroupCanDisplay(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        mg.display()
+
 
 class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
 

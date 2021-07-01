@@ -208,7 +208,11 @@ class Surface(Component):
             return [BezierCurve([(v1, -h), (v1, h)])]
 
         R1 = self.surface.R
-        phi1 = math.asin(h / abs(R1))
+        if h / abs(R1) <= 1.0:
+            phi1 = math.asin(h / abs(R1))
+        else:
+            phi1 = np.pi/2
+
         delta1 = R1 * (1.0 - math.cos(phi1))
         ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
         corner1 = v1 + delta1
@@ -259,7 +263,11 @@ class SurfacePair(Component):
             return [BezierCurve([(v1, -h), (v1, h)])]
 
         R1 = self.surfaceA.R
-        phi1 = math.asin(h / abs(R1))
+        if h / abs(R1) <= 1.0:
+            phi1 = math.asin(h / abs(R1))
+        else:
+            phi1 = np.pi/2
+
         delta1 = R1 * (1.0 - math.cos(phi1))
         ctl1 = abs((1.0 - math.cos(phi1)) / math.sin(phi1) * R1)
         corner1 = v1 + delta1
@@ -292,7 +300,11 @@ class SurfacePair(Component):
                     BezierCurve([(v2, -h), (self.corners[0], -h)])]
 
         R2 = self.surfaceB.R
-        phi2 = math.asin(h / abs(R2))
+        if h / abs(R1) <= 1.0:
+            phi2 = math.asin(h / abs(R2))
+        else:
+            phi2 = np.pi/2
+
         delta2 = R2 * (1.0 - math.cos(phi2))
         ctl2 = abs((1.0 - math.cos(phi2)) / math.sin(phi2) * R2)
         corner2 = v2 + delta2
