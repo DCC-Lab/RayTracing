@@ -300,7 +300,7 @@ class SurfacePair(Component):
                     BezierCurve([(v2, -h), (self.corners[0], -h)])]
 
         R2 = self.surfaceB.R
-        if h / abs(R1) <= 1.0:
+        if h / abs(R2) <= 1.0:
             phi2 = math.asin(h / abs(R2))
         else:
             phi2 = np.pi/2

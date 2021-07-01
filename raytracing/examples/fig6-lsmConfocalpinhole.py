@@ -16,7 +16,11 @@ spot by sending a large number of rays in the system  (changing the position
 of the focal spot provides an optical sectioning process).
 """
 
-import envexamples
+try:
+    import envexamples
+except:
+    pass
+
 from raytracing import *
 import matplotlib.pyplot as plt
 import numpy as np
