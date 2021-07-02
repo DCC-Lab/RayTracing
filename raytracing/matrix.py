@@ -604,12 +604,12 @@ class Matrix(object):
 
         Parameters
         ----------
-        ray : object of Ray class
+        ray : object of Ray class or GaussianBeam
             A ray at height y and angle theta
 
         Returns
         -------
-        rayTrace : List of ray(s)
+        rayTrace : List of ray(s) or list of GaussianBeam
             A list of rays (i.e. a ray trace) for the input ray through the matrix. 
 
         Examples
@@ -641,20 +641,21 @@ class Matrix(object):
         """
 
         rayTrace = []
-        if isinstance(ray, Ray):
-            if self.L > 0:
-                z = 0
-                hasBeenBlocked = False
-                while z < self.L:
-                    rayAtZ = self.transferMatrix(upTo=z) * ray
-                    if abs(rayAtZ.y) > self.apertureDiameter/2:
-                        hasBeenBlocked = True
-                    
-                    rayAtZ.isBlocked = hasBeenBlocked
-                    rayTrace.append(rayAtZ)
-                    z += self.dz
-
-        rayTrace.append(self * ray)
+        
+        if isinstance(ray, Ray) and self.L > 0:
+            z = 0
+            hasBeenBlocked = False
+            while z <= self.L:
+                rayAtZ = self.transferMatrix(upTo=z) * ray
+                if abs(rayAtZ.y) > self.apertureDiameter/2:
+                    hasBeenBlocked = True # and will not change until the end
+                
+                rayAtZ.isBlocked = hasBeenBlocked
+                rayTrace.append(rayAtZ)
+                z += self.dz
+        else:
+            rayTrace.append(ray)
+            rayTrace.append(self * ray)
 
         return rayTrace
 
@@ -1931,16 +1932,26 @@ class DielectricSlab(ThickLens):
                                                                                     self.apertureDiameter)
 
 class GRIN(Matrix):
-    r"""GRIN lens of 
+    r"""Gradient index (GRIN) lens of length L, with a quadratic index of refraction.
+
+    The index is given by n^2 = n0^2 * ( 1 - r^2 alpha^2) ≈ n0 * ( 1 - 1/2 * r^2 alpha^2)
+    At Thorlabs, the alpha parameter is equal to √A.
+    An example is here: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_ID=11167
+
+    A ray propagating in a GRIN will oscillate up and down.  The number of complete oscillations
+    is called the pitch. You can initialize with either the alpha parameter (which is a physical parameter)
+    or the pitch (which is a usage parameter).
 
     Parameters
     ----------
     d : float
         the length of the free space
-    n : float
+    n0 : float
         The refraction index of the space. This value cannot be negative. (default=1)
-    n2 : float
-        The quadratic refraction index2 (default=0)
+    alpha : float
+        The quadratic parameter for the index (default= None)
+    pitch : float
+        The pitch parameter of the the GRIN (number of oscillations alpha*L = 2*pi*pitch) (default=None)
     diameter: float
         Diameter of element (default = infinity)
     label : string
@@ -1948,9 +1959,16 @@ class GRIN(Matrix):
 
     """
 
-    def __init__(self, L, n0=1, n2=0, diameter=float('+Inf'), label=''):
-        #n = n0 * ( 1 - r^2 A/2) https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_ID=11167
-        alpha = n2/n0/2
+    def __init__(self, L, n0=1, alpha=None, pitch=None, diameter=float('+Inf'), label=''):
+        
+        if alpha is None and pitch is None:
+            raise ValueError("You must set either alpha or the pitch (but not both)")
+
+        if alpha is None:
+            alpha = 2*pi*pitch/L
+        elif pitch is None:
+            pitch = alpha*L/2/pi
+
         super().__init__(A=cos(alpha*L),
                         B=1/alpha*sin(alpha*L),
                         C=-alpha*sin(alpha*L),
@@ -1963,9 +1981,14 @@ class GRIN(Matrix):
                         apertureDiameter=diameter,
                         label=label)
         self.n0 = n0
-        self.n2 = n2
-        self.pitch = pi/alpha
-        self.dz = self.pitch/20
+        self.alpha = alpha
+        self.pitch = pitch
+        self.dz = L/20
+        if self.pitch > 1:
+            self.dz /= self.pitch
+
+
+
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a Matrix() corresponding to a partial propagation
@@ -1984,7 +2007,7 @@ class GRIN(Matrix):
         """
         distance = upTo
         if distance < self.L:
-            return GRIN(L=distance, n0=self.n0, n2=self.n2, diameter=self.apertureDiameter, label=self.label)
+            return GRIN(L=distance, n0=self.n0, alpha=self.alpha, diameter=self.apertureDiameter, label=self.label)
         else:
             return self
 

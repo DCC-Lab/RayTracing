@@ -272,15 +272,20 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testTrace(self):
         ray = Ray(y=1, theta=1)
-        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=0)
-        trace = [ray, m * ray]
-        self.assertListEqual(m.trace(ray), trace)
+        m = Space(d=4)
+        rayTrace = m.trace(ray)
+        self.assertTrue(len(rayTrace) >= 2)
+        self.assertTrue(rayTrace[0].z == 0)
+        self.assertTrue(rayTrace[-1].z == 4)
 
     def testTraceNullLength(self):
         ray = Ray(y=1, theta=1)
         m = Matrix(A=1, B=0, C=0, D=1)
-        trace = [m * ray]
-        self.assertListEqual(m.trace(ray), trace)
+
+        rayTrace = m.trace(ray)
+        self.assertTrue(len(rayTrace) >= 2)
+        self.assertTrue(rayTrace[0].z == 0)
+        self.assertTrue(rayTrace[-1].z == 0)
 
     def testTraceBlocked(self):
         ray = Ray(y=10, theta=1)
@@ -301,21 +306,25 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testTraceThrough(self):
         ray = Ray()
-        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
+        m = Space(10)
         trace = m.traceThrough(ray)
         self.assertEqual(trace, m * ray)
 
     def testTraceMany(self):
         rays = [Ray(y, theta) for y, theta in zip(range(10, 20), range(10))]
         m = Space(d=1.01)
-        traceMany = [[ray, ray] for ray in rays]
-        self.assertListEqual(m.traceMany(rays), traceMany)
+        allRayTraces = m.traceMany(rays)
+
+        for i, ray in enumerate(rays):
+            rayTrace = m.trace(ray)
+            self.assertListEqual(allRayTraces[i], rayTrace)  
 
     def testTraceManyJustOne(self):
         rays = [Ray()]
         m = Space(d=1e-9)
-        traceMany = [rays * 2]
-        self.assertListEqual(m.traceMany(rays), traceMany)
+        allRayTraces = m.traceMany(rays)
+        rayTrace = m.trace(rays[0])
+        self.assertListEqual(allRayTraces[0], rayTrace)  
 
     def testTraceManyThroughIterable(self):
         rays = [Ray(y, y) for y in range(10)]
@@ -326,10 +335,9 @@ class TestMatrix(envtest.RaytracingTestCase):
         traceManyThroughList = m.traceManyThrough(rays)
         traceManyThroughTuple = m.traceManyThrough(iterable)
         traceManyThroughRays = m.traceManyThrough(raysObj)
-        for i in range(len(rays)):
-            self.assertEqual(rays[i], traceManyThroughList[i])
-            self.assertEqual(rays[i], traceManyThroughTuple[i])
-            self.assertEqual(rays[i], traceManyThroughRays[i])
+        for i in range(len(traceManyThroughList)):
+            self.assertEqual(traceManyThroughList[i], traceManyThroughTuple[i])
+            self.assertEqual(traceManyThroughList[i], traceManyThroughRays[i])
 
     def testTraceManyThroughNotIterable(self):
         with self.assertRaises(TypeError):
@@ -371,10 +379,11 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Space(d=1)
-        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
-        for i in range(len(rays)):
+        allRayTraces = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
+        self.assertEqual(len(allRayTraces), len(rays))
+        for i, ray in enumerate(rays):
             # Order is not kept, we have to check if the ray traced is in the original list
-            self.assertIn(trace[i], rays)
+            self.assertIn(m.traceThrough(ray), allRayTraces)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
@@ -382,7 +391,8 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallelNoOutput(self):
         processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True,
                                          universal_newlines=True)
-        self.assertEqual(processComplete.stdout, "")
+        self.assertTrue(processComplete.returncode == 0)
+        self.assertEqual(processComplete.stdout.strip(), "")
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
@@ -390,6 +400,7 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallelWithOutput(self):
         processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
                                          capture_output=True, universal_newlines=True)
+        self.assertTrue(processComplete.returncode == 0)
         self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
     def testPointsOfInterest(self):
@@ -659,14 +670,24 @@ f = +inf (afocal)
         self.assertEqual(m, space)
 
     def testGrin(self):
-        g = GRIN(L=10, n0=1, n2=0.1)
-        # g.display()sub
+        g1 = GRIN(L=3.758, n0=1.66, alpha=0.724)
+        g2 = GRIN(L=3.758, n0=1.66, pitch=g1.pitch)
+        self.assertEqual(g1,g2)
+        g3 = GRIN(L=g2.L, n0=g2.n0, alpha=g2.alpha)
+        self.assertEqual(g1.alpha, g3.alpha)
 
     def testGrinRay(self):
         path = ImagingPath()
-        path.append(GRIN(L=10, n0=1, n2=0.5,diameter=10))
-        path.display()
+        g = GRIN(L=3.758, n0=1.66, alpha=0.724,diameter=10)
+        path.append(g)
+        # path.display()
+        
 
+        path = ImagingPath()
+        g = GRIN(L=3.758, n0=1.66, pitch=0.5,diameter=10)
+        path.append(g)
+
+        # path.display()
 
 
 if __name__ == '__main__':
