@@ -669,25 +669,38 @@ f = +inf (afocal)
         space = Space(d)
         self.assertEqual(m, space)
 
-    def testGrin(self):
+    def testGrinInit(self):
         g1 = GRIN(L=3.758, n0=1.66, alpha=0.724)
         g2 = GRIN(L=3.758, n0=1.66, pitch=g1.pitch)
         self.assertEqual(g1,g2)
+
         g3 = GRIN(L=g2.L, n0=g2.n0, alpha=g2.alpha)
         self.assertEqual(g1.alpha, g3.alpha)
+
+    def testGrinWithoutGradient(self):
+        g = GRIN(L=10, n0=1., alpha=0)
+        s = Space(d=10)
+        self.assertEqual(g.A, s.A)
+        self.assertEqual(g.B, s.B)
+        self.assertEqual(g.C, s.C)
+        self.assertEqual(g.D, s.D)
+
+    # def testGrinWithoutGradientBaseIndexNot1(self):
+    #     g = GRIN(L=10, n0=1.5, alpha=0)
+    #     s = DielectricSlab(thickness=10,n=1.5)
+    #     self.assertEqual(g.A, s.A)
+    #     self.assertEqual(g.B, s.B)
+    #     self.assertEqual(g.C, s.C)
+    #     self.assertEqual(g.D, s.D)
 
     def testGrinRay(self):
         path = ImagingPath()
         g = GRIN(L=3.758, n0=1.66, alpha=0.724,diameter=10)
         path.append(g)
-        # path.display()
         
-
         path = ImagingPath()
         g = GRIN(L=3.758, n0=1.66, pitch=0.5,diameter=10)
         path.append(g)
-
-        # path.display()
 
 
 if __name__ == '__main__':

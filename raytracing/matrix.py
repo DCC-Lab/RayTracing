@@ -1945,15 +1945,15 @@ class GRIN(Matrix):
     Parameters
     ----------
     d : float
-        the length of the free space
+        the length of the GRIN
     n0 : float
-        The refraction index of the space. This value cannot be negative. (default=1)
+        The base refraction index of the GRIN. This value cannot be negative. (default=1)
     alpha : float
         The quadratic parameter for the index (default= None)
     pitch : float
         The pitch parameter of the the GRIN (number of oscillations alpha*L = 2*pi*pitch) (default=None)
     diameter: float
-        Diameter of element (default = infinity)
+        Diameter of GRIN (default = infinity)
     label : string
         The label of the free space
 
@@ -1969,17 +1969,31 @@ class GRIN(Matrix):
         elif pitch is None:
             pitch = alpha*L/2/pi
 
-        super().__init__(A=cos(alpha*L),
-                        B=1/alpha*sin(alpha*L),
-                        C=-alpha*sin(alpha*L),
-                        D=cos(alpha*L),
-                        physicalLength=L,
-                        frontVertex=0,
-                        backVertex=L,
-                        frontIndex=1.0,
-                        backIndex=1.0,
-                        apertureDiameter=diameter,
-                        label=label)
+        if alpha != 0:
+            super().__init__(A=cos(alpha*L),
+                            B=1/alpha*sin(alpha*L),
+                            C=-alpha*sin(alpha*L),
+                            D=cos(alpha*L),
+                            physicalLength=L,
+                            frontVertex=0,
+                            backVertex=L,
+                            frontIndex=1.0,
+                            backIndex=1.0,
+                            apertureDiameter=diameter,
+                            label=label)
+        else:
+            super().__init__(A=1,
+                            B=L,
+                            C=0,
+                            D=1,
+                            physicalLength=L,
+                            frontVertex=0,
+                            backVertex=L,
+                            frontIndex=1.0,
+                            backIndex=1.0,
+                            apertureDiameter=diameter,
+                            label=label)
+
         self.n0 = n0
         self.alpha = alpha
         self.pitch = pitch
