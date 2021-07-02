@@ -658,6 +658,16 @@ f = +inf (afocal)
         space = Space(d)
         self.assertEqual(m, space)
 
+    def testGrin(self):
+        g = GRIN(d=10, n=1, n2=0.1)
+        # g.display()
+
+    def testGrinRay(self):
+        path = ImagingPath()
+        path.append(GRIN(d=10, n=1, n2=0.5,diameter=10))
+        path.display()
+
+
 
 if __name__ == '__main__':
     envtest.main()

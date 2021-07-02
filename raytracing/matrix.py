@@ -9,7 +9,7 @@ import multiprocessing
 import sys
 import math
 import warnings
-from numpy import isfinite
+from numpy import isfinite, cos, sin
 
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
@@ -1921,6 +1921,63 @@ class DielectricSlab(ThickLens):
         else:
             return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, float("+inf"),
                                                                                     self.apertureDiameter)
+
+class GRIN(Matrix):
+    r"""GRIN lens of 
+
+    Parameters
+    ----------
+    d : float
+        the length of the free space
+    n : float
+        The refraction index of the space. This value cannot be negative. (default=1)
+    n2 : float
+        The quadratic refraction index2 (default=0)
+    diameter: float
+        Diameter of element (default = infinity)
+    label : string
+        The label of the free space
+
+    """
+
+    def __init__(self, d, n=1, n2=0, diameter=float('+Inf'), label=''):
+
+        alpha = n2/n
+        super().__init__(A=cos(alpha*d),
+                        B=1/alpha*sin(alpha*d),
+                        C=-alpha*sin(alpha*d),
+                        D=cos(alpha*d),
+                        physicalLength=d,
+                        frontVertex=0,
+                        backVertex=d,
+                        frontIndex=1.0,
+                        backIndex=1.0,
+                        apertureDiameter=diameter,
+                        label=label)
+        self.n = n
+        self.n2 = n2
+
+
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ Returns a Matrix() corresponding to a partial propagation
+        if the requested distance is smaller than the length of this element
+
+        Parameters
+        ----------
+        upTo : float
+            The length of the propagation (default=Inf)
+
+        Returns
+        -------
+        transferMatrix : object of class Matrix
+            the corresponding matrix to the propagation
+
+        """
+        distance = upTo
+        if distance < self.L:
+            return GRIN(d=distance, n=self.n, n2=self.n2, diameter=self.apertureDiameter, label=self.label)
+        else:
+            return self
 
 
 class Aperture(Matrix):
