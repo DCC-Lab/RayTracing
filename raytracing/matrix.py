@@ -9,7 +9,7 @@ import multiprocessing
 import sys
 import math
 import warnings
-from numpy import isfinite, cos, sin
+from numpy import isfinite, cos, sin, pi
 
 """ We start with general, useful namedtuples to simplify management of values """
 from typing import NamedTuple
@@ -137,6 +137,7 @@ class Matrix(object):
 
         # Length of this element
         self.L = float(physicalLength)
+        self.dz = self.L
         # Aperture
         if apertureDiameter <= 0:
             raise ValueError("The aperture diameter must be strictly positive.")
@@ -642,9 +643,16 @@ class Matrix(object):
         rayTrace = []
         if isinstance(ray, Ray):
             if self.L > 0:
-                if abs(ray.y) > self.apertureDiameter/2:
-                    ray.isBlocked = True
-                rayTrace.append(ray)
+                z = 0
+                hasBeenBlocked = False
+                while z < self.L:
+                    rayAtZ = self.transferMatrix(upTo=z) * ray
+                    if abs(rayAtZ.y) > self.apertureDiameter/2:
+                        hasBeenBlocked = True
+                    
+                    rayAtZ.isBlocked = hasBeenBlocked
+                    rayTrace.append(rayAtZ)
+                    z += self.dz
 
         rayTrace.append(self * ray)
 
@@ -1940,23 +1948,24 @@ class GRIN(Matrix):
 
     """
 
-    def __init__(self, d, n=1, n2=0, diameter=float('+Inf'), label=''):
-
-        alpha = n2/n
-        super().__init__(A=cos(alpha*d),
-                        B=1/alpha*sin(alpha*d),
-                        C=-alpha*sin(alpha*d),
-                        D=cos(alpha*d),
-                        physicalLength=d,
+    def __init__(self, L, n0=1, n2=0, diameter=float('+Inf'), label=''):
+        #n = n0 * ( 1 - r^2 A/2) https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_ID=11167
+        alpha = n2/n0/2
+        super().__init__(A=cos(alpha*L),
+                        B=1/alpha*sin(alpha*L),
+                        C=-alpha*sin(alpha*L),
+                        D=cos(alpha*L),
+                        physicalLength=L,
                         frontVertex=0,
-                        backVertex=d,
+                        backVertex=L,
                         frontIndex=1.0,
                         backIndex=1.0,
                         apertureDiameter=diameter,
                         label=label)
-        self.n = n
+        self.n0 = n0
         self.n2 = n2
-
+        self.pitch = pi/alpha
+        self.dz = self.pitch/20
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a Matrix() corresponding to a partial propagation
@@ -1975,7 +1984,7 @@ class GRIN(Matrix):
         """
         distance = upTo
         if distance < self.L:
-            return GRIN(d=distance, n=self.n, n2=self.n2, diameter=self.apertureDiameter, label=self.label)
+            return GRIN(L=distance, n0=self.n0, n2=self.n2, diameter=self.apertureDiameter, label=self.label)
         else:
             return self
 

@@ -272,7 +272,7 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testTrace(self):
         ray = Ray(y=1, theta=1)
-        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=0)
         trace = [ray, m * ray]
         self.assertListEqual(m.trace(ray), trace)
 
@@ -284,13 +284,13 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testTraceBlocked(self):
         ray = Ray(y=10, theta=1)
-        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10, physicalLength=1)
+        m = Space(d=10, diameter=10)
         trace = m.trace(ray)
         self.assertTrue(all(x.isBlocked for x in trace))
 
     def testTraceGaussianBeam(self):
         beam = GaussianBeam(w=1)
-        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
+        m = Space(d=10, diameter=10)
         outputBeam = m * beam
         tracedBeam = m.trace(beam)[-1]
         self.assertEqual(tracedBeam.w, outputBeam.w)
@@ -307,19 +307,19 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testTraceMany(self):
         rays = [Ray(y, theta) for y, theta in zip(range(10, 20), range(10))]
-        m = Matrix(physicalLength=1.01)
+        m = Space(d=1.01)
         traceMany = [[ray, ray] for ray in rays]
         self.assertListEqual(m.traceMany(rays), traceMany)
 
     def testTraceManyJustOne(self):
         rays = [Ray()]
-        m = Matrix(physicalLength=1e-9)
+        m = Space(d=1e-9)
         traceMany = [rays * 2]
         self.assertListEqual(m.traceMany(rays), traceMany)
 
     def testTraceManyThroughIterable(self):
         rays = [Ray(y, y) for y in range(10)]
-        m = Matrix(physicalLength=1)
+        m = Space(d=1)
         iterable = tuple(rays)
         raysObj = Rays(iterable)
 
@@ -338,12 +338,12 @@ class TestMatrix(envtest.RaytracingTestCase):
 
     def testTraceManyThroughOutput(self):
         rays = [Ray(y, y) for y in range(10_000)]
-        m = Matrix(physicalLength=1)
+        m = Space(d=1)
         self.assertPrints(m.traceManyThrough, "Progress 10000/10000 (100%)", inputRays=rays, progress=True)
 
     def testTraceManyThroughNoOutput(self):
         rays = [Ray(y, y) for y in range(10_000)]
-        m = Matrix(physicalLength=1)
+        m = Space(d=1)
         self.assertPrints(m.traceManyThrough, "", inputRays=rays, progress=False)
 
     def testTraceManyThroughLastRayBlocked(self):
@@ -359,7 +359,7 @@ class TestMatrix(envtest.RaytracingTestCase):
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
-        m = Matrix(physicalLength=1)
+        m = Space(d=1)
         trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
         for i in range(len(rays)):
             # Order is not kept, we have to check if the ray traced is in the original list
@@ -370,7 +370,7 @@ class TestMatrix(envtest.RaytracingTestCase):
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallel(self):
         rays = [Ray(y, y) for y in range(5)]
-        m = Matrix(physicalLength=1)
+        m = Space(d=1)
         trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
         for i in range(len(rays)):
             # Order is not kept, we have to check if the ray traced is in the original list
@@ -659,12 +659,12 @@ f = +inf (afocal)
         self.assertEqual(m, space)
 
     def testGrin(self):
-        g = GRIN(d=10, n=1, n2=0.1)
-        # g.display()
+        g = GRIN(L=10, n0=1, n2=0.1)
+        # g.display()sub
 
     def testGrinRay(self):
         path = ImagingPath()
-        path.append(GRIN(d=10, n=1, n2=0.5,diameter=10))
+        path.append(GRIN(L=10, n0=1, n2=0.5,diameter=10))
         path.display()
 
 
