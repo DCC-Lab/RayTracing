@@ -75,8 +75,11 @@ class MatrixGroup(Matrix):
                     matrix.frontIndex = lastElement.backIndex
                     matrix.backIndex = matrix.frontIndex
                 else:
-                    msg = "Mismatch of indices between last element and appended element"
-                    raise ValueError(msg)
+                    msg = "Mismatch of indices between last element and appended element. "
+                    msg2 = "The last element ends with an index of n1={1}, ".format(lastElement.label, lastElement.backIndex)
+                    msg3 = "but the appended element has a front index of n2={1}. ".format(matrix.label, matrix.frontIndex)
+                    msg4 = "You must add a DielectricInterface(n1,n2) before (and DielectricInterface(n2,n1) after) the element."
+                    raise ValueError(msg+msg2+msg3+msg4)
 
         self.elements.append(matrix)
         transferMatrix = self.transferMatrix()

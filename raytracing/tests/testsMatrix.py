@@ -677,8 +677,16 @@ f = +inf (afocal)
         g3 = GRIN(L=g2.L, n0=g2.n0, alpha=g2.alpha)
         self.assertEqual(g1.alpha, g3.alpha)
 
-    def testGrinWithoutGradient(self):
+    def testGrinWithoutGradientByAlpha(self):
         g = GRIN(L=10, n0=1., alpha=0)
+        s = Space(d=10)
+        self.assertEqual(g.A, s.A)
+        self.assertEqual(g.B, s.B)
+        self.assertEqual(g.C, s.C)
+        self.assertEqual(g.D, s.D)
+
+    def testGrinWithoutGradientByPitch(self):
+        g = GRIN(L=10, n0=1., pitch=0)
         s = Space(d=10)
         self.assertEqual(g.A, s.A)
         self.assertEqual(g.B, s.B)
@@ -702,6 +710,16 @@ f = +inf (afocal)
         g = GRIN(L=3.758, n0=1.66, pitch=0.5,diameter=10)
         path.append(g)
 
+    def testGrinRay(self):
+        path = ImagingPath()
+        n0 = 1.66
+        path.append(Space(d=0.2))
+        path.append(DielectricInterface(n1=1, n2=n0))
+        path.append(GRIN(L=3.758, n0=n0, pitch=0.433,diameter=10))
+        path.append(DielectricInterface(n1=n0, n2=1.33))
+        path.append(Space(d=0.3))
+        path.displayWithObject(diameter=5)
+        self.fail("The plot is off")
 
 if __name__ == '__main__':
     envtest.main()

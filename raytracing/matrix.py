@@ -1977,8 +1977,8 @@ class GRIN(Matrix):
                             physicalLength=L,
                             frontVertex=0,
                             backVertex=L,
-                            frontIndex=1.0,
-                            backIndex=1.0,
+                            frontIndex=n0,
+                            backIndex=n0,
                             apertureDiameter=diameter,
                             label=label)
         else:
@@ -1989,8 +1989,8 @@ class GRIN(Matrix):
                             physicalLength=L,
                             frontVertex=0,
                             backVertex=L,
-                            frontIndex=1.0,
-                            backIndex=1.0,
+                            frontIndex=n0,
+                            backIndex=n0,
                             apertureDiameter=diameter,
                             label=label)
 
@@ -2000,9 +2000,6 @@ class GRIN(Matrix):
         self.dz = L/20
         if self.pitch > 1:
             self.dz /= self.pitch
-
-
-
 
     def transferMatrix(self, upTo=float('+Inf')):
         """ Returns a Matrix() corresponding to a partial propagation
