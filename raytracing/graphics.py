@@ -152,7 +152,7 @@ class MatrixGraphic(Graphic):
         if halfHeight == float("+Inf"):
             halfHeight = self.matrix.displayHalfHeight()
 
-        return [Rectangle(xy=(self.x, -halfHeight), width=self.matrix.L, height=2*halfHeight)]
+        return [Rectangle(xy=(0, -halfHeight), width=self.matrix.L, height=2*halfHeight)]
 
     @property
     def apertureComponents(self):

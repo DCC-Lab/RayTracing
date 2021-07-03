@@ -710,7 +710,7 @@ f = +inf (afocal)
         g = GRIN(L=3.758, n0=1.66, pitch=0.5,diameter=10)
         path.append(g)
 
-    def testGrinRay(self):
+    def testGrinRayPlot(self):
         path = ImagingPath()
         n0 = 1.66
         path.append(Space(d=0.2))
@@ -719,7 +719,6 @@ f = +inf (afocal)
         path.append(DielectricInterface(n1=n0, n2=1.33))
         path.append(Space(d=0.3))
         path.displayWithObject(diameter=5)
-        self.fail("The plot is off")
 
 if __name__ == '__main__':
     envtest.main()
