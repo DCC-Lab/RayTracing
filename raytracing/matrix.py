@@ -518,7 +518,7 @@ class Matrix(object):
         elif self.L <= distance:
             return self
         else:
-            raise TypeError("Subclass of non-null physical length must override transferMatrix()")
+            raise TypeError("Subclass {0} of non-null physical length must override transferMatrix()".format(type(self)))
 
     def transferMatrices(self):
         """ The list of Matrix() that corresponds to the propagation through

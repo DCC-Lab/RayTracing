@@ -331,6 +331,36 @@ class SingletLens(CompoundLens):
                 SphericalInterface(R=self.R2)]
 
 
+class PP1ToPP2(Matrix):
+    def __init__(self, physicalLength, diameter=float('+Inf'), label='PP1 to PP2'):
+        super().__init__(A=1, B=0, C=0, D=1,
+                         physicalLength=physicalLength,
+                         apertureDiameter=diameter,
+                         frontVertex=None,
+                         backVertex=None,
+                         label=label)
+    def transferMatrix(self, upTo=float('+Inf')):
+        """ Returns a Matrix() corresponding to a partial propagation
+        if the requested distance is smaller than the length of this element
+
+        Parameters
+        ----------
+        upTo : float
+            The length of the propagation (default=Inf)
+
+        Returns
+        -------
+        transferMatrix : object of class Matrix
+            the corresponding matrix to the propagation
+
+        """
+        distance = upTo
+        if distance < self.L:
+            return PP1ToPP2(physicalLength=distance, diameter=self.apertureDiameter)
+        else:
+            return self
+
+
 class Objective(MatrixGroup):
 
     """
@@ -382,7 +412,7 @@ class Objective(MatrixGroup):
 
         elements = [Aperture(diameter=self.backAperture, label="backAperture"),
                     Space(d=self.f),
-                    Matrix(1, 0, 0, 1, physicalLength=self.focusToFocusLength - 2 * self.f),
+                    PP1ToPP2(physicalLength=self.focusToFocusLength - 2 * self.f, diameter=self.backAperture),
                     Lens(f=self.f),
                     Space(d=self.f - self.workingDistance),
                     Aperture(diameter=self.frontAperture, label="frontAperture"),

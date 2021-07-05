@@ -22,7 +22,7 @@ def exampleCode(comments=None):
     path.append(obj)
     path.append(Space(10))
     
-    path.displayWithObject(diameter=20, fanAngle=0.005, comments=comments)
+    path.displayWithObject(diameter=10, fanAngle=0.005, comments=comments)
 
 if __name__ == "__main__":
     exampleCode()
