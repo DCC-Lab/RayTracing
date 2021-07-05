@@ -267,6 +267,30 @@ class TestMatrix(envtest.RaytracingTestCase):
         with self.assertRaises(Exception) as context:
             m2.transferMatrix(upTo=0.5)
 
+
+    def testIncrementalTransferMatrixIsRightLength(self):
+        m = Space(d=10)
+        self.assertEqual(m.transferMatrix(), m)
+
+        mHalf = m.transferMatrix(startingAt=0, upTo=5)
+        self.assertEqual(mHalf.L*2, m.L)
+        
+        ray = Ray(y=0, theta=0.1)
+        outputRay = mHalf.trace(ray)
+
+        self.assertEqual(outputRay[0].z, 0)
+        self.assertEqual(outputRay[-1].z, mHalf.L)
+
+    def testTransferMatrixSumsUpToCompleteElementInfinite(self):
+        m = Space(d=10)
+        self.assertEqual(m.transferMatrix(), m)
+
+        ray = Ray(y=0, theta=0.1)
+
+        outputRay = m.trace(ray)
+        self.assertEqual(outputRay[0].z, 0)
+        self.assertEqual(outputRay[-1].z, m.L)
+
     def testTransferMatrices(self):
         m1 = Matrix(A=1, B=0, C=0, D=2, frontIndex=2)
         self.assertEqual(m1.transferMatrices(), [m1])
@@ -289,7 +313,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertTrue(rayTrace[-1].z == 0)
 
     def testTraceBlocked(self):
-        ray = Ray(y=10, theta=1)
+        ray = Ray(y=11, theta=1)
         m = Space(d=10, diameter=10)
         trace = m.trace(ray)
         self.assertTrue(all(x.isBlocked for x in trace))
@@ -637,7 +661,7 @@ f = +inf (afocal)
 
     def testDisplayHalfHeightInfiniteDiameter(self):
         m = Matrix(apertureDiameter=inf)
-        self.assertEqual(m.displayHalfHeight(), 4)
+        self.assertEqual(m.displayHalfHeight(), 12.5)
 
     def testEqualityNotSameClassInstance(self):
         m = Matrix()
@@ -715,7 +739,7 @@ f = +inf (afocal)
         g = GRIN(L=3.758, n0=1.66, pitch=0.433,diameter=1)
         self.assertTrue(g.largestDiameter == 1)
 
-    #@patch('matplotlib.pyplot.show', new=Mock())
+    @patch('matplotlib.pyplot.show', new=Mock())
     def testGrinRayPlot(self):
         path = ImagingPath()
         n0 = 1.66

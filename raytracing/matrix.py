@@ -522,10 +522,8 @@ class Matrix(object):
 
         if self.L == 0:
             return self
-        elif self.L <= distance:
+        elif distance >= self.L:
             return self
-        elif self.L != 0 and distance == 0:
-            return Matrix(1,0,0,1, physicalLength=0, apertureDiameter=self.apertureDiameter, frontIndex=self.frontIndex, backIndex=self.backIndex)
         else:
             raise TypeError("Subclass {0} of non-null physical length must override transferMatrix()".format(type(self)))
 
@@ -614,7 +612,7 @@ class Matrix(object):
         Parameters
         ----------
         ray : object of Ray class or GaussianBeam
-            A ray at height y and angle theta
+            A ray at height y and angle theta or a GaussianBeam with width and radius of curvature
 
         Returns
         -------
@@ -650,9 +648,24 @@ class Matrix(object):
         """
 
         rayTrace = []
-        for matrix in self.transferMatrices():
-            ray = matrix * ray
-            rayTrace.append(ray)     # but we will continue the calculation
+
+        if isinstance(ray, Ray):
+            if abs(ray.y) >= self.apertureDiameter/2:
+                ray.isBlocked = True
+                ray.apertureDiameter = self.apertureDiameter
+
+
+        rayTrace.append(ray) # just before the element
+
+        if self.L > 0: # propagate incrementally 
+            z = 0
+            while z < self.L: # will execute at least once, since self.L > 0 and z starts at z=0
+                ray = self.transferMatrix(startingAt=z, upTo=z+self.dz) * ray
+                rayTrace.append(ray)
+                z += self.dz
+        else:          # L == 0, propagate as a single matrix
+            ray = self * ray
+            rayTrace.append(ray) # just after the element
 
         return rayTrace
 
@@ -1402,10 +1415,12 @@ class Matrix(object):
         halfHeight : float
             The half height of the optical element
         """
-        halfHeight = 4  # FIXME: keep a minimum half height when infinite ?
 
         if self.apertureDiameter != float('+Inf'):
             halfHeight = self.apertureDiameter/2  # real half height
+        else:
+            halfHeight = 12.5  # FIXME: keep a minimum half height when infinite ? Assume 1 inch
+
         return halfHeight
 
     def display(self):
@@ -1464,7 +1479,7 @@ class Lens(Matrix):
                                    frontVertex=0,
                                    backVertex=0,
                                    label=label)
-        self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
+
 
     @property
     def forwardSurfaces(self):
@@ -1499,34 +1514,6 @@ class Lens(Matrix):
             pointsOfInterest.append({'z': f2, 'label': '$F_b$'})
 
         return pointsOfInterest
-
-    def displayHalfHeight(self):
-        """ A reasonable height for display purposes for
-        an element, whether it is infinite or not.
-        If the element is infinite, the half-height is currently
-        set to '4' or to the specified minimum half height.
-        If not, it is the apertureDiameter/2.
-
-        Returns
-        -------
-        halfHeight : float
-            The half height of the optical element
-        """
-        if self.apertureDiameter != float('+Inf'):
-            self._physicalHalfHeight = self.apertureDiameter/2  # real half height
-        return self._physicalHalfHeight
-
-    @property
-    def largestDiameter(self):
-        """ Largest diameter for a group of elements
-
-        Returns
-        -------
-        LargestDiameter : float
-            Largest diameter of the element or group of elements. For a `Matrix`
-            this will simply be the aperture diameter of this element.
-        """
-        return self._physicalHalfHeight
 
 
 class CurvedMirror(Matrix):
@@ -1675,7 +1662,7 @@ class Space(Matrix):
         distance = upTo-startingAt
 
         if distance < self.L:
-            return Space(d=distance, n=self.frontIndex)
+            return Space(d=distance, n=self.frontIndex, diameter=self.apertureDiameter)
         else:
             return self
 
