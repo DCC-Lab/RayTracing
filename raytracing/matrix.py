@@ -474,7 +474,7 @@ class Matrix(object):
         """
         return self.apertureDiameter != float("+Inf")
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo=float('+Inf'), startingAt=0.0):
         r""" The Matrix() that corresponds to propagation from the edge
         of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is
         provided, the transfer matrix will be from the front edge to the back edge.
@@ -512,11 +512,20 @@ class Matrix(object):
         The upTo parameter should have a value greater than the physical distance of the system.
         """
 
-        distance = upTo
+        if upTo > self.L:
+            upTo = self.L
+
+        if startingAt > upTo:
+            raise ValueError("In transferMatrix(), `startingAt` {0} must be smaller than `upTo` {1}".format(startingAt, upTo))
+
+        distance = upTo-startingAt
+
         if self.L == 0:
             return self
         elif self.L <= distance:
             return self
+        elif self.L != 0 and distance == 0:
+            return Matrix(1,0,0,1, physicalLength=0, apertureDiameter=self.apertureDiameter, frontIndex=self.frontIndex, backIndex=self.backIndex)
         else:
             raise TypeError("Subclass {0} of non-null physical length must override transferMatrix()".format(type(self)))
 
@@ -641,21 +650,9 @@ class Matrix(object):
         """
 
         rayTrace = []
-        
-        if isinstance(ray, Ray) and self.L > 0:
-            z = 0
-            hasBeenBlocked = False
-            while z <= self.L:
-                rayAtZ = self.transferMatrix(upTo=z) * ray
-                if abs(rayAtZ.y) > self.apertureDiameter/2:
-                    hasBeenBlocked = True # and will not change until the end
-                
-                rayAtZ.isBlocked = hasBeenBlocked
-                rayTrace.append(rayAtZ)
-                z += self.dz
-        else:
-            rayTrace.append(ray)
-            rayTrace.append(self * ray)
+        for matrix in self.transferMatrices():
+            ray = matrix * ray
+            rayTrace.append(ray)     # but we will continue the calculation
 
         return rayTrace
 
@@ -1654,7 +1651,7 @@ class Space(Matrix):
                                     apertureDiameter=diameter,
                                     label=label)
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo=float('+Inf'), startingAt=0.0):
         """ Returns a Matrix() corresponding to a partial propagation
         if the requested distance is smaller than the length of this element
 
@@ -1669,12 +1666,18 @@ class Space(Matrix):
             the corresponding matrix to the propagation
 
         """
-        distance = upTo
+        if upTo > self.L:
+            upTo = self.L
+
+        if startingAt > upTo:
+            raise ValueError("In transferMatrix(), `startingAt` {0} must be smaller than `upTo` {1}".format(startingAt, upTo))
+
+        distance = upTo-startingAt
+
         if distance < self.L:
-            return Space(distance, self.frontIndex)
+            return Space(d=distance, n=self.frontIndex)
         else:
             return self
-
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
@@ -1824,7 +1827,7 @@ class ThickLens(Matrix):
 
         return pointsOfInterest
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo=float('+Inf'), startingAt=0.0):
         """ Returns a ThickLens() or a Matrix() corresponding to a partial propagation
         if the requested distance is smaller than the length of this element
 
@@ -1839,11 +1842,19 @@ class ThickLens(Matrix):
             the corresponding matrix to the propagation
 
         """
-        if self.L <= upTo:
+        if upTo > self.L:
+            upTo = self.L
+
+        if startingAt > upTo:
+            raise ValueError("In transferMatrix(), `startingAt` {0} must be smaller than `upTo` {1}".format(startingAt, upTo))
+
+        distance = upTo-startingAt
+
+        if self.L <= distance:
             return self
         else:
-            return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, self.R1,
-                                                                                    self.apertureDiameter)
+            return Space(d=distance, n=self.n, diameter=self.apertureDiameter) * DielectricInterface(n1=1.0, n2=self.n, R=self.R1,
+                                                                                    diameter=self.apertureDiameter)
 
     def flipOrientation(self):
         """ We flip the element around (as in, we turn a lens around front-back).
@@ -1910,7 +1921,7 @@ class DielectricSlab(ThickLens):
         """ A list of surfaces that represents the element for drawing purposes. """
         return [FlatInterface(L=self.L, n=self.n), FlatInterface()]
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo=float('+Inf'), startingAt=0.0):
         """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
                 if the requested distance is smaller than the length of this element
 
@@ -1925,11 +1936,22 @@ class DielectricSlab(ThickLens):
             the corresponding matrix to the propagation
 
         """
-        if self.L <= upTo:
+        if upTo > self.L:
+            upTo = self.L
+
+        if startingAt > upTo:
+            raise ValueError("In transferMatrix(), `startingAt` {0} must be smaller than `upTo` {1}".format(startingAt, upTo))
+
+        distance = upTo-startingAt
+        if self.L <= distance:
             return self
+        elif upTo == self.L:
+            return DielectricInterface(n1=self.n, n2=1.0, R=float("+inf"), diameter=self.apertureDiameter) * Space(d=distance, n=self.n, diameter=self.apertureDiameter)
+        elif startingAt == 0:
+            return Space(d=distance, n=self.n, diameter=self.apertureDiameter) * DielectricInterface(n1=1.0, n2=self.n, R=float("+inf"),
+                                                                                    diameter=self.apertureDiameter)
         else:
-            return Space(upTo, self.n, self.apertureDiameter) * DielectricInterface(1.0, self.n, float("+inf"),
-                                                                                    self.apertureDiameter)
+            return Space(d=distance, n=self.n, diameter=self.apertureDiameter)
 
 class GRIN(Matrix):
     r"""Gradient index (GRIN) lens of length L, with a quadratic index of refraction.
@@ -2001,9 +2023,10 @@ class GRIN(Matrix):
         if self.pitch > 1:
             self.dz /= self.pitch
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo=float('+Inf'), startingAt=float(0)):
         """ Returns a Matrix() corresponding to a partial propagation
-        if the requested distance is smaller than the length of this element
+        if the requested distance is smaller than the length of this element.
+        You can have a 
 
         Parameters
         ----------
@@ -2016,12 +2039,18 @@ class GRIN(Matrix):
             the corresponding matrix to the propagation
 
         """
-        distance = upTo
+        if upTo > self.L:
+            upTo = self.L
+
+        if startingAt > upTo:
+            raise ValueError("In transferMatrix(), `startingAt` {0} must be smaller than `upTo` {1}".format(startingAt, upTo))
+
+        distance = upTo-startingAt
+
         if distance < self.L:
             return GRIN(L=distance, n0=self.n0, alpha=self.alpha, diameter=self.apertureDiameter, label=self.label)
         else:
             return self
-
 
 class Aperture(Matrix):
     r"""An aperture of finite diameter, null thickness.
