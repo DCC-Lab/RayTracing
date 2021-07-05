@@ -122,11 +122,12 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
     def testFieldStop_1(self):
         space = Space(d=10)
-        lens = Lens(f=10, diameter=150)
+        lens = Lens(f=10, diameter=100)
         space2 = Space(d=20)
         lens2 = Lens(f=10, diameter=50)
         path = ImagingPath([space, lens, space2, lens2, space])
-        self.assertTupleEqual(path.fieldStop(), (10, 150))
+        path.display()
+        self.assertTupleEqual(path.fieldStop(), (10, 100))
         self.assertTrue(path.hasFieldStop())
 
     def testFieldStop_2(self):

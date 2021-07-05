@@ -626,7 +626,7 @@ class ImagingPath(MatrixGroup):
                     dy = dy * 1.5  # Keep going, go faster (different factor)
 
                 y += dy
-                print(y)
+                # print(outputChiefRay.y, outputChiefRay.isBlocked)
                 wasBlocked = outputChiefRay.isBlocked
                 if abs(y) > self.maxHeight and not wasBlocked:
                     return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
@@ -638,6 +638,7 @@ class ImagingPath(MatrixGroup):
                     fieldStopDiameter = ray.apertureDiameter
                     break
 
+        # print(fieldStopPosition, fieldStopDiameter)
         return Stop(z=fieldStopPosition, diameter=fieldStopDiameter)
 
     def hasFieldStop(self):

@@ -333,6 +333,9 @@ class Matrix(object):
         r"""This function does the multiplication of a ray by a matrix.
         The output shows the propagated ray through the system.
         New position of ray is updated by the physical length of the matrix.
+        If the ray was blocked prior to this point, we do not propagate anything: we simply returned the input ray
+        because the ray is not propagating anymore
+
 
         Parameters
         ----------
@@ -383,20 +386,24 @@ class Matrix(object):
         as "isBlocked = True" but the propagation can still be calculated.
         """
 
-        outputRay = Ray()
+        if rightSideRay.isBlocked: # was blocked before
+            return rightSideRay
 
-        if rightSideRay.isBlocked:
-            outputRay = rightSideRay
+        outputRay = Ray()
+        if abs(rightSideRay.y) > self.apertureDiameter/2: # is newly blocked at the entrance
+            outputRay.y = rightSideRay.y
+            outputRay.theta = rightSideRay.theta
+            outputRay.z = rightSideRay.z
+            outputRay.apertureDiameter = self.apertureDiameter
+            outputRay.isBlocked = True
         else:
             outputRay.y = self.A * rightSideRay.y + self.B * rightSideRay.theta
             outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
             outputRay.z = self.L + rightSideRay.z
             outputRay.apertureDiameter = self.apertureDiameter
-
-            if abs(rightSideRay.y) > self.apertureDiameter/2:
+            outputRay.isBlocked = rightSideRay.isBlocked
+            if abs(outputRay.y) > self.apertureDiameter/2: # is blocked at the exit
                 outputRay.isBlocked = True
-            else:
-                outputRay.isBlocked = rightSideRay.isBlocked
 
         return outputRay
 
@@ -534,7 +541,17 @@ class Matrix(object):
         For a MatrixGroup(), it returns the transferMatrices for
         each individual element and appends each element to a list for this group."""
 
-        return [self]
+        transferMatrices = []
+        if self.L > 0:
+            z = 0
+            while z < self.L: # will execute at least once, since self.L > 0 and z starts at z=0
+                incrementalMatrix = self.transferMatrix(startingAt=z, upTo=z+self.dz)
+                transferMatrices.append(incrementalMatrix)
+                z += self.dz
+        else:
+            transferMatrices = [self]
+
+        return transferMatrices
 
     def opticalInvariant(self, ray1, ray2, z=0):
         """ The optical invariant is a quantity that is conserved for any two
@@ -638,34 +655,20 @@ class Matrix(object):
         Notes
         -----
         Currently, the output of the function is returned as a list. It is
-        sufficient to trace (i.e. display) the ray to draw lines between the points.
-        For some elements, (zero physical length), there will be a single element. For
-        other elements there may be more.  For groups of elements, there can be any 
-        number of rays in the list.
+        sufficient to trace (i.e. display) the ray to draw lines between the
+        points. For some elements, (zero physical length), there will be a
+        single element, but there may be more. For other elements there may
+        be more.  For groups of elements, there can be any number of rays in
+        the list.
 
         If you only care about the final ray that has propagated through, use 
         `traceThrough()`
         """
+        rayTrace = [ray]
 
-        rayTrace = []
-
-        if isinstance(ray, Ray):
-            if abs(ray.y) >= self.apertureDiameter/2:
-                ray.isBlocked = True
-                ray.apertureDiameter = self.apertureDiameter
-
-
-        rayTrace.append(ray) # just before the element
-
-        if self.L > 0: # propagate incrementally 
-            z = 0
-            while z < self.L: # will execute at least once, since self.L > 0 and z starts at z=0
-                ray = self.transferMatrix(startingAt=z, upTo=z+self.dz) * ray
-                rayTrace.append(ray)
-                z += self.dz
-        else:          # L == 0, propagate as a single matrix
-            ray = self * ray
-            rayTrace.append(ray) # just after the element
+        for matrix in self.transferMatrices():
+            ray = matrix * ray
+            rayTrace.append(ray)
 
         return rayTrace
 
