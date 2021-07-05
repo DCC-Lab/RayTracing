@@ -1,18 +1,20 @@
-TITLE       = "GRIN lens"
-DESCRIPTION = """
-A GRIN lens is available.  It has a quadratic index of refraction and is defined
-either with its alpha parameter or its pitch (it is easier to work with the pitch).
-Here, we have a GRIN available from Thorlabs G1P10.  Please note that the GRIN
-is not assumed to be in any medium.  Therefore, if you wish to use it in air or water
-(or both at either end), you need to explicitly add a DielectricInterface with the
-appropriate indices.
+TITLE       = "GRIN lens (example is Thorlabs G1P10"
+
+DESCRIPTION = """ 
+A GRIN lens is available.  It has a quadratic index of
+refraction and is defined either with its alpha parameter or its pitch (it is
+easier to work with the pitch). Here, we have a GRIN available from Thorlabs
+G1P10.  Please note that the GRIN is not assumed to be in any medium
+(air, water, etc..).  Therefore, if you wish to use it in air or water
+(or both at either end), you need to explicitly add a DielectricInterface
+with the appropriate indices before an after (as shown below).
 """
 
 from raytracing import *
 
 def exampleCode(comments=None):
     path = ImagingPath()
-
+    path.label = TITLE
     n0 = 1.66
     path.append(Space(d=0.2))
     # Dry side on the objective side (index is 1.0)
