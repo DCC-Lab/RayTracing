@@ -1997,7 +1997,7 @@ class GRIN(Matrix):
         self.n0 = n0
         self.alpha = alpha
         self.pitch = pitch
-        self.dz = L/20
+        self.dz = L/20 # 20 pts per cycle
         if self.pitch > 1:
             self.dz /= self.pitch
 
