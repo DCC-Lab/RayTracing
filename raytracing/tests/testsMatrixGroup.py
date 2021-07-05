@@ -210,7 +210,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         mg = MatrixGroup([s, l])
         trace = [ray, ray, Ray(6, 2), Ray(6, 1)]
         mgTrace = mg.trace(ray)
-        self.assertEqual(len(mgTrace), 4)
+        # self.assertEqual(len(mgTrace), 4)
         self.assertListEqual(mgTrace, trace)
         self.assertTrue(mgTrace[-1].isBlocked)
         self.assertListEqual(mg._lastRayTrace, trace)

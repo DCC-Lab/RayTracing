@@ -710,15 +710,19 @@ f = +inf (afocal)
         g = GRIN(L=3.758, n0=1.66, pitch=0.5,diameter=10)
         path.append(g)
 
+    def testGrinLargestDiameter(self):
+        g = GRIN(L=3.758, n0=1.66, pitch=0.433,diameter=1)
+        self.assertTrue(g.largestDiameter == 1)
+
     def testGrinRayPlot(self):
         path = ImagingPath()
         n0 = 1.66
         path.append(Space(d=0.2))
-        path.append(DielectricInterface(n1=1, n2=n0))
-        path.append(GRIN(L=3.758, n0=n0, pitch=0.433,diameter=10))
-        path.append(DielectricInterface(n1=n0, n2=1.33))
+        path.append(DielectricInterface(n1=1, n2=n0,diameter=1))
+        path.append(GRIN(L=3.758, n0=n0, pitch=0.433,diameter=1))
+        path.append(DielectricInterface(n1=n0, n2=1.33,diameter=1))
         path.append(Space(d=0.3))
-        path.displayWithObject(diameter=5)
+        path.displayWithObject(diameter=0.5)
 
 if __name__ == '__main__':
     envtest.main()

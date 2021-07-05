@@ -403,6 +403,46 @@ class MatrixGroupGraphic(MatrixGraphic):
         return points
 
 
+class GRINGraphic(MatrixGraphic):
+    def __init__(self, grin, x=0.0):
+        super().__init__(grin, x=x)
+
+    @property
+    def components(self):
+        if self._components is None:
+            self._components = self.mainComponents
+            self._components.extend(self.apertureComponents)
+        return self._components
+
+    @property
+    def mainComponents(self):
+        self.useAutoScale = False
+
+        halfHeight = self.matrix.largestDiameter / 2
+        if halfHeight == float("+Inf"):
+            halfHeight = self.matrix.displayHalfHeight()
+
+        """
+        We fake a gradient by drawing several filled rectangles
+        There may be a solution here
+        https://stackoverflow.com/questions/24976471/matplotlib-rectangle-with-color-gradient-fill
+        but it does not integrate nicely with  the component strategy we have taken (patches).
+        """
+
+        components = []
+        nSlices = 40
+        sliceThickness = 2*halfHeight/nSlices
+        for i in range(nSlices):
+            indexCorrection = abs(nSlices/2-i)*0.02
+            colorValue = 1.0 - np.min([(self.matrix.n0 - indexCorrection - 1) ** 2 / 2, 0.5])
+            color = (colorValue - 0.1, colorValue, 0.95)
+            components.append(Rectangle(xy=(0, -halfHeight + i*sliceThickness), 
+                                        width=self.matrix.L, 
+                                        height=sliceThickness, 
+                                        fill=True, 
+                                        color=color))
+        return components
+
 class ObjectiveGraphic(MatrixGroupGraphic):
     def __init__(self, objective, x=0.0):
         self.matrixGroup = objective
@@ -459,6 +499,8 @@ class GraphicOf:
             return None
         if instance == 'Aperture':
             return ApertureGraphic(element, x=x)
+        if instance == 'GRIN':
+            return GRINGraphic(element, x=x)
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
         if issubclass(type(element), MatrixGroup):
