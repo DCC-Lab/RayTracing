@@ -311,7 +311,7 @@ class MatrixGroup(Matrix):
         ray formalism.  To find out if a ray has been blocked, you must
         use trace().
         """
-        transferMatrix = Matrix(A=1, B=0, C=0, D=1)
+        transferMatrix = Matrix(1,0,0,1, physicalLength=0)
         distance = upTo
         for element in self.elements:
             if element.L <= distance:
