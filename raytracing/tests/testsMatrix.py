@@ -1,5 +1,6 @@
 import envtest  # modifies path
 import subprocess
+from unittest.mock import Mock, patch
 
 from raytracing import *
 
@@ -714,6 +715,7 @@ f = +inf (afocal)
         g = GRIN(L=3.758, n0=1.66, pitch=0.433,diameter=1)
         self.assertTrue(g.largestDiameter == 1)
 
+    @patch('matplotlib.pyplot.show', new=Mock())
     def testGrinRayPlot(self):
         path = ImagingPath()
         n0 = 1.66
