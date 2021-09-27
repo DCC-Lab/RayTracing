@@ -275,8 +275,8 @@ class MatrixGraphic(Graphic):
 
 class LensGraphic(MatrixGraphic):
     def __init__(self, matrix, x=0.0, fixedWidth=False, minSize=0):
-        if matrix.apertureDiameter == float('+Inf') and minSize > matrix._physicalHalfHeight:
-            matrix._physicalHalfHeight = minSize
+        # if matrix.apertureDiameter == float('+Inf') and minSize > matrix.largestDiameter:
+        #     matrix._physicalHalfHeight = minSize
 
         super(LensGraphic, self).__init__(matrix, x=x, fixedWidth=fixedWidth)
 

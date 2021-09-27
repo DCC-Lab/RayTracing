@@ -40,10 +40,11 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
         transferMat = mg.transferMatrix()
-        self.assertEqual(transferMat.A, 1)
-        self.assertEqual(transferMat.B, 0)
-        self.assertEqual(transferMat.C, 0)
-        self.assertEqual(transferMat.D, 1)
+        self.assertIsNone(transferMat)
+        # self.assertEqual(transferMat.A, 1)
+        # self.assertEqual(transferMat.B, 0)
+        # self.assertEqual(transferMat.C, 0)
+        # self.assertEqual(transferMat.D, 1)
 
     def testTransferMatrix(self):
         upTo = inf
@@ -91,7 +92,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
 
     def testAppendNoElementInit(self):
         mg = MatrixGroup()
-        element = DielectricInterface(1.33, 1, 10)
+        element = Space(d=10)
         mg.append(element)
         self.assertEqual(len(mg.elements), 1)
         self.assertEqual(mg.L, element.L)
@@ -100,7 +101,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         self.assertEqual(mg.C, element.C)
         self.assertEqual(mg.D, element.D)
 
-        otherElement = Space(10)
+        otherElement = Lens(f=20)
         mg.append(otherElement)
         transferMat = otherElement * element
         self.assertEqual(len(mg.elements), 2)
@@ -282,7 +283,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
 
     def testLargestDiameterNoFiniteAperture(self):
         mg = MatrixGroup([Space(10), Lens(5)])
-        self.assertEqual(mg.largestDiameter, 8)
+        self.assertEqual(mg.largestDiameter, 25)
 
     def testLargestDiameterWithEmptyGroup(self):
         m = MatrixGroup()
@@ -306,11 +307,12 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
     def testFlipOrientation_2(self):
         space = Space(10)
         slab = DielectricSlab(1, 10)
-        interface = DielectricInterface(1, 1.33)
+        interface = DielectricInterface(n1=1, n2=1.33, R=10)
+        interfaceFlipped = DielectricInterface(n1=1.33, n2=1, R=-10)
         mg = MatrixGroup([space, slab, interface])
         mg.flipOrientation()
-        supposedMatrix = space * slab * interface
-        self.assertListEqual(mg.elements, [interface, slab, space])
+        supposedMatrix = space * slab * interfaceFlipped
+        self.assertListEqual(mg.elements, [interfaceFlipped, slab, space])
         self.assertEqual(mg.A, supposedMatrix.A)
         self.assertEqual(mg.B, supposedMatrix.B)
         self.assertEqual(mg.C, supposedMatrix.C)

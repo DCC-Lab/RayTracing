@@ -339,7 +339,7 @@ class PP1ToPP2(Matrix):
                          frontVertex=None,
                          backVertex=None,
                          label=label)
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo=float('+Inf'), startingAt=0.0):
         """ Returns a Matrix() corresponding to a partial propagation
         if the requested distance is smaller than the length of this element
 
@@ -354,7 +354,7 @@ class PP1ToPP2(Matrix):
             the corresponding matrix to the propagation
 
         """
-        distance = upTo
+        distance = upTo-startingAt
         if distance < self.L:
             return PP1ToPP2(physicalLength=distance, diameter=self.apertureDiameter)
         else:

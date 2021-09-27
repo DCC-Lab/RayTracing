@@ -270,7 +270,7 @@ class MatrixGroup(Matrix):
             self.pop(key)
             self.insert(key, element)
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo=float('+Inf'), startingAt=0.0):
         r""" The transfer matrix between front edge and distance=upTo
 
         Parameters
@@ -311,15 +311,28 @@ class MatrixGroup(Matrix):
         ray formalism.  To find out if a ray has been blocked, you must
         use trace().
         """
-        transferMatrix = Matrix(1,0,0,1, physicalLength=0)
-        distance = upTo
+        if startingAt > upTo:
+            raise ValueError("In transferMatrix(), `startingAt` {0} must be smaller than `upTo` {1}".format(startingAt, upTo))
+
+        transferMatrix = None
+        z = 0
+
         for element in self.elements:
-            if element.L <= distance:
-                transferMatrix = element * transferMatrix
-                distance -= element.L
-            else:
-                transferMatrix = element.transferMatrix(upTo=distance) * transferMatrix
+            zStartElement = z
+            zEndElement   = z + element.L
+
+            if startingAt >= zStartElement and startingAt <= zEndElement:
+                localUpTo = upTo - zStartElement
+                localStartingAt = startingAt - zStartElement
+                transferMatrix = element.transferMatrix(startingAt=localStartingAt, upTo=localUpTo)
+            elif startingAt <= zStartElement :
+                localUpTo = upTo - zStartElement
+                transferMatrix = element.transferMatrix(startingAt=0, upTo=localUpTo)*transferMatrix
+
+            if upTo <= zEndElement :
                 break
+
+            z = z + element.L
 
         return transferMatrix
 
