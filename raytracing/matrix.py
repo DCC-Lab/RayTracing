@@ -127,6 +127,7 @@ class Matrix(object):
             frontIndex=1.0,
             backIndex=1.0,
             apertureDiameter=float('+Inf'),
+            apertureNA=float('+Inf'),
             label=''
     ):
         # Ray matrix formalism
@@ -141,6 +142,9 @@ class Matrix(object):
         if apertureDiameter <= 0:
             raise ValueError("The aperture diameter must be strictly positive.")
         self.apertureDiameter = apertureDiameter
+        if apertureNA <= 0:
+            raise ValueError("The aperture NA must be strictly positive.")
+        self.apertureNA = apertureNA
 
         # First and last interfaces. Used for BFL and FFL
         self.frontVertex = frontVertex
@@ -392,7 +396,7 @@ class Matrix(object):
             outputRay.z = self.L + rightSideRay.z
             outputRay.apertureDiameter = self.apertureDiameter
 
-            if abs(rightSideRay.y) > self.apertureDiameter/2:
+            if abs(rightSideRay.y) > self.apertureDiameter/2 or abs(rightSideRay.theta) > self.apertureNA:
                 outputRay.isBlocked = True
             else:
                 outputRay.isBlocked = rightSideRay.isBlocked
@@ -1950,7 +1954,7 @@ class Aperture(Matrix):
     If the ray is beyond the finite diameter, the ray is blocked.
     """
 
-    def __init__(self, diameter, label=''):
+    def __init__(self, diameter, NA=float("+inf"), label=''):
         super(
             Aperture,
             self).__init__(
@@ -1960,4 +1964,5 @@ class Aperture(Matrix):
             D=1,
             physicalLength=0,
             apertureDiameter=diameter,
+            apertureNA=NA,
             label=label)
