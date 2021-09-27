@@ -127,6 +127,7 @@ class Matrix(object):
             frontIndex=1.0,
             backIndex=1.0,
             apertureDiameter=float('+Inf'),
+            apertureNA=float('+Inf'),
             label=''
     ):
         # Ray matrix formalism
@@ -141,6 +142,9 @@ class Matrix(object):
         if apertureDiameter <= 0:
             raise ValueError("The aperture diameter must be strictly positive.")
         self.apertureDiameter = apertureDiameter
+        if apertureNA <= 0:
+            raise ValueError("The aperture NA must be strictly positive.")
+        self.apertureNA = apertureNA
 
         # First and last interfaces. Used for BFL and FFL
         self.frontVertex = frontVertex
