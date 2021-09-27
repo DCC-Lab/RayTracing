@@ -22,6 +22,7 @@ class TestExamples(envtest.RaytracingTestCase):
         import raytracing.examples as ex
         self.assertTrue(len(ex.short) > 0)
 
+    @envtest.skipUnless(envtest.performanceTests, "Skipping long performance tests")
     @patch('matplotlib.pyplot.show', new=Mock())
     def testExamplesRun(self):
         import raytracing.examples as ex
