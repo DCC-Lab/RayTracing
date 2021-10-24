@@ -839,15 +839,56 @@ class Matrix(object):
         raytracing.Matrix.traceThrough
         raytracing.Matrix.traceManyThrough
         """
+        import pyopencl as pycl
+
+        devices = pycl.get_platforms()[0].get_devices(device_type=pycl.device_type.GPU)
+        context = pycl.Context(devices=devices)
+        queue = pycl.CommandQueue(context)
+
+        Ray.Struct, RayStruct_OpenCL = pycl.tools.match_dtype_to_c_struct(devices[0], "RayStruct", Ray.Struct)
+        Matrix.Struct, MatrixStruct_OpenCL = pycl.tools.match_dtype_to_c_struct(devices[0], "MatrixStruct", Matrix.Struct)
+
         matrices = self.transferMatrices()
         ray = Ray()
 
         inputRaysAsStructArray = np.array([ r.toStruct() for r in inputRays ], dtype=Ray.Struct)
         matricesAsStructArray = np.array([ m.toStruct() for m in matrices], dtype=Matrix.Struct )
-        manyRayTraces = np.array([ray.toStruct() for i in range(len(inputRays) * (len(matrices)+1))])
+        outputRayTraces = np.array([ray.toStruct() for i in range(len(inputRays) * (len(matrices)+1))])
+
+        matrices = pycl.array.to_device(queue=queue, ary=matricesAsStructArray)
+        inputVectors = pycl.array.to_device(queue=queue, ary=inputRaysAsStructArray)
+        resultTraces = pycl.array.to_device(queue=queue, ary=outputRayTraces)
+
+        N = len(inputRays)
+        M = len(matrices)
+        print(N,M)
+        program_source_floats = RayStruct_OpenCL + MatrixStruct_OpenCL + """
+        kernel void product(global MatrixStruct *mat, global RayStruct *vec, global RayStruct* res, uint M)
+                      {
+                      int i    = get_global_id(0); // the vector index
+                      int j;                       // the matrix index
+                      int N    = get_global_size(0);
+                      RayStruct v = vec[i];
+                      res[i] = v;
+                      for (j = 0; j < M; j++) {
+                          MatrixStruct m = mat[j];
+
+                          v.y     = m.A * v.y + m.B * v.theta;
+                          v.theta = m.C * v.theta + m.D * v.theta;
+                          res[i+N*(j+1)] = v;
+                          }
+                      }
+
+        """
+
+        program = pycl.Program(context, program_source_floats).build()
+
+        knl = program.product
+        knl(queue, (N,), None, matrices.data, inputVectors.data, resultTraces.data, np.uint32(M))
+
 
         # Do the OpenCL thing here.
-        return manyRayTraces
+        return resultTraces
 
     def traceManyThrough(self, inputRays, progress=True):
         """This function trace each ray from a list or a Rays() distribution from
