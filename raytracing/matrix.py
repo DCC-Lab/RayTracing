@@ -790,6 +790,65 @@ class Matrix(object):
 
         return manyRayTraces
 
+    def traceManyOpenCL(self, inputRays):
+        r"""This function trace each ray from a group of rays from front edge of element to
+        the back edge. It can be either a list of Ray(), or a Rays() object:
+        the Rays() object is an iterator and can be used like a list.
+
+        Parameters
+        ----------
+        inputRays : list of object of Ray class
+            A List of rays, each object includes two ray. The fisr is the properties
+            of the input ray and the second is the properties of the output ray.
+
+        Returns
+        -------
+        rayTrace : object of Ray class
+            List of Ray() (i,e. a raytrace), one for each input ray.
+
+        Examples
+        --------
+        First, a list of 10 uniformly distributed random ray is generated
+        and then the output of the system for the rays are calculated.
+
+        >>> from raytracing import *
+        >>> # M is an ABCD matrix of a lens (f=10)
+        >>> M= Matrix(A=1,B=0,C=-1/10,D=1,physicalLength=2,label='Lens')
+        >>> # inputRays is a group of random rays with uniform distribution at center
+        >>> nRays = 10
+        >>> inputRays = RandomUniformRays(yMax=0, maxCount=nRays)
+        >>> Tr=M.traceMany(inputRays)
+        >>> #index[0] of the first object in the list is the first input
+        >>> print('The properties of the first input ray:\n', Tr[0][0])
+        The properties of the first input ray:
+         y =  0.000
+        theta =  0.153
+        z = 0.000
+
+
+        >>> #index[1] of the first object in the list is the first output
+        >>> print('The properties of the first output ray:\n', Tr[0][1])
+        The properties of the first output ray:
+         y =  0.000
+        theta =  0.153
+        z = 2.000
+
+        See Also
+        --------
+        raytracing.Matrix.trace
+        raytracing.Matrix.traceThrough
+        raytracing.Matrix.traceManyThrough
+        """
+        matrices = self.transferMatrices()
+        ray = Ray()
+
+        inputRaysAsStructArray = np.array([ r.toStruct() for r in inputRays ], dtype=Ray.Struct)
+        matricesAsStructArray = np.array([ m.toStruct() for m in matrices], dtype=Matrix.Struct )
+        manyRayTraces = np.array([ray.toStruct() for i in range(len(inputRays) * (len(matrices)+1))])
+
+        # Do the OpenCL thing here.
+        return manyRayTraces
+
     def traceManyThrough(self, inputRays, progress=True):
         """This function trace each ray from a list or a Rays() distribution from
         front edge of element to the back edge.
