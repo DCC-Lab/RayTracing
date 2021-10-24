@@ -537,6 +537,11 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         mg.display()
 
+    def testMatrixGroupAsStructArray(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        structArray = np.array([ m.toStruct() for m in mg ], dtype=Matrix.Struct)
+        print(structArray)
+
 
 class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):
 

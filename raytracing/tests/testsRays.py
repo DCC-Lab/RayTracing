@@ -247,6 +247,10 @@ class TestRays(envtest.RaytracingTestCase):
         with self.assertRaises(TypeError):
             rays.append("This is a ray")
 
+    def testAsStructuredArray(self):
+        rays = RandomUniformRays()
+        structArray = np.array([ r.toStruct() for r in rays ], dtype=Ray.Struct)
+        print(structArray)
 
 class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 
