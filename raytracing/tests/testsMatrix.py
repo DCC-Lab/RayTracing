@@ -701,6 +701,12 @@ f = +inf (afocal)
         space = Space(d)
         self.assertEqual(m, space)
 
+    def testToAndFromStruct(self):
+        m = Matrix(1,0.5,4,3, physicalLength=5)
+        theStruct = m.toStruct()
+        m2 = Matrix(1,0,0,1)
+        m2.fromStruct(theStruct)
+        self.assertEqual(m, m2)
 
 if __name__ == '__main__':
     envtest.main()

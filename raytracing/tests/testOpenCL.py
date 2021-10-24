@@ -268,7 +268,7 @@ class TestOpenCL(unittest.TestCase):
         self.assertTrue(calcTimeOpenCL2 < calcTimeNumpy,msg="\nNumpy is faster than OpenCL: CL1 {0:.1f} ms NP {1:.1f} ms CL2 {2:.1f} ms".format(calcTimeOpenCL1, calcTimeNumpy, calcTimeOpenCL2))
         print("\nCL1 {0:.1f} ms NP {1:.1f} ms".format(calcTimeOpenCL2, calcTimeNumpy))
 
-    @unittest.skip("Skipping for now")
+    # @unittest.skip("Skipping for now")
     def test003PerformanceVsSize(self):
         """
         I really expected this to work.  Performance is more complicated than I expected.

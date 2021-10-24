@@ -36,6 +36,7 @@ class Conjugate(NamedTuple):
 
 # todo: fix docstrings since draw-related methods were removed
 
+
 class Matrix(object):
     r"""A matrix and an optical element that can transform a ray or another
     matrix.
@@ -115,6 +116,20 @@ class Matrix(object):
 
     __epsilon__ = 1e-5  # Anything smaller is zero
 
+    Struct = np.dtype([("A", np.float32),
+                      ("B", np.float32), 
+                      ("C", np.float32), 
+                      ("D", np.float32), 
+                      ("L", np.float32),
+                      ("frontVertex", np.float32),
+                      ("backVertex", np.float32),
+                      ("frontIndex", np.float32),
+                      ("backIndex", np.float32),
+                      ("apertureDiameter", np.float32),
+                      ("apertureNA", np.float32),
+                      ("isFlipped", np.int32)
+                      ])
+
     def __init__(
             self,
             A: float = 1,
@@ -161,6 +176,30 @@ class Matrix(object):
         if areAbsolutelyNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
             raise ValueError("The matrix has inconsistent values: \
                 determinant is incorrect considering front and back indices.")
+
+    def toStruct(self):
+        theStruct = np.array( (self.A, self.B, self.C, self.D, self.L,
+                               self.frontVertex, self.backVertex, self.frontIndex, self.backIndex,
+                               self.apertureDiameter, self.apertureNA, self.isFlipped), dtype=Matrix.Struct)
+        return theStruct
+
+    def fromStruct(self, theStruct):
+        self.A = theStruct["A"]
+        self.B = theStruct["B"]
+        self.C = theStruct["C"]
+        self.D = theStruct["D"]
+        self.L = theStruct["L"]
+        self.frontVertex = theStruct["frontVertex"]
+        if np.isnan(self.frontVertex):
+            self.frontVertex = None
+        self.backVertex = theStruct["backVertex"]
+        if np.isnan(self.backVertex):
+            self.backVertex = None
+        self.frontIndex = theStruct["frontIndex"]
+        self.backIndex = theStruct["backIndex"]
+        self.apertureDiameter = theStruct["apertureDiameter"]
+        self.apertureNA = theStruct["apertureNA"]
+        self.isFlipped = theStruct["isFlipped"]
 
     @property
     def isIdentity(self):

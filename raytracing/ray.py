@@ -1,6 +1,6 @@
 import warnings
 from .utils import deprecated
-
+import numpy as np
 
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
@@ -36,6 +36,14 @@ class Ray:
 
     """
 
+    Struct = np.dtype([("y", np.float32),
+                      ("theta", np.float32), 
+                      ("z", np.float32),
+                      ("isBlocked", np.int32),
+                      ("apertureDiameter", np.float32),
+                      ("wavelength", np.float32)
+                      ])
+
     def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked:bool = False, wavelength: float = None):
         self.y = y
         self.theta = theta
@@ -45,6 +53,21 @@ class Ray:
         self.apertureDiameter = float("+Inf")
 
         self.wavelength = wavelength
+
+    def toStruct(self):
+        theStruct = np.array( (self.y, self.theta, self.z, 
+                              self.isBlocked, self.apertureDiameter, self.wavelength), dtype=Ray.Struct)
+        return theStruct
+
+    def fromStruct(self, theStruct):
+        self.y = theStruct["y"]
+        self.theta = theStruct["theta"]
+        self.z = theStruct["z"] 
+        self.isBlocked = theStruct["isBlocked"]
+        self.apertureDiameter = theStruct["apertureDiameter"]
+        self.wavelength = theStruct["wavelength"]
+        if np.isnan(self.wavelength):
+            self.wavelength = None
 
     @property
     def isNotBlocked(self) -> bool:

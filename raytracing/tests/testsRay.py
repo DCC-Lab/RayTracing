@@ -135,6 +135,13 @@ class TestRay(envtest.RaytracingTestCase):
         self.assertEqual(Ray.along(rayTrace, z=1.5), Ray(0.2,0.2))
         self.assertEqual(Ray.along(rayTrace, z=2.0), Ray(0.3,0))
 
+    def testToAndFromStruct(self):
+        ray1 = Ray(y=1,theta=0.5)
+        theStruct = ray1.toStruct()
+        ray2 = Ray()
+        ray2.fromStruct(theStruct)
+        self.assertEqual(ray1,ray2)
+
 
 if __name__ == '__main__':
     envtest.main()
