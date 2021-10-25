@@ -137,11 +137,13 @@ class TestRay(envtest.RaytracingTestCase):
 
     def testToAndFromStruct(self):
         ray1 = Ray(y=1,theta=0.5)
-        theStruct = ray1.toStruct()
-        ray2 = Ray()
-        ray2.fromStruct(theStruct)
-        self.assertEqual(ray1,ray2)
+        rayCl = CompactRay(ray=ray1)
 
+        self.assertEqual(ray1,rayCl)
+
+
+    def testCLRay(self):
+        self.assertIsNotNone(CompactRay(struct=(0,1,2,3,4,5)))
 
 if __name__ == '__main__':
     envtest.main()

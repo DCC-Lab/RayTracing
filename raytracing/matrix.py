@@ -790,7 +790,7 @@ class Matrix(object):
 
         return manyRayTraces
 
-    def traceManyOpenCL(self, inputRays):
+    def traceManyOpenCL(self, inputRays, inputRaysAsStructArray=None):
         r"""This function trace each ray from a group of rays from front edge of element to
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
@@ -845,19 +845,20 @@ class Matrix(object):
         context = pycl.Context(devices=devices)
         queue = pycl.CommandQueue(context)
 
-        Ray.Struct, RayStruct_OpenCL = pycl.tools.match_dtype_to_c_struct(devices[0], "RayStruct", Ray.Struct)
+        CompactRay.Struct, RayStruct_OpenCL = pycl.tools.match_dtype_to_c_struct(devices[0], "RayStruct", CompactRay.Struct)
         Matrix.Struct, MatrixStruct_OpenCL = pycl.tools.match_dtype_to_c_struct(devices[0], "MatrixStruct", Matrix.Struct)
 
+        if inputRaysAsStructArray is None:
+            inputRaysAsStructArray = np.array([ CompactRay(r).struct for r in inputRays ], dtype=CompactRay.Struct)
+
         matrices = self.transferMatrices()
-        ray = Ray()
-
-        inputRaysAsStructArray = np.array([ r.toStruct() for r in inputRays ], dtype=Ray.Struct)
         matricesAsStructArray = np.array([ m.toStruct() for m in matrices], dtype=Matrix.Struct )
-        outputRayTraces = np.array([ray.toStruct() for i in range(len(inputRays) * (len(matrices)+1))])
+        outputRayTraces = np.zeros(shape=( len(inputRays), (len(matrices)+1) ), dtype=CompactRay.Struct)
 
-        matrices = pycl.array.to_device(queue=queue, ary=matricesAsStructArray)
-        inputVectors = pycl.array.to_device(queue=queue, ary=inputRaysAsStructArray)
-        resultTraces = pycl.array.to_device(queue=queue, ary=outputRayTraces)
+        mf = pycl.mem_flags
+        matriceBuffer = pycl.Buffer(context, flags=mf.HOST_READ_ONLY| mf.COPY_HOST_PTR, hostbuf=matricesAsStructArray)
+        inputRayBuffer = pycl.Buffer(context, flags=mf.HOST_READ_ONLY| mf.COPY_HOST_PTR, hostbuf=inputRaysAsStructArray)
+        outputRayBuffer = pycl.Buffer(context, flags=mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=outputRayTraces)
 
         N = len(inputRays)
         M = len(matrices)
@@ -890,9 +891,20 @@ class Matrix(object):
         program = pycl.Program(context, program_source_floats).build()
 
         knl = program.product
-        knl(queue, (N,), None, matrices.data, inputVectors.data, resultTraces.data, np.int32(M))
+        knl(queue, (N,), None, matriceBuffer, inputRayBuffer, outputRayBuffer, np.int32(M))
 
-        return resultTraces.reshape(M+1,N)
+        pycl.enqueue_copy(queue, outputRayTraces, outputRayBuffer)
+
+        outputRayTraces = outputRayTraces.reshape(M + 1, N)
+
+        raytraces = []
+        for i in range(N):
+            raytrace = []
+            for rayStruct in outputRayTraces[:,i]:
+                raytrace.append(CompactRay(struct=rayStruct))
+            raytraces.append(raytrace)
+
+        return raytraces
 
     def traceManyThrough(self, inputRays, progress=True):
         """This function trace each ray from a list or a Rays() distribution from

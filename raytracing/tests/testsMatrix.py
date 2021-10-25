@@ -435,8 +435,12 @@ class TestMatrix(envtest.RaytracingTestCase):
                                          capture_output=True, universal_newlines=True)
         self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
+    def testdtypes(self):
+        a = np.array([(1,2,3,4,5,6)], dtype=CompactRay.Struct)
+        print((a[0].astype(CompactRay.Struct)))
+
     def testTraceManyOpenCL(self):
-        rays = RandomUniformRays(maxCount=100000)#[Ray(y, y) for y in range(1000000)]
+        rays = UniformRays(M=1000,N=100)#[Ray(y, y) for y in range(1000000)]
         path = ImagingPath()
         path.append(Space(d=2))
         path.append(Lens(f=10, diameter=25))
@@ -446,7 +450,8 @@ class TestMatrix(envtest.RaytracingTestCase):
         path.append(Lens(f=30))
         path.append(Space(d=4))
         m = MatrixGroup(path.transferMatrices())
-        print(m.traceManyOpenCL(rays))
+        outputRaytraces = m.traceManyOpenCL(rays)
+        print(outputRaytraces)
 
     def testPointsOfInterest(self):
         m = Matrix()

@@ -36,38 +36,57 @@ class Ray:
 
     """
 
-    Struct = np.dtype([("y", np.float32),
-                      ("theta", np.float32), 
-                      ("z", np.float32),
-                      ("isBlocked", np.int32),
-                      ("apertureDiameter", np.float32),
-                      ("wavelength", np.float32)
-                      ])
-
     def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked:bool = False, wavelength: float = None):
-        self.y = y
-        self.theta = theta
+        self._y = y
+        self._theta = theta
 
-        self.z = z
-        self.isBlocked = isBlocked
-        self.apertureDiameter = float("+Inf")
+        self._z = z
+        self._isBlocked = isBlocked
+        self._apertureDiameter = float("+Inf")
 
-        self.wavelength = wavelength
+        self._wavelength = wavelength
 
-    def toStruct(self):
-        theStruct = np.array( (self.y, self.theta, self.z, 
-                              self.isBlocked, self.apertureDiameter, self.wavelength), dtype=Ray.Struct)
-        return theStruct
+    @property
+    def y(self):
+        return self._y
+    @y.setter
+    def y(self, value):
+        self._y = value
 
-    def fromStruct(self, theStruct):
-        self.y = theStruct["y"]
-        self.theta = theStruct["theta"]
-        self.z = theStruct["z"] 
-        self.isBlocked = theStruct["isBlocked"]
-        self.apertureDiameter = theStruct["apertureDiameter"]
-        self.wavelength = theStruct["wavelength"]
-        if np.isnan(self.wavelength):
-            self.wavelength = None
+    @property
+    def theta(self):
+        return self._theta
+    @theta.setter
+    def theta(self, value):
+        self._theta = value
+
+    @property
+    def z(self):
+        return self._z
+    @z.setter
+    def z(self, value):
+        self._z = value
+
+    @property
+    def isBlocked(self):
+        return self._isBlocked
+    @isBlocked.setter
+    def isBlocked(self, value):
+        self._isBlocked = value
+
+    @property
+    def apertureDiameter(self):
+        return self._apertureDiameter
+    @apertureDiameter.setter
+    def apertureDiameter(self, value):
+        self._apertureDiameter = value
+
+    @property
+    def wavelength(self):
+        return self._wavelength
+    @wavelength.setter
+    def wavelength(self, value):
+        self._wavelength = value
 
     @property
     def isNotBlocked(self) -> bool:
@@ -289,3 +308,67 @@ class Ray:
             return False
 
         return True
+
+class CompactRay(Ray):
+
+    Struct = np.dtype([("y", np.float32),
+                      ("theta", np.float32),
+                      ("z", np.float32),
+                      ("isBlocked", np.int32),
+                      ("apertureDiameter", np.float32),
+                      ("wavelength", np.float32)
+                      ])
+
+    def __init__(self, ray=None, struct=None):
+        super().__init__()
+        if ray is not None:
+            self.struct = (ray.y, ray.theta, ray.z, ray.isBlocked, ray.apertureDiameter, ray.wavelength)
+        elif struct is not None:
+            if len(struct) == 6:
+                self.struct = struct
+            else:
+                raise ValueError("You must provide struct with these fields in order: {0}, {1}".format(self.Struct.fields, struct))
+        else:
+            self.struct = struct.pack(Compact.Struct, (0,0,0,0,0,0))
+
+    @property
+    def y(self):
+        return self.struct[0]
+    @y.setter
+    def y(self, value):
+        self.struct[0] = value
+
+    @property
+    def theta(self):
+        return self.struct[1]
+    @theta.setter
+    def theta(self, value):
+        self.struct[1] = value
+
+    @property
+    def z(self):
+        return self.struct[2]
+    @z.setter
+    def z(self, value):
+        self.struct[2] = value
+
+    @property
+    def isBlocked(self):
+        return self.struct[3]
+    @isBlocked.setter
+    def isBlocked(self, value):
+        self.struct[3] = value
+
+    @property
+    def apertureDiameter(self):
+        return self.struct[4]
+    @apertureDiameter.setter
+    def apertureDiameter(self, value):
+        self.struct[4] = value
+
+    @property
+    def wavelength(self):
+        return self.struct[5]
+    @wavelength.setter
+    def wavelength(self, value):
+        self.struct[5] = value
