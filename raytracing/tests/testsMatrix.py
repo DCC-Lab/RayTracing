@@ -436,8 +436,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
     def testTraceManyOpenCL(self):
-        rays = [Ray(y, y) for y in range(5)]
-        m = Matrix(physicalLength=1)
+        rays = RandomUniformRays(maxCount=100000)#[Ray(y, y) for y in range(1000000)]
+        path = ImagingPath()
+        path.append(Space(d=2))
+        path.append(Lens(f=10, diameter=25))
+        path.append(Space(d=2))
+        path.append(Lens(f=20))
+        path.append(Space(d=3))
+        path.append(Lens(f=30))
+        path.append(Space(d=4))
+        m = MatrixGroup(path.transferMatrices())
         print(m.traceManyOpenCL(rays))
 
     def testPointsOfInterest(self):

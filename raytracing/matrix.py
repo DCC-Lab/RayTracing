@@ -863,7 +863,7 @@ class Matrix(object):
         M = len(matrices)
         print(N,M)
         program_source_floats = RayStruct_OpenCL + MatrixStruct_OpenCL + """
-        kernel void product(global MatrixStruct *mat, global RayStruct *vec, global RayStruct* res, uint M)
+        kernel void product(global MatrixStruct *mat, global RayStruct *vec, global RayStruct* res, int M)
                       {
                       int i    = get_global_id(0); // the vector index
                       int j;                       // the matrix index
@@ -875,20 +875,25 @@ class Matrix(object):
 
                           v.y     = m.A * v.y + m.B * v.theta;
                           v.theta = m.C * v.theta + m.D * v.theta;
-                          res[i+N*(j+1)] = v;
-                          }
-                      }
+                          
+                          v.z += m.L;
+                          v.apertureDiameter = m.apertureDiameter;
 
+                          if ( (v.y > m.apertureDiameter/2) || (v.theta > m.apertureNA) )  {
+                             v.isBlocked = 1;
+                          }
+
+                          res[i+N*(j+1)] = v;
+                      }
+                    }
         """
 
         program = pycl.Program(context, program_source_floats).build()
 
         knl = program.product
-        knl(queue, (N,), None, matrices.data, inputVectors.data, resultTraces.data, np.uint32(M))
+        knl(queue, (N,), None, matrices.data, inputVectors.data, resultTraces.data, np.int32(M))
 
-
-        # Do the OpenCL thing here.
-        return resultTraces
+        return resultTraces.reshape(M+1,N)
 
     def traceManyThrough(self, inputRays, progress=True):
         """This function trace each ray from a list or a Rays() distribution from
