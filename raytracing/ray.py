@@ -354,10 +354,10 @@ class CompactRay(Ray):
 
     @property
     def isBlocked(self):
-        return self.struct[3]
+        return self.struct[3] != 0
     @isBlocked.setter
     def isBlocked(self, value):
-        self.struct[3] = value
+        self.struct[3] = (value != 0)
 
     @property
     def apertureDiameter(self):

@@ -848,15 +848,17 @@ class Matrix(object):
                       res[i] = v;
                       for (j = 0; j < M; j++) {
                           MatrixStruct m = mat[j];
-
-                          v.y     = m.A * v.y + m.B * v.theta;
-                          v.theta = m.C * v.theta + m.D * v.theta;
                           
-                          v.z += m.L;
-                          v.apertureDiameter = m.apertureDiameter;
+                          if (!v.isBlocked) {
+                              v.y     = m.A * v.y + m.B * v.theta;
+                              v.theta = m.C * v.theta + m.D * v.theta;
+                              
+                              v.z += m.L;
+                              v.apertureDiameter = m.apertureDiameter;
 
-                          if ( (v.y > m.apertureDiameter/2) || (v.theta > m.apertureNA) )  {
-                             v.isBlocked = 1;
+                              if ( (v.y > m.apertureDiameter/2) || (v.theta > m.apertureNA) )  {
+                                 v.isBlocked = 1;
+                              }                          
                           }
 
                           res[i+N*(j+1)] = v;
