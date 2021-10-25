@@ -861,7 +861,6 @@ class Matrix(object):
 
         N = len(inputRays)
         M = len(matrices)
-        print(N,M)
         program_source_floats = RayStruct_OpenCL + MatrixStruct_OpenCL + """
         kernel void product(global MatrixStruct *mat, global RayStruct *vec, global RayStruct* res, int M)
                       {
