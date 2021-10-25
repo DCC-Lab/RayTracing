@@ -851,12 +851,12 @@ class Matrix(object):
                           
                           if (!v.isBlocked) {
                               v.y     = m.A * v.y + m.B * v.theta;
-                              v.theta = m.C * v.theta + m.D * v.theta;
+                              v.theta = m.C * v.y + m.D * v.theta;
                               
                               v.z += m.L;
                               v.apertureDiameter = m.apertureDiameter;
 
-                              if ( (v.y > m.apertureDiameter/2) || (v.theta > m.apertureNA) )  {
+                              if ( (v.y > m.apertureDiameter/2) || (v.y < -m.apertureDiameter/2) || (v.theta > m.apertureNA) || (v.theta < -m.apertureNA) )  {
                                  v.isBlocked = 1;
                               }                          
                           }
