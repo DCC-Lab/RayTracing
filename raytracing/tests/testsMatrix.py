@@ -440,7 +440,7 @@ class TestMatrix(envtest.RaytracingTestCase):
         print((a[0].astype(CompactRay.Struct)))
 
     def testTraceManyOpenCL(self):
-        rays = UniformRays(M=1000,N=100)#[Ray(y, y) for y in range(1000000)]
+        rays = UniformRays(M=100,N=10)#[Ray(y, y) for y in range(1000000)]
         path = ImagingPath()
         path.append(Space(d=2))
         path.append(Lens(f=10, diameter=25))
@@ -451,7 +451,12 @@ class TestMatrix(envtest.RaytracingTestCase):
         path.append(Space(d=4))
         m = MatrixGroup(path.transferMatrices())
         outputRaytraces = m.traceManyOpenCL(rays)
-        print(outputRaytraces)
+
+
+        path.display(raysList=outputRaytraces)
+        # for trace in outputRaytraces:
+        #     for ray in trace:
+        #         print("{0}".format(ray))
 
     def testPointsOfInterest(self):
         m = Matrix()

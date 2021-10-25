@@ -532,7 +532,7 @@ class UniformRays(Rays):
 
         for y in heights:
             for theta in np.linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
-                rays.append(Ray(y, theta))
+                rays.append(CompactRay(struct=(y, theta,0,0,0,0)))
         super(UniformRays, self).__init__(rays=rays)
 
 
@@ -591,7 +591,7 @@ class LambertianRays(Rays):
             intensity = int(I * np.cos(theta))
             for y in np.linspace(self.yMin, self.yMax, M, endpoint=True):
                 for k in range(intensity):
-                    rays.append(Ray(y, theta))
+                    rays.append(CompactRay(struct=(y, theta, 0, 0, 0, 0)))
         super(LambertianRays, self).__init__(rays=rays)
 
 
@@ -714,7 +714,7 @@ class RandomUniformRays(RandomRays):
 
         theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
         y = self.yMin + np.random.random() * (self.yMax - self.yMin)
-        ray = Ray(y=y, theta=theta)
+        ray = CompactRay(struct=(y, theta, 0, 0, 0, 0))
         self.append(ray)
         return ray
 
@@ -772,7 +772,7 @@ class RandomLambertianRays(RandomRays):
                 break
 
         y = self.yMin + np.random.random() * (self.yMax - self.yMin)
-        ray = Ray(y, theta)
+        ray = CompactRay( struct=(y, theta, 0, 0, 0, 0) )
         self.append(ray)
         return ray
 
