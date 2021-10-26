@@ -301,16 +301,17 @@ class Ray:
     def __eq__(self, other):
         """Define rays to be equal if they have the same height and angle."""
 
-        if not isinstance(other, Ray):
-            return False
-        elif self.y != other.y:
-            return False
-        elif self.theta != other.theta:
+        try:
+            if self.y != other.y:
+                return False
+            elif self.theta != other.theta:
+                return False
+        except Exception as err:
             return False
 
         return True
 
-class CompactRay(Ray):
+class CompactRay:
 
     Struct = np.dtype([("y", np.float32),
                       ("theta", np.float32),
@@ -321,7 +322,6 @@ class CompactRay(Ray):
                       ])
 
     def __init__(self, raysSource, index):
-        super().__init__()
         self.rays = raysSource
         self.index = index
 
@@ -370,3 +370,16 @@ class CompactRay(Ray):
     @wavelength.setter
     def wavelength(self, value):
         self.elementAsStruct[5] = value
+
+    def __eq__(self, other):
+        """Define rays to be equal if they have the same height and angle."""
+
+        try:
+            if self.y != other.y:
+                return False
+            elif self.theta != other.theta:
+                return False
+        except Exception as err:
+            return False
+
+        return True

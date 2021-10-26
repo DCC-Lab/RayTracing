@@ -1,7 +1,8 @@
 from raytracing import *
 import time
 
-rays = RandomUniformRays(yMax=10, maxCount=100000)#[Ray(y, y) for y in range(1000000)]
+rays = RandomUniformRays(yMax=10, maxCount=1000000)#[Ray(y, y) for y in range(1000000)]
+rays[-1]
 path = ImagingPath()
 path.append(Space(d=2))
 path.append(Lens(f=10, diameter=1))
