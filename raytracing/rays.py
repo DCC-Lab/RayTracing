@@ -365,8 +365,8 @@ class Rays:
         if self._rays is None:
             raise StopIteration
 
-        if self.iteration < len(self._rays):
-            ray = self._rays[self.iteration]
+        if self.iteration < len(self): # We really want to use len(self) to be compatible with CompactRays
+            ray = self[self.iteration] # Again we want to use __getitem__ for self for CompactRays
             self.iteration += 1
             return ray
 
@@ -467,16 +467,24 @@ class Rays:
     # and https://stackoverflow.com/questions/3122049/drawing-an-anti-aliased-line-with-thepython-imaging-library
 
 class CompactRays(Rays):
-    def __init__(self, compactRaysStructuredBuffer=None):
+    def __init__(self, compactRaysStructuredBuffer=None, maxCount=None):
         super().__init__()
-        self.buffer = compactRaysStructuredBuffer
+        self.maxCount = maxCount
+
         if compactRaysStructuredBuffer is not None:
-            self._rays = np.frombuffer(compactRaysStructuredBuffer, dtype=CompactRay.Struct)
+            self.buffer = compactRaysStructuredBuffer
+            self._rays = np.frombuffer(self.buffer, dtype=CompactRay.Struct)
+        elif maxCount is not None:
+            self._rays = np.zeros((maxCount,), dtype=CompactRay.Struct)
+            self.buffer = self._rays.data
         else:
-            self._rays = np.array([], dtype=CompactRay.Struct)
+            raise ValueError('You must provide a buffer or a maxCount')
 
     def __getitem__(self, index):
-        return CompactRay(self.buffer, index)
+        return CompactRay(self, index)
+
+    def append(self, tuple):
+        raise RuntimeError('You can only replace elements from a pre-allocated CompactRays')
 
 class UniformRays(Rays):
     """A list of rays with uniform distribution.
@@ -543,11 +551,11 @@ class UniformRays(Rays):
 
         for y in heights:
             for theta in np.linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
-                rays.append(CompactRay(struct=(y, theta,0,0,0,0)))
+                rays.append(Ray(y, theta))
         super(UniformRays, self).__init__(rays=rays)
 
 
-class LambertianRays(Rays):
+class LambertianRays(CompactRays):
     """A list of rays with Lambertian distribution.
 
     Parameters
@@ -597,16 +605,20 @@ class LambertianRays(Rays):
         self.M = M
         self.N = N
         self.I = I
-        rays = []
+        super(LambertianRays, self).__init__(maxCount=M*N*I)
+
+        i = 0
         for theta in np.linspace(self.thetaMin, self.thetaMax, N, endpoint=True):
             intensity = int(I * np.cos(theta))
             for y in np.linspace(self.yMin, self.yMax, M, endpoint=True):
                 for k in range(intensity):
-                    rays.append(CompactRay(struct=(y, theta, 0, 0, 0, 0)))
-        super(LambertianRays, self).__init__(rays=rays)
+                    ray = self[i]
+                    ray.y = y
+                    ray.theta = theta
+                    i += 1
 
 
-class RandomRays(Rays):
+class RandomRays(CompactRays):
     """A list of rays with Random distribution.
 
     Parameters
@@ -641,7 +653,9 @@ class RandomRays(Rays):
         self.thetaMin = thetaMin
         if thetaMin is None:
             self.thetaMin = -thetaMax
-        super(RandomRays, self).__init__()
+
+        self.nextAvailable = 0
+        super(RandomRays, self).__init__(maxCount=maxCount)
 
     def __len__(self) -> int:
         return self.maxCount
@@ -651,16 +665,17 @@ class RandomRays(Rays):
             # Convert negative index to positive (i.e. -1 == len - 1)
             item += self.maxCount
 
-        if item < 0 or item >= self.maxCount:
+        if item < 0 or item > self.maxCount:
             raise IndexError(f"Index {item} out of bound, min = 0, max {self.maxCount}.")
 
         start = time.monotonic()
-        while len(self._rays) <= item:
-            self.randomRay()
+        ray = None
+        while self.nextAvailable <= item:
+            ray = self.randomRay()
             if time.monotonic() - start > 3:
                 warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
 
-        return self._rays[item]
+        return CompactRay(self, item)
 
     def __next__(self) -> Ray:
         if self.iteration >= self.maxCount:
@@ -720,13 +735,13 @@ class RandomUniformRays(RandomRays):
                                                 maxCount=maxCount)
 
     def randomRay(self) -> Ray:
-        if len(self._rays) == self.maxCount:
+        if self.nextAvailable >= self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
-        theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
-        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
-        ray = CompactRay(struct=(y, theta, 0, 0, 0, 0))
-        self.append(ray)
+        ray = CompactRay(self, self.nextAvailable) # CompactRay
+        ray.theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+        ray.y = self.yMin + np.random.random() * (self.yMax - self.yMin)
+        self.nextAvailable += 1
         return ray
 
 
@@ -771,7 +786,7 @@ class RandomLambertianRays(RandomRays):
                                                    maxCount=maxCount)
 
     def randomRay(self) -> Ray:
-        if len(self._rays) == self.maxCount:
+        if self.nextAvailable >= self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
         theta = 0
@@ -782,9 +797,10 @@ class RandomLambertianRays(RandomRays):
             if randomValue < intensity:
                 break
 
-        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
-        ray = CompactRay( struct=(y, theta, 0, 0, 0, 0) )
-        self.append(ray)
+        ray = CompactRay(self, self.nextAvailable) # CompactRay
+        ray.theta = theta
+        ray.y = self.yMin + np.random.random() * (self.yMax - self.yMin)
+        self.nextAvailable += 1
         return ray
 
 

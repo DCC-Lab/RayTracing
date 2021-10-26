@@ -249,33 +249,52 @@ class TestRays(envtest.RaytracingTestCase):
 
 
 class TestCompactRays(envtest.RaytracingTestCase):
-    def testCompactRays(self):
-        rays = CompactRays()
+    def testCompactRaysPreallocated(self):
+        rays = CompactRays(maxCount=10)
         self.assertIsNotNone(rays)
-        self.assertEqual(len(rays), 0)
+        self.assertEqual(len(rays), 10)
 
     def testCompactRaysFromBuffer(self):
         rays = CompactRays(compactRaysStructuredBuffer=bytearray(b'\x00'*CompactRay.Struct.itemsize))
-        self.assertEqual(len(rays._rays), 1)
+        self.assertEqual(len(rays), 1)
 
     def testCompactRaysFromBufferElementRightType(self):
         rays = CompactRays(compactRaysStructuredBuffer=bytearray(b'\x00' * CompactRay.Struct.itemsize))
         self.assertTrue(isinstance(rays[0], CompactRay))
 
-    def testCompactRaysFromBufferElementRightValues(self):
+    def testCompactRayElementHasRightValues(self):
         value = 1.0
         floatBytes = pack('<f', value) # should use dtype formats? Don't know how to read alignment
         rays = CompactRays(compactRaysStructuredBuffer=bytearray(floatBytes + b'\x00' * (CompactRay.Struct.itemsize-4)))
         ray = rays[0]
         self.assertEqual(ray.y, value)
+        self.assertEqual(ray.isBlocked, False)
 
+    def testCompactRayElementCanChangeValue(self):
+        value = 1.0
+        floatBytes = pack('<f', value) # should use dtype formats? Don't know how to read alignment
+        rays = CompactRays(compactRaysStructuredBuffer=bytearray(floatBytes + b'\x00' * (CompactRay.Struct.itemsize-4)))
+        ray = rays[0]
+        self.assertEqual(ray.y, value)
+        self.assertEqual(ray.isBlocked, False)
+        ray.y = 2.0*value+1
+        self.assertEqual(ray.y, 2*value+1)
 
+    def testAppendElementToBufferFails(self):
+        rays = CompactRays(compactRaysStructuredBuffer=bytearray(b'\x00' * (CompactRay.Struct.itemsize)))
+        with self.assertRaises(Exception):
+            rays.append((1,2,3,4,5,6))
 
+        rays = CompactRays(maxCount=10)
+        with self.assertRaises(Exception):
+            rays.append((1,2,3,4,5,6))
 
-
-
-
-
+    def testReplaceValue(self):
+        rays = CompactRays(maxCount=10)
+        rays[0].y = 1
+        rays[2].theta = 2
+        self.assertEqual(rays[0].y, 1)
+        self.assertEqual(rays[2].theta, 2)
 
 
 

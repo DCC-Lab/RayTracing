@@ -320,63 +320,53 @@ class CompactRay(Ray):
                       ("wavelength", np.float32)
                       ])
 
-    def __init__(self, buffer, index):
+    def __init__(self, raysSource, index):
         super().__init__()
-        self.structuredBytes = np.frombuffer(buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * index)[0]
-        # if isinstance(ray, CompactRay):
-        #     self.structuredBytes = ray.structuredBytes
-        # elif isinstance(ray, Ray):
-        #     byte = bytearray()
-        #     for field in CompactRay.Struct.descr:
-        #         name = field[0]
-        #         format = field[1]
-        #         byte += pack(format, (ray.__getattribute__(name)))
-        # elif tuple is not None:
-        #     if len(tuple) == 6:
-        #         self.struct = tuple
-        #     else:
-        #         raise ValueError("You must provide struct with these fields in order: {0}, {1}".format(self.Struct.fields, struct))
-        # else:
-        #     self.structuredBytes = np.array((0, 0, 0, False, 0, 0), dtype=CompactRay.Struct)
+        self.rays = raysSource
+        self.index = index
+
+    @property
+    def elementAsStruct(self):
+        return np.frombuffer(self.rays.buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * self.index)[0]
 
     @property
     def y(self):
-        return self.structuredBytes[0]
+        return self.elementAsStruct[0]
     @y.setter
     def y(self, value):
-        self.structuredBytes[0] = value
+        self.elementAsStruct[0] = value
 
     @property
     def theta(self):
-        return self.structuredBytes[1]
+        return self.elementAsStruct[1]
     @theta.setter
     def theta(self, value):
-        self.structuredBytes[1] = value
+        self.elementAsStruct[1] = value
 
     @property
     def z(self):
-        return self.structuredBytes[2]
+        return self.elementAsStruct[2]
     @z.setter
     def z(self, value):
-        self.structuredBytes[2] = value
+        self.elementAsStruct[2] = value
 
     @property
     def isBlocked(self):
-        return self.structuredBytes[3] != 0
+        return self.elementAsStruct[3] != 0
     @isBlocked.setter
     def isBlocked(self, value):
-        self.structuredBytes[3] = (value != 0)
+        self.elementAsStruct[3] = (value != 0)
 
     @property
     def apertureDiameter(self):
-        return self.structuredBytes[4]
+        return self.elementAsStruct[4]
     @apertureDiameter.setter
     def apertureDiameter(self, value):
-        self.structuredBytes[4] = value
+        self.elementAsStruct[4] = value
 
     @property
     def wavelength(self):
-        return self.structuredBytes[5]
+        return self.elementAsStruct[5]
     @wavelength.setter
     def wavelength(self, value):
-        self.structuredBytes[5] = value
+        self.elementAsStruct[5] = value
