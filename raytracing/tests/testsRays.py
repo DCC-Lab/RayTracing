@@ -247,10 +247,47 @@ class TestRays(envtest.RaytracingTestCase):
         with self.assertRaises(TypeError):
             rays.append("This is a ray")
 
-    def testAsStructuredArray(self):
-        rays = RandomUniformRays()
-        structArray = np.array([ r.struct for r in rays ], dtype=CompactRay.Struct)
-        print(structArray)
+
+class TestCompactRays(envtest.RaytracingTestCase):
+    def testCompactRays(self):
+        rays = CompactRays()
+        self.assertIsNotNone(rays)
+        self.assertEqual(len(rays), 0)
+
+    def testCompactRaysFromBuffer(self):
+        rays = CompactRays(compactRaysStructuredBuffer=bytearray(b'\x00'*CompactRay.Struct.itemsize))
+        self.assertEqual(len(rays._rays), 1)
+
+    def testCompactRaysFromBufferRightType(self):
+        rays = CompactRays(compactRaysStructuredBuffer=bytearray(b'\x00' * CompactRay.Struct.itemsize))
+        self.assertTrue(isinstance(rays[0], CompactRay.Struct.type))
+
+    def testDefaultCompactRay(self):
+        ray = CompactRay()
+        self.assertIsNotNone(ray)
+
+    def testCompactRayNoInitPossibleFromComponent(self):
+        with self.assertRaises(Exception):
+            ray = CompactRay(y=1, theta=2)
+
+    def testCompactRayNoInitPossibleFromComponent(self):
+        ray = CompactRay()
+        self.assertIsNotNone(ray)
+        with self.assertRaises(Exception):
+            ray = CompactRay(y=1, theta=2)
+
+    def testCompactRayFromRay(self):
+        someRay = Ray(y=1, theta=2)
+        ray = CompactRay(someRay)
+        self.assertIsNotNone(ray)
+        self.assertEqual(ray, someRay)
+
+    # def testAsStructuredArray(self):
+    #     rays = RandomUniformRays()
+    #     structArray = np.array([ r.struct for r in rays ], dtype=CompactRay.Struct)
+    #     print(structArray)
+
+
 
 class TestRaysSaveAndLoad(envtest.RaytracingTestCase):
 

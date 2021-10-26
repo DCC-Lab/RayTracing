@@ -1,6 +1,7 @@
 import warnings
 from .utils import deprecated
 import numpy as np
+from struct import pack
 
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
@@ -319,56 +320,65 @@ class CompactRay(Ray):
                       ("wavelength", np.float32)
                       ])
 
-    def __init__(self, ray=None, struct=None):
+    def __init__(self, ray=None, tuple=None, bytes=None, index=0):
         super().__init__()
-        if ray is not None:
-            self.struct = (ray.y, ray.theta, ray.z, ray.isBlocked, ray.apertureDiameter, ray.wavelength)
-        elif struct is not None:
-            if len(struct) == 6:
-                self.struct = struct
+        self.structuredBytes = None
+        self.index = index
+
+        if isinstance(ray, CompactRay):
+            self.structuredBytes = ray.structuredBytes
+        elif isinstance(ray, Ray):
+            byte = bytearray()
+            for field in CompactRay.Struct.descr:
+                name = field[0]
+                format = field[1]
+                byte += pack(format, (ray.__getattribute__(name)))
+        elif tuple is not None:
+            if len(tuple) == 6:
+                self.struct = tuple
             else:
                 raise ValueError("You must provide struct with these fields in order: {0}, {1}".format(self.Struct.fields, struct))
         else:
-            self.struct = struct.pack(Compact.Struct, (0,0,0,0,0,0))
+            self.structuredBytes = np.array((0, 0, 0, False, 0, 0), dtype=CompactRay.Struct)
 
     @property
     def y(self):
-        return self.struct[0]
+        return self.structuredBytes[0]
     @y.setter
     def y(self, value):
-        self.struct[0] = value
+        self.structuredBytes[0] = value
 
     @property
     def theta(self):
-        return self.struct[1]
+        return self.structuredBytes[1]
     @theta.setter
     def theta(self, value):
-        self.struct[1] = value
+        self.structuredBytes[1] = value
 
     @property
     def z(self):
-        return self.struct[2]
+        return self.structuredBytes[2]
     @z.setter
     def z(self, value):
-        self.struct[2] = value
+        self.structuredBytes[2] = value
 
     @property
     def isBlocked(self):
-        return self.struct[3] != 0
+        return self.structuredBytes[3] != 0
     @isBlocked.setter
     def isBlocked(self, value):
-        self.struct[3] = (value != 0)
+        self.structuredBytes[3] = (value != 0)
 
     @property
     def apertureDiameter(self):
-        return self.struct[4]
+        return self.structuredBytes[4]
     @apertureDiameter.setter
     def apertureDiameter(self, value):
-        self.struct[4] = value
+        self.structuredBytes[4] = value
 
     @property
     def wavelength(self):
-        return self.struct[5]
+        return self.structuredBytes[5]
     @wavelength.setter
     def wavelength(self, value):
-        self.struct[5] = value
+        self.structuredBytes[5] = value
