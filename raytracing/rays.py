@@ -486,7 +486,7 @@ class CompactRays(Rays):
     def append(self, tuple):
         raise RuntimeError('You can only replace elements from a pre-allocated CompactRays')
 
-class UniformRays(Rays):
+class UniformRays(CompactRays):
     """A list of rays with uniform distribution.
 
     Parameters
@@ -549,10 +549,16 @@ class UniformRays(Rays):
         else:
             heights = np.linspace(self.yMin, self.yMax, self.M, endpoint=True)
 
+        super(UniformRays, self).__init__(maxCount=M*N)
+
+        i = 0
         for y in heights:
             for theta in np.linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
-                rays.append(Ray(y, theta))
-        super(UniformRays, self).__init__(rays=rays)
+                ray = self[i]
+                ray.y = y
+                ray.theta = theta
+                i += 1
+
 
 
 class LambertianRays(CompactRays):
