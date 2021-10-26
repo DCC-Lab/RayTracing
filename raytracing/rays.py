@@ -469,26 +469,14 @@ class Rays:
 class CompactRays(Rays):
     def __init__(self, compactRaysStructuredBuffer=None):
         super().__init__()
+        self.buffer = compactRaysStructuredBuffer
         if compactRaysStructuredBuffer is not None:
-            # self._rays = np.frombuffer(compactRaysStructuredBuffer, dtype=CompactRay.Struct)
             self._rays = np.frombuffer(compactRaysStructuredBuffer, dtype=CompactRay.Struct)
         else:
             self._rays = np.array([], dtype=CompactRay.Struct)
 
-    # def append(self, element):
-    #     """A ray can be appended to the List of the rays using this function.
-    #
-    #      Parameters
-    #      ----------
-    #      ray : object of ray class
-    #         a ray with height y and angle theta
-    #
-    #      """
-    #     # if not isinstance(element, Ray):
-    #     #     raise TypeError("'ray' must be a 'Ray' object.")
-    #
-    #     np.append(self._rays, [element])
-    #
+    def __getitem__(self, index):
+        return CompactRay(self.buffer, index)
 
 class UniformRays(Rays):
     """A list of rays with uniform distribution.

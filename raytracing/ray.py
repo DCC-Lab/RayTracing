@@ -320,26 +320,24 @@ class CompactRay(Ray):
                       ("wavelength", np.float32)
                       ])
 
-    def __init__(self, ray=None, tuple=None, bytes=None, index=0):
+    def __init__(self, buffer, index):
         super().__init__()
-        self.structuredBytes = None
-        self.index = index
-
-        if isinstance(ray, CompactRay):
-            self.structuredBytes = ray.structuredBytes
-        elif isinstance(ray, Ray):
-            byte = bytearray()
-            for field in CompactRay.Struct.descr:
-                name = field[0]
-                format = field[1]
-                byte += pack(format, (ray.__getattribute__(name)))
-        elif tuple is not None:
-            if len(tuple) == 6:
-                self.struct = tuple
-            else:
-                raise ValueError("You must provide struct with these fields in order: {0}, {1}".format(self.Struct.fields, struct))
-        else:
-            self.structuredBytes = np.array((0, 0, 0, False, 0, 0), dtype=CompactRay.Struct)
+        self.structuredBytes = np.frombuffer(buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * index)[0]
+        # if isinstance(ray, CompactRay):
+        #     self.structuredBytes = ray.structuredBytes
+        # elif isinstance(ray, Ray):
+        #     byte = bytearray()
+        #     for field in CompactRay.Struct.descr:
+        #         name = field[0]
+        #         format = field[1]
+        #         byte += pack(format, (ray.__getattribute__(name)))
+        # elif tuple is not None:
+        #     if len(tuple) == 6:
+        #         self.struct = tuple
+        #     else:
+        #         raise ValueError("You must provide struct with these fields in order: {0}, {1}".format(self.Struct.fields, struct))
+        # else:
+        #     self.structuredBytes = np.array((0, 0, 0, False, 0, 0), dtype=CompactRay.Struct)
 
     @property
     def y(self):

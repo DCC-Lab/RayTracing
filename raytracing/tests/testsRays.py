@@ -258,29 +258,47 @@ class TestCompactRays(envtest.RaytracingTestCase):
         rays = CompactRays(compactRaysStructuredBuffer=bytearray(b'\x00'*CompactRay.Struct.itemsize))
         self.assertEqual(len(rays._rays), 1)
 
-    def testCompactRaysFromBufferRightType(self):
+    def testCompactRaysFromBufferElementRightType(self):
         rays = CompactRays(compactRaysStructuredBuffer=bytearray(b'\x00' * CompactRay.Struct.itemsize))
-        self.assertTrue(isinstance(rays[0], CompactRay.Struct.type))
+        self.assertTrue(isinstance(rays[0], CompactRay))
 
-    def testDefaultCompactRay(self):
-        ray = CompactRay()
-        self.assertIsNotNone(ray)
+    def testCompactRaysFromBufferElementRightValues(self):
+        value = 1.0
+        floatBytes = pack('<f', value) # should use dtype formats? Don't know how to read alignment
+        rays = CompactRays(compactRaysStructuredBuffer=bytearray(floatBytes + b'\x00' * (CompactRay.Struct.itemsize-4)))
+        ray = rays[0]
+        self.assertEqual(ray.y, value)
 
-    def testCompactRayNoInitPossibleFromComponent(self):
-        with self.assertRaises(Exception):
-            ray = CompactRay(y=1, theta=2)
 
-    def testCompactRayNoInitPossibleFromComponent(self):
-        ray = CompactRay()
-        self.assertIsNotNone(ray)
-        with self.assertRaises(Exception):
-            ray = CompactRay(y=1, theta=2)
 
-    def testCompactRayFromRay(self):
-        someRay = Ray(y=1, theta=2)
-        ray = CompactRay(someRay)
-        self.assertIsNotNone(ray)
-        self.assertEqual(ray, someRay)
+
+
+
+
+
+
+
+
+
+    # def testDefaultCompactRay(self):
+    #     ray = CompactRay()
+    #     self.assertIsNotNone(ray)
+    #
+    # def testCompactRayNoInitPossibleFromComponent(self):
+    #     with self.assertRaises(Exception):
+    #         ray = CompactRay(y=1, theta=2)
+    #
+    # def testCompactRayNoInitPossibleFromComponent(self):
+    #     ray = CompactRay()
+    #     self.assertIsNotNone(ray)
+    #     with self.assertRaises(Exception):
+    #         ray = CompactRay(y=1, theta=2)
+
+    # def testCompactRayFromRay(self):
+    #     someRay = Ray(y=1, theta=2)
+    #     ray = CompactRay(someRay)
+    #     self.assertIsNotNone(ray)
+    #     self.assertEqual(ray, someRay)
 
     # def testAsStructuredArray(self):
     #     rays = RandomUniformRays()
