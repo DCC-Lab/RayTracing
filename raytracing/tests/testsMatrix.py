@@ -313,150 +313,6 @@ class TestMatrix(envtest.RaytracingTestCase):
         m1 = Matrix(A=1, B=0, C=0, D=2, frontIndex=2)
         self.assertEqual(m1.transferMatrices(), [m1])
 
-    def testTrace(self):
-        ray = Ray(y=1, theta=1)
-        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
-        trace = [ray, m * ray]
-        self.assertListEqual(m.trace(ray), trace)
-
-    def testTraceNullLength(self):
-        ray = Ray(y=1, theta=1)
-        m = Matrix(A=1, B=0, C=0, D=1)
-        trace = [m * ray]
-        self.assertListEqual(m.trace(ray), trace)
-
-    def testTraceBlocked(self):
-        ray = Ray(y=10, theta=1)
-        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10, physicalLength=1)
-        trace = m.trace(ray)
-        self.assertTrue(all(x.isBlocked for x in trace))
-
-    def testTraceGaussianBeam(self):
-        beam = GaussianBeam(w=1)
-        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
-        outputBeam = m * beam
-        tracedBeam = m.trace(beam)[-1]
-        self.assertEqual(tracedBeam.w, outputBeam.w)
-        self.assertEqual(tracedBeam.q, outputBeam.q)
-        self.assertEqual(tracedBeam.z, outputBeam.z)
-        self.assertEqual(tracedBeam.n, outputBeam.n)
-        self.assertEqual(tracedBeam.isClipped, outputBeam.isClipped)
-
-    def testTraceThrough(self):
-        ray = Ray()
-        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
-        trace = m.traceThrough(ray)
-        self.assertEqual(trace, m * ray)
-
-    def testTraceMany(self):
-        rays = [Ray(y, theta) for y, theta in zip(range(10, 20), range(10))]
-        m = Matrix(physicalLength=1.01)
-        traceMany = [[ray, ray] for ray in rays]
-        self.assertListEqual(m.traceMany(rays), traceMany)
-
-    def testTraceManyJustOne(self):
-        rays = [Ray()]
-        m = Matrix(physicalLength=1e-9)
-        traceMany = [rays * 2]
-        self.assertListEqual(m.traceMany(rays), traceMany)
-
-    def testTraceManyThroughIterable(self):
-        rays = [Ray(y, y) for y in range(10)]
-        m = Matrix(physicalLength=1)
-        iterable = tuple(rays)
-        raysObj = Rays(iterable)
-
-        traceManyThroughList = m.traceManyThrough(rays)
-        traceManyThroughTuple = m.traceManyThrough(iterable)
-        traceManyThroughRays = m.traceManyThrough(raysObj)
-        for i in range(len(rays)):
-            self.assertEqual(rays[i], traceManyThroughList[i])
-            self.assertEqual(rays[i], traceManyThroughTuple[i])
-            self.assertEqual(rays[i], traceManyThroughRays[i])
-
-    def testTraceManyThroughNotIterable(self):
-        with self.assertRaises(TypeError):
-            m = Matrix()
-            m.traceManyThrough(self.assertIs)
-
-    def testTraceManyThroughOutput(self):
-        rays = [Ray(y, y) for y in range(10_000)]
-        m = Matrix(physicalLength=1)
-        self.assertPrints(m.traceManyThrough, "Progress 10000/10000 (100%)", inputRays=rays, progress=True)
-
-    def testTraceManyThroughNoOutput(self):
-        rays = [Ray(y, y) for y in range(10_000)]
-        m = Matrix(physicalLength=1)
-        self.assertPrints(m.traceManyThrough, "", inputRays=rays, progress=False)
-
-    def testTraceManyThroughLastRayBlocked(self):
-        m = Matrix()
-        rays = Rays([Ray(), Ray(-1, -1)])
-        rays[-1].isBlocked = True
-        traceManyThrough = m.traceManyThrough(rays)
-        # One less ray, because last is blocked
-        self.assertEqual(len(traceManyThrough), len(rays) - 1)
-
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
-                    "Endless loop on macOS")
-    # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallel(self):
-        rays = [Ray(y, y) for y in range(5)]
-        m = Matrix(physicalLength=1)
-        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
-        for i in range(len(rays)):
-            # Order is not kept, we have to check if the ray traced is in the original list
-            self.assertIn(trace[i], rays)
-
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
-                    "Endless loop on macOS")
-    # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallel(self):
-        rays = [Ray(y, y) for y in range(5)]
-        m = Matrix(physicalLength=1)
-        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
-        for i in range(len(rays)):
-            # Order is not kept, we have to check if the ray traced is in the original list
-            self.assertIn(trace[i], rays)
-
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
-                    "Endless loop on macOS")
-    # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallelNoOutput(self):
-        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True,
-                                         universal_newlines=True)
-        self.assertEqual(processComplete.stdout, "")
-
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
-                    "Endless loop on macOS")
-    # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallelWithOutput(self):
-        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
-                                         capture_output=True, universal_newlines=True)
-        self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
-
-    def testdtypes(self):
-        a = np.array([(1,2,3,4,5,6)], dtype=CompactRay.Struct)
-        print((a[0].astype(CompactRay.Struct)))
-
-    def testTraceManyOpenCL(self):
-        rays = UniformRays(M=100,N=10)#[Ray(y, y) for y in range(1000000)]
-        path = ImagingPath()
-        path.append(Space(d=2))
-        path.append(Lens(f=10, diameter=25))
-        path.append(Space(d=2))
-        path.append(Lens(f=20))
-        path.append(Space(d=3))
-        path.append(Lens(f=30))
-        path.append(Space(d=4))
-        m = MatrixGroup(path.transferMatrices())
-        outputRaytraces = m.traceManyOpenCL(rays)
-
-
-        path.display(raysList=outputRaytraces)
-        # for trace in outputRaytraces:
-        #     for ray in trace:
-        #         print("{0}".format(ray))
 
     def testPointsOfInterest(self):
         m = Matrix()
@@ -730,6 +586,222 @@ f = +inf (afocal)
         m2 = Matrix(1,0,0,1)
         m2.fromStruct(theStruct)
         self.assertEqual(m, m2)
+
+class TestTrace(envtest.RaytracingTestCase):
+    def testTrace(self):
+        ray = Ray(y=1, theta=1)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
+        trace = [ray, m * ray]
+        self.assertListEqual(m.trace(ray), trace)
+
+    def testTraceNullLength(self):
+        ray = Ray(y=1, theta=1)
+        m = Matrix(A=1, B=0, C=0, D=1)
+        trace = [m * ray]
+        self.assertListEqual(m.trace(ray), trace)
+
+    def testTraceBlocked(self):
+        ray = Ray(y=10, theta=1)
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10, physicalLength=1)
+        trace = m.trace(ray)
+        self.assertTrue(all(x.isBlocked for x in trace))
+
+    def testTraceGaussianBeam(self):
+        beam = GaussianBeam(w=1)
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
+        outputBeam = m * beam
+        tracedBeam = m.trace(beam)[-1]
+        self.assertEqual(tracedBeam.w, outputBeam.w)
+        self.assertEqual(tracedBeam.q, outputBeam.q)
+        self.assertEqual(tracedBeam.z, outputBeam.z)
+        self.assertEqual(tracedBeam.n, outputBeam.n)
+        self.assertEqual(tracedBeam.isClipped, outputBeam.isClipped)
+
+    def testTraceThrough(self):
+        ray = Ray()
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
+        trace = m.traceThrough(ray)
+        self.assertEqual(trace, m * ray)
+
+    def testTraceManyNative(self):
+        inputRays = []
+        for y in [-1,0,1]:
+            for t in [-1, -0.5, 0, 0.5, 1.0]:
+                inputRays.append(Ray(y, t))
+                inputRays.append(Ray(-y, -t))
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        outputRayTraces = group.traceManyNative(inputRays)
+
+        self.assertEqual(len(outputRayTraces), len(inputRays))
+        for i, rayTrace in enumerate(outputRayTraces):
+            self.assertEqual(rayTrace[0], inputRays[i])
+        for i, rayTrace in enumerate(outputRayTraces):
+            if rayTrace[-1].isNotBlocked:
+                self.assertEqual(rayTrace[0].y,-rayTrace[-1].y)
+        for i, rayTrace in enumerate(outputRayTraces):
+            if abs(rayTrace[0].theta) >= 0.99:
+                self.assertTrue(rayTrace[-1].isBlocked)
+
+    def testTraceManyNativeCompactRays(self):
+        inputRays = CompactRays(maxCount=15)
+        for i,y in enumerate([-1,0,1]):
+            for j,t in enumerate([-1, -0.5, 0, 0.5, 1.0]):
+                ray = inputRays[i*5+j]
+                ray.y = y
+                ray.theta = t
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        outputRayTraces = group.traceManyNative(inputRays)
+
+        self.assertEqual(len(outputRayTraces), len(inputRays))
+        for i, rayTrace in enumerate(outputRayTraces):
+            self.assertEqual(rayTrace[0], inputRays[i])
+        for i, rayTrace in enumerate(outputRayTraces):
+            if rayTrace[-1].isNotBlocked:
+                self.assertEqual(rayTrace[0].y,-rayTrace[-1].y)
+        for i, rayTrace in enumerate(outputRayTraces):
+            if abs(rayTrace[0].theta) >= 0.99:
+                self.assertTrue(rayTrace[-1].isBlocked)
+
+    def testTraceManyNativeNonAndCompactRays(self):
+        inputRays1 = []
+        for y in [-1,0,1]:
+            for t in [-1, -0.5, 0, 0.5, 1.0]:
+                inputRays1.append(Ray(y, t))
+                inputRays1.append(Ray(-y, -t))
+
+        inputRays2 = CompactRays(maxCount=len(inputRays1))
+        for i,otherRay in enumerate(inputRays1):
+            compactRay = inputRays2[i]
+            compactRay.y = otherRay.y
+            compactRay.theta = otherRay.theta
+
+        for r1,r2 in zip(inputRays1, inputRays2):
+            self.assertEqual(r1,r2)
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        outputRayTraces1 = group.traceManyNative(inputRays1)
+        outputRayTraces2 = group.traceManyNative(inputRays2)
+
+        self.assertEqual(outputRayTraces1, outputRayTraces2)
+
+
+    def testTraceManyJustOne(self):
+        rays = [Ray()]
+        m = Matrix(physicalLength=1e-9)
+        traceMany = [rays * 2]
+        self.assertListEqual(m.traceMany(rays), traceMany)
+
+    def testTraceManyThroughIterable(self):
+        rays = [Ray(y, y) for y in range(10)]
+        m = Matrix(physicalLength=1)
+        iterable = tuple(rays)
+        raysObj = Rays(iterable)
+
+        traceManyThroughList = m.traceManyThrough(rays)
+        traceManyThroughTuple = m.traceManyThrough(iterable)
+        traceManyThroughRays = m.traceManyThrough(raysObj)
+        for i in range(len(rays)):
+            self.assertEqual(rays[i], traceManyThroughList[i])
+            self.assertEqual(rays[i], traceManyThroughTuple[i])
+            self.assertEqual(rays[i], traceManyThroughRays[i])
+
+    def testTraceManyThroughNotIterable(self):
+        with self.assertRaises(TypeError):
+            m = Matrix()
+            m.traceManyThrough(self.assertIs)
+
+    def testTraceManyThroughOutput(self):
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "Progress 10000/10000 (100%)", inputRays=rays, progress=True)
+
+    def testTraceManyThroughNoOutput(self):
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "", inputRays=rays, progress=False)
+
+    def testTraceManyThroughLastRayBlocked(self):
+        m = Matrix()
+        rays = Rays([Ray(), Ray(-1, -1)])
+        rays[-1].isBlocked = True
+        traceManyThrough = m.traceManyThrough(rays)
+        # One less ray, because last is blocked
+        self.assertEqual(len(traceManyThrough), len(rays) - 1)
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallel(self):
+        rays = [Ray(y, y) for y in range(5)]
+        m = Matrix(physicalLength=1)
+        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(trace[i], rays)
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallel(self):
+        rays = [Ray(y, y) for y in range(5)]
+        m = Matrix(physicalLength=1)
+        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(trace[i], rays)
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallelNoOutput(self):
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True,
+                                         universal_newlines=True)
+        self.assertEqual(processComplete.stdout, "")
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallelWithOutput(self):
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
+                                         capture_output=True, universal_newlines=True)
+        self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
+
+    def testdtypes(self):
+        a = np.array([(1,2,3,4,5,6)], dtype=CompactRay.Struct)
+        print((a[0].astype(CompactRay.Struct)))
+
+    def testTraceManyOpenCL(self):
+        rays = UniformRays(M=100,N=10)#[Ray(y, y) for y in range(1000000)]
+        path = ImagingPath()
+        path.append(Space(d=2))
+        path.append(Lens(f=10, diameter=25))
+        path.append(Space(d=2))
+        path.append(Lens(f=20))
+        path.append(Space(d=3))
+        path.append(Lens(f=30))
+        path.append(Space(d=4))
+        m = MatrixGroup(path.transferMatrices())
+        outputRaytraces = m.traceManyOpenCL(rays)
+
+
+        path.display(raysList=outputRaytraces)
+        # for trace in outputRaytraces:
+        #     for ray in trace:
+        #         print("{0}".format(ray))
 
 if __name__ == '__main__':
     envtest.main()

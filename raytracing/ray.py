@@ -298,6 +298,9 @@ class Ray:
 
         return description
 
+    def __repr__(self):
+        return "{0}".format(self)
+
     def __eq__(self, other):
         """Define rays to be equal if they have the same height and angle."""
 
@@ -311,7 +314,7 @@ class Ray:
 
         return True
 
-class CompactRay:
+class CompactRay(Ray):
 
     Struct = np.dtype([("y", np.float32),
                       ("theta", np.float32),
@@ -322,12 +325,16 @@ class CompactRay:
                       ])
 
     def __init__(self, raysSource, index):
+        super().__init__()
         self.rays = raysSource
         self.index = index
+        self.array = np.frombuffer(self.rays.buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * self.index)
 
     @property
     def elementAsStruct(self):
-        return np.frombuffer(self.rays.buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * self.index)[0]
+        if self.array is None:
+            self.array = np.frombuffer(self.rays.buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * self.index)
+        return self.array[0]
 
     @property
     def y(self):
@@ -370,16 +377,20 @@ class CompactRay:
     @wavelength.setter
     def wavelength(self, value):
         self.elementAsStruct[5] = value
-
-    def __eq__(self, other):
-        """Define rays to be equal if they have the same height and angle."""
-
-        try:
-            if self.y != other.y:
-                return False
-            elif self.theta != other.theta:
-                return False
-        except Exception as err:
-            return False
-
-        return True
+    #
+    # @property
+    # def isNotBlocked(self) -> bool:
+    #     return not self.isBlocked
+    #
+    # def __eq__(self, other):
+    #     """Define rays to be equal if they have the same height and angle."""
+    #
+    #     try:
+    #         if self.y != other.y:
+    #             return False
+    #         elif self.theta != other.theta:
+    #             return False
+    #     except Exception as err:
+    #         return False
+    #
+    #     return True
