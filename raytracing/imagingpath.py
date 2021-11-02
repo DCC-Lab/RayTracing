@@ -349,8 +349,9 @@ class ImagingPath(MatrixGroup):
 
     def fNumber(self):
         """This function returns the f-number of the component or system
-        by dividing the diameter of the entrance pupil by the effective
-        focal length of the system.
+        by dividing the effective focal length of the system by the diameter
+        of the entrance pupil. An f-number is always positive, hence we take the
+        absolute value of the focal length.
 
         It is not always appreciated that the f-number of *an optical system*
         is meaningful mostly in "infinite conjugate" situations, that is, 
@@ -378,7 +379,7 @@ class ImagingPath(MatrixGroup):
         if pupilDiameter is None:
             return None
 
-        return focalFront/pupilDiameter
+        return abs(focalFront)/pupilDiameter
 
     def NA(self):
         """This function returns the numerical aperture of the component
