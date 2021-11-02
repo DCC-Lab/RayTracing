@@ -249,6 +249,25 @@ class TestRays(envtest.RaytracingTestCase):
 
 
 class TestCompactRays(envtest.RaytracingTestCase):
+    def testRaysListRaysAndCompactEquivalence(self):
+        inputRays1 = []
+        for y in [-1, 0, 1]:
+            for t in [-1, -0.5, 0, 0.5, 1.0]:
+                inputRays1.append(Ray(y, t))
+                inputRays1.append(Ray(-y, -t))
+
+        inputRays2 = CompactRays(maxCount=len(inputRays1))
+        inputRays3 = Rays()
+        for i, otherRay in enumerate(inputRays1):
+            compactRay = inputRays2[i]
+            compactRay.y = otherRay.y
+            compactRay.theta = otherRay.theta
+            inputRays3.append(otherRay, copy=True)
+
+        for r1, r2, r3 in zip(inputRays1, inputRays2, inputRays3):
+            self.assertEqual(r1, r2)
+            self.assertEqual(r1, r3)
+
     def testCompactRaysPreallocated(self):
         rays = CompactRays(maxCount=10)
         self.assertIsNotNone(rays)

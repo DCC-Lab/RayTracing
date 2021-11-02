@@ -129,11 +129,12 @@ class TestRay(envtest.RaytracingTestCase):
         rayTrace = [Ray(0,0.1), Ray(0.1,0.2,z=1), Ray(0.3,0,z=2)]
 
         self.assertEqual(Ray.along(rayTrace, z=0), Ray(0,0.1))
-        self.assertEqual(Ray.along(rayTrace, z=0.5), Ray(0.05,0.1))
+        self.assertEqual(Ray.along(rayTrace, z=0.5), Ray(0.05,0.1,z=0.5))
+        self.assertEqual(Ray.along(rayTrace, z=0.5), Ray(0.05,0.1,z=0.5))
         self.assertEqual(Ray.along(rayTrace, z=1.0).y, 0.1)
-        self.assertEqual(Ray.along(rayTrace, z=1.0), Ray(0.1,0.2))
-        self.assertEqual(Ray.along(rayTrace, z=1.5), Ray(0.2,0.2))
-        self.assertEqual(Ray.along(rayTrace, z=2.0), Ray(0.3,0))
+        self.assertEqual(Ray.along(rayTrace, z=1.0), Ray(0.1,0.2,z=1.0))
+        self.assertEqual(Ray.along(rayTrace, z=1.5), Ray(0.2,0.2,z=1.5))
+        self.assertEqual(Ray.along(rayTrace, z=2.0), Ray(0.3,0,z=2.0))
 
 if __name__ == '__main__':
     envtest.main()

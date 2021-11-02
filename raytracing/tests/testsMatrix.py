@@ -672,21 +672,24 @@ class TestTrace(envtest.RaytracingTestCase):
             if abs(rayTrace[0].theta) >= 0.99:
                 self.assertTrue(rayTrace[-1].isBlocked)
 
-    def testTraceManyNativeNonAndCompactRays(self):
+    def testTraceManyNativeWithList_Rays_And_CompactRays(self):
         inputRays1 = []
-        for y in [-1,0,1]:
+        for y in [-1, 0, 1]:
             for t in [-1, -0.5, 0, 0.5, 1.0]:
                 inputRays1.append(Ray(y, t))
                 inputRays1.append(Ray(-y, -t))
 
         inputRays2 = CompactRays(maxCount=len(inputRays1))
-        for i,otherRay in enumerate(inputRays1):
+        inputRays3 = Rays()
+        for i, otherRay in enumerate(inputRays1):
             compactRay = inputRays2[i]
             compactRay.y = otherRay.y
             compactRay.theta = otherRay.theta
+            inputRays3.append(otherRay, copy=True)
 
-        for r1,r2 in zip(inputRays1, inputRays2):
-            self.assertEqual(r1,r2)
+        for r1, r2, r3 in zip(inputRays1, inputRays2, inputRays3):
+            self.assertEqual(r1, r2)
+            self.assertEqual(r1, r3)
 
         group = MatrixGroup()
         group.append(Space(d=10))
@@ -695,9 +698,49 @@ class TestTrace(envtest.RaytracingTestCase):
 
         outputRayTraces1 = group.traceManyNative(inputRays1)
         outputRayTraces2 = group.traceManyNative(inputRays2)
+        outputRayTraces3 = group.traceManyNative(inputRays3)
 
         self.assertEqual(outputRayTraces1, outputRayTraces2)
+        self.assertEqual(outputRayTraces1, outputRayTraces3)
 
+    def testTraceManyOpenCLWithList_Rays_And_CompactRays(self):
+        inputRays1 = []
+        for y in [-1, 0, 1]:
+            for t in [-1, -0.5, 0, 0.5, 1.0]:
+                inputRays1.append(Ray(y, t))
+                inputRays1.append(Ray(-y, -t))
+
+        inputRays2 = CompactRays(maxCount=len(inputRays1))
+        inputRays3 = Rays()
+        for i, otherRay in enumerate(inputRays1):
+            compactRay = inputRays2[i]
+            compactRay.y = otherRay.y
+            compactRay.theta = otherRay.theta
+            inputRays3.append(otherRay, copy=True)
+
+        for r1, r2, r3 in zip(inputRays1, inputRays2, inputRays3):
+            self.assertEqual(r1, r2)
+            self.assertEqual(r1, r3)
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        with self.assertRaises(Exception):
+            outputRayTraces1 = group.traceManyOpenCL(inputRays1)
+        with self.assertRaises(Exception):
+            outputRayTraces3 = group.traceManyOpenCL(inputRays3)
+
+        outputRayTraces1 = group.traceManyNative(inputRays1)
+        outputRayTraces3 = group.traceManyNative(inputRays3)
+        outputRayTraces2 = group.traceManyOpenCL(inputRays2)
+
+        for raytrace1, raytrace2, raytrace3 in zip(outputRayTraces1,outputRayTraces2,outputRayTraces3):
+            self.assertEqual(raytrace1[0], raytrace2[0])
+            self.assertEqual(raytrace1[0], raytrace3[0])
+            self.assertEqual(raytrace1[-1], raytrace2[-1])
+            self.assertEqual(raytrace1[-1], raytrace3[-1])
 
     def testTraceManyJustOne(self):
         rays = [Ray()]

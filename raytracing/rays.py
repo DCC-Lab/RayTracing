@@ -375,7 +375,7 @@ class Rays:
     def __getitem__(self, item):
         return self._rays[item]
 
-    def append(self, ray):
+    def append(self, ray, copy=False):
         """A ray can be appended to the List of the rays using this function.
 
          Parameters
@@ -387,7 +387,18 @@ class Rays:
         if not isinstance(ray, Ray):
             raise TypeError("'ray' must be a 'Ray' object.")
         if self._rays is not None:
-            self._rays.append(ray)
+            if copy:
+                rayCopy = Ray()
+                rayCopy.y = ray.y
+                rayCopy.theta = ray.theta
+                rayCopy.z = ray.z
+                rayCopy.isBlocked = ray.isBlocked
+                rayCopy.wavelength = ray.wavelength
+                rayCopy.apertureDiameter = ray.apertureDiameter
+
+                self._rays.append(rayCopy)
+            else:
+                self._rays.append(ray)
 
         # Invalidate cached values
         self._yValues = None

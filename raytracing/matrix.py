@@ -815,6 +815,9 @@ class Matrix(object):
         of CPU properties to run as many calculations as possible in parallel.
 
         """
+        if not isinstance(inputRays, CompactRays):
+            raise ValueError("Only CompactRays can be used with OnenCL.  Convert your rays to CompactRays.")
+
         import pyopencl as pycl
 
         devices = pycl.get_platforms()[0].get_devices(device_type=pycl.device_type.GPU)

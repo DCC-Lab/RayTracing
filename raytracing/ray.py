@@ -1,5 +1,5 @@
 import warnings
-from .utils import deprecated
+from .utils import deprecated, areAbsolutelyAlmostEqual
 import numpy as np
 from struct import pack
 
@@ -303,13 +303,20 @@ class Ray:
 
     def __eq__(self, other):
         """Define rays to be equal if they have the same height and angle."""
+        if other is None:
+            return False
 
         try:
-            if self.y != other.y:
+            if not areAbsolutelyAlmostEqual(self.y, other.y):
                 return False
-            elif self.theta != other.theta:
+            elif not areAbsolutelyAlmostEqual(self.theta, other.theta):
+                return False
+            elif not areAbsolutelyAlmostEqual(self.z, other.z):
+                return False
+            elif self.isBlocked != other.isBlocked:
                 return False
         except Exception as err:
+            print(err)
             return False
 
         return True
@@ -377,20 +384,3 @@ class CompactRay(Ray):
     @wavelength.setter
     def wavelength(self, value):
         self.elementAsStruct[5] = value
-    #
-    # @property
-    # def isNotBlocked(self) -> bool:
-    #     return not self.isBlocked
-    #
-    # def __eq__(self, other):
-    #     """Define rays to be equal if they have the same height and angle."""
-    #
-    #     try:
-    #         if self.y != other.y:
-    #             return False
-    #         elif self.theta != other.theta:
-    #             return False
-    #     except Exception as err:
-    #         return False
-    #
-    #     return True
