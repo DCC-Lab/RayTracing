@@ -358,8 +358,12 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path = ImagingPath()
         path.append(System4f(f1=40, diameter1=25.4, f2=150, diameter2=50, label="Excitation relay"))
         path.append(Lens(diameter=16, f=500, label="ETL"))
+        
         fNumber = path.fNumber()
-        self.assertTrue(fNumber >= 0, msg="fNumber is negative")
+        focalLength, _ = path.effectiveFocalLengths()
+
+        self.assertTrue(focalLength <= 0)
+        self.assertTrue(fNumber >= 0, msg="fNumber is negative with negative lens, should be positive")
 
 
 if __name__ == '__main__':
