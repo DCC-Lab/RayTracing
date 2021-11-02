@@ -355,22 +355,11 @@ class TestImagingPath(envtest.RaytracingTestCase):
             path.chiefRay()
 
     def testBugNegativeFNumber(self):
-        # Assuming:
         path = ImagingPath()
-        path.fanAngle = 0.2094
-        path.append(Aperture(diameter=5, label="LSR"))
         path.append(System4f(f1=40, diameter1=25.4, f2=150, diameter2=50, label="Excitation relay"))
         path.append(Lens(diameter=16, f=500, label="ETL"))
-        path.append(olympus.XLUMPlanFLN20X())
-        path.design(fontScale=1.5)
-        
-        # Calculate f-number
         fNumber = path.fNumber()
-
-        # Must be positive
         self.assertTrue(fNumber >= 0, msg="fNumber is negative")
-
-
 
 
 if __name__ == '__main__':
