@@ -378,7 +378,7 @@ class ImagingPath(MatrixGroup):
         if pupilDiameter is None:
             return None
 
-        return focalFront/pupilDiameter
+        return abs(focalFront/pupilDiameter)
 
     def NA(self):
         """This function returns the numerical aperture of the component
