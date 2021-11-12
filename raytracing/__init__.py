@@ -68,13 +68,6 @@ OpticalPath = ImagingPath
 __version__ = "1.3.7"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
-import os.path as path
-import time
-import tempfile
-
-tmpDir = tempfile.gettempdir()
-checkFile = '{0}/raytracing-version-check'.format(tmpDir)
-
 def checkLatestVersion():
     try:
         import json
@@ -97,18 +90,3 @@ def checkLatestVersion():
     except Exception as err:
         print(err)
         print("Unable to check for latest version of raytracing on pypi.org")
-
-
-def lastCheckMoreThanADay():
-    if path.exists(checkFile):
-        lastTime = path.getmtime(checkFile)
-        if time.time() - lastTime > 24*60*60:
-            return True
-        else:
-            return False
-    else:
-        return True
-
-if lastCheckMoreThanADay():
-    checkLatestVersion()
-
