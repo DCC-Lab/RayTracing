@@ -1670,6 +1670,13 @@ class Space(Matrix):
         else:
             return self
 
+class ToConjugate(Space):
+    def __init__(self, element):
+        super(ToConjugate, self).__init__(d=element.forwardConjugate().d)
+
+class ToFocus(Space):
+    def __init__(self, element):
+        super(ToFocus, self).__init__(d=element.backFocalLength())
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
