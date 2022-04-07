@@ -1,4 +1,5 @@
 from raytracing.graphicComponents import *
+from .matrix import Lens, Space, Aperture
 from .specialtylenses import Objective
 from .matrixgroup import MatrixGroup
 import numpy as np
@@ -451,13 +452,13 @@ class ObjectiveGraphic(MatrixGroupGraphic):
 class GraphicOf:
     def __new__(cls, element, x=0.0, minSize=0) -> Union[MatrixGraphic, None, list]:
         instance = type(element).__name__
-        if type(element) is Objective or issubclass(type(element), Objective):
+        if issubclass(type(element), Objective):
             return ObjectiveGraphic(element, x=x)
-        if instance is 'Lens':
+        if issubclass(type(element), Lens):
             return LensGraphic(element, x=x, minSize=minSize)
-        if instance is 'Space':
+        if issubclass(type(element), Space):
             return None
-        if instance is 'Aperture':
+        if issubclass(type(element), Aperture):
             return ApertureGraphic(element, x=x)
         if element.surfaces:
             return SurfacesGraphic(element, x=x)
