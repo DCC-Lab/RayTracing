@@ -204,6 +204,17 @@ class Matrix(object):
 
         return surfaces
     
+    def fromFocusToFocus(self):
+        """
+        A simple method to obtain a MatrixGroup that includes
+        all three matrices to travel from the front focus, through
+        the lens, and then to the back focus.
+        """
+        from .matrixgroup import MatrixGroup
+        return MatrixGroup([Space(self.frontFocalLength()), self, Space(self.backFocalLength())])
+
+
+
     def __mul__(self, rightSide):
         """Operator overloading allowing easy-to-read matrix multiplication
         with other `Matrix`, with a `Ray` or a `GaussianBeam`.
@@ -1462,6 +1473,7 @@ class Lens(Matrix):
                                    frontVertex=0,
                                    backVertex=0,
                                    label=label)
+        self.f = f
         self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
 
     @property
@@ -1671,10 +1683,19 @@ class Space(Matrix):
             return self
 
 class ToConjugate(Space):
+    """ 
+    A method to obtain the Space() matrix that leads to the conjugate
+    plane assuming an object at the front of `element`.
+    """
+
     def __init__(self, element):
         super(ToConjugate, self).__init__(d=element.forwardConjugate().d)
 
 class ToFocus(Space):
+    """ 
+    A method to obtain the Space() matrix that leads to the back focal spot
+    of the `element`.
+    """
     def __init__(self, element):
         super(ToFocus, self).__init__(d=element.backFocalLength())
 
