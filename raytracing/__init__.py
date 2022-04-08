@@ -49,6 +49,7 @@ from . import olympus
 from .zemax import *
 
 from .utils import *
+from .preferences import *
 
 import os
 
@@ -56,6 +57,7 @@ if "RAYTRACING_EXPERT" in os.environ:
     expertMode()
 else:
     beginnerMode()
+
     
 """ Synonym of Matrix: Element 
 
@@ -111,4 +113,17 @@ def lastCheckMoreThanADay():
 
 if lastCheckMoreThanADay():
     checkLatestVersion()
+
+variables = Preferences().readPreferences()
+try:
+
+    if "silentMode" in variables:
+        silentMode()
+    elif "expertMode" in variables:
+        expertMode()
+    else:
+        beginnerMode()
+except Exception as err:
+    pass
+
 

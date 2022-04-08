@@ -16,7 +16,7 @@ class ExpertNote(UserWarning):
     pass
 
 def warningLineFormat(message, category, filename, lineno, line=None):
-    return '\n{0}: {1}\n{2}: {3}\n'.format(filename, lineno, category.__name__, message)
+    return '{2}: {3}\n'.format(filename, lineno, category.__name__, message)
 
 def beginnerMode():
     warnings.formatwarning = warningLineFormat
@@ -32,6 +32,13 @@ def expertMode():
     warnings.filterwarnings("once", category=DeprecationWarning)
 
 
+def silentMode():
+    warnings.formatwarning = warningLineFormat
+    warnings.filterwarnings("ignore", category=BeginnerHint)
+    warnings.filterwarnings("ignore", category=ExpertNote)
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    warnings.filterwarnings("ignore", category=UserWarning)
+    
 def isAlmostZero(value, epsilon=1e-3):
     return abs(value) < epsilon
 
