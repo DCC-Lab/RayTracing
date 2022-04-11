@@ -3,42 +3,62 @@ from os.path import expanduser
 import json
 import platform
 
-class Preferences:
-    def __init__(self):
+class Preferences(dict):
+    def __init__(self, *args, **kwargs):
+        self.update(*args, **kwargs)
+
         prefFilename = "ca.dcclab.python.raytracing.json"
-        if platform.system() == 'Darwin':
-            home = expanduser("~")
-            prefDir = os.path.join(home, "Library","Preferences")
-        elif platform.system() == 'Windows':
-            from win32com.shell import shell, shellcon
-            prefDir = shell.SHGetFolderPath(0, shellcon.CSIDL_APPDATA, None, 0)
-        elif platform.system() == 'Linux':
-            home = expanduser("~")
-            prefDir = os.path.join(home, ".config")
-            if not os.path.exists(prefDir):
-                os.mkdir(prefDir)
-        else:
+        prefDir = "."
+
+        try:
+            if platform.system() == 'Darwin':
+                home = expanduser("~")
+                prefDir = os.path.join(home, "Library","Preferences")
+            elif platform.system() == 'Windows':
+                from win32com.shell import shell, shellcon
+                prefDir = shell.SHGetFolderPath(0, shellcon.CSIDL_APPDATA, None, 0)
+            elif platform.system() == 'Linux':
+                home = expanduser("~")
+                prefDir = os.path.join(home, ".config")
+                if not os.path.exists(prefDir):
+                    os.mkdir(prefDir)
+        except Exception as err:
             prefDir = "."
-        
+
         self.path = os.path.join(prefDir, prefFilename)
-        self.variables = self.readPreferences()
+
+    def update(self, *args, **kwargs):
+        for k, v in dict(*args, **kwargs).items():
+            self[k] = v
+
+    def __getitem__(self, key):
+        self.readFromDisk()
+        return super().__getitem__(key)
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+        self.writeToDisk()
 
     def resetPreferences(self):
-        os.remove(self.path)
-        self.writePreferences(dict())
+        try:
+            os.remove(self.path)
+        except Exception as err:
+            pass
+        self.clear()
+        self.writeToDisk()
 
-    def readPreferences(self):
-        if not os.path.exists(self.path):
-            self.writePreferences(dict())
+    def readFromDisk(self):
+        if os.path.exists(self.path):
+            with open(self.path, "r+") as prefFile:
+                try:
+                    data = json.load(prefFile)
+                except Exception as err:
+                    data = dict()
+            self.update(data)
+        else:
+            self.clear()
+            self.writeToDisk()
 
-        with open(self.path, "r") as prefFile:
-            try:
-                data = json.load(prefFile)
-            except Exception as err:
-                data = dict()
-
-        return data
-
-    def writePreferences(self, preferencesData):
+    def writeToDisk(self):
         with open(self.path, "w+") as prefFile:
-            json.dump(preferencesData, prefFile)
+            json.dump(self, prefFile)

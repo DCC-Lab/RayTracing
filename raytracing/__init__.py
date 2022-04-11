@@ -52,12 +52,7 @@ from .utils import *
 from .preferences import *
 
 import os
-
-if "RAYTRACING_EXPERT" in os.environ:
-    expertMode()
-else:
-    beginnerMode()
-
+from datetime import datetime
     
 """ Synonym of Matrix: Element 
 
@@ -85,7 +80,8 @@ def checkLatestVersion():
 
         url = "https://pypi.org/pypi/raytracing/json"
         req = urllib.request.Request(url)
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(req, timeout=1) as response:
+            print("Here")
             data = json.load(response)
             versions = sorted(data["releases"].keys(),key=StrictVersion)
             latestVersion = versions[-1]
@@ -102,24 +98,33 @@ def checkLatestVersion():
 
 
 def lastCheckMoreThanADay():
-    if path.exists(checkFile):
-        lastTime = path.getmtime(checkFile)
-        if time.time() - lastTime > 24*60*60:
+    if "lastVersionCheck" in prefs:
+        then = datetime.date.fromisoformat(prefs["lastVersionCheck"])
+        difference = datetime.now() - then
+        if difference.days > 1:
             return True
         else:
             return False
     else:
+        prefs["lastVersionCheck"] = datetime.now().isoformat()
         return True
+
+if "RAYTRACING_EXPERT" in os.environ:
+    expertMode()
+else:
+    beginnerMode()
+
+prefs = Preferences()
 
 if lastCheckMoreThanADay():
     checkLatestVersion()
-
-variables = Preferences().readPreferences()
+    prefs["lastVersionCheck"] = datetime.now().isoformat()
+    
 try:
 
-    if "silentMode" in variables:
+    if "silentMode" in prefs:
         silentMode()
-    elif "expertMode" in variables:
+    elif "expertMode" in prefs:
         expertMode()
     else:
         beginnerMode()

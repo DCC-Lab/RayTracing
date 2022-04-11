@@ -12,8 +12,7 @@ class TestPrefs(envtest.RaytracingTestCase):
         p = Preferences()
         p.resetPreferences()
         self.assertTrue(os.path.exists(p.path))
-        v = p.readPreferences()
-        self.assertFalse(v) # empty
+        self.assertFalse(p.keys()) # empty
 
     def testPathExists(self):
         p = Preferences()
@@ -22,17 +21,39 @@ class TestPrefs(envtest.RaytracingTestCase):
 
     def testReadPrefs(self):
         p = Preferences()
-        d = p.readPreferences()
-        self.assertIsNotNone(d)
-        self.assertTrue(isinstance(d, dict))
+        p.readFromDisk()
+        self.assertIsNotNone(p)
 
     def testWritePrefs(self):
         p = Preferences()
-        d = p.readPreferences()
-        d["test"] = 123
-        p.writePreferences(d)
-        d2 = p.readPreferences()
-        self.assertTrue(d2["test"] == 123)
+        p["test"] = 123
+        p.writeToDisk()
+        p.readFromDisk()
+        self.assertTrue(p["test"] == 123)
+
+    def testPrefsAsDict(self):
+        p = Preferences()
+        p["test"] = 345
+        self.assertEqual(p["test"], 345)        
+
+    # def testPrefsAsIter(self):
+    #     p = Preferences()
+    #     p["test"] = 1
+    #     for key in p:
+    #         self.assertEqual(key, "test")
+
+    def testZZPrefsIncludesKey(self):
+        p = Preferences()
+        p["test"] = "ouch"
+        self.assertTrue('test' in p)
+
+    def testZZZPrefsLargeDict(self):
+        p = Preferences()
+        p["test"] = "ouch"
+        p["test1"] = "ouch"
+        p["test2"] = "ouch"
+        p["test3"] = "ouch"
+        self.assertTrue(len(p.keys()) >= 4)
 
 if __name__ == '__main__':
     envtest.main()
