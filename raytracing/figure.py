@@ -60,7 +60,7 @@ class Figure:
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
                imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None,
                fontScale: float = None, lampRayColors: List[Union[str, tuple]] = None,
-               FOVColors: list = None):
+               FOVColors: list = None, showObjectImage: bool = None):
         """ Update the design parameters of the figure.
         All parameters are None by default to allow for the update of one parameter at a time.
 
@@ -83,6 +83,8 @@ class Figure:
             The 2 colors to use for the graphics of FOV.
         fontScale : float, optional
             Base scale factor for the size of all fonts used. Default to 1.
+        showObjectImage : bool, optional
+            Set visibility of ObjectRays. Default to True.
         """
         if style is not None:
             if style in self.styles.keys():
@@ -93,7 +95,7 @@ class Figure:
         newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
                            'imageColor': imageColor, 'objectColor': objectColor,
                            'fontScale': fontScale, 'lampRayColors': lampRayColors,
-                           'FOVColors': FOVColors}
+                           'FOVColors': FOVColors, 'showObjectImage': showObjectImage}
         for key, value in newDesignParams.items():
             if value is not None:
                 self.designParams[key] = value
