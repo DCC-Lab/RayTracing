@@ -190,6 +190,9 @@ class Figure:
             elif graphic is not None:
                 graphics.append(graphic)
             z += element.L
+        if not self.path.showElementLabels:
+            for graphic in graphics:
+                graphic.label = None
         return graphics
 
     def setGraphicsFromRaysList(self):
