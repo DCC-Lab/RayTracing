@@ -31,10 +31,10 @@ class Figure:
 
         self.styles = dict()
         self.styles['default'] = {'rayColors': ['b', 'r', 'g'], 'lampRayColors': ['y'], 'onlyAxialRay': False,
-                                  'imageColor': 'r', 'objectColor': 'b', 'onlyPrincipalAndAxialRays': True,
-                                  'limitObjectToFieldOfView': True, 'removeBlockedRaysCompletely': False,
-                                  'fontScale': 1.2, 'showFOV': False, 'showObjectImage': True,
-                                  'FOVColors': ['blue', 'red']}
+                                  'imageColor': 'r', 'fillImage': True, 'objectColor': 'b', 'fillObject': True,
+                                  'onlyPrincipalAndAxialRays': True, 'limitObjectToFieldOfView': True,
+                                  'removeBlockedRaysCompletely': False, 'fontScale': 1.2, 'showFOV': False,
+                                  'showObjectImage': True, 'FOVColors': ['blue', 'red']}
         self.styles['publication'] = self.styles['default'].copy()
         self.styles['presentation'] = self.styles['default'].copy()  # same as default for now
         self.styles['publication'].update({'rayColors': ['0.4', '0.2', '0.6'],
@@ -58,7 +58,8 @@ class Figure:
 
     def design(self, style: str = None,
                rayColors: List[Union[str, tuple]] = None, onlyAxialRay: bool = None,
-               imageColor: Union[str, tuple] = None, objectColor: Union[str, tuple] = None,
+               imageColor: Union[str, tuple] = None, fillImage: bool = None,
+               objectColor: Union[str, tuple] = None, fillObject: bool = None,
                fontScale: float = None, lampRayColors: List[Union[str, tuple]] = None,
                FOVColors: list = None, showObjectImage: bool = None):
         """ Update the design parameters of the figure.
@@ -79,6 +80,10 @@ class Figure:
             Color of image arrows. Default to 'r'.
         objectColor : Union[str, tuple], optional
             Color of object arrow. Default to 'b'.
+        fillImage : bool, optional
+            Fill the image arrows. Default to True.
+        fillObject : bool, optional
+            Fill the object arrow. Default to True.
         FOVColors: list
             The 2 colors to use for the graphics of FOV.
         fontScale : float, optional
@@ -94,6 +99,7 @@ class Figure:
 
         newDesignParams = {'rayColors': rayColors, 'onlyAxialRay': onlyAxialRay,
                            'imageColor': imageColor, 'objectColor': objectColor,
+                           'fillImage': fillImage, 'fillObject': fillObject,
                            'fontScale': fontScale, 'lampRayColors': lampRayColors,
                            'FOVColors': FOVColors, 'showObjectImage': showObjectImage}
         for key, value in newDesignParams.items():
@@ -200,13 +206,14 @@ class Figure:
             instance = type(rays).__name__
             if instance is 'ObjectRays':
                 objectKey = kObjectImageZKey.format(rays.z) if rays.z != 0 else kObjectImageKey
-                color = 'b' if rays.color is None else rays.color
-                self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z, color=color, label=rays.label)]
-                if rays.color is None:
-                    self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z))
-                else:
+                if self.path.showObject:
+                    self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z,
+                                                                   color=self.designParams['objectColor'],
+                                                                   fill=self.designParams['fillObject'], label=rays.label)]
+                if self.path.showImages:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
-                                                                                        fill=False, color=color))
+                                                                                        color=self.designParams['imageColor'],
+                                                                                        fill=self.designParams['fillImage']))
             if instance is 'LampRays':
                 lampKey = 'Lamp (z={0:.2f})'.format(rays.z) if rays.z != 0 else kLampKey
                 self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z, label=rays.label)]
