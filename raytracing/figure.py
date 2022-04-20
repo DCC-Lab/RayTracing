@@ -300,7 +300,8 @@ class Figure:
         points = []
         halfHeight = self.displayRange / 2
         for zStr, label in labels.items():
-            points.append(Point(text=label, x=float(zStr), y=-halfHeight * 0.5, fontsize=12))
+            text = label if self.path.showPointsOfInterestLabels else None
+            points.append(Point(text=text, x=float(zStr), y=-halfHeight * 0.5, fontsize=12))
         return points
 
     @property
