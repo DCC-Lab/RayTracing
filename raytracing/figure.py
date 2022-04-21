@@ -204,7 +204,7 @@ class Figure:
     def setGraphicsFromRaysList(self):
         for rays in self.raysList:
             instance = type(rays).__name__
-            if instance is 'ObjectRays':
+            if instance == 'ObjectRays':
                 objectKey = kObjectImageZKey.format(rays.z) if rays.z != 0 else kObjectImageKey
                 if self.path.showObject:
                     self.graphicGroups[objectKey] = [ObjectGraphic(rays.yMax * 2, x=rays.z,
@@ -214,7 +214,7 @@ class Figure:
                     self.graphicGroups[objectKey].extend(self.graphicsOfConjugatePlanes(rays.yMax * 2, x=rays.z,
                                                                                         color=self.designParams['imageColor'],
                                                                                         fill=self.designParams['fillImage']))
-            if instance is 'LampRays':
+            if instance == 'LampRays':
                 lampKey = 'Lamp (z={0:.2f})'.format(rays.z) if rays.z != 0 else kLampKey
                 self.graphicGroups[lampKey] = [LampGraphic(rays.yMax * 2, x=rays.z, label=rays.label)]
 
@@ -223,12 +223,12 @@ class Figure:
             rayTrace = self.rayTraceLines(rays=rays)
 
             instance = type(rays).__name__
-            if instance is 'ObjectRays':
+            if instance == 'ObjectRays':
                 if rays.z == 0:
                     self.lineGroups[kObjectImageKey].extend(rayTrace)
                 else:
                     self.lineGroups[kObjectImageZKey.format(rays.z)] = rayTrace
-            elif instance is 'LampRays':
+            elif instance == 'LampRays':
                 self.designParams['showObjectImage'] = False
                 if rays.z == 0:
                     self.lineGroups[kLampKey].extend(rayTrace)
@@ -386,7 +386,7 @@ class Figure:
                 dz = rays.z
             if rays.rayColors is not None:
                 colors = rays.rayColors
-            elif type(rays).__name__ is 'LampRays':
+            elif type(rays).__name__ == 'LampRays':
                 colors = self.designParams['lampRayColors']
 
         if dz != 0:
@@ -548,7 +548,7 @@ class Figure:
         if not self.designParams['showObjectImage']:
             self.setGroupVisibility(kObjectImageKey, False)
 
-        if backend is 'matplotlib':
+        if backend == 'matplotlib':
             mplFigure = self.mplFigure
             mplFigure.create(comments, title)
             if display3D:
@@ -566,7 +566,7 @@ class Figure:
             self.lineGroups['rays'].extend(self.beamTraceLines(beam))
             self.annotations.extend(self.beamWaistAnnotations(beam))
 
-        if backend is 'matplotlib':
+        if backend == 'matplotlib':
             mplFigure = self.mplFigure
             mplFigure.create(comments, title)
             if display3D:
