@@ -992,9 +992,9 @@ class ImagingPath(MatrixGroup):
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
             if self.fanAngle is None:
-                self.fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
+                fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
             defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
-                                       halfAngle=self.fanAngle, T=self.rayNumber, H=self.fanNumber)
+                                       halfAngle=fanAngle, T=self.rayNumber, H=self.fanNumber)
             raysList.append(defaultObject)
         else:
             self.figure.designParams['showObjectImage'] = True
