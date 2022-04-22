@@ -462,7 +462,8 @@ class MplLabel(Label):
 
 
 class Point(Label):
-    def __init__(self, x=0.0, y=0.0, text=None, fontsize=12, color='k', hasMarker=True):
+    def __init__(self, x=0.0, y=0.0, text=None, fontsize=12, color='k', hasMarker=True, fixToAxis=True):
+        self.fixToAxis = fixToAxis
         super().__init__(text=text, x=x, y=y, fontsize=fontsize, hasPointMarker=hasMarker, color=color)
 
 
