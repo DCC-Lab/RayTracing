@@ -43,9 +43,15 @@ class CompoundLens(MatrixGroup):
 
     @property
     def forwardSurfaces(self) -> List[Interface]:
-        """ Must be overridden by subclasses """
-
-        return None
+        surfaces = []
+        spaceLength = 0
+        for element in reversed(self.elements):
+            if isinstance(element, Space):
+                spaceLength = element.L
+            elif isinstance(element, DielectricInterface):
+                surfaces.append(SphericalInterface(element.R, n=element.n2, L=spaceLength))
+        surfaces.reverse()
+        return surfaces
 
     def focalShifts(self, wavelengths=None):
         """ The chromatic aberration shifts to the focal distance from the
@@ -92,6 +98,7 @@ class CompoundLens(MatrixGroup):
     @classmethod
     def all(cls):
         return allSubclasses(cls)
+
 
 class AchromatDoubletLens(CompoundLens):
     """ 
