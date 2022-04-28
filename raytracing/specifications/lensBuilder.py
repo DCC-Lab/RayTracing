@@ -59,5 +59,6 @@ print("f = 9.006 mm")
 print("WD = 2.04 mm")
 
 olympus20xPrescription = CompoundLens(olympus20xPrescription.elements,
-                                      olympus20xPrescription.effectiveFocalLengths().f1)
+                                      designFocalLength=olympus20xPrescription.effectiveFocalLengths().f1,
+                                      diameter=20)
 olympus20xPrescription.display()

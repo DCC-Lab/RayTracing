@@ -21,11 +21,12 @@ the Objective() class.
 """
 
 class CompoundLens(MatrixGroup):
-    def __init__(self, elements, designFocalLength, wavelengthRef=None, url=None, label=''):
+    def __init__(self, elements, designFocalLength, diameter=float("+Inf"), wavelengthRef=None, url=None, label=''):
         """ A base class for any lens that we make from its individual elements
         """
         super(CompoundLens, self).__init__(elements=elements, label=label)
 
+        self.apertureDiameter = diameter
         self.designFocalLength = designFocalLength
         self.url = url
         self.wavelengthRef = wavelengthRef
@@ -185,12 +186,11 @@ class AchromatDoubletLens(CompoundLens):
         elements.append(DielectricInterface(n1=self.n1, n2=self.n2, R=R2, diameter=diameter))
         elements.append(Space(d=tc2, n=self.n2))
         elements.append(DielectricInterface(n1=self.n2, n2=1, R=R3, diameter=diameter))
-        super(AchromatDoubletLens, self).__init__(elements=elements, 
+        super(AchromatDoubletLens, self).__init__(elements=elements, diameter=diameter,
                                                   designFocalLength=fa, 
                                                   wavelengthRef=wavelengthRef,
                                                   url=url, 
                                                   label=label)
-        self.apertureDiameter = diameter
 
         if abs(self.tc1 + self.tc2 - self.L) / self.L > 0.02:
             msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1 + self.tc2, self.L)
@@ -297,12 +297,11 @@ class SingletLens(CompoundLens):
         elements.append(Space(d=tc, n=self.n))
         elements.append(DielectricInterface(n1=self.n, n2=1, R=R2, diameter=diameter))
 
-        super(SingletLens, self).__init__(elements=elements, 
+        super(SingletLens, self).__init__(elements=elements, diameter=diameter,
                                           designFocalLength=f, 
                                           wavelengthRef=wavelengthRef,
                                           url=url, 
                                           label=label)
-        self.apertureDiameter = diameter
 
         if abs(self.tc - self.L) / self.L > 0.02:
             msg = "Obtained thickness {0:.4} is not within 2%% of expected {1:.4}".format(self.tc1, self.L)
