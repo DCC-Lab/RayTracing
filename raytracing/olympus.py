@@ -200,3 +200,35 @@ class XLPLN25X(Objective):
                                          fieldNumber=18,
                                          label='XLPLN25X',
                                          url="https://www.olympus-lifescience.com/en/objectives/multiphoton/")
+
+
+class XLFLUOR4X340(Objective):
+    """ Olympus XLFLUOR4X340 0.28 NA
+
+    .. csv-table::
+        :header: Parameter, value
+
+        "Magnification", "4x"
+        "focusToFocusLength", "81? or 49?"
+        "backAperture", "20?"
+        "Numerical Aperture (NA)", "0.28"
+        "Working Distance (mm)", "30"
+
+
+    Notes
+    -----
+    More info: https://www.olympus-lifescience.com/en/objectives/detail/0-DIRECTORY::DirFrontend-itemId.511708034.html
+
+    """
+    def __init__(self):
+        super(XLFLUOR4X340, self).__init__(
+            f=180 / 4,
+            NA=0.3,
+            focusToFocusLength=65+16, #ou -16?
+            backAperture=20,
+            workingDistance=30,
+            magnification=4,
+            fieldNumber=22,
+            url="https://www.olympus-lifescience.com/en/objectives/detail/0-DIRECTORY::DirFrontend-itemId.511708034.html",
+            label="Olympus XLFLUOR4X/340"
+        )
