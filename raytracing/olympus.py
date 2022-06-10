@@ -223,7 +223,7 @@ class XLFLUOR4X340(Objective):
     def __init__(self):
         super(XLFLUOR4X340, self).__init__(
             f=180 / 4,
-            NA=0.3,
+            NA=0.28,
             focusToFocusLength=65+16, #ou -16?
             backAperture=20,
             workingDistance=30,
