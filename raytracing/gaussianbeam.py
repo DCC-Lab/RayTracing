@@ -145,7 +145,7 @@ class GaussianBeam(object):
             description += "w(z): {0:.3f}, ".format(self.w)
             description += "R(z): {0:.3f}, ".format(self.R)
             description += "z: {0:.3f}, ".format(self.z)
-            description += "λ: {0:.1f} nm\n".format(self.wavelength)
+            description += "λ: {0:.1f} nm\n".format(self.wavelength * 1e9)
             description += "zo: {0:.3f}, ".format(self.zo)
             description += "wo: {0:.3f}, ".format(self.wo)
             description += "wo position: {0:.3f}".format(self.waistPosition)
