@@ -28,6 +28,49 @@ class TestMatrix(envtest.RaytracingTestCase):
         with self.assertRaises(ValueError):
             Matrix(apertureDiameter=-0.1)
 
+    def testNullApertureNA(self):
+        with self.assertRaises(ValueError):
+            Matrix(apertureNA=0)
+
+    def testNonNullBlockingApertureNA(self):
+        m = Matrix(1,0,0,1,apertureNA=0.25)
+        ray = Ray(y=0, theta=0.5)
+        outRay = m*ray
+        self.assertTrue(outRay.isBlocked)
+
+    def testNonNullNonBlockingApertureNA(self):
+        m = Matrix(1,0,0,1,apertureNA=0.5)
+        ray = Ray(y=0, theta=0.25)
+        outRay = m*ray
+        self.assertFalse(outRay.isBlocked)
+
+    def testNonNullJustAtTheLimitApertureNA(self):
+        m = Matrix(1,0,0,1,apertureNA=0.5)
+        ray = Ray(y=0, theta=0.5)
+        outRay = m*ray
+        self.assertFalse(outRay.isBlocked)
+
+    def testApertureWithNA(self):
+        m = Aperture(diameter=1.0, NA=0.5)
+        ray = Ray(y=0, theta=0.6)
+        outRay = m*ray
+        self.assertTrue(outRay.isBlocked)
+
+        m = Aperture(diameter=0.5, NA=0.5)
+        ray = Ray(y=1.0, theta=0)
+        outRay = m*ray
+        self.assertTrue(outRay.isBlocked)
+
+        m = Aperture(diameter=0.5, NA=0.5)
+        ray = Ray(y=1.0, theta=0.6)
+        outRay = m*ray
+        self.assertTrue(outRay.isBlocked)
+
+        m = Aperture(diameter=0.5*2, NA=0.5)
+        ray = Ray(y=0.5, theta=0.5)
+        outRay = m*ray
+        self.assertFalse(outRay.isBlocked)
+
     def testMatrixExplicit(self):
         m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1,
                    frontVertex=0, backVertex=0, apertureDiameter=0.5)
