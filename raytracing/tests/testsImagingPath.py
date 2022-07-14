@@ -22,7 +22,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertTrue(path.showElementLabels)
         self.assertTrue(path.showPointsOfInterest)
         self.assertTrue(path.showPointsOfInterestLabels)
-        self.assertTrue(path.showPlanesAcrossPointsOfInterest)
         self.assertFalse(path.showEntrancePupil)
 
     def testImagingPathWithElements(self):
