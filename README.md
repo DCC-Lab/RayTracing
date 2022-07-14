@@ -84,7 +84,7 @@ path.display()
 
 <img src="https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/simple.png" alt="simple" style="zoom:25%;" />
 
-You can also call `display()` on an element to see the cardinal points, principal planes, BFL and FFL. You can do it with any single `Matrix` element but also with `MatrixGroup`.
+You can also call `display()` on an element to see the cardinal points, principal planes, BFL (back focal length, or the distance between the last interface and the focal point after the lens) and FFL (front focal length, or the distance between the focal point before the lens and the first interface). You can do it with any single `Matrix` element but also with `MatrixGroup`.
 
 ```python
 from raytracing import *
