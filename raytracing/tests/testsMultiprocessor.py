@@ -37,8 +37,8 @@ class TestMultiProcessorSupport(envtest.RaytracingTestCase):
         self.assertEqual(outputValues, list(map(func, inputValues)))
 
 class TestSingleAndMultiProcessorCalculation(envtest.RaytracingTestCase):
-    #@envtest.skipUnless(envtest.performanceTests)
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    @envtest.skipUnless(envtest.performanceTests, "Skipping long performance tests")
     def testShortPath(self):
         path = ImagingPath()
         path.append(Space(d=100))
