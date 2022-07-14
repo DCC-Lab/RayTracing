@@ -405,7 +405,6 @@ class Matrix(object):
             outputRay.theta = self.C * rightSideRay.y + self.D * rightSideRay.theta
             outputRay.z = self.L + rightSideRay.z
             outputRay.apertureDiameter = self.apertureDiameter
-            outputRay.isBlocked = rightSideRay.isBlocked
 
             if abs(rightSideRay.y) > self.apertureDiameter/2 or abs(rightSideRay.theta) > self.apertureNA:
                 outputRay.isBlocked = True
