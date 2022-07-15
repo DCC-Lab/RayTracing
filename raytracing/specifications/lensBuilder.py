@@ -1,3 +1,4 @@
+import envtest
 import csv
 from raytracing import *
 
@@ -57,3 +58,8 @@ print("--------------")
 print("From Olympus patent, Table 3, at https://patents.google.com/patent/US6501603B2/en")
 print("f = 9.006 mm")
 print("WD = 2.04 mm")
+
+olympus20xPrescription = CompoundLens(olympus20xPrescription.elements,
+                                      designFocalLength=olympus20xPrescription.effectiveFocalLengths().f1,
+                                      diameter=20)
+olympus20xPrescription.display()
