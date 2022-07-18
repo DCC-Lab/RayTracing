@@ -17,6 +17,12 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 
 The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in english or french, with english subtitles when in french) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
+## Where to go to get started:
+   * If you want to use the module, keep reading.
+   * If you have a suggestion or a bug report, go to [Issues](https://github.com/DCC-Lab/RayTracing/issues).
+   * If you want to read and contribute to the code, go to the [Wiki](https://github.com/DCC-Lab/RayTracing/wiki) for general considerations. We plan to have a roadmap in the near future.
+
+## Getting started
 The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
 We have tried to separate the calculation code (i.e. the matrices and subclasses) from the drawing code (figures and graphics). One can use the calculation code without any graphics calls.
