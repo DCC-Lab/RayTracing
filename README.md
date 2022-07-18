@@ -17,7 +17,7 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 
 The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in english or french, with english subtitles when in french) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
-## Where to go to get started:
+## Where do I get started?
    * If you want to use the module, keep reading.
    * If you have a suggestion or a bug report, go to [Issues](https://github.com/DCC-Lab/RayTracing/issues).
    * If you want to read and contribute to the code, go to the [Wiki](https://github.com/DCC-Lab/RayTracing/wiki) for general considerations. We plan to have a roadmap in the near future.
