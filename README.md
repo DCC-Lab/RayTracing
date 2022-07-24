@@ -6,7 +6,7 @@ This code aims to provide a simple ray tracing module for calculating various pr
 
 It is not a package to do "Rendering in 3D with raytracing".
 
-The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. As of January 21st, 2021, there is an extensive, freely accessible tutorial in Journal of Neurophotonics:
+The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. As of January 21st, 2021, there is an extensive, freely accessible, peer-reviewed tutorial in Journal of Neurophotonics:
 
 > ["Tools and tutorial on practical ray tracing for microscopy"](https://doi.org/10.1117/1.NPh.8.1.010801) 
 >
