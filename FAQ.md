@@ -25,13 +25,13 @@
    It is not possible however to consider chromatic aberrations for a thin lens. The thin lens is created directly with a given focal length and no material at all (it is infinitely thin). The focal length is fixed. To create a lens with chromatic aberration, you need to use `SingletLens` or `AchromaticDoubletLens`.
    
 4. **Can I perform more complex calculations than just tracing rays?**
-   Of course you can. Although the display functions are central to the module, you can also extract more information in a script.  For instance, the example [lsmConfocalPinhole.py](https://github.com/DCC-Lab/RayTracing/blob/master/raytracing/examples/fig6-lsmConfocalpinhole.py) is a good example. 
+   Of course you can. Although the display functions are central to the module, you can also extract more information in a script.  For instance, the example [lsmConfocalPinhole.py](https://github.com/DCC-Lab/RayTracing/blob/master/raytracing/examples/fig6-lsmConfocalpinhole.py) is a good example where the transmission efficacy of a pinhole is calculated as a function of distance from the focal plane.
 
 5. **Can you perform a 2D efficiency calculation that will apply to my real-life optical system?**
    Yes, but you need to use a ray distribution that considers the cylindrical symmetry (currently in preparation). This will provide proper numbers for the 2D energy efficiency, but it will not be "traceable" easily. To trace your rays, use the `RandomUniformRays` class for instance.
 
 6. **There are stored preferences. Where are they?**
-   It depends on the platform. The file is always the same (it is a JSON dictionary) but the location is obtained differently based on the platform:
+   Some variables can be "saved" into a Preferences file on disk.  Where it is depends on the platform. The file is always the same (it is a JSON dictionary) but the location is platform-specific:
 
    * macOS: `(username)/Library/Preferences/ca.dcclab.python.raytracing.json`
 
