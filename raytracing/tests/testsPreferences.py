@@ -69,5 +69,19 @@ class TestPrefs(envtest.RaytracingTestCase):
         self.assertIsNotNone(p)
         self.assertTrue("lastVersionCheck" in p.keys())
 
+    def testSaveSilentMode(self):
+        silentMode(saveToPrefs=True)
+        p = Preferences()
+        self.assertIsNotNone(p)
+        self.assertTrue("mode" in p.keys())
+        self.assertEqual(p["mode"], "silent")
+
+    def testSaveExpertMode(self):
+        expertMode(saveToPrefs=True)
+        p = Preferences()
+        self.assertIsNotNone(p)
+        self.assertTrue("mode" in p.keys())
+        self.assertEqual(p["mode"], "expert")
+
 if __name__ == '__main__':
     envtest.main()

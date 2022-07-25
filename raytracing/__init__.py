@@ -100,22 +100,19 @@ def lastCheckMoreThanADay():
     else:
         return True
 
+
 prefs = Preferences()
-
-if "RAYTRACING_EXPERT" in os.environ:
-    expertMode()
-else:
-    beginnerMode()
-
 if lastCheckMoreThanADay():
     checkLatestVersion()
     prefs["lastVersionCheck"] = datetime.now().isoformat()
+
+if "RAYTRACING_EXPERT" in os.environ:
+    prefs["mode"] = "expert"
     
 try:
-
-    if "silentMode" in prefs:
+    if prefs["mode"] == "silent":
         silentMode()
-    elif "expertMode" in prefs:
+    elif prefs["mode"] == "expert":
         expertMode()
     else:
         beginnerMode()

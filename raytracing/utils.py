@@ -2,6 +2,7 @@ import math
 import warnings
 import inspect
 import sys
+from .preferences import Preferences
 
 """ Two constants: deg and rad to quickly convert to degrees
 or radians with angle*degPerRad or angle*radPerDeg """
@@ -18,26 +19,34 @@ class ExpertNote(UserWarning):
 def warningLineFormat(message, category, filename, lineno, line=None):
     return '{2}: {3}\n'.format(filename, lineno, category.__name__, message)
 
-def beginnerMode():
+def beginnerMode(saveToPrefs=False):
     warnings.formatwarning = warningLineFormat
     warnings.filterwarnings("always", category=BeginnerHint)
     warnings.filterwarnings("default", category=ExpertNote)
     warnings.filterwarnings("default", category=DeprecationWarning)
+    if saveToPrefs:
+        prefs = Preferences()
+        prefs["mode"] = "beginner"
 
-def expertMode():
+def expertMode(saveToPrefs=False):
     print("Expert mode ON")
     warnings.formatwarning = warningLineFormat
     warnings.filterwarnings("ignore", category=BeginnerHint)
     warnings.filterwarnings("once", category=ExpertNote)
     warnings.filterwarnings("once", category=DeprecationWarning)
+    if saveToPrefs:
+        prefs = Preferences()
+        prefs["mode"] = "expert"
 
-
-def silentMode():
+def silentMode(saveToPrefs=False):
     warnings.formatwarning = warningLineFormat
     warnings.filterwarnings("ignore", category=BeginnerHint)
     warnings.filterwarnings("ignore", category=ExpertNote)
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     warnings.filterwarnings("ignore", category=UserWarning)
+    if saveToPrefs:
+        prefs = Preferences()
+        prefs["mode"] = "silent"
     
 def isAlmostZero(value, epsilon=1e-3):
     return abs(value) < epsilon
