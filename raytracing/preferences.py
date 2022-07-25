@@ -26,6 +26,7 @@ class Preferences(dict):
             prefDir = "."
 
         self.path = os.path.join(prefDir, prefFilename)
+        self.readFromDisk()
 
     def update(self, *args, **kwargs):
         for k, v in dict(*args, **kwargs).items():

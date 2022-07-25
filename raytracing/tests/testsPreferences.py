@@ -4,6 +4,15 @@ from raytracing.preferences import Preferences
 
 
 class TestPrefs(envtest.RaytracingTestCase):
+    def setUp(self):
+        super().setUp()
+        self.savedPrefs = Preferences()
+        self.savedPrefs.readFromDisk()
+
+    def tearDown(self):
+        self.savedPrefs.writeToDisk()
+        super().tearDown()
+
     def testInitPrefs(self):
         p = Preferences()
         self.assertIsNotNone(p)
@@ -54,6 +63,11 @@ class TestPrefs(envtest.RaytracingTestCase):
         p["test2"] = "ouch"
         p["test3"] = "ouch"
         self.assertTrue(len(p.keys()) >= 4)
+
+    def testVersionCheckPrefs(self):
+        p = Preferences()
+        self.assertIsNotNone(p)
+        self.assertTrue("lastVersionCheck" in p.keys())
 
 if __name__ == '__main__':
     envtest.main()

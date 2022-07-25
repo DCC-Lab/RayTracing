@@ -69,9 +69,6 @@ import os.path as path
 import time
 import tempfile
 
-tmpDir = tempfile.gettempdir()
-checkFile = '{0}/raytracing-version-check'.format(tmpDir)
-
 def checkLatestVersion():
     try:
         import json
@@ -92,30 +89,23 @@ def checkLatestVersion():
         print("Unable to check for latest version of raytracing on pypi.org")
         print(err)
 
-    finally:
-        # We always timestamp: if there was an error, we will not look again until later
-        with open(checkFile, 'w') as opened_file:
-            opened_file.write("Last check is timestamp of this file")
-
-
 def lastCheckMoreThanADay():
     if "lastVersionCheck" in prefs:
-        then = datetime.date.fromisoformat(prefs["lastVersionCheck"])
+        then = datetime.fromisoformat(prefs["lastVersionCheck"])
         difference = datetime.now() - then
         if difference.days > 1:
             return True
         else:
             return False
     else:
-        prefs["lastVersionCheck"] = datetime.now().isoformat()
         return True
+
+prefs = Preferences()
 
 if "RAYTRACING_EXPERT" in os.environ:
     expertMode()
 else:
     beginnerMode()
-
-prefs = Preferences()
 
 if lastCheckMoreThanADay():
     checkLatestVersion()
