@@ -29,7 +29,6 @@ def beginnerMode(saveToPrefs=False):
         prefs["mode"] = "beginner"
 
 def expertMode(saveToPrefs=False):
-    print("Expert mode ON")
     warnings.formatwarning = warningLineFormat
     warnings.filterwarnings("ignore", category=BeginnerHint)
     warnings.filterwarnings("once", category=ExpertNote)
