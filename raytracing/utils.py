@@ -24,6 +24,7 @@ def beginnerMode(saveToPrefs=False):
     warnings.filterwarnings("always", category=BeginnerHint)
     warnings.filterwarnings("default", category=ExpertNote)
     warnings.filterwarnings("default", category=DeprecationWarning)
+    warnings.filterwarnings("default", category=UserWarning)
     if saveToPrefs:
         prefs = Preferences()
         prefs["mode"] = "beginner"
@@ -33,6 +34,7 @@ def expertMode(saveToPrefs=False):
     warnings.filterwarnings("ignore", category=BeginnerHint)
     warnings.filterwarnings("once", category=ExpertNote)
     warnings.filterwarnings("once", category=DeprecationWarning)
+    warnings.filterwarnings("once", category=UserWarning)
     if saveToPrefs:
         prefs = Preferences()
         prefs["mode"] = "expert"

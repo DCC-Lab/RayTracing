@@ -47,5 +47,14 @@ class TestRaytracingPrefs(envtest.RaytracingTestCase):
         beginnerMode(saveToPrefs=False)
         self.assertEqual(p["mode"], "expert")
 
+    def testWarningsFormat(self):
+        beginnerMode()
+        message = "This is a test."
+        filename = "test.py"
+        lineno = 10
+        category = UserWarning
+        warningsMessage = warningLineFormat(message, category, filename, lineno)
+        self.assertEqual(warningsMessage, "UserWarning: This is a test.\n")
+
 if __name__ == '__main__':
     envtest.main()
