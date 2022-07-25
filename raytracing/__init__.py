@@ -76,15 +76,15 @@ def checkLatestVersion():
     try:
         import json
         import urllib.request
-        from distutils.version import StrictVersion
+        from packaging.version import Version
 
         url = "https://pypi.org/pypi/raytracing/json"
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req, timeout=1) as response:
             data = json.load(response)
-            versions = sorted(data["releases"].keys(),key=StrictVersion)
+            versions = [ Version(version) for version in data["releases"].keys() ]
             latestVersion = versions[-1]
-            if __version__ < latestVersion:
+            if Version(__version__) < latestVersion:
                 print("Latest version {0} available on PyPi (you are using {1}).".format(latestVersion, __version__))
                 print("run `pip install --upgrade raytracing` to update.")
 
