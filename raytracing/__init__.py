@@ -65,7 +65,7 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.3.7"
+__version__ = "1.3.8"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
 import os.path as path
@@ -91,12 +91,14 @@ def checkLatestVersion():
                 print("Latest version {0} available on PyPi (you are using {1}).".format(latestVersion, __version__))
                 print("run `pip install --upgrade raytracing` to update.")
 
+    except Exception as err:
+        print("Unable to check for latest version of raytracing on pypi.org")
+        print(err)
+
+    finally:
+        # We always timestamp: if there was an error, we will not look again until later
         with open(checkFile, 'w') as opened_file:
             opened_file.write("Last check is timestamp of this file")
-
-    except Exception as err:
-        print(err)
-        print("Unable to check for latest version of raytracing on pypi.org")
 
 
 def lastCheckMoreThanADay():

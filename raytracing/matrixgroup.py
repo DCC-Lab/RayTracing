@@ -87,6 +87,9 @@ class MatrixGroup(Matrix):
         self.L = transferMatrix.L
         self.frontVertex = transferMatrix.frontVertex
         self.backVertex = transferMatrix.backVertex
+        self.frontIndex = transferMatrix.frontIndex
+        self.backIndex = transferMatrix.backIndex
+
 
     def __len__(self):
         """
