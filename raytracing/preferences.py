@@ -1,5 +1,4 @@
 import os
-from os.path import expanduser
 import json
 import platform
 
@@ -12,13 +11,13 @@ class Preferences(dict):
 
         try:
             if platform.system() == 'Darwin':
-                home = expanduser("~")
+                home = os.path.expanduser("~")
                 prefDir = os.path.join(home, "Library","Preferences")
             elif platform.system() == 'Windows':
                 from win32com.shell import shell, shellcon
                 prefDir = shell.SHGetFolderPath(0, shellcon.CSIDL_APPDATA, None, 0)
             elif platform.system() == 'Linux':
-                home = expanduser("~")
+                home = os.path.expanduser("~")
                 prefDir = os.path.join(home, ".config")
                 if not os.path.exists(prefDir):
                     os.mkdir(prefDir)

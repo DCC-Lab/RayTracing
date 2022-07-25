@@ -1,5 +1,5 @@
 import envtest # modifies path
-from raytracing import *
+import os
 from raytracing.preferences import Preferences
 
 
@@ -63,41 +63,6 @@ class TestPrefs(envtest.RaytracingTestCase):
         p["test2"] = "ouch"
         p["test3"] = "ouch"
         self.assertTrue(len(p.keys()) >= 4)
-
-    def testVersionCheckPrefs(self):
-        p = Preferences()
-        self.assertIsNotNone(p)
-        self.assertTrue("lastVersionCheck" in p.keys())
-
-    def testSaveBeginnerMode(self):
-        beginnerMode(saveToPrefs=True)
-        p = Preferences()
-        self.assertIsNotNone(p)
-        self.assertTrue("mode" in p.keys())
-        self.assertEqual(p["mode"], "beginner")
-        expertMode(saveToPrefs=False)
-        silentMode(saveToPrefs=False)
-        self.assertEqual(p["mode"], "beginner")
-
-    def testSaveSilentMode(self):
-        silentMode(saveToPrefs=True)
-        p = Preferences()
-        self.assertIsNotNone(p)
-        self.assertTrue("mode" in p.keys())
-        self.assertEqual(p["mode"], "silent")
-        expertMode(saveToPrefs=False)
-        beginnerMode(saveToPrefs=False)
-        self.assertEqual(p["mode"], "silent")
-
-    def testSaveExpertMode(self):
-        expertMode(saveToPrefs=True)
-        p = Preferences()
-        self.assertIsNotNone(p)
-        self.assertTrue("mode" in p.keys())
-        self.assertEqual(p["mode"], "expert")
-        silentMode(saveToPrefs=False)
-        beginnerMode(saveToPrefs=False)
-        self.assertEqual(p["mode"], "expert")
 
 if __name__ == '__main__':
     envtest.main()
