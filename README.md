@@ -66,6 +66,7 @@ This will show you a list of examples of things you can do (more on that in the 
 python -m raytracing -l           # List examples
 python -m raytracing -e all       # Run all of them
 python -m raytracing -e 1,2,4,6   # Only run 1,2,4 and 6
+python -m raytracing -t           # Run all the tests.  Some performance tests can take up to a minute, but they should all pass.
 ```
 
 or request help with:
