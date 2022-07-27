@@ -45,3 +45,8 @@
 7. **There are a lot of warnings printed on screen, and I don't like it because I know what I am doing. Can I get rid of that?**
    Yes you can. There are three modes: `beginner` (many warnings), `expert` (very few, but some), and `silent` (nothing). Call `silentMode(saveToPrefs=True)` or `expertMode(saveToPrefs=True)` and you will be all set.
 
+8. **What is the front and the back of a lens?**
+   A lens has a focus on both sides.  The side where the light enters is called the front side, and therefore the focus on that side is at a distance "front focal length (or FFL)" away from the physical surface of the lens. Similarly (and possibly surprisingly) the focus to which the light will go after having propagated through the lens is the "back focus" and is a distance "back focal length or (BFL)" away from the last physical surface of the lens.
+
+   These terms are standard terms in optical design.
+
