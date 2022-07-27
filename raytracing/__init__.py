@@ -69,26 +69,6 @@ import os.path as path
 import time
 import tempfile
 
-def checkLatestVersion():
-    try:
-        import json
-        import urllib.request
-        from packaging.version import Version
-
-        url = "https://pypi.org/pypi/raytracing/json"
-        req = urllib.request.Request(url)
-        with urllib.request.urlopen(req, timeout=1) as response:
-            data = json.load(response)
-            versions = [ Version(version) for version in data["releases"].keys() ]
-            latestVersion = versions[-1]
-            if Version(__version__) < latestVersion:
-                print("Latest version {0} available on PyPi (you are using {1}).".format(latestVersion, __version__))
-                print("run `pip install --upgrade raytracing` to update.")
-
-    except Exception as err:
-        print("Unable to check for latest version of raytracing on pypi.org")
-        print(err)
-
 def lastCheckMoreThanADay():
     if "lastVersionCheck" in prefs:
         then = datetime.fromisoformat(prefs["lastVersionCheck"])
