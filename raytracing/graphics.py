@@ -1,4 +1,5 @@
 from raytracing.graphicComponents import *
+from .matrix import Lens, Space, Aperture
 from .specialtylenses import Objective
 from .matrixgroup import MatrixGroup
 from .matrix import Space, Lens, Aperture
