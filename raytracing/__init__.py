@@ -49,13 +49,10 @@ from . import olympus
 from .zemax import *
 
 from .utils import *
+from .preferences import *
 
 import os
-
-if "RAYTRACING_EXPERT" in os.environ:
-    expertMode()
-else:
-    beginnerMode()
+from datetime import datetime
     
 """ Synonym of Matrix: Element 
 
@@ -65,52 +62,41 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.3.8"
+__version__ = "1.3.9"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
 import os.path as path
 import time
 import tempfile
 
-tmpDir = tempfile.gettempdir()
-checkFile = '{0}/raytracing-version-check'.format(tmpDir)
-
-def checkLatestVersion():
-    try:
-        import json
-        import urllib.request
-        from distutils.version import StrictVersion
-
-        url = "https://pypi.org/pypi/raytracing/json"
-        req = urllib.request.Request(url)
-        with urllib.request.urlopen(req) as response:
-            data = json.load(response)
-            versions = sorted(data["releases"].keys(),key=StrictVersion)
-            latestVersion = versions[-1]
-            if __version__ < latestVersion:
-                print("Latest version {0} available on PyPi (you are using {1}).".format(latestVersion, __version__))
-                print("run `pip install --upgrade raytracing` to update.")
-
-    except Exception as err:
-        print("Unable to check for latest version of raytracing on pypi.org")
-        print(err)
-
-    finally:
-        # We always timestamp: if there was an error, we will not look again until later
-        with open(checkFile, 'w') as opened_file:
-            opened_file.write("Last check is timestamp of this file")
-
-
 def lastCheckMoreThanADay():
-    if path.exists(checkFile):
-        lastTime = path.getmtime(checkFile)
-        if time.time() - lastTime > 24*60*60:
+    if "lastVersionCheck" in prefs:
+        then = datetime.fromisoformat(prefs["lastVersionCheck"])
+        difference = datetime.now() - then
+        if difference.days > 1:
             return True
         else:
             return False
     else:
         return True
 
+
+prefs = Preferences()
 if lastCheckMoreThanADay():
     checkLatestVersion()
+    prefs["lastVersionCheck"] = datetime.now().isoformat()
+
+if "RAYTRACING_EXPERT" in os.environ:
+    prefs["mode"] = "expert"
+    
+try:
+    if prefs["mode"] == "silent":
+        silentMode()
+    elif prefs["mode"] == "expert":
+        expertMode()
+    else:
+        beginnerMode()
+except Exception as err:
+    pass
+
 

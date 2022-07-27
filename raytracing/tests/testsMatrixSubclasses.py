@@ -411,5 +411,42 @@ class TestAperture(envtest.RaytracingTestCase):
         self.assertIsNone(s.backVertex)
 
 
+class TestToConjugateToFocus(envtest.RaytracingTestCase):
+
+    def testToConjugateMatrix(self):
+        g = MatrixGroup([Space(d=10), Lens(f=5)])
+        m = ToConjugate(g)
+        self.assertEqual(m.B, 10.0)
+        self.assertTrue((m*g).isImaging)
+
+    def testToConjugateMatrixSpace(self):
+        m = ToConjugate(Space(d=10))
+        self.assertEqual(m.B, -10.0)
+        self.assertTrue(m.isImaging)
+
+    def testToInfiniteConjugateMatrixSpace(self):
+        path = ImagingPath()
+        path.append(Space(d=5))
+        path.append(Lens(f=5))
+        with self.assertRaises(ValueError):
+            path.append(ToConjugate(path))
+
+    def testToConjugateMatrixSpace(self):
+        self.assertEqual(ToConjugate(Lens(f=5)).B, 0.0)
+
+    def testToFocus(self):
+        self.assertEqual(ToFocus(Lens(f=5)).B, 5.0)
+
+    def testToFocusAtInf(self):
+        with self.assertRaises(ValueError):
+            self.assertEqual(ToFocus(Space(d=5)).B, 5.0)
+
+    def testFromFocusToFocus(self):
+        m = Lens(f=5).fromFocusToFocus()
+        self.assertEqual(m.A, 0)
+        self.assertEqual(m.B, 5)
+        self.assertEqual(m.C, -1/5)
+        self.assertEqual(m.D, 0)
+
 if __name__ == '__main__':
     envtest.main()
