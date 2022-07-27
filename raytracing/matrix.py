@@ -1684,12 +1684,18 @@ class Space(Matrix):
 
 class ToConjugate(Space):
     """ 
-    A method to obtain the Space() matrix that leads to the conjugate
+    A method to obtain the Space() matrix that leads to the forward conjugate
     plane assuming an object at the front of `element`.
+
+    It is possible the distance traveled is backwards, if the conjugate plane corresponds to a virtual image.
     """
 
     def __init__(self, element):
-        super(ToConjugate, self).__init__(d=element.forwardConjugate().d)
+        d = element.forwardConjugate().d
+        if isfinite(d):
+            super(ToConjugate, self).__init__(d=element.forwardConjugate().d)
+        else:
+            raise ValueError("The conjugate plane is at infinity, and Raytracing cannot handle matrix multiplications with infinity (we often get infinity * 0, which is undefined.")
 
 class ToFocus(Space):
     """ 
@@ -1697,7 +1703,11 @@ class ToFocus(Space):
     of the `element`.
     """
     def __init__(self, element):
-        super(ToFocus, self).__init__(d=element.backFocalLength())
+        bfl = element.backFocalLength()
+        if bfl is not None:
+            super(ToFocus, self).__init__(d=bfl)
+        else:
+            raise ValueError("The focal plane is at infinity, and Raytracing cannot handle matrix multiplications with infinity (we often get infinity * 0, which is undefined.")
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
