@@ -2,7 +2,7 @@ import math
 import warnings
 import inspect
 import sys
-from .preferences import Preferences
+from raytracing.preferences import Preferences
 
 """ Two constants: deg and rad to quickly convert to degrees
 or radians with angle*degPerRad or angle*radPerDeg """
@@ -227,10 +227,11 @@ def warnDeprecatedObjectReferences():
                   "versions. Create an ObjectRays(...) instead and provide it to the display "
                   "with ImagingPath.display(rays=...)", category=DeprecationWarning)
 
-def checkLatestVersion():
+def checkLatestVersion(currentVersion):
     """
     Warns the user on screen that a new version exists if the current version is older than the version on PyPi
 
+    currentVersion should be __version__
     """
     try:
         import json
@@ -243,10 +244,13 @@ def checkLatestVersion():
             data = json.load(response)
             versions = [ Version(version) for version in data["releases"].keys() ]
             latestVersion = versions[-1]
-            if Version(__version__) < latestVersion:
-                print("Latest version {0} available on PyPi (you are using {1}).".format(latestVersion, __version__))
+            if Version(currentVersion) < latestVersion:
+                print("Latest version {0} available on PyPi (you are using {1}).".format(latestVersion, currentVersion))
                 print("run `pip install --upgrade raytracing` to update.")
+                return True
 
     except Exception as err:
         print("Unable to check for latest version of raytracing on pypi.org")
         print(err)
+
+    return False

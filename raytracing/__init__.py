@@ -62,7 +62,7 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.3.9"
+__version__ = "1.3.10"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
 import os.path as path
@@ -83,7 +83,7 @@ def lastCheckMoreThanADay():
 
 prefs = Preferences()
 if lastCheckMoreThanADay():
-    checkLatestVersion()
+    checkLatestVersion(currentVersion=__version__)
     prefs["lastVersionCheck"] = datetime.now().isoformat()
 
 if "RAYTRACING_EXPERT" in os.environ:
