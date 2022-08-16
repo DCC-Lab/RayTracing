@@ -83,6 +83,14 @@ class LaserCavity(LaserPath):
 
         return q
 
+    @property
+    def isStable(self):
+        beams = self.laserModes()
+        if len(beams) == 0:
+            return False
+
+        return True
+    
     def display(self, comments=None):  # pragma: no cover
         """ Display the optical cavity and trace the laser beam. 
         If comments are included they will be displayed on a
@@ -95,8 +103,8 @@ class LaserCavity(LaserPath):
             graph in the bottom half of the plot. (default=None)
 
         """
-        beams = self.laserModes()
-        if len(beams) == 0:
+
+        if self.isStable:
             print("Cavity is not stable")
 
         super(LaserCavity, self).display(beams=beams)
