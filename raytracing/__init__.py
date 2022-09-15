@@ -90,13 +90,18 @@ if "RAYTRACING_EXPERT" in os.environ:
     prefs["mode"] = "expert"
     
 try:
-    if prefs["mode"] == "silent":
-        silentMode()
-    elif prefs["mode"] == "expert":
-        expertMode()
+    if "mode" in prefs:
+        if prefs["mode"] == "silent":
+            silentMode()
+        elif prefs["mode"] == "expert":
+            expertMode()
+        else:
+            beginnerMode(saveToPrefs=False)
     else:
-        beginnerMode()
+        beginnerMode(saveToPrefs=True)
+
 except Exception as err:
+    beginnerMode(saveToPrefs=True)
     pass
 
 

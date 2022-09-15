@@ -3,6 +3,7 @@ import warnings
 import inspect
 import sys
 from raytracing.preferences import Preferences
+import os
 
 """ Two constants: deg and rad to quickly convert to degrees
 or radians with angle*degPerRad or angle*radPerDeg """
@@ -18,7 +19,8 @@ class ExpertNote(UserWarning):
     pass
 
 def warningLineFormat(message, category, filename, lineno, line=None):
-    return '{2}: {3}\n'.format(filename, lineno, category.__name__, message)
+    basenameOnly = os.path.basename(filename)
+    return '{2} [in {0}]: {3}\n'.format(basenameOnly, lineno, category.__name__, message)
 
 def beginnerMode(saveToPrefs=False):
     """
