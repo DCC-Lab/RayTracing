@@ -977,7 +977,7 @@ class ImagingPath(MatrixGroup):
         if rays is not None:
             raysList.append(rays)
 
-        self.figure.initializeDisplay()
+        self.figure.applyDesign()
 
         if len(raysList) == 0:
             self.figure.designParams['showFOV'] = True
@@ -991,7 +991,8 @@ class ImagingPath(MatrixGroup):
                                   'Using default ObjectRays.', category=BeginnerHint)
 
         if 'ObjectRays' not in [type(rays).__name__ for rays in raysList]:
-            if self.fanAngle is None:
+            fanAngle = self.fanAngle
+            if fanAngle is None:
                 fanAngle = np.tan(self.figure.displayRange / 2 / self.L / 5)
             defaultObject = ObjectRays(self.objectHeight, z=self.objectPosition,
                                        halfAngle=fanAngle, T=self.rayNumber, H=self.fanNumber)
@@ -1001,6 +1002,10 @@ class ImagingPath(MatrixGroup):
 
         self.figure.display(raysList=raysList, comments=comments, title=self.label,
                             backend='matplotlib', display3D=False, interactive=interactive, filepath=filePath)
+
+        savedDesignParams = self.figure.designParams
+        self.figure = Figure(opticalPath=self)
+        self.design = savedDesignParams
 
     def saveFigure(self, filePath, rays=None, raysList=None, removeBlocked=True, comments=None,
                    onlyPrincipalAndAxialRays=None, limitObjectToFieldOfView=None):
