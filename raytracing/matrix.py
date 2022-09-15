@@ -1545,7 +1545,7 @@ class CurvedMirror(Matrix):
     Parameters
     ----------
     R : float
-        the radius of curvature of the mirror
+        the radius of curvature of the mirror, converging is negative
     diameter : float
         The diameter of the element (default=Inf)
     label : string
