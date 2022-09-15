@@ -777,6 +777,63 @@ class RandomLambertianRays(RandomRays):
         return ray
 
 
+class GaussianProfileUniformRays(RandomRays):
+    """A list of random rays with Gaussian intensity distribution.
+
+    Parameters
+    ----------
+    intensityWidth : float
+        1/e gaussien width in intensity
+    maxCount : int
+        Number of rays in the list
+
+    Examples
+    --------
+
+    >>> from raytracing import *
+    >>> nRays = 1000 # Increase for better resolution
+    >>> minHeight=0
+    >>> maxHeight=50
+    >>> # define a list of random rays with Lambertian distribution
+    >>> inputRays = GaussianProfileUniformRays(intensityWidth=2, maxCount=nRays)
+    >>> inputRays.display()
+
+
+    See Also
+    --------
+    raytracing.LambertianRays
+    raytracing.RandomUniformRays
+
+    """
+    def __init__(self, intensityWidth, maxCount=10000):
+        super(GaussianProfileUniformRays, self).__init__(yMax=4*intensityWidth, yMin=-4*intensityWidth, thetaMax=np.pi / 2, thetaMin=-np.pi / 2,
+                                                   maxCount=maxCount)
+        self.intensityWidth = intensityWidth
+
+    def randomRay(self) -> Ray:
+        """
+        Return a ray randomly from the distribution
+
+        This strategy to get gaussian rays is fairly inefficient, but it works.
+
+        """
+        if len(self._rays) == self.maxCount:
+            raise AttributeError("Cannot generate more random rays, maximum count achieved")
+
+
+        while (True):
+            y = self.yMin + np.random.random() * (self.yMax - self.yMin)
+            intensity = np.exp(-y*y/self.intensityWidth/self.intensityWidth)
+            randomValue = np.random.random()
+            if randomValue < intensity:
+                break
+
+        theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+        ray = Ray(y, theta)
+        self.append(ray)
+        return ray
+
+
 class ObjectRays(UniformRays):
     """
     A set of rays used for objects.
