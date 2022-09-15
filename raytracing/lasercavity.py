@@ -1,6 +1,7 @@
 from .matrixgroup import *
 from .imagingpath import *
 from .laserpath import *
+import warnings
 
 class LaserCavity(LaserPath):
     """A laser cavity (i.e. a resonator).  The beam is considered to go 
@@ -14,9 +15,10 @@ class LaserCavity(LaserPath):
     Parameters
     ----------
     elements : list of elements
-        A list of ABCD matrices in the imaging path
+        A list of ABCD matrices in the laser cavity.  Must include both forward and backward.
+        You can use the copyReversedElements() function to help. Do not copy the last mirror twice.
     label : string
-        the label for the imaging path (Optional)
+        the label for the laser cavity (Optional)
 
     Attributes
     ----------
@@ -38,8 +40,23 @@ class LaserCavity(LaserPath):
 
     """
 
-    def __init__(self, elements=None, label=""):
+    def __init__(self, elements=None, label="Laser cavity"):
         super(LaserCavity, self).__init__(elements=elements, label=label)
+
+    def appendElementsInReverse(self, skipFirstElement=False, skipLastElement=False):      
+        if skipFirstElement:
+            firstElement = 1
+        else:
+            firstElement = 0
+
+        if skipLastElement:
+            forwardElements = self.elements[firstElement:-1]
+        else:
+            forwardElements = self.elements[firstElement:]
+            
+        for element in reversed(forwardElements):
+            self.elements.append(element)
+
 
     def eigenModes(self):
         """
@@ -83,6 +100,14 @@ class LaserCavity(LaserPath):
 
         return q
 
+    @property
+    def isStable(self):
+        beams = self.laserModes()
+        if len(beams) > 0:
+            return True
+
+        return False
+    
     def display(self, comments=None):  # pragma: no cover
         """ Display the optical cavity and trace the laser beam. 
         If comments are included they will be displayed on a
@@ -95,8 +120,9 @@ class LaserCavity(LaserPath):
             graph in the bottom half of the plot. (default=None)
 
         """
-        beams = self.laserModes()
-        if len(beams) == 0:
-            print("Cavity is not stable")
 
-        super(LaserCavity, self).display(beams=beams)
+        if not self.isStable:
+            warnings.warn("`LaserCavity.display()` called with an unstable cavity. No beam will be drawn.", BeginnerHint)
+            super(LaserCavity, self).display(beams=[])
+        else:
+            super(LaserCavity, self).display(beams=self.laserModes())
