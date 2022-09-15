@@ -110,7 +110,7 @@ class Figure:
     def fontScale(self):
         return self.designParams['fontScale']
 
-    def initializeDisplay(self):
+    def applyDesign(self):
         """ Configure the imaging path and the figure according to the display conditions. """
 
         note1 = ""
@@ -145,9 +145,6 @@ class Figure:
         label = Label(x=0.05, y=0.02, text=note1, fontsize=12*self.fontScale,
                       useDataUnits=False, alignment='left')
         self.labels.append(label)
-
-    def resetDisplay(self):
-        return
 
     def setPrincipalAndAxialRays(self):
         (stopPosition, stopDiameter) = self.path.apertureStop()
