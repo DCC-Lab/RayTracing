@@ -10,7 +10,7 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 
 > ["Tools and tutorial on practical ray tracing for microscopy"](https://doi.org/10.1117/1.NPh.8.1.010801) 
 >
-> by V. Pineau Noël*, S. Masoumi*, E. Parham*, G. Genest, L. Bégin, M.-A. Vigneault, D. C. Côté, 
+> by V. Pineau Noël\*, S. Masoumi\*, E. Parham\*, G. Genest, L. Bégin, M.-A. Vigneault, D. C. Côté, 
 > Neurophotonics, 8(1), 010801 (2021). 
 > *Equal contributions.
 > Permalink: https://doi.org/10.1117/1.NPh.8.1.010801
@@ -32,6 +32,8 @@ If you want to perform calculations with coherent laser beams, then you use `Gau
 ## What's new?
 
 To get information about what is new, currently the best place is the [release page on GitHub.](https://github.com/DCC-Lab/RayTracing/releases)
+
+There is a **[Frequently Asked Questions](./FAQ.md)** page.
 
 The article above is fully compatible with all 1.3.x versions.  As long as the API does not change, versions will be 1.3.x.
 
