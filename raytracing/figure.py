@@ -146,6 +146,9 @@ class Figure:
                       useDataUnits=False, alignment='left')
         self.labels.append(label)
 
+    def resetDisplay(self):
+        return
+
     def setPrincipalAndAxialRays(self):
         (stopPosition, stopDiameter) = self.path.apertureStop()
         if stopPosition is None:
