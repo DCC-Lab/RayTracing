@@ -71,7 +71,8 @@ import tempfile
 
 def lastCheckMoreThanADay():
     if "lastVersionCheck" in prefs:
-        then = datetime.fromisoformat(prefs["lastVersionCheck"])
+        isoFormat = "%Y-%m-%dT%H:%M:%S.%f"
+        then = datetime.strptime(prefs["lastVersionCheck"], isoFormat)
         difference = datetime.now() - then
         if difference.days > 1:
             return True
