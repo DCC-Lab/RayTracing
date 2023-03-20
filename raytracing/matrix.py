@@ -1582,7 +1582,7 @@ class CurvedMirror(Matrix):
     def forwardSurfaces(self):
         """ A list of surfaces that represents the element for drawing purposes 
         """
-        return [SphericalInterface(R=2/self.C)]
+        return [SphericalInterface(R=-2/self.C)]
 
     def pointsOfInterest(self, z):
         """ List of points of interest for this element as a dictionary:
