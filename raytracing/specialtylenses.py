@@ -226,6 +226,12 @@ class AchromatDoubletLens(CompoundLens):
                 SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
                 SphericalInterface(R=self.R3)]
 
+    def __str__(self):
+        ef1, ef2 = self.effectiveFocalLengths()
+        return "{0} efl={1}, diameter={2}".format(self.label, ef1, self.diameter)
+
+    def __expr__(self):
+        return self.__str__()
 
 class SingletLens(CompoundLens):
     """
