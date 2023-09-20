@@ -1,6 +1,7 @@
 from .specialtylenses import *
 from .materials import *
 
+from .thorlabs2 import *
 
 class ACN254_100_A(AchromatDoubletLens):
     """ ACN254-100-A
