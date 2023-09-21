@@ -827,7 +827,7 @@ class Matrix(object):
 
         """
         if not isinstance(inputRays, CompactRays):
-            raise ValueError("Only CompactRays can be used with OnenCL.  Convert your rays to CompactRays.")
+            raise ValueError("Only CompactRays can be used with OpenCL.  Convert your rays to CompactRays.")
 
         import pyopencl as pycl
 
@@ -872,11 +872,13 @@ class Matrix(object):
                               }                          
                           }
 
-                          res[i+N*(j+1)] = v;
+                          // res[i+N*(j+1)] = v;
+                          res[i*(M+1)+(j+1)] = v;
                       }
                     }
         """
-
+        import time
+        start = time.time()
         program = pycl.Program(context, program_source_floats).build()
 
         knl = program.product
@@ -884,11 +886,15 @@ class Matrix(object):
 
         pycl.enqueue_copy(queue, outputRays.buffer, outputRayBuffer)
 
+        # raytraces = CompactRaytraces(outputRays, traceLength = M + 1)
+        #
+        #
+        # print(time.time()-start)
         raytraces = []
         for i in range(N):
             raytrace = []
             for j in range(M+1):
-                raytrace.append(outputRays[i+N*j])
+                raytrace.append(outputRays[i*(M+1)+j])
             raytraces.append(raytrace)
 
         return raytraces
