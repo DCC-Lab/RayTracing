@@ -780,24 +780,26 @@ class TestTrace(envtest.RaytracingTestCase):
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallel(self):
+    def testTraceManyThroughInParallel_1(self):
         rays = [Ray(y, y) for y in range(5)]
+        expectedThroughRays = [Ray(y, y, z=1) for y in range(5)]
         m = Matrix(physicalLength=1)
-        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
+        traces = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
         for i in range(len(rays)):
             # Order is not kept, we have to check if the ray traced is in the original list
-            self.assertIn(trace[i], rays)
+            self.assertIn(traces[i], expectedThroughRays)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallel(self):
+    def testTraceManyThroughInParallel_2(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
-        trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
+        expectedThroughRays = [Ray(y, y, z=1) for y in range(5)]
+        traces = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
         for i in range(len(rays)):
             # Order is not kept, we have to check if the ray traced is in the original list
-            self.assertIn(trace[i], rays)
+            self.assertIn(traces[i], expectedThroughRays)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
@@ -820,7 +822,12 @@ class TestTrace(envtest.RaytracingTestCase):
         print((a[0].astype(CompactRay.Struct)))
 
     def testTraceManyOpenCL(self):
-        rays = UniformRays(M=100,N=10)#[Ray(y, y) for y in range(1000000)]
+        inputRaysOpenCL = UniformRays(M=100,N=10)
+        inputRaysNative = UniformRays(M=100,N=10)
+
+        for rayOpenCL, rayNative in zip(inputRaysOpenCL, inputRaysNative):
+            self.assertEqual(rayOpenCL, rayNative)
+
         path = ImagingPath()
         path.append(Space(d=2))
         path.append(Lens(f=10, diameter=25))
@@ -830,13 +837,65 @@ class TestTrace(envtest.RaytracingTestCase):
         path.append(Lens(f=30))
         path.append(Space(d=4))
         m = MatrixGroup(path.transferMatrices())
-        outputRaytraces = m.traceManyOpenCL(rays)
+        outputRaytracesOpenCL = m.traceManyOpenCL(inputRaysOpenCL)
+        outputRaytracesNative = m.traceManyNative(inputRaysNative)
 
 
-        path.display(raysList=outputRaytraces)
-        # for trace in outputRaytraces:
-        #     for ray in trace:
-        #         print("{0}".format(ray))
+        for traceOpenCL, traceNative in zip(outputRaytracesOpenCL, outputRaytracesNative):
+            self.assertEqual(traceOpenCL[0], traceNative[0])
+            self.assertEqual(traceOpenCL[-1], traceNative[-1])
+
+
+    def testTraceManyWithOpenCLArgument(self):
+        inputRaysOpenCL = UniformRays(M=100, N=100)
+        inputRaysNative = UniformRays(M=100, N=100)
+        path = ImagingPath()
+        path.append(Space(d=2))
+        path.append(Lens(f=10, diameter=25))
+        path.append(Space(d=2))
+        path.append(Lens(f=20))
+        path.append(Space(d=3))
+        path.append(Lens(f=30))
+        path.append(Space(d=4))
+        m = MatrixGroup(path.transferMatrices())
+        outputRaytracesOpenCL = m.traceMany(inputRaysOpenCL, useOpenCL=True)
+        outputRaytracesNative = m.traceManyNative(inputRaysNative)
+
+        for traceOpenCL, traceNative in zip(outputRaytracesOpenCL, outputRaytracesNative):
+            self.assertEqual(traceOpenCL[0], traceNative[0])
+            self.assertEqual(traceOpenCL[-1], traceNative[-1])
+
+    @envtest.skip("Performance skipped")
+    def testTraceManyOpenCLvsNativePerformance(self):
+        import time
+        Ms = [1, 10, 100, 100, 100, 100]
+        Ns = [1, 10, 100, 1000, 10000, 100000]
+
+        path = ImagingPath()
+        path.append(Space(d=2))
+        path.append(Lens(f=10, diameter=25))
+        path.append(Space(d=2))
+        path.append(Lens(f=20))
+        path.append(Space(d=3))
+        path.append(Lens(f=30))
+        path.append(Space(d=4))
+        m = MatrixGroup(path.transferMatrices())
+
+        native = []
+        openCL = []
+        for M,N in zip(Ms, Ns):
+            inputRaysOpenCL = UniformRays(M=M, N=N)
+            start = time.time()
+            outputRaytracesOpenCL = m.traceManyOpenCL(inputRaysOpenCL)
+            openCL.append(time.time() - start)
+
+            inputRaysNative = UniformRays(M=M, N=N)
+            start = time.time()
+            outputRaytracesNative = m.traceManyNative(inputRaysNative)
+            native.append(time.time() - start)
+
+        print(native)
+        print(openCL)
 
 if __name__ == '__main__':
     envtest.main()

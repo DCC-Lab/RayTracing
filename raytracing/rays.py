@@ -494,8 +494,79 @@ class CompactRays(Rays):
     def __getitem__(self, index):
         return CompactRay(self, index)
 
+    def __iter__(self):
+        self.iteration = 0
+        return self
+
+    def __next__(self) -> CompactRay:
+
+        if self.iteration < len(self):
+            ray = self[self.iteration] # Again we want to use __getitem__ for self for CompactRays
+            self.iteration += 1
+            return ray
+
+        raise StopIteration
+
     def append(self, tuple):
         raise RuntimeError('You can only replace elements from a pre-allocated CompactRays')
+
+class CompactRaytrace:
+    def __init__(self, compactRays, firstIndex, traceLength):
+        self.compactRays = compactRays
+        self.firstIndex = firstIndex
+        self.traceLength = traceLength
+
+    def __len__(self):
+        return self.traceLength
+
+    def __getitem__(self, rayIndex):
+        while (rayIndex < 0):
+            rayIndex += self.traceLength
+        return self.compactRays[self.firstIndex + rayIndex]
+
+
+    def __iter__(self):
+        self.iteration = 0
+        return self
+
+    def __next__(self) -> CompactRay:
+
+        if self.iteration < len(self):
+            ray = self[self.iteration] # Again we want to use __getitem__ for self for CompactRays
+            self.iteration += 1
+            return ray
+
+        raise StopIteration
+
+
+class CompactRaytraces:
+    def __init__(self, compactRays, traceLength):
+        self.compactRays = compactRays
+        self.traceLength = traceLength
+        self.traceCount = int(compactRays.maxCount / traceLength)
+
+    def __len__(self):
+        return self.traceCount
+    def __getitem__(self, traceIndex):
+        while (traceIndex < 0):
+            traceIndex += self.traceCount
+        traceIndex = traceIndex % self.traceCount
+        return CompactRaytrace(self.compactRays, traceIndex * self.traceLength, self.traceLength)
+
+
+    def __iter__(self):
+        self.iteration = 0
+        return self
+
+    def __next__(self) -> CompactRaytrace:
+
+        if self.iteration < len(self):
+            raytrace = self[self.iteration]
+            self.iteration += 1
+            return raytrace
+
+        raise StopIteration
+
 
 class UniformRays(CompactRays):
     """A list of rays with uniform distribution.
@@ -912,3 +983,4 @@ class LampRays(RandomUniformRays, Rays):
         self.z = z
         self.rayColors = rayColors
         self.label = label
+
