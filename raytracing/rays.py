@@ -477,98 +477,9 @@ class Rays:
     # https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
     # and https://stackoverflow.com/questions/3122049/drawing-an-anti-aliased-line-with-thepython-imaging-library
 
-class CompactRays(Rays):
-    def __init__(self, compactRaysStructuredBuffer=None, maxCount=None):
-        super().__init__()
-        self.maxCount = maxCount
-
-        if compactRaysStructuredBuffer is not None:
-            self.buffer = compactRaysStructuredBuffer
-            self._rays = np.frombuffer(self.buffer, dtype=CompactRay.Struct)
-        elif maxCount is not None:
-            self._rays = np.zeros((maxCount,), dtype=CompactRay.Struct)
-            self.buffer = self._rays.data
-        else:
-            raise ValueError('You must provide a buffer or a maxCount')
-
-    def __getitem__(self, index):
-        return CompactRay(self, index)
-
-    def __iter__(self):
-        self.iteration = 0
-        return self
-
-    def __next__(self) -> CompactRay:
-
-        if self.iteration < len(self):
-            ray = self[self.iteration] # Again we want to use __getitem__ for self for CompactRays
-            self.iteration += 1
-            return ray
-
-        raise StopIteration
-
-    def append(self, tuple):
-        raise RuntimeError('You can only replace elements from a pre-allocated CompactRays')
-
-class CompactRaytrace:
-    def __init__(self, compactRays, firstIndex, traceLength):
-        self.compactRays = compactRays
-        self.firstIndex = firstIndex
-        self.traceLength = traceLength
-
-    def __len__(self):
-        return self.traceLength
-
-    def __getitem__(self, rayIndex):
-        while (rayIndex < 0):
-            rayIndex += self.traceLength
-        return self.compactRays[self.firstIndex + rayIndex]
 
 
-    def __iter__(self):
-        self.iteration = 0
-        return self
-
-    def __next__(self) -> CompactRay:
-
-        if self.iteration < len(self):
-            ray = self[self.iteration] # Again we want to use __getitem__ for self for CompactRays
-            self.iteration += 1
-            return ray
-
-        raise StopIteration
-
-
-class CompactRaytraces:
-    def __init__(self, compactRays, traceLength):
-        self.compactRays = compactRays
-        self.traceLength = traceLength
-        self.traceCount = int(compactRays.maxCount / traceLength)
-
-    def __len__(self):
-        return self.traceCount
-    def __getitem__(self, traceIndex):
-        while (traceIndex < 0):
-            traceIndex += self.traceCount
-        traceIndex = traceIndex % self.traceCount
-        return CompactRaytrace(self.compactRays, traceIndex * self.traceLength, self.traceLength)
-
-
-    def __iter__(self):
-        self.iteration = 0
-        return self
-
-    def __next__(self) -> CompactRaytrace:
-
-        if self.iteration < len(self):
-            raytrace = self[self.iteration]
-            self.iteration += 1
-            return raytrace
-
-        raise StopIteration
-
-
-class UniformRays(CompactRays):
+class UniformRays(Rays):
     """A list of rays with uniform distribution.
 
     Parameters
@@ -624,14 +535,13 @@ class UniformRays(CompactRays):
 
         self.M = M
         self.N = N
-        rays = []
 
         if self.M == 1:
             heights = [0]
         else:
             heights = np.linspace(self.yMin, self.yMax, self.M, endpoint=True)
 
-        super(UniformRays, self).__init__(maxCount=M*N)
+        super(UniformRays, self).__init__()
 
         i = 0
         for y in heights:
@@ -643,7 +553,7 @@ class UniformRays(CompactRays):
 
 
 
-class LambertianRays(CompactRays):
+class LambertianRays(Rays):
     """A list of rays with Lambertian distribution.
 
     Parameters
@@ -706,7 +616,7 @@ class LambertianRays(CompactRays):
                     i += 1
 
 
-class RandomRays(CompactRays):
+class RandomRays(Rays):
     """A list of rays with Random distribution.
 
     Parameters

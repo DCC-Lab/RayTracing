@@ -1,7 +1,4 @@
-import warnings
 from .utils import deprecated, areAbsolutelyAlmostEqual
-import numpy as np
-from struct import pack
 
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
@@ -321,66 +318,3 @@ class Ray:
 
         return True
 
-class CompactRay(Ray):
-
-    Struct = np.dtype([("y", np.float32),
-                      ("theta", np.float32),
-                      ("z", np.float32),
-                      ("isBlocked", np.int32),
-                      ("apertureDiameter", np.float32),
-                      ("wavelength", np.float32)
-                      ])
-
-    def __init__(self, raysSource, index):
-        super().__init__()
-        self.rays = raysSource
-        self.index = index
-        self.array = np.frombuffer(self.rays.buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * self.index)
-
-    @property
-    def elementAsStruct(self):
-        if self.array is None:
-            self.array = np.frombuffer(self.rays.buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * self.index)
-        return self.array[0]
-
-    @property
-    def y(self):
-        return self.elementAsStruct[0]
-    @y.setter
-    def y(self, value):
-        self.elementAsStruct[0] = value
-
-    @property
-    def theta(self):
-        return self.elementAsStruct[1]
-    @theta.setter
-    def theta(self, value):
-        self.elementAsStruct[1] = value
-
-    @property
-    def z(self):
-        return self.elementAsStruct[2]
-    @z.setter
-    def z(self, value):
-        self.elementAsStruct[2] = value
-
-    @property
-    def isBlocked(self):
-        return self.elementAsStruct[3] != 0
-    @isBlocked.setter
-    def isBlocked(self, value):
-        self.elementAsStruct[3] = (value != 0)
-
-    @property
-    def apertureDiameter(self):
-        return self.elementAsStruct[4]
-    @apertureDiameter.setter
-    def apertureDiameter(self, value):
-        self.elementAsStruct[4] = value
-
-    @property
-    def wavelength(self):
-        return self.elementAsStruct[5]
-    @wavelength.setter
-    def wavelength(self, value):
-        self.elementAsStruct[5] = value

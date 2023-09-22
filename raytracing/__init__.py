@@ -28,6 +28,7 @@ from .matrixgroup import *
 """ Ray matrices for geometrical optics """
 from .ray import *
 from .rays import *
+from .compact import *
 from .imagingpath import *
 
 """ ABCD matrices for gaussian beams """

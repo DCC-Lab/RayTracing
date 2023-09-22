@@ -1,6 +1,7 @@
 from .ray import *
 from .gaussianbeam import *
 from .rays import *
+from .compact import *
 from .interface import *
 from .utils import *
 
