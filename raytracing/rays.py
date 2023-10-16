@@ -365,8 +365,8 @@ class Rays:
         if self._rays is None:
             raise StopIteration
 
-        if self.iteration < len(self): # We really want to use len(self) to be compatible with CompactRays
-            ray = self[self.iteration] # Again we want to use __getitem__ for self for CompactRays
+        if self.iteration < len(self._rays):
+            ray = self._rays[self.iteration]
             self.iteration += 1
             return ray
 
@@ -478,7 +478,6 @@ class Rays:
     # and https://stackoverflow.com/questions/3122049/drawing-an-anti-aliased-line-with-thepython-imaging-library
 
 
-
 class UniformRays(Rays):
     """A list of rays with uniform distribution.
 
@@ -535,22 +534,17 @@ class UniformRays(Rays):
 
         self.M = M
         self.N = N
+        rays = []
 
         if self.M == 1:
             heights = [0]
         else:
             heights = np.linspace(self.yMin, self.yMax, self.M, endpoint=True)
 
-        super(UniformRays, self).__init__()
-
-        i = 0
         for y in heights:
             for theta in np.linspace(self.thetaMin, self.thetaMax, self.N, endpoint=True):
-                ray = self[i]
-                ray.y = y
-                ray.theta = theta
-                i += 1
-
+                rays.append(Ray(y, theta))
+        super(UniformRays, self).__init__(rays=rays)
 
 
 class LambertianRays(Rays):
@@ -603,17 +597,13 @@ class LambertianRays(Rays):
         self.M = M
         self.N = N
         self.I = I
-        super(LambertianRays, self).__init__(maxCount=M*N*I)
-
-        i = 0
+        rays = []
         for theta in np.linspace(self.thetaMin, self.thetaMax, N, endpoint=True):
             intensity = int(I * np.cos(theta))
             for y in np.linspace(self.yMin, self.yMax, M, endpoint=True):
                 for k in range(intensity):
-                    ray = self[i]
-                    ray.y = y
-                    ray.theta = theta
-                    i += 1
+                    rays.append(Ray(y, theta))
+        super(LambertianRays, self).__init__(rays=rays)
 
 
 class RandomRays(Rays):
@@ -651,9 +641,7 @@ class RandomRays(Rays):
         self.thetaMin = thetaMin
         if thetaMin is None:
             self.thetaMin = -thetaMax
-
-        self.nextAvailable = 0
-        super(RandomRays, self).__init__(maxCount=maxCount)
+        super(RandomRays, self).__init__()
 
     def __len__(self) -> int:
         return self.maxCount
@@ -663,17 +651,16 @@ class RandomRays(Rays):
             # Convert negative index to positive (i.e. -1 == len - 1)
             item += self.maxCount
 
-        if item < 0 or item > self.maxCount:
+        if item < 0 or item >= self.maxCount:
             raise IndexError(f"Index {item} out of bound, min = 0, max {self.maxCount}.")
 
         start = time.monotonic()
-        ray = None
-        while self.nextAvailable <= item:
-            ray = self.randomRay()
+        while len(self._rays) <= item:
+            self.randomRay()
             if time.monotonic() - start > 3:
                 warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
 
-        return CompactRay(self, item)
+        return self._rays[item]
 
     def __next__(self) -> Ray:
         if self.iteration >= self.maxCount:
@@ -733,13 +720,13 @@ class RandomUniformRays(RandomRays):
                                                 maxCount=maxCount)
 
     def randomRay(self) -> Ray:
-        if self.nextAvailable >= self.maxCount:
+        if len(self._rays) == self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
-        ray = CompactRay(self, self.nextAvailable) # CompactRay
-        ray.theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
-        ray.y = self.yMin + np.random.random() * (self.yMax - self.yMin)
-        self.nextAvailable += 1
+        theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
+        ray = Ray(y=y, theta=theta)
+        self.append(ray)
         return ray
 
 
@@ -784,7 +771,7 @@ class RandomLambertianRays(RandomRays):
                                                    maxCount=maxCount)
 
     def randomRay(self) -> Ray:
-        if self.nextAvailable >= self.maxCount:
+        if len(self._rays) == self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
         theta = 0
@@ -795,10 +782,66 @@ class RandomLambertianRays(RandomRays):
             if randomValue < intensity:
                 break
 
-        ray = CompactRay(self, self.nextAvailable) # CompactRay
-        ray.theta = theta
-        ray.y = self.yMin + np.random.random() * (self.yMax - self.yMin)
-        self.nextAvailable += 1
+        y = self.yMin + np.random.random() * (self.yMax - self.yMin)
+        ray = Ray(y, theta)
+        self.append(ray)
+        return ray
+
+
+class GaussianProfileUniformRays(RandomRays):
+    """A list of random rays with Gaussian intensity distribution.
+
+    Parameters
+    ----------
+    intensityWidth : float
+        1/e gaussien width in intensity
+    maxCount : int
+        Number of rays in the list
+
+    Examples
+    --------
+
+    >>> from raytracing import *
+    >>> nRays = 1000 # Increase for better resolution
+    >>> minHeight=0
+    >>> maxHeight=50
+    >>> # define a list of random rays with Lambertian distribution
+    >>> inputRays = GaussianProfileUniformRays(intensityWidth=2, maxCount=nRays)
+    >>> inputRays.display()
+
+
+    See Also
+    --------
+    raytracing.LambertianRays
+    raytracing.RandomUniformRays
+
+    """
+    def __init__(self, intensityWidth, maxCount=10000):
+        super(GaussianProfileUniformRays, self).__init__(yMax=4*intensityWidth, yMin=-4*intensityWidth, thetaMax=np.pi / 2, thetaMin=-np.pi / 2,
+                                                   maxCount=maxCount)
+        self.intensityWidth = intensityWidth
+
+    def randomRay(self) -> Ray:
+        """
+        Return a ray randomly from the distribution
+
+        This strategy to get gaussian rays is fairly inefficient, but it works.
+
+        """
+        if len(self._rays) == self.maxCount:
+            raise AttributeError("Cannot generate more random rays, maximum count achieved")
+
+
+        while (True):
+            y = self.yMin + np.random.random() * (self.yMax - self.yMin)
+            intensity = np.exp(-y*y/self.intensityWidth/self.intensityWidth)
+            randomValue = np.random.random()
+            if randomValue < intensity:
+                break
+
+        theta = self.thetaMin + np.random.random() * (self.thetaMax - self.thetaMin)
+        ray = Ray(y, theta)
+        self.append(ray)
         return ray
 
 
@@ -893,4 +936,3 @@ class LampRays(RandomUniformRays, Rays):
         self.z = z
         self.rayColors = rayColors
         self.label = label
-
