@@ -24,6 +24,14 @@ class CompactRay(Ray):
             self.array = np.frombuffer(self.rays.buffer, dtype=CompactRay.Struct, count=1, offset=CompactRay.Struct.itemsize * self.index)
         return self.array[0]
 
+    def assign(self, ray):
+        self.y = ray.y
+        self.theta = ray.theta
+        self.z = ray.z
+        self.wavelength = ray.wavelength
+        self.isBlocked = ray.isBlocked
+        self.apertureDiameter = ray.apertureDiameter
+
     @property
     def y(self):
         return self.elementAsStruct[0]
@@ -67,7 +75,7 @@ class CompactRay(Ray):
         self.elementAsStruct[5] = value
 
 class CompactRays(Rays):
-    def __init__(self, compactRaysStructuredBuffer=None, maxCount=None):
+    def __init__(self, compactRaysStructuredBuffer=None, maxCount=None, rays=None):
         super().__init__()
         self.maxCount = maxCount
 
@@ -77,14 +85,22 @@ class CompactRays(Rays):
         elif maxCount is not None:
             self._rays = np.zeros((maxCount,), dtype=CompactRay.Struct)
             self.buffer = self._rays.data
+        elif rays is not None:
+            maxCount = len(rays)
+            self._rays = np.zeros((maxCount,), dtype=CompactRay.Struct)
+            self.buffer = self._rays.data
+
+            for i, ray in enumerate(rays):
+                CompactRay(self, i).assign(ray)
+
         else:
             raise ValueError('You must provide a buffer or a maxCount')
 
     def __getitem__(self, index):
         return CompactRay(self, index)
 
-    def __setitem__(self, key, value):
-        self._rays[key] = value
+    def __setitem__(self, index, value):
+        CompactRay(self, index).assign(value)
 
     def __iter__(self):
         self.iteration = 0

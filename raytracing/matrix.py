@@ -857,7 +857,7 @@ class Matrix(object):
                       int j;                       // the matrix index
                       int N    = get_global_size(0);
                       RayStruct v = vec[i];
-                      res[i] = v;
+                      res[i*(M+1)] = v;
                       for (j = 0; j < M; j++) {
                           MatrixStruct m = mat[j];
                           
@@ -873,7 +873,8 @@ class Matrix(object):
                               }                          
                           }
 
-                          // res[i+N*(j+1)] = v;
+                          //res[i+N*(j+1)] = v;
+                          // res[i*(M+1)+(j+1)] = v;
                           res[i*(M+1)+(j+1)] = v;
                       }
                     }
@@ -887,16 +888,16 @@ class Matrix(object):
 
         pycl.enqueue_copy(queue, outputRays.buffer, outputRayBuffer)
 
-        # raytraces = CompactRaytraces(outputRays, traceLength = M + 1)
-        #
-        #
-        # print(time.time()-start)
-        raytraces = []
-        for i in range(N):
-            raytrace = []
-            for j in range(M+1):
-                raytrace.append(outputRays[i*(M+1)+j])
-            raytraces.append(raytrace)
+        raytraces = CompactRaytraces(outputRays, traceLength = M + 1)
+        # # #
+        # # #
+        # # # print(time.time()-start)
+        # raytraces = []
+        # for i in range(N):
+        #     raytrace = []
+        #     for j in range(M+1):
+        #         raytrace.append(outputRays[i*(M+1)+j])
+        #     raytraces.append(raytrace)
 
         return raytraces
 

@@ -5,6 +5,31 @@ from raytracing import *
 inf = float("+inf")
 
 class TestCompactRays(envtest.RaytracingTestCase):
+    def testCompactRaysInit(self):
+        self.assertIsNotNone(CompactRays(maxCount=100))
+
+    def testCompactRaysInit(self):
+        rays=CompactRays(maxCount=100)
+        self.assertIsNotNone(rays)
+        self.assertEqual(len(rays), 100)
+
+    def testCompactRaysGetItem(self):
+        rays=CompactRays(maxCount=100)
+        self.assertIsNotNone(rays)
+        for ray in rays:
+            self.assertIsNotNone(ray)
+            self.assertEqual(ray.y, 0)
+            self.assertEqual(ray.theta, 0)
+            self.assertEqual(ray.z, 0)
+        self.assertEqual(len(rays), 100)
+
+    def testCompactRaysSetItem(self):
+        rays=CompactRays(maxCount=100)
+        ray = Ray(y=1, theta=0.5)
+        rays[0] = ray
+        self.assertEqual(rays[0].y, ray.y)
+        self.assertEqual(rays[0].theta, ray.theta)
+
     def testRaysListRaysAndCompactEquivalence(self):
         inputRays1 = []
         for y in [-1, 0, 1]:
@@ -15,7 +40,7 @@ class TestCompactRays(envtest.RaytracingTestCase):
         inputRays2 = CompactRays(maxCount=len(inputRays1))
 
         for i, otherRay in enumerate(inputRays1):
-            inputRays2[i] = inputRays1[i]
+            inputRays2[i] = otherRay
 
         for r1, r2 in zip(inputRays1, inputRays2):
             self.assertEqual(r1, r2)
@@ -98,27 +123,50 @@ class TestCompactRays(envtest.RaytracingTestCase):
 
 class TestCompactRaytraces(envtest.RaytracingTestCase):
 
-    def testCompactRaytrace(self):
+    def testCompactRaytraceInit(self):
         rays = CompactRays(maxCount=10)
         self.assertIsNotNone(rays)
         self.assertEqual(len(rays), 10)
+        raytrace = CompactRaytrace(rays, firstIndex=0, traceLength=10)
+        self.assertEqual(len(raytrace), 10)
+
+    def testCompactRaytraceAssignment(self):
+        rays = CompactRays(maxCount=10)
+        self.assertIsNotNone(rays)
+        self.assertEqual(len(rays), 10)
+
+        for i, ray in enumerate(rays):
+            ray.y = i
+            ray.theta = i
+            ray.z = i
+
         raytrace = CompactRaytrace(rays, firstIndex=0, traceLength=10)
 
         self.assertEqual(len(raytrace), 10)
 
         for i in range(10):
-            print(raytrace[i])
+            self.assertEqual(raytrace[i].y, i)
+            self.assertEqual(raytrace[i].theta, i)
+            self.assertEqual(raytrace[i].z, i)
 
     def testCompactRaytraceIterator(self):
         rays = CompactRays(maxCount=10)
         self.assertIsNotNone(rays)
         self.assertEqual(len(rays), 10)
+
+        for i, ray in enumerate(rays):
+            ray.y = i
+            ray.theta = i
+            ray.z = i
+
         raytrace = CompactRaytrace(rays, firstIndex=0, traceLength=10)
 
         self.assertEqual(len(raytrace), 10)
 
-        for ray in raytrace:
-            print(ray)
+        for i,ray in enumerate(raytrace):
+            self.assertEqual(ray.y, i)
+            self.assertEqual(ray.theta, i)
+            self.assertEqual(ray.z, i)
 
     def testCompactRaytraces(self):
         rays = CompactRays(maxCount=10)

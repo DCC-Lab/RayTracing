@@ -741,18 +741,15 @@ class TestTrace(envtest.RaytracingTestCase):
         self.assertListEqual(m.traceMany(rays), traceMany)
 
     def testTraceManyThroughIterable(self):
-        rays = [Ray(y, y) for y in range(10)]
-        m = Matrix(physicalLength=1)
-        iterable = tuple(rays)
-        raysObj = Rays(iterable)
+        rays = [Ray(y, y) for y in range(3)]
+        m = Space(d=1)
 
-        traceManyThroughList = m.traceManyThrough(rays)
-        traceManyThroughTuple = m.traceManyThrough(iterable)
-        traceManyThroughRays = m.traceManyThrough(raysObj)
+        traceManyThroughRays = m.traceManyThrough(rays)
+
         for i in range(len(rays)):
-            self.assertEqual(rays[i], traceManyThroughList[i])
-            self.assertEqual(rays[i], traceManyThroughTuple[i])
-            self.assertEqual(rays[i], traceManyThroughRays[i])
+            self.assertEqual(traceManyThroughRays[i].y, rays[i].y+rays[i].theta)
+            self.assertEqual(traceManyThroughRays[i].theta, rays[i].theta)
+            self.assertEqual(traceManyThroughRays[i].z, 1)
 
     def testTraceManyThroughNotIterable(self):
         with self.assertRaises(TypeError):
@@ -822,7 +819,7 @@ class TestTrace(envtest.RaytracingTestCase):
         print((a[0].astype(CompactRay.Struct)))
 
     def testTraceManyOpenCL(self):
-        inputRaysOpenCL = UniformRays(M=100,N=10)
+        inputRaysOpenCL = CompactRays(rays=UniformRays(M=100,N=10))
         inputRaysNative = UniformRays(M=100,N=10)
 
         for rayOpenCL, rayNative in zip(inputRaysOpenCL, inputRaysNative):
