@@ -96,6 +96,15 @@ class CompactRays(Rays):
         else:
             raise ValueError('You must provide a buffer or a maxCount')
 
+    def fillWithRandomUniform(self, yMax=1.0, yMin=None, thetaMax=np.pi / 2, thetaMin=None):
+        if yMin is None:
+            yMin = -yMax
+        if thetaMin is None:
+            thetaMin = -thetaMax
+
+        for i, rayStruct in enumerate(self._rays):
+            rayStruct = (yMin + np.random.random() * (yMax - yMin), thetaMin + np.random.random() * (thetaMax - thetaMin), 0, 0, 0, 0)
+
     def __getitem__(self, index):
         return CompactRay(self, index)
 

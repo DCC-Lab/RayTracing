@@ -862,11 +862,11 @@ class TestTrace(envtest.RaytracingTestCase):
             self.assertEqual(traceOpenCL[0], traceNative[0])
             self.assertEqual(traceOpenCL[-1], traceNative[-1])
 
-    @envtest.skip("Performance skipped")
+    # @envtest.skip("Performance skipped")
     def testTraceManyOpenCLvsNativePerformance(self):
         import time
-        Ms = [1, 10, 100, 100, 100, 100]
-        Ns = [1, 10, 100, 1000, 10000, 100000]
+        Ms = [10, 100]
+        Ns = [1000, 100000]
 
         path = ImagingPath()
         path.append(Space(d=2))
@@ -881,14 +881,14 @@ class TestTrace(envtest.RaytracingTestCase):
         native = []
         openCL = []
         for M,N in zip(Ms, Ns):
-            inputRaysOpenCL = UniformRays(M=M, N=N)
+            inputRaysOpenCL = CompactRays(maxCount=M*N)
+            inputRaysOpenCL.fillWithRandomUniform()
             start = time.time()
             outputRaytracesOpenCL = m.traceManyOpenCL(inputRaysOpenCL)
             openCL.append(time.time() - start)
 
-            inputRaysNative = UniformRays(M=M, N=N)
             start = time.time()
-            outputRaytracesNative = m.traceManyNative(inputRaysNative)
+            outputRaytracesNative = m.traceManyNative(inputRaysOpenCL)
             native.append(time.time() - start)
 
         print(native)
