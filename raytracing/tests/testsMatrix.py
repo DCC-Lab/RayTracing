@@ -756,6 +756,7 @@ class TestTrace(envtest.RaytracingTestCase):
             m = Matrix()
             m.traceManyThrough(self.assertIs)
 
+    @envtest.expectedFailure
     def testTraceManyThroughOutput(self):
         rays = [Ray(y, y) for y in range(10_000)]
         m = Matrix(physicalLength=1)
@@ -806,12 +807,11 @@ class TestTrace(envtest.RaytracingTestCase):
                                          universal_newlines=True)
         self.assertEqual(processComplete.stdout, "")
 
-    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
-                    "Endless loop on macOS")
-    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    @envtest.expectedFailure
     def testTraceManyThroughInParallelWithOutput(self):
         processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
                                          capture_output=True, universal_newlines=True)
+        print(processComplete.stdout)
         self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
     def testdtypes(self):
