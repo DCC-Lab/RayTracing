@@ -3,18 +3,10 @@ import subprocess
 from unittest.mock import Mock, patch
 
 from raytracing import *
-
 inf = float("+inf")
 
 
 class TestMatrix(envtest.RaytracingTestCase):
-    def testWarningsFormat(self):
-        message = "This is a test."
-        filename = "test.py"
-        lineno = 10
-        category = UserWarning
-        warningsMessage = warningLineFormat(message, category, filename, lineno)
-        self.assertEqual(warningsMessage, "\ntest.py: 10\nUserWarning: This is a test.\n")
 
     def testMatrix(self):
         m = Matrix()

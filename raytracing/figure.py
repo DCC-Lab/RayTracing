@@ -110,7 +110,7 @@ class Figure:
     def fontScale(self):
         return self.designParams['fontScale']
 
-    def initializeDisplay(self):
+    def applyDesign(self):
         """ Configure the imaging path and the figure according to the display conditions. """
 
         note1 = ""

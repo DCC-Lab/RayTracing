@@ -1,22 +1,30 @@
 # RayTracing
 
-by the DCCLab group http://www.dcclab.ca, guided by Prof. [Daniel Côté](mailto:dccote@cervo.ulaval.ca?subject=Raytracing%20python%20module).
+by the DCC/M Lab group http://www.dccmlab.ca, guided by Prof. [Daniel Côté](mailto:dccote@cervo.ulaval.ca?subject=Raytracing%20python%20module).
+
+**[Update September 2023]: What are we up to? You will notice the master branch has not changed in some time. However, other branches are actively being worked on, including a GPU-accelerated branch that promises to open up possibilities for Monte Carlo calculations. More extensive tutorials, with practical lab-related calculations, are also being worked on.  Stay tuned.**
 
 This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider spherical aberrations but can compute chromatic aberrations for simple cases when the materials are known. Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays and gaussian laser beams. 
 
 It is not a package to do "Rendering in 3D with raytracing".
 
-The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. As of January 21st, 2021, there is an extensive, freely accessible tutorial in Journal of Neurophotonics:
+The code has been developed first for teaching purposes and is used in my "[Optique](https://itunes.apple.com/ca/book/optique/id949326768?mt=11)" Study Notes (french only), but also for actual use in my research. As of January 21st, 2021, there is an extensive, freely accessible, peer-reviewed tutorial in Journal of Neurophotonics:
 
 > ["Tools and tutorial on practical ray tracing for microscopy"](https://doi.org/10.1117/1.NPh.8.1.010801) 
 >
-> by V. Pineau Noël*, S. Masoumi*, E. Parham*, G. Genest, L. Bégin, M.-A. Vigneault, D. C. Côté, 
+> by V. Pineau Noël\*, S. Masoumi\*, E. Parham\*, G. Genest, L. Bégin, M.-A. Vigneault, D. C. Côté, 
 > Neurophotonics, 8(1), 010801 (2021). 
 > *Equal contributions.
 > Permalink: https://doi.org/10.1117/1.NPh.8.1.010801
 
 The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in english or french, with english subtitles when in french) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
+## Where do I get started?
+   * If you want to use the module, keep reading.
+   * If you have a suggestion or a bug report, go to [Issues](https://github.com/DCC-Lab/RayTracing/issues).
+   * If you want to read and contribute to the code, go to the [Wiki](https://github.com/DCC-Lab/RayTracing/wiki) for general considerations. We plan to have a roadmap in the near future.
+
+## Getting started
 The module defines `Ray` , `Matrix`, `MatrixGroup` and `ImagingPath` as the main elements for tracing rays.  `Matrix` and `MatrixGroup` are either one or a sequence of many matrices into which `Ray` will propagate. `ImagingPath` is also a sequence of elements, with an object at the front edge.  Specific subclasses of `Matrix` exists: `Space`, `Lens`, `ThicklLens`, and `Aperture`. Finally, a ray fan is a collection of rays, originating from a given point with a range of angles.
 
 We have tried to separate the calculation code (i.e. the matrices and subclasses) from the drawing code (figures and graphics). One can use the calculation code without any graphics calls.
@@ -26,6 +34,8 @@ If you want to perform calculations with coherent laser beams, then you use `Gau
 ## What's new?
 
 To get information about what is new, currently the best place is the [release page on GitHub.](https://github.com/DCC-Lab/RayTracing/releases)
+
+There is a **[Frequently Asked Questions](./FAQ.md)** page.
 
 The article above is fully compatible with all 1.3.x versions.  As long as the API does not change, versions will be 1.3.x.
 
@@ -60,6 +70,7 @@ This will show you a list of examples of things you can do (more on that in the 
 python -m raytracing -l           # List examples
 python -m raytracing -e all       # Run all of them
 python -m raytracing -e 1,2,4,6   # Only run 1,2,4 and 6
+python -m raytracing -t           # Run all the tests.  Some performance tests can take up to a minute, but they should all pass.
 ```
 
 or request help with:

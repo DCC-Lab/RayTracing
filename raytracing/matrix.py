@@ -205,6 +205,17 @@ class Matrix(object):
 
         return surfaces
     
+    def fromFocusToFocus(self):
+        """
+        A simple method to obtain a MatrixGroup that includes
+        all three matrices to travel from the front focus, through
+        the lens, and then to the back focus.
+        """
+        from .matrixgroup import MatrixGroup
+        return MatrixGroup([Space(self.frontFocalLength()), self, Space(self.backFocalLength())])
+
+
+
     def __mul__(self, rightSide):
         """Operator overloading allowing easy-to-read matrix multiplication
         with other `Matrix`, with a `Ray` or a `GaussianBeam`.
@@ -1486,7 +1497,8 @@ class Lens(Matrix):
                                    frontVertex=0,
                                    backVertex=0,
                                    label=label)
-
+        self.f = f
+        self._physicalHalfHeight = 4  # FIXME: keep a minimum half height when infinite ?
 
     @property
     def forwardSurfaces(self):
@@ -1529,7 +1541,7 @@ class CurvedMirror(Matrix):
     Parameters
     ----------
     R : float
-        the radius of curvature of the mirror
+        the radius of curvature of the mirror, converging is negative
     diameter : float
         The diameter of the element (default=Inf)
     label : string
@@ -1672,6 +1684,33 @@ class Space(Matrix):
             return Space(d=distance, n=self.frontIndex, diameter=self.apertureDiameter)
         else:
             return self
+
+class ToConjugate(Space):
+    """ 
+    A method to obtain the Space() matrix that leads to the forward conjugate
+    plane assuming an object at the front of `element`.
+
+    It is possible the distance traveled is backwards, if the conjugate plane corresponds to a virtual image.
+    """
+
+    def __init__(self, element):
+        d = element.forwardConjugate().d
+        if isfinite(d):
+            super(ToConjugate, self).__init__(d=element.forwardConjugate().d)
+        else:
+            raise ValueError("The conjugate plane is at infinity, and Raytracing cannot handle matrix multiplications with infinity (we often get infinity * 0, which is undefined.")
+
+class ToFocus(Space):
+    """ 
+    A method to obtain the Space() matrix that leads to the back focal spot
+    of the `element`.
+    """
+    def __init__(self, element):
+        bfl = element.backFocalLength()
+        if bfl is not None:
+            super(ToFocus, self).__init__(d=bfl)
+        else:
+            raise ValueError("The focal plane is at infinity, and Raytracing cannot handle matrix multiplications with infinity (we often get infinity * 0, which is undefined.")
 
 class DielectricInterface(Matrix):
     """A dielectric interface of radius R, with an index n1 before and n2
