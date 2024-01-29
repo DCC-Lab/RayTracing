@@ -273,6 +273,7 @@ class MatrixGraphic(Graphic):
             figure.setGraphicsFromOpticalPath()
         figure.create(title="Element properties")
         figure.display2D(interactive=False)
+        return figure
 
 
 class LensGraphic(MatrixGraphic):
