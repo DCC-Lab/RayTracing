@@ -23,13 +23,6 @@ class Viewer:
         self.popup = None
         self.menuButton = None
 
-
-        self.root.geometry("1020x750")
-        self.root.title("Lens viewer")
-
-        self.frm = ttk.Frame(self.root, padding=10)
-        self.frm.grid()
-
         self.build_viewer_window()
 
     def buildLensList(self):
@@ -56,11 +49,17 @@ class Viewer:
         self.menuButton.grid(column=0, row=0)
 
     def build_viewer_window(self):
+        self.root.geometry("1020x750")
+        self.root.title("Lens viewer")
+
+        self.frm = ttk.Frame(self.root, padding=10)
+        self.frm.grid()
+
         self.buildLensList()
         self.createMenu()
 
         # a blank figure that will be replaced with the real figure
-        self.fig = Figure(figsize=(10, 7), dpi=100)
+        self.fig = Figure(figsize=(10.2, 7.5), dpi=100)
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         toolbar = NavigationToolbar2Tk(self.canvas, self.root, pack_toolbar=False)
