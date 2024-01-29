@@ -47,7 +47,9 @@ class Viewer:
     def createMenu(self):
         self.popup = Menu(self.root, tearoff=0)
         for i, lens in enumerate(self.lenses):
-            self.popup.add_command(label=lens.label, command=partial(self.item_plot, i))
+            f1, f2 = lens.effectiveFocalLengths()
+            label = "{0:s} [f={1:.1f}]".format(lens.label, f1)
+            self.popup.add_command(label=label, command=partial(self.item_plot, i))
         self.field_var = StringVar(value="Select lens")
         self.menuButton = ttk.Menubutton(textvariable=self.field_var,text='All lenses',menu=self.popup)
         self.menuButton.width = 30
@@ -73,7 +75,7 @@ class Viewer:
             self.field_var.set(lens.label) # Reflect choice on screen
 
             graphic = GraphicOf(lens)
-            self.fig = graphic.display() # hack
+            self.fig = graphic.drawFigure() # hack
 
             self.canvas = FigureCanvasTkAgg(self.fig.figure, master=self.root)
             toolbar = NavigationToolbar2Tk(self.canvas, self.root, pack_toolbar=False)
@@ -83,7 +85,7 @@ class Viewer:
             self.canvas.draw()
 
         except Exception as err:
-            showerror("Error when retrieving data", err)
+            showerror("Unable to display lens #",i," : ", err)
 
 
 if __name__ == "__main__":
