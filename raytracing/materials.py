@@ -448,3 +448,207 @@ class FusedSilica(Material):
     @classmethod
     def abbeNumber(cls):
         return 67.82
+
+class N_SK16(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.34317774 / (1 - 0.00704687339 / x ** 2) + 0.241144399 / (1 - 0.0229005 / x ** 2) + 0.994317969 / (
+                    1 - 92.7508526 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 60.32
+
+class E_BAF11(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (2.71954649 - 0.0100472501 * x ** 2 + 0.0200301385 * x ** -2 + 0.000465868302 * x ** -4 - 7.51633336e-06 * x ** -6 + 1.77544989e-06 * x ** -8) ** .5
+
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 48.31
+
+class N_LAK10(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.72878017 / (1 - 0.00886014635 / x ** 2) + 0.169257825 / (1 - 0.0363416509 / x ** 2) + 1.19386956 / (
+                    1 - 82.9009069 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 50.62
+
+class S_BAH11(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.5713886 / (1 - 0.00910807936 / x ** 2) + 0.147869313 / (1 - 0.0402401684 / x ** 2) + 1.28092846 / (
+                    1 - 130.399367 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 48.32
+
+class S_TIH6(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.77227611 / (1 - 0.0131182633 / x ** 2) + 0.34569125 / (1 - 0.0614479619 / x ** 2) + 2.40788501 / (
+                    1 - 200.753254 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 25.42
+
+class N_SK2(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.28189012 / (1 - 0.0072719164 / x ** 2) + 0.257738258 / (1 - 0.0242823527 / x ** 2) + 0.96818604 / (
+                    1 - 110.377773 / x ** 2)) ** .5
+
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 56.65
+
+class S_PHM52(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.0996655 / (1 - 0.0132718559 / x ** 2) + 0.478125422 / (1 + 0.000601649685 / x ** 2) + 1.13214074 / (
+                    1 - 130.595472 / x ** 2)) ** .5
+
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 63.33
+
+class S_NPH2(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 2.0386951 / (1 - 0.0170796224 / x ** 2) + 0.437269641 / (1 - 0.0749254813 / x ** 2) + 2.96711461 / (
+                    1 - 174.155354 / x ** 2)) ** .5
+
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 18.90
+
+
+class N_PK52A(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.029607 / (1 - 0.00516800155 / x ** 2) + 0.1880506 / (1 - 0.0166658798 / x ** 2) + 0.736488165 / (
+                    1 - 138.964129 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 81.61
+
+class H_LAF3B(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.66486969 / (1 - 0.00895646712 / x ** 2) + 0.30162248 / (1 - 0.0350299695 / x ** 2) + 1.1973888 / (
+                    1 - 123.334438 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 44.90
+
+
+class H_ZF52GT(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 0.409982615 / (1 - 0.0621421199 / x ** 2) + 2.37517176 / (1 - 185.055134 / x ** 2) + 1.83913582 / (
+                    1 - 0.0136093459 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 23.78
+
+
+class H_ZF13(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 1.73521591 / (1 - 0.0131087904 / x ** 2) + 0.316277446 / (1 - 0.0621421663 / x ** 2) + 2.16384634 / (
+                    1 - 178.845558 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 25.72
+
+
+class H_ZK50(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 0.434311306 / (1 + 0.00192252587 / x ** 2) + 1.10560033 / (1 - 0.0147271072 / x ** 2) + 0.988776159 / (
+                    1 - 110.41165 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 56.65
+
+class H_F4(Material):
+    @classmethod
+    def n(cls, wavelength):
+        if wavelength > 10 or wavelength < 0.01:
+            raise ValueError("Wavelength must be in microns")
+        x = wavelength
+        n = (1 + 0.131898794 / (1 - 0.05793195 / x ** 2) + 1.42441827 / (1 - 0.0106270032 / x ** 2) + 1.21746316 / (
+                    1 - 117.376535 / x ** 2)) ** .5
+        return n
+
+    @classmethod
+    def abbeNumber(cls):
+        return 36.35
+
