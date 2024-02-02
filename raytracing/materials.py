@@ -89,7 +89,7 @@ class Material:
         className = type(self)
         matchObj = re.match(r".+\.(\S+)'", "{0}".format(className))
         if matchObj is not None:
-            return matchObj.groups(1)[0]
+            return matchObj.groups(1)[0].replace("_","-")
         else:
             return "Unknown"
 
