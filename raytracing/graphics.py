@@ -233,6 +233,11 @@ class MatrixGraphic(Graphic):
                                  hasMarker=False))
 
     def display(self):
+        fig = self.drawFigure()
+        fig.display2D(interactive=False)
+        return fig
+
+    def drawFigure(self, figure = None) -> 'Figure':
         """ Display this component, without any ray tracing but with
         all of its cardinal points and planes.
 
@@ -266,13 +271,16 @@ class MatrixGraphic(Graphic):
         from .figure import MplFigure
         from .imagingpath import ImagingPath
         path = ImagingPath(elements=[self.matrix])
-        figure = MplFigure(path)
-        figure.graphicGroups['Elements'] = [self]
+        mplFigure = MplFigure(path)
+        if figure is not None:
+            mplFigure.figure = figure
+        mplFigure.graphicGroups['Elements'] = [self]
         if self.displayComponents:
             path.elements = self.matrix
-            figure.setGraphicsFromOpticalPath()
-        figure.create(title="Element properties")
-        figure.display2D(interactive=False)
+            mplFigure.setGraphicsFromOpticalPath()
+        mplFigure.create(title="Element properties")
+        mplFigure.draw()
+        return mplFigure
 
 
 class LensGraphic(MatrixGraphic):
