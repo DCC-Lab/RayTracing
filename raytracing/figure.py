@@ -700,6 +700,7 @@ class MplFigure(Figure):
                 artist.set_transform(self.axes.transAxes)
             self.axes.add_artist(artist)
 
+#TODO: modify here since checkBoxes lines and rectangles attributes are deprecated
     def initVisibilityCheckBoxes(self):
         visibility = self.visibility
         if kElementsKey in visibility.keys():
