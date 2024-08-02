@@ -700,33 +700,28 @@ class MplFigure(Figure):
                 artist.set_transform(self.axes.transAxes)
             self.axes.add_artist(artist)
 
-#TODO: modify here since checkBoxes lines and rectangles attributes are deprecated
     def initVisibilityCheckBoxes(self):
         visibility = self.visibility
         if kElementsKey in visibility.keys():
             visibility.pop(kElementsKey)
-
-        subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
-        self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
-
+            
         step = 0.15
-        for i, (label, rectangle, lines) in enumerate(zip(self.checkBoxes.labels,
-                                                          self.checkBoxes.rectangles,
-                                                          self.checkBoxes.lines)):
-            h = 0.85 - step * i
-            label.set_fontsize(11)
-            rectangle.set_x(0.05)
-            rectangle.set_y(h)
-            rectangle.set(width=0.12, height=0.04)
-            label.set_y(h + 0.02)
-            label.set_x(0.2)
-
-            lineA, lineB = lines
-            lineA.set_xdata([0.05, 0.17])
-            lineB.set_xdata([0.05, 0.17])
-            lineA.set_ydata([h, h + 0.04])
-            lineB.set_ydata([h + 0.04, h])
-
+        num_keys = len(visibility.keys())
+        offset_fram_y = 0.85 - step*np.arange(num_keys)
+        offset_fram = [(0.1, float(i)) for i in offset_fram_y]
+        offset_label = [(0.25, float(i)-0.01) for i in offset_fram_y]
+        fontsize = [11]*num_keys
+        
+        subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
+        self.checkBoxes = CheckButtons(subAxes, 
+                                       visibility.keys(), 
+                                       visibility.values())
+        self.checkBoxes.set_check_props({'offsets': offset_fram, 
+                                         's':100})
+        self.checkBoxes.set_frame_props({'offsets': offset_fram, 
+                                         's':100})
+        self.checkBoxes.set_label_props({'position': offset_label,
+                                          'fontsize': fontsize})
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):
