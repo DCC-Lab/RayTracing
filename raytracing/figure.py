@@ -704,24 +704,18 @@ class MplFigure(Figure):
         visibility = self.visibility
         if kElementsKey in visibility.keys():
             visibility.pop(kElementsKey)
-            
-        step = 0.15
-        num_keys = len(visibility.keys())
-        offset_fram_y = 0.85 - step*np.arange(num_keys)
-        offset_fram = [(0.1, float(i)) for i in offset_fram_y]
-        offset_label = [(0.25, float(i)-0.01) for i in offset_fram_y]
-        fontsize = [11]*num_keys
-        
-        subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
-        self.checkBoxes = CheckButtons(subAxes, 
-                                       visibility.keys(), 
-                                       visibility.values())
-        self.checkBoxes.set_check_props({'offsets': offset_fram, 
-                                         's':100})
-        self.checkBoxes.set_frame_props({'offsets': offset_fram, 
-                                         's':100})
-        self.checkBoxes.set_label_props({'position': offset_label,
-                                          'fontsize': fontsize})
+
+        subAxes = plt.axes((0.81, 0.4, 0.1, 0.5), frameon=False, anchor='NW')
+
+        nBoxes = len(visibility)
+        heightStep = 0.15
+        offsets = [(0.11, 0.85 - heightStep * i) for i in range(nBoxes)]
+        checkProps = {'sizes': [100] * nBoxes, 'offsets': offsets}
+        self.checkBoxes = CheckButtons(
+            subAxes, visibility.keys(), visibility.values(), check_props=checkProps, frame_props=checkProps
+        )
+        self.checkBoxes.set_label_props({'x': [0.22] * nBoxes, 'y': [v[1] - 0.003 for v in offsets], 'fontsize': [11] * nBoxes})
+
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):
