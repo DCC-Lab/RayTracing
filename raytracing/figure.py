@@ -705,26 +705,16 @@ class MplFigure(Figure):
         if kElementsKey in visibility.keys():
             visibility.pop(kElementsKey)
 
-        subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
-        self.checkBoxes = CheckButtons(subAxes, visibility.keys(), visibility.values())
+        subAxes = plt.axes((0.81, 0.4, 0.1, 0.5), frameon=False, anchor='NW')
 
-        step = 0.15
-        for i, (label, rectangle, lines) in enumerate(zip(self.checkBoxes.labels,
-                                                          self.checkBoxes.rectangles,
-                                                          self.checkBoxes.lines)):
-            h = 0.85 - step * i
-            label.set_fontsize(11)
-            rectangle.set_x(0.05)
-            rectangle.set_y(h)
-            rectangle.set(width=0.12, height=0.04)
-            label.set_y(h + 0.02)
-            label.set_x(0.2)
-
-            lineA, lineB = lines
-            lineA.set_xdata([0.05, 0.17])
-            lineB.set_xdata([0.05, 0.17])
-            lineA.set_ydata([h, h + 0.04])
-            lineB.set_ydata([h + 0.04, h])
+        nBoxes = len(visibility)
+        heightStep = 0.15
+        offsets = [(0.11, 0.85 - heightStep * i) for i in range(nBoxes)]
+        checkProps = {'sizes': [100] * nBoxes, 'offsets': offsets}
+        self.checkBoxes = CheckButtons(
+            subAxes, visibility.keys(), visibility.values(), check_props=checkProps, frame_props=checkProps
+        )
+        self.checkBoxes.set_label_props({'x': [0.22] * nBoxes, 'y': [v[1] - 0.003 for v in offsets], 'fontsize': [11] * nBoxes})
 
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
