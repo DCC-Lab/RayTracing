@@ -140,7 +140,8 @@ nRays = 1000000 # Increase for better resolution
 inputRays = RandomLambertianRays(yMax=2.5, maxCount=nRays)
 inputRays.display("Input profile")
 outputRays = path.traceManyThrough(inputRays, progress=True)
-# On macOS and Linux, you can do parallel computations
+# On macOS and Linux, you can do parallel computations.
+# On Windows, who the hell knows? Maybe only on Windows 10 or Windows 7 32-bits, or whatever.
 # outputRays = path.traceManyThroughInParallel(inputRays, progress=True, processes=8) 
 outputRays.display("Output profile")
 
