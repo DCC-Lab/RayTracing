@@ -210,10 +210,11 @@ class OpticalComponentViewer(ViewerApp):
     def selection_changed(self):
         lens_label = self.menu.menu_items[self.menu.selected_index]
         lens = self.lenses[lens_label]
-        plot = self.figure.add_subplot()
 
         graphic = GraphicOf(lens)
-        self.figure = graphic.drawFigure().figure
+        graphic_figure = graphic.createFigure()
+        graphic_figure.draw()
+        self.figure = graphic_figure.figure
 
 
 if __name__ == "__main__":

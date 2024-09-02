@@ -233,11 +233,6 @@ class MatrixGraphic(Graphic):
                                  hasMarker=False))
 
     def display(self):
-        fig = self.drawFigure()
-        fig.display2D(interactive=False)
-        return fig
-
-    def drawFigure(self, figure = None) -> 'Figure':
         """ Display this component, without any ray tracing but with
         all of its cardinal points and planes.
 
@@ -260,6 +255,11 @@ class MatrixGraphic(Graphic):
         -----
         If the component has no power (i.e. C == 0) this will fail.
         """
+        fig = self.createFigure()
+        fig.display2D(interactive=False)
+        return fig
+
+    def createFigure(self) -> 'Figure':
         self.points = []
         self.points.extend(self.cardinalPoints)
         if self.matrix.L != 0:
@@ -272,14 +272,11 @@ class MatrixGraphic(Graphic):
         from .imagingpath import ImagingPath
         path = ImagingPath(elements=[self.matrix])
         mplFigure = MplFigure(path)
-        if figure is not None:
-            mplFigure.figure = figure
         mplFigure.graphicGroups['Elements'] = [self]
         if self.displayComponents:
             path.elements = self.matrix
             mplFigure.setGraphicsFromOpticalPath()
         mplFigure.create(title="Element properties")
-        mplFigure.draw()
         return mplFigure
 
 
