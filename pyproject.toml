@@ -1,0 +1,75 @@
+# pyproject.toml is the newer method for module distribution
+# setup.py is not needed, you simply do python -m build
+#
+# To distribute:
+# =============
+# rm dist/*; python -m build; python -m twine upload dist/* 
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "raytracing"
+#
+# Version __version__ will be loaded by setuptools_scm using a git tag
+# This requires a git tag in the form of v.1.3.13
+dynamic = ["version"]  
+description = "Simple optical ray tracing library to validate the design of an optical system."
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.6"
+license = { text = "MIT" }
+
+authors = [
+  { name = "Daniel Cote", email = "dccote@cervo.ulaval.ca" }
+]
+
+urls = { Homepage = "https://github.com/DCC-Lab/RayTracing" }
+
+keywords = [
+  "optics", "optical", "lens", "ray tracing", "matrix", "matrices", "aperture", "field stop",
+  "monte carlo", "design", "raytracing", "zemax", "chromatic aberrations"
+]
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Education",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Education",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.6",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent"
+]
+
+dependencies = [
+  "matplotlib>=3.7",
+  "numpy",
+  "pygments",
+  "mytk"
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["raytracing*"]
+
+[tool.setuptools.package-data]
+raytracing = ["*.png"]
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+
+"doc" = ["*.html"]

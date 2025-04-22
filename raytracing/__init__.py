@@ -62,7 +62,13 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.3.15"
+try:  # to get __version__ dynamically from pyproject.toml
+    from importlib.metadata import version
+except ImportError:  # Python <3.8
+    from importlib_metadata import version
+
+__version__ = version("raytracing")
+
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
 import os.path as path
