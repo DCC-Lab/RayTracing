@@ -15,7 +15,8 @@ import colorsys
 import pyperclip
 from contextlib import suppress
 
-class CanvasApp(App):
+
+class RaytracingApp(App):
     def __init__(self):
         App.__init__(self, name="Raytracing Application")
         self.window.widget.title("Raytracing")
@@ -84,12 +85,26 @@ class CanvasApp(App):
                 "label": "Label",
             }
         )
-        self.tableview.column_formats['focal_length'] = {'format_string':"{0:g}", 'multiplier':1, 'anchor':''}
-        self.tableview.column_formats['diameter'] = {'format_string':"{0:g}", 'multiplier':1, 'anchor':''}
-        self.tableview.column_formats['position'] = {'format_string':"{0:g}", 'multiplier':1, 'anchor':''}
-        self.tableview.data_source.update_field_properties('focal_length', {'type':float})
-        self.tableview.data_source.update_field_properties('diameter', {'type':float})
-        self.tableview.data_source.update_field_properties('position', {'type':float})
+        self.tableview.column_formats["focal_length"] = {
+            "format_string": "{0:g}",
+            "multiplier": 1,
+            "anchor": "",
+        }
+        self.tableview.column_formats["diameter"] = {
+            "format_string": "{0:g}",
+            "multiplier": 1,
+            "anchor": "",
+        }
+        self.tableview.column_formats["position"] = {
+            "format_string": "{0:g}",
+            "multiplier": 1,
+            "anchor": "",
+        }
+        self.tableview.data_source.update_field_properties(
+            "focal_length", {"type": float}
+        )
+        self.tableview.data_source.update_field_properties("diameter", {"type": float})
+        self.tableview.data_source.update_field_properties("position", {"type": float})
 
         self.tableview.grid_into(
             self.table_group,
@@ -244,13 +259,15 @@ class CanvasApp(App):
             self.controls, column=0, row=6, pady=5, padx=5, sticky="nsew"
         )
 
-        self.object_conjugate = PopupMenu(menu_items=['Finite object','Infinite object'])        
+        self.object_conjugate = PopupMenu(
+            menu_items=["Finite object", "Infinite object"]
+        )
         self.object_conjugate.grid_into(
             self.conjugation_box, column=0, row=0, pady=5, padx=5, sticky="w"
         )
         self.object_conjugate.selection_changed(0)
 
-        self.image_conjugate = PopupMenu(menu_items=['Finite image','Infinite image'])        
+        self.image_conjugate = PopupMenu(menu_items=["Finite image", "Infinite image"])
         self.image_conjugate.grid_into(
             self.conjugation_box, column=1, row=0, pady=5, padx=5, sticky="w"
         )
@@ -261,21 +278,30 @@ class CanvasApp(App):
             self.window, column=0, row=1, columnspan=3, pady=5, padx=5, sticky="nsew"
         )
 
-        NotificationCenter().add_observer(self, self.canvas_did_resize, BaseNotification.did_resize)
+        NotificationCenter().add_observer(
+            self, self.canvas_did_resize, BaseNotification.did_resize
+        )
 
         self.window.column_resize_weight(index=1, weight=1)
         self.window.row_resize_weight(index=1, weight=1)
 
-        self.coords_origin = Point(0.05, 0.5, basis=DynamicBasis(self.canvas, "relative_basis"))
+        self.coords_origin = Point(
+            0.05, 0.5, basis=DynamicBasis(self.canvas, "relative_basis")
+        )
 
-        size = (Vector(0.85,0, basis=DynamicBasis(self.canvas, "relative_basis")), Vector(0,-0.6, basis=DynamicBasis(self.canvas, "relative_basis")))
+        size = (
+            Vector(0.85, 0, basis=DynamicBasis(self.canvas, "relative_basis")),
+            Vector(0, -0.6, basis=DynamicBasis(self.canvas, "relative_basis")),
+        )
         self.coords = XYCoordinateSystemElement(
             size=size, axes_limits=((0, 400), (-25, 25)), width=2
         )
         self.coords.nx_major = 20
         self.coords.ny_major = 10
 
-        self.canvas.place(self.coords, position=Point(0.05, 0.5, basis=self.canvas.relative_basis))
+        self.canvas.place(
+            self.coords, position=Point(0.05, 0.5, basis=self.canvas.relative_basis)
+        )
         optics_basis = DynamicBasis(self.coords, "basis")
 
         self.bind_properties(
@@ -375,7 +401,7 @@ class CanvasApp(App):
         if not self.initialization_completed:
             return
 
-        self.tableview.sort_column(column_name='position')
+        self.tableview.sort_column(column_name="position")
 
         self.canvas.widget.delete("ray")
         self.canvas.widget.delete("optics")
@@ -387,7 +413,9 @@ class CanvasApp(App):
         self.canvas.widget.delete("tick")
         self.canvas.widget.delete("tick-label")
 
-        user_provided_path = self.get_path_from_ui(without_apertures=True, max_position=None)
+        user_provided_path = self.get_path_from_ui(
+            without_apertures=True, max_position=None
+        )
         finite_imaging_path = None
         finite_path = None
 
@@ -395,11 +423,15 @@ class CanvasApp(App):
 
         if isfinite(conjugate.d):
             image_position = user_provided_path.L + conjugate.d
-            finite_imaging_path = self.get_path_from_ui(without_apertures=False, max_position=image_position)
-        
+            finite_imaging_path = self.get_path_from_ui(
+                without_apertures=False, max_position=image_position
+            )
+
         finite_path = finite_imaging_path
         if finite_path is None:
-            finite_path = self.get_path_from_ui(without_apertures=False, max_position=self.coords.axes_limits[0][1])
+            finite_path = self.get_path_from_ui(
+                without_apertures=False, max_position=self.coords.axes_limits[0][1]
+            )
 
         self.path_has_field_stop = finite_path.hasFieldStop()
 
@@ -411,7 +443,6 @@ class CanvasApp(App):
         self.coords.create_y_axis()
         self.coords.create_y_major_ticks()
         self.coords.create_y_major_ticks_labels()
-
 
         self.calculate_imaging_path_results(finite_imaging_path)
 
@@ -430,17 +461,27 @@ class CanvasApp(App):
             self.create_object_labels(finite_path)
 
     def adjust_axes_limits(self, path):
-        half_diameter = max( filter(lambda e:e is not None and type(e) != str, self.tableview.data_source.field('diameter')))/2
+        half_diameter = (
+            max(
+                filter(
+                    lambda e: e is not None and type(e) != str,
+                    self.tableview.data_source.field("diameter"),
+                )
+            )
+            / 2
+        )
         raytraces = self.raytraces_to_display(path)
         y_min, y_max = self.raytraces_limits(raytraces)
 
-        self.coords.axes_limits = ((0, path.L), (min(y_min,-half_diameter)*1.1, max(y_max,half_diameter)*1.1))
+        self.coords.axes_limits = (
+            (0, path.L),
+            (min(y_min, -half_diameter) * 1.1, max(y_max, half_diameter) * 1.1),
+        )
 
-        
     def raytraces_limits(self, raytraces):
         ys = []
         for raytrace in raytraces:
-            ys.extend([ray.y for ray in raytrace ])
+            ys.extend([ray.y for ray in raytrace])
         y_max = max(ys)
         y_min = min(ys)
         return y_min, y_max
@@ -472,14 +513,18 @@ class CanvasApp(App):
             if principal_ray is not None:
                 principal_raytrace = path.trace(principal_ray)
                 line_trace = self.create_line_from_raytrace(
-                    principal_raytrace, basis=DynamicBasis(self.coords, "basis"), color="green"
+                    principal_raytrace,
+                    basis=DynamicBasis(self.coords, "basis"),
+                    color="green",
                 )
                 self.coords.place(line_trace, position=Point(0, 0))
 
                 axial_ray = path.axialRay()
                 axial_raytrace = path.trace(axial_ray)
                 line_trace = self.create_line_from_raytrace(
-                    axial_raytrace, basis=DynamicBasis(self.coords, "basis"), color="red"
+                    axial_raytrace,
+                    basis=DynamicBasis(self.coords, "basis"),
+                    color="red",
                 )
                 self.coords.place(line_trace, position=Point(0, 0))
 
@@ -564,7 +609,9 @@ class CanvasApp(App):
         else:
             raytraces_to_show = raytraces
 
-        line_traces = self.raytraces_to_lines(raytraces_to_show, DynamicBasis(self.coords, "basis"))
+        line_traces = self.raytraces_to_lines(
+            raytraces_to_show, DynamicBasis(self.coords, "basis")
+        )
 
         for line_trace in line_traces:
             self.canvas.place(line_trace, position=self.coords_origin)
@@ -674,18 +721,25 @@ class CanvasApp(App):
         rgbi = (int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255))
         return "#{0:02x}{1:02x}{2:02x}".format(*rgbi)
 
-
     def get_path_from_ui(self, without_apertures=True, max_position=None):
         path = ImagingPath()
 
         z = 0
         ordered_records = self.tableview.data_source.records
         if without_apertures:
-            ordered_records = [ record for record in ordered_records if record['element'].lower() != 'aperture']
+            ordered_records = [
+                record
+                for record in ordered_records
+                if record["element"].lower() != "aperture"
+            ]
 
         ordered_records.sort(key=lambda e: float(e["position"]))
         if max_position is not None:
-            ordered_records = [ record for record in ordered_records if record['position'] <= max_position]
+            ordered_records = [
+                record
+                for record in ordered_records
+                if record["position"] <= max_position
+            ]
 
         for element in ordered_records:
             path_element = None
@@ -708,7 +762,6 @@ class CanvasApp(App):
             else:
                 print(f"Unable to include unknown element {element['element']}")
 
-
             delta = next_z - z
 
             path.append(Space(d=delta))
@@ -717,7 +770,7 @@ class CanvasApp(App):
 
         if max_position is not None:
             if path.L < max_position:
-                path.append(Space(d=max_position-path.L))
+                path.append(Space(d=max_position - path.L))
 
         return path
 
@@ -866,7 +919,6 @@ path.display(rays=rays)
                 }
             )
 
-
         """
         Field Stop
         """
@@ -874,7 +926,6 @@ path.display(rays=rays)
         field_stop = imaging_path.fieldStop()
         if field_stop.z is not None:
             has_field_stop = True
-
 
         if has_field_stop:
             data_source.append_record(
@@ -907,7 +958,6 @@ path.display(rays=rays)
             data_source.append_record(
                 {"property": "Principal ray y_max", "value": f"Inexistent [no FS]"}
             )
-
 
         """
         Object [FOV] and Image Sizes, dicated by finite FOV
@@ -949,7 +999,7 @@ path.display(rays=rays)
                 {"property": "Magnification [Angular]", "value": f"Inexistent"}
             )
 
-        self.results_tableview.sort_column(column_name='property')
+        self.results_tableview.sort_column(column_name="property")
 
     def save(self):
         filepath = filedialog.asksaveasfilename()
@@ -957,6 +1007,6 @@ path.display(rays=rays)
 
 
 if __name__ == "__main__":
-    app = CanvasApp()
+    app = RaytracingApp()
 
     app.mainloop()
