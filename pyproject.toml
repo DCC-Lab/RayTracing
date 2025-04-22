@@ -58,6 +58,9 @@ dependencies = [
   "mytk"
 ]
 
+[tool.setuptools_scm]
+version_scheme = "post-release"
+
 [tool.setuptools]
 package-dir = {"" = "."}
 include-package-data = true
@@ -69,7 +72,5 @@ include = ["raytracing*"]
 [tool.setuptools.package-data]
 raytracing = ["*.png"]
 
-[tool.setuptools_scm]
-version_scheme = "post-release"
 
 "doc" = ["*.html"]
