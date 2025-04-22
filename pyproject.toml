@@ -71,6 +71,3 @@ include = ["raytracing*"]
 
 [tool.setuptools.package-data]
 raytracing = ["*.png"]
-
-
-"doc" = ["*.html"]
