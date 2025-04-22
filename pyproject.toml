@@ -60,6 +60,7 @@ dependencies = [
 
 [tool.setuptools_scm]
 version_scheme = "post-release"
+write_to = "raytracing/_version.py" # This is apparently needed because ptyhon -m build loses the .git tags
 
 [tool.setuptools]
 package-dir = {"" = "."}

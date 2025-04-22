@@ -67,7 +67,7 @@ try:  # to get __version__ dynamically from pyproject.toml
 except ImportError:  # Python <3.8
     from importlib_metadata import version
 
-__version__ = version("raytracing")
+from ._version import version as __version__
 
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
