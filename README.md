@@ -2,7 +2,15 @@
 
 by the DCC/M Lab group http://www.dccmlab.ca, guided by Prof. [Daniel Côté](mailto:dccote@cervo.ulaval.ca?subject=Raytracing%20python%20module).
 
-**[Update September 2023]: What are we up to? You will notice the master branch has not changed in some time. However, other branches are actively being worked on, including a GPU-accelerated branch that promises to open up possibilities for Monte Carlo calculations. More extensive tutorials, with practical lab-related calculations, are also being worked on.  Stay tuned.**
+## New: A graphical interface for Raytracing
+A graphical interface is now available (macOS, Windows and Linux), with (python 3.12 and earlier, not 3.13):
+```
+pip install raytracing
+python -m raytracing -a
+```
+
+<img width="1280" alt="image" src="https://github.com/user-attachments/assets/472b54ca-cb5e-41b4-abdc-f90c16cacc7c" />
+
 
 This code aims to provide a simple ray tracing module for calculating various properties of optical paths (object, image, aperture stops, field stops).  It makes use of ABCD matrices and does not consider spherical aberrations but can compute chromatic aberrations for simple cases when the materials are known. Since it uses the ABCD formalism (or Ray matrices, or Gauss matrices) it can perform tracing of rays and gaussian laser beams. 
 
