@@ -6,7 +6,7 @@
 # rm dist/*; python -m build; python -m twine upload dist/* 
 
 [build-system]
-requires = ["setuptools>=61", "wheel"]
+requires = ["setuptools>=61", "setuptools_scm>=7", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -60,7 +60,8 @@ dependencies = [
 
 [tool.setuptools_scm]
 version_scheme = "post-release"
-write_to = "raytracing/_version.py" # This is apparently needed because ptyhon -m build loses the .git tags
+# This is apparently needed because ptyhon -m build loses the .git tags
+write_to = "raytracing/_version.py" 
 
 [tool.setuptools]
 package-dir = {"" = "."}
