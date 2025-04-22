@@ -196,16 +196,17 @@ class ImagingPath(MatrixGroup):
         a proper chief ray. So the function will return None.
         If there is no aperture stop, there is no chief ray either. None is also returned.
         """
+
         (stopPosition, stopDiameter) = self.apertureStop()
         if stopPosition is None:
-            return None
+            raise ValueError('It is not possible to calculate a chief ray without an aperture stop')
 
         transferMatrixToApertureStop = self.transferMatrix(upTo=stopPosition)
         A = transferMatrixToApertureStop.A
         B = transferMatrixToApertureStop.B
 
         if transferMatrixToApertureStop.isImaging:
-            return None
+            return Ray(y=0, theta=0)
 
         if y is None:
             y = self.halfFieldOfView()
@@ -614,6 +615,9 @@ class ImagingPath(MatrixGroup):
             chiefRayTrace = []
             while abs(dy) > self.precision or not wasBlocked:
                 chiefRay = self.chiefRay(y=y)
+                if chiefRay is None: # This happens in pathological cases
+                    return Stop(z=None, diameter=None)
+
                 chiefRayTrace = self.trace(chiefRay)
                 outputChiefRay = chiefRayTrace[-1]
 
