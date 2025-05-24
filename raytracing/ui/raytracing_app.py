@@ -54,17 +54,17 @@ class RaytracingApp(App):
         )
 
         self.add_lens_button = Button(
-            "Add Lens", user_event_callback=self.click_table_buttons
+            "Add element", user_event_callback=self.click_table_buttons
         )
         self.add_lens_button.grid_into(
             self.button_group, row=0, column=0, pady=5, padx=5
         )
-        self.add_aperture_button = Button(
-            "Add Aperture", user_event_callback=self.click_table_buttons
-        )
-        self.add_aperture_button.grid_into(
-            self.button_group, row=0, column=1, pady=5, padx=5
-        )
+        # self.add_aperture_button = Button(
+        #     "Add Aperture", user_event_callback=self.click_table_buttons
+        # )
+        # self.add_aperture_button.grid_into(
+        #     self.button_group, row=0, column=1, pady=5, padx=5
+        # )
 
         self.delete_button = Button(
             "Delete element", user_event_callback=self.click_table_buttons
@@ -379,10 +379,10 @@ class RaytracingApp(App):
             updated_record["arguments"] = ", ".join(mandatory_arguments)
 
             self.tableview.data_source.update_record(uuid, updated_record)
-            Dialog.showerror(
-                title=f"Error in element argument",
-                message=f"The element {uuid} requires at least the following arguments: {', '.join(mandatory_arguments)}",
-            )
+            # Dialog.showerror(
+            #     title=f"Error in element argument",
+            #     message=f"The element {uuid} requires at least the following arguments: {', '.join(mandatory_arguments)}",
+            # )
 
             return True
 
@@ -654,7 +654,7 @@ class RaytracingApp(App):
         z = 0
         thickness = 3
         for element in path:
-            if isinstance(element, Lens):
+            if type(element) is Lens:
                 diameter = element.apertureDiameter
                 if not isfinite(diameter):
                     y_lims = self.coords.axes_limits[1]
@@ -694,7 +694,7 @@ class RaytracingApp(App):
                 )
                 coords.place(lens, position=Point(z, 0, basis=coords.basis))
 
-            elif isinstance(element, Aperture):
+            elif type(element) is Aperture:
                 diameter = element.apertureDiameter
                 if not isfinite(diameter):
                     diameter = 90
@@ -720,7 +720,7 @@ class RaytracingApp(App):
                 )
                 coords.place(aperture_bottom, position=Point(z, 0, basis=coords.basis))
 
-            elif isinstance(element, ThickLens):
+            elif type(element) is ThickLens:
                 diameter = element.apertureDiameter
                 if not isfinite(diameter):
                     y_lims = self.coords.axes_limits[1]
@@ -762,6 +762,48 @@ class RaytracingApp(App):
                     lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
                 )
 
+            elif type(element) is DielectricSlab:
+                diameter = element.apertureDiameter
+                if not isfinite(diameter):
+                    y_lims = self.coords.axes_limits[1]
+                    diameter = 0.98 * (y_lims[1] - y_lims[0])
+                else:
+                    aperture_top = Line(
+                        points=(
+                            Point(-thickness, diameter / 2, basis=coords.basis),
+                            Point(thickness, diameter / 2, basis=coords.basis),
+                        ),
+                        fill="black",
+                        width=4,
+                        tag=("optics"),
+                    )
+                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
+                    aperture_bottom = Line(
+                        points=(
+                            Point(-thickness, -diameter / 2, basis=coords.basis),
+                            Point(thickness, -diameter / 2, basis=coords.basis),
+                        ),
+                        fill="black",
+                        width=4,
+                        tag=("optics"),
+                    )
+                    coords.place(
+                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
+                    )
+
+                lens = Rectangle(
+                    size=(element.L, diameter),
+                    basis=coords.basis,
+                    position_is_center=True,
+                    fill=self.fill_color_for_index(element.n),
+                    outline="black",
+                    width=2,
+                    tag=("optics"),
+                )
+                coords.place(
+                    lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
+                )
+
             z += element.L
 
     def raytraces_to_lines(self, raytraces, basis):
@@ -780,16 +822,19 @@ class RaytracingApp(App):
                     hue = 1.0
                 color = self.color_from_hue(hue)
 
-                line_trace = self.create_line_from_raytrace(
+                line_segments = self.create_line_segments_from_raytrace(
                     raytrace, basis=basis, color=color
                 )
-                line_traces.append(line_trace)
+                line_traces.extend(line_segments)
 
         return line_traces
 
-    def create_line_from_raytrace(self, raytrace, basis, color):
+    def create_line_segments_from_raytrace(self, raytrace, basis, color):
+        for ray in raytrace:
+            print(ray.z, ray.n)
+
         points = [Point(r.z, r.y, basis=basis) for r in raytrace]
-        return Line(points, tag=("ray"), fill=color, width=2)
+        return [Line(points, tag=("ray"), fill=color, width=2)]
 
     def color_from_hue(self, hue):
         rgb = colorsys.hsv_to_rgb(hue, 1, 1)
