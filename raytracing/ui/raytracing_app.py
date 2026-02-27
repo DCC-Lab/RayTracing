@@ -9,6 +9,8 @@ from mytk.labels import Label
 from mytk.notificationcenter import NotificationCenter
 
 import time
+import ast
+import inspect
 from numpy import linspace, isfinite
 from raytracing import *
 import colorsys
@@ -52,17 +54,17 @@ class RaytracingApp(App):
         )
 
         self.add_lens_button = Button(
-            "Add Lens", user_event_callback=self.click_table_buttons
+            "Add element", user_event_callback=self.click_table_buttons
         )
         self.add_lens_button.grid_into(
             self.button_group, row=0, column=0, pady=5, padx=5
         )
-        self.add_aperture_button = Button(
-            "Add Aperture", user_event_callback=self.click_table_buttons
-        )
-        self.add_aperture_button.grid_into(
-            self.button_group, row=0, column=1, pady=5, padx=5
-        )
+        # self.add_aperture_button = Button(
+        #     "Add Aperture", user_event_callback=self.click_table_buttons
+        # )
+        # self.add_aperture_button.grid_into(
+        #     self.button_group, row=0, column=1, pady=5, padx=5
+        # )
 
         self.delete_button = Button(
             "Delete element", user_event_callback=self.click_table_buttons
@@ -79,31 +81,15 @@ class RaytracingApp(App):
         self.tableview = TableView(
             columns_labels={
                 "element": "Element",
-                "focal_length": "Focal length [mm]",
-                "diameter": "Diameter [mm]",
+                "arguments": "Properties",
                 "position": "Position [mm]",
-                "label": "Label",
             }
         )
-        self.tableview.column_formats["focal_length"] = {
-            "format_string": "{0:g}",
-            "multiplier": 1,
-            "anchor": "",
-        }
-        self.tableview.column_formats["diameter"] = {
-            "format_string": "{0:g}",
-            "multiplier": 1,
-            "anchor": "",
-        }
         self.tableview.column_formats["position"] = {
             "format_string": "{0:g}",
             "multiplier": 1,
             "anchor": "",
         }
-        self.tableview.data_source.update_field_properties(
-            "focal_length", {"type": float}
-        )
-        self.tableview.data_source.update_field_properties("diameter", {"type": float})
         self.tableview.data_source.update_field_properties("position", {"type": float})
 
         self.tableview.grid_into(
@@ -116,22 +102,23 @@ class RaytracingApp(App):
             sticky="nsew",
         )
         self.tableview.displaycolumns = [
-            "element",
             "position",
-            "focal_length",
-            "diameter",
-            "label",
+            "element",
+            "arguments",
         ]
         for column in self.tableview.displaycolumns:
-            self.tableview.widget.column(column, width=50, anchor=W)
+            widths = {
+                "position": 5,
+                "element": 5,
+                "arguments": 150,
+            }
+            self.tableview.widget.column(column, width=widths[column], anchor=W)
 
         self.tableview.data_source.append_record(
             {
                 "element": "Lens",
-                "focal_length": 100,
-                "diameter": 25.4,
+                "arguments": "f=100",
                 "position": 200,
-                "label": "L1",
             }
         )
         # self.tableview.data_source.append_record(
@@ -370,6 +357,35 @@ class RaytracingApp(App):
     def source_data_changed(self, tableview):
         self.refresh()
 
+    def validate_source_data(self, tableview):
+        try:
+            user_provided_path = self.get_path_from_ui(
+                without_apertures=True, max_position=None
+            )
+            return False
+        except Exception as err:
+            mandatory_arguments = [
+                f"{k}=?" for k, v in err.details.items() if v is inspect._empty
+            ]
+
+            uuid = err.details["element"]["__uuid"]
+
+            updated_record = {
+                k: v
+                for k, v in err.details["element"].items()
+                if not k.startswith("__")
+            }
+
+            updated_record["arguments"] = ", ".join(mandatory_arguments)
+
+            self.tableview.data_source.update_record(uuid, updated_record)
+            # Dialog.showerror(
+            #     title=f"Error in element argument",
+            #     message=f"The element {uuid} requires at least the following arguments: {', '.join(mandatory_arguments)}",
+            # )
+
+            return True
+
     def click_copy_buttons(self, event, button):
         if button == self.copy_code_button:
             script = self.get_path_script()
@@ -385,20 +401,21 @@ class RaytracingApp(App):
         elif button == self.add_lens_button:
             record = self.tableview.data_source.empty_record()
             record["element"] = "Lens"
+            record["arguments"] = "f=50, diameter=25.4"
             record["position"] = position = path.L + 50
-            record["focal_length"] = 50
-            record["diameter"] = 25.4
             self.tableview.data_source.append_record(record)
         elif button == self.add_aperture_button:
             record = self.tableview.data_source.empty_record()
             record["element"] = "Aperture"
+            record["arguments"] = "diameter=25.4"
             record["position"] = position = path.L + 50
-            record["diameter"] = 25.4
-            record["focal_length"] = None
             self.tableview.data_source.append_record(record)
 
     def refresh(self):
         if not self.initialization_completed:
+            return
+
+        if self.validate_source_data(self.tableview):
             return
 
         self.tableview.sort_column(column_name="position")
@@ -413,63 +430,68 @@ class RaytracingApp(App):
         self.canvas.widget.delete("tick")
         self.canvas.widget.delete("tick-label")
 
-        user_provided_path = self.get_path_from_ui(
-            without_apertures=True, max_position=None
-        )
-        finite_imaging_path = None
-        finite_path = None
-
-        conjugate = user_provided_path.forwardConjugate()
-
-        if isfinite(conjugate.d):
-            image_position = user_provided_path.L + conjugate.d
-            finite_imaging_path = self.get_path_from_ui(
-                without_apertures=False, max_position=image_position
+        try:
+            user_provided_path = self.get_path_from_ui(
+                without_apertures=True, max_position=None
             )
+            finite_imaging_path = None
+            finite_path = None
 
-        finite_path = finite_imaging_path
-        if finite_path is None:
-            finite_path = self.get_path_from_ui(
-                without_apertures=False, max_position=self.coords.axes_limits[0][1]
-            )
+            conjugate = user_provided_path.forwardConjugate()
 
-        self.path_has_field_stop = finite_path.hasFieldStop()
+            if isfinite(conjugate.d):
+                image_position = user_provided_path.L + conjugate.d
+                finite_imaging_path = self.get_path_from_ui(
+                    without_apertures=False, max_position=image_position
+                )
 
-        self.adjust_axes_limits(finite_path)
+            finite_path = finite_imaging_path
+            if finite_path is None:
+                finite_path = self.get_path_from_ui(
+                    without_apertures=False, max_position=self.coords.axes_limits[0][1]
+                )
 
-        self.coords.create_x_axis()
-        self.coords.create_x_major_ticks()
-        self.coords.create_x_major_ticks_labels()
-        self.coords.create_y_axis()
-        self.coords.create_y_major_ticks()
-        self.coords.create_y_major_ticks_labels()
+            self.path_has_field_stop = finite_path.hasFieldStop()
 
-        self.calculate_imaging_path_results(finite_imaging_path)
+            self.adjust_axes_limits(finite_path)
 
-        self.create_optical_path(finite_path, self.coords)
+            self.coords.create_x_axis()
+            self.coords.create_x_major_ticks()
+            self.coords.create_x_major_ticks_labels()
+            self.coords.create_y_axis()
+            self.coords.create_y_major_ticks()
+            self.coords.create_y_major_ticks_labels()
 
-        if self.show_raytraces:
-            self.create_all_traces(finite_path)
+            self.calculate_imaging_path_results(finite_imaging_path)
 
-        if self.show_conjugates:
-            self.create_conjugate_planes(finite_path)
+            self.create_optical_path(finite_path, self.coords)
 
-        if self.show_apertures:
-            self.create_apertures_labels(finite_path)
+            if self.show_raytraces:
+                self.create_all_traces(finite_path)
 
-        if self.show_labels:
-            self.create_object_labels(finite_path)
+            if self.show_conjugates:
+                self.create_conjugate_planes(finite_path)
+
+            if self.show_apertures:
+                self.create_apertures_labels(finite_path)
+
+            if self.show_labels:
+                self.create_object_labels(finite_path)
+        except ValueError as err:
+            pass
 
     def adjust_axes_limits(self, path):
-        half_diameter = (
-            max(
-                filter(
-                    lambda e: e is not None and type(e) != str,
-                    self.tableview.data_source.field("diameter"),
-                )
-            )
-            / 2
-        )
+        # half_diameter = (
+        #     max(
+        #         filter(
+        #             lambda e: e is not None and type(e) != str,
+        #             self.tableview.data_source.field("diameter"),
+        #         )
+        #     )
+        #     / 2
+        # )
+        half_diameter = 40
+
         raytraces = self.raytraces_to_display(path)
         y_min, y_max = self.raytraces_limits(raytraces)
 
@@ -617,11 +639,22 @@ class RaytracingApp(App):
             self.canvas.place(line_trace, position=self.coords_origin)
             self.canvas.widget.tag_lower(line_trace.id)
 
+    def fill_color_for_index(self, n):
+        n_max = 1.6
+        t = (n - 1) / (n_max - 1)
+
+        base_color = (173, 216, 255)
+        r = round(255 + t * (base_color[0] - 255))
+        g = round(255 + t * (base_color[1] - 255))
+        b = round(255 + t * (base_color[2] - 255))
+
+        return f"#{r:02x}{g:02x}{b:02x}"
+
     def create_optical_path(self, path, coords):
         z = 0
         thickness = 3
         for element in path:
-            if isinstance(element, Lens):
+            if type(element) is Lens:
                 diameter = element.apertureDiameter
                 if not isfinite(diameter):
                     y_lims = self.coords.axes_limits[1]
@@ -654,14 +687,14 @@ class RaytracingApp(App):
                     size=(5, diameter),
                     basis=coords.basis,
                     position_is_center=True,
-                    fill="light blue",
+                    fill=self.fill_color_for_index(1.5),
                     outline="black",
                     width=2,
                     tag=("optics"),
                 )
                 coords.place(lens, position=Point(z, 0, basis=coords.basis))
 
-            elif isinstance(element, Aperture):
+            elif type(element) is Aperture:
                 diameter = element.apertureDiameter
                 if not isfinite(diameter):
                     diameter = 90
@@ -687,6 +720,90 @@ class RaytracingApp(App):
                 )
                 coords.place(aperture_bottom, position=Point(z, 0, basis=coords.basis))
 
+            elif type(element) is ThickLens:
+                diameter = element.apertureDiameter
+                if not isfinite(diameter):
+                    y_lims = self.coords.axes_limits[1]
+                    diameter = 0.98 * (y_lims[1] - y_lims[0])
+                else:
+                    aperture_top = Line(
+                        points=(
+                            Point(-thickness, diameter / 2, basis=coords.basis),
+                            Point(thickness, diameter / 2, basis=coords.basis),
+                        ),
+                        fill="black",
+                        width=4,
+                        tag=("optics"),
+                    )
+                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
+                    aperture_bottom = Line(
+                        points=(
+                            Point(-thickness, -diameter / 2, basis=coords.basis),
+                            Point(thickness, -diameter / 2, basis=coords.basis),
+                        ),
+                        fill="black",
+                        width=4,
+                        tag=("optics"),
+                    )
+                    coords.place(
+                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
+                    )
+
+                lens = Oval(
+                    size=(element.L, diameter),
+                    basis=coords.basis,
+                    position_is_center=True,
+                    fill=self.fill_color_for_index(element.n),
+                    outline="black",
+                    width=2,
+                    tag=("optics"),
+                )
+                coords.place(
+                    lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
+                )
+
+            elif type(element) is DielectricSlab:
+                diameter = element.apertureDiameter
+                if not isfinite(diameter):
+                    y_lims = self.coords.axes_limits[1]
+                    diameter = 0.98 * (y_lims[1] - y_lims[0])
+                else:
+                    aperture_top = Line(
+                        points=(
+                            Point(-thickness, diameter / 2, basis=coords.basis),
+                            Point(thickness, diameter / 2, basis=coords.basis),
+                        ),
+                        fill="black",
+                        width=4,
+                        tag=("optics"),
+                    )
+                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
+                    aperture_bottom = Line(
+                        points=(
+                            Point(-thickness, -diameter / 2, basis=coords.basis),
+                            Point(thickness, -diameter / 2, basis=coords.basis),
+                        ),
+                        fill="black",
+                        width=4,
+                        tag=("optics"),
+                    )
+                    coords.place(
+                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
+                    )
+
+                lens = Rectangle(
+                    size=(element.L, diameter),
+                    basis=coords.basis,
+                    position_is_center=True,
+                    fill=self.fill_color_for_index(element.n),
+                    outline="black",
+                    width=2,
+                    tag=("optics"),
+                )
+                coords.place(
+                    lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
+                )
+
             z += element.L
 
     def raytraces_to_lines(self, raytraces, basis):
@@ -705,21 +822,83 @@ class RaytracingApp(App):
                     hue = 1.0
                 color = self.color_from_hue(hue)
 
-                line_trace = self.create_line_from_raytrace(
+                line_segments = self.create_line_segments_from_raytrace(
                     raytrace, basis=basis, color=color
                 )
-                line_traces.append(line_trace)
+                line_traces.extend(line_segments)
 
         return line_traces
 
-    def create_line_from_raytrace(self, raytrace, basis, color):
+    def create_line_segments_from_raytrace(self, raytrace, basis, color):
+        for ray in raytrace:
+            print(ray.z, ray.n)
+
         points = [Point(r.z, r.y, basis=basis) for r in raytrace]
-        return Line(points, tag=("ray"), fill=color, width=2)
+        return [Line(points, tag=("ray"), fill=color, width=2)]
 
     def color_from_hue(self, hue):
         rgb = colorsys.hsv_to_rgb(hue, 1, 1)
         rgbi = (int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255))
         return "#{0:02x}{1:02x}{2:02x}".format(*rgbi)
+
+    @staticmethod
+    def parse_element_call(expr_str: str) -> tuple[str, dict]:
+        # Parse the string as an expression
+        expr = ast.parse(expr_str, mode="eval")
+
+        # Make sure it's a function or constructor call
+        if not isinstance(expr.body, ast.Call):
+            raise ValueError("Expected a function or constructor call")
+
+        # Extract the class/function name
+        if isinstance(expr.body.func, ast.Name):
+            class_name = expr.body.func.id
+        else:
+            raise ValueError("Unsupported function expression")
+
+        # Extract keyword arguments as a dictionary
+        kwargs = {kw.arg: ast.literal_eval(kw.value) for kw in expr.body.keywords}
+
+        return class_name, kwargs
+
+    @staticmethod
+    def instantiate_element(class_name, class_kwargs) -> Any:
+        # allowed_classes = {
+        #     "Lens": Lens,
+        #     "Aperture": Aperture,
+        #     "DielectricInterface": DielectricInterface,
+        #     "Matrix": Matrix,
+        #     "ThickLens": ThickLens,
+        #     "DielectricSlab":DielectricSlab
+        # }
+
+        cls = globals()[class_name]
+        # cls = allowed_classes.get(class_name)
+        if cls is None:
+            raise ValueError(f"Class {class_name} not allowed")
+
+        # Get init signature for this class
+        sig = inspect.signature(cls.__init__)
+
+        # Extract argument names and default values
+        signature_kwargs = {
+            name: param.default
+            for name, param in sig.parameters.items()
+            if name != "self"  # exclude 'self'
+        }
+
+        filtered_class_kwargs = {
+            k: v for k, v in class_kwargs.items() if k in signature_kwargs
+        }
+
+        instance = None
+
+        try:
+            instance = cls(**filtered_class_kwargs)
+        except Exception as err:
+            instance = None
+
+        return instance, signature_kwargs
 
     def get_path_from_ui(self, without_apertures=True, max_position=None):
         path = ImagingPath()
@@ -730,7 +909,7 @@ class RaytracingApp(App):
             ordered_records = [
                 record
                 for record in ordered_records
-                if record["element"].lower() != "aperture"
+                if "aperture" not in record["element"].lower()
             ]
 
         ordered_records.sort(key=lambda e: float(e["position"]))
@@ -743,24 +922,21 @@ class RaytracingApp(App):
 
         for element in ordered_records:
             path_element = None
-            if element["element"].lower() == "lens":
-                focal_length = float(element["focal_length"])
-                label = element["label"]
-                next_z = float(element["position"])
-                diameter = float("+inf")
-                if element["diameter"] != "":
-                    diameter = float(element["diameter"])
 
-                path_element = Lens(f=focal_length, diameter=diameter, label=label)
-            elif element["element"].lower() == "aperture":
-                label = element["label"]
-                next_z = float(element["position"])
-                diameter = float("+inf")
-                if element["diameter"] != "":
-                    diameter = float(element["diameter"])
-                path_element = Aperture(diameter=diameter, label=label)
-            else:
-                print(f"Unable to include unknown element {element['element']}")
+            constructor_string = f"{element['element']}({element['arguments']})"
+            class_name, class_kwargs = self.parse_element_call(constructor_string)
+
+            path_element, signature_kwargs = self.instantiate_element(
+                class_name, class_kwargs
+            )
+
+            if path_element is None:
+                err = ValueError(f"{class_name} requires arguments")
+                err.details = signature_kwargs
+                err.details["element"] = element
+                raise err
+
+            next_z = float(element["position"])
 
             delta = next_z - z
 
