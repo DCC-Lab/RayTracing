@@ -72,7 +72,12 @@ if runApp:
     gui_path = os.path.join(current_dir, "ui", "raytracing_app.py")
 
     # Call the GUI app as a subprocess
-    subprocess.run([sys.executable, gui_path])
+    result = subprocess.run([sys.executable, gui_path])
+    if result.returncode != 0:
+        print("The graphical interface requires 'mytk' and 'tkinter'.")
+        print("Install mytk with: pip install mytk")
+        print("On Linux, you may also need: sudo apt install python3-tk (Debian/Ubuntu)")
+        print("                          or: sudo dnf install python3-tkinter (Fedora)")
     exit()
 
 if runExamples == "all":

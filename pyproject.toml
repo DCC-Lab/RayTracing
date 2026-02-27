@@ -55,8 +55,10 @@ dependencies = [
   "matplotlib>=3.7",
   "numpy",
   "pygments",
-  "mytk"
 ]
+
+[project.optional-dependencies]
+gui = ["mytk"]
 
 [tool.setuptools_scm]
 version_scheme = "post-release"

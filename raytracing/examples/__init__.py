@@ -1,6 +1,7 @@
 import os
 import re
 import importlib
+import warnings
 
 from pygments import highlight
 from pygments.lexers import PythonLexer
@@ -17,6 +18,20 @@ TODO: all other examples from the article are in the diretory
 but are not added to the list because they have a structure
 that is different (no TITLE and not constrined to a single function).
 """
+
+def highlightSourceCodeToBmp(srcCode):
+    try:
+        bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
+        return Image.open(BytesIO(bmpSrcCode))
+    except Exception:
+        warnings.warn(
+            "Unable to render source code as image. "
+            "On Linux, you may need to install a font package "
+            "(e.g. 'dejavu-fonts-all' on Fedora).",
+            stacklevel=2
+        )
+        return None
+
 topDir      = os.path.dirname(os.path.realpath(__file__))
 allFiles    = os.listdir(topDir)
 allFiles.sort()
@@ -35,16 +50,14 @@ for file in allFiles:
         srcCode = srcCode[:-3]
         srcCode = str.join('', srcCode)
         module.__SRC_CODE = srcCode
+        module.__IMG_CODE = highlightSourceCodeToBmp(srcCode)
 
-        bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
-        module.__IMG_CODE = Image.open(BytesIO(bmpSrcCode))
-
-        short.append({"name":name, 
+        short.append({"name":name,
                      "title":module.TITLE,
                      "code":module.exampleCode,
                      "sourceCode":srcCode,
                      "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
-                     "bmpSourceCode":Image.open(BytesIO(bmpSrcCode)),
+                     "bmpSourceCode":highlightSourceCodeToBmp(srcCode),
                      "path":"{0}/{1}".format(topDir, file)
                      })
     else:
@@ -59,11 +72,10 @@ for file in allFiles:
                 srcCode = f.readlines()
 
             srcCode = str.join('', srcCode)
-            bmpSrcCode = highlight(srcCode, PythonLexer(), BmpImageFormatter())
 
-            long.append({"name":name, 
+            long.append({"name":name,
                          "sourceCode":srcCode,
                          "terminalSourceCode":highlight(srcCode, PythonLexer(), TerminalFormatter()),
-                         "bmpSourceCode":Image.open(BytesIO(bmpSrcCode)),
+                         "bmpSourceCode":highlightSourceCodeToBmp(srcCode),
                          "path":"{0}/{1}".format(topDir, file)
                          })
