@@ -230,7 +230,7 @@ class AchromatDoubletLens(CompoundLens):
         ef1, ef2 = self.effectiveFocalLengths()
         return "{0} efl={1}, diameter={2}".format(self.label, ef1, self.diameter)
 
-    def __expr__(self):
+    def __repr__(self):
         return self.__str__()
 
 class SingletLens(CompoundLens):
