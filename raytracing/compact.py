@@ -102,8 +102,10 @@ class CompactRays(Rays):
         if thetaMin is None:
             thetaMin = -thetaMax
 
-        for i, rayStruct in enumerate(self._rays):
-            rayStruct = (yMin + np.random.random() * (yMax - yMin), thetaMin + np.random.random() * (thetaMax - thetaMin), 0, 0, 0, 0)
+        for i in range(len(self._rays)):
+            ray = self[i]
+            ray.y = yMin + np.random.random() * (yMax - yMin)
+            ray.theta = thetaMin + np.random.random() * (thetaMax - thetaMin)
 
     def __getitem__(self, index):
         return CompactRay(self, index)

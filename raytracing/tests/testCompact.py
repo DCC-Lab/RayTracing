@@ -92,6 +92,14 @@ class TestCompactRays(envtest.RaytracingTestCase):
         self.assertEqual(rays[0].y, 1)
         self.assertEqual(rays[2].theta, 2)
 
+    def testFillWithRandomUniformActuallyModifiesRays(self):
+        rays = CompactRays(maxCount=100)
+        rays.fillWithRandomUniform(yMax=1.0, thetaMax=0.5)
+        hasNonZeroY = any(rays[i].y != 0 for i in range(len(rays)))
+        hasNonZeroTheta = any(rays[i].theta != 0 for i in range(len(rays)))
+        self.assertTrue(hasNonZeroY, "fillWithRandomUniform did not modify y values")
+        self.assertTrue(hasNonZeroTheta, "fillWithRandomUniform did not modify theta values")
+
 
 
 
