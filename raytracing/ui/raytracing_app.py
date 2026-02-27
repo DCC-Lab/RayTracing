@@ -840,9 +840,6 @@ class RaytracingApp(App):
         return line_traces
 
     def create_line_segments_from_raytrace(self, raytrace, basis, color):
-        for ray in raytrace:
-            print(ray.z, ray.n)
-
         points = [Point(r.z, r.y, basis=basis) for r in raytrace]
         return [Line(points, tag=("ray"), fill=color, width=2)]
 
