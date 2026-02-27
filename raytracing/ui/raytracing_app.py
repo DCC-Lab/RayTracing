@@ -1,12 +1,22 @@
-from tkinter import DoubleVar
-from tkinter import filedialog
-from mytk import *
-from mytk.base import BaseNotification
-from mytk.canvasview import *
-from mytk.dataviews import *
-from mytk.vectors import Point, PointDefault, DynamicBasis
-from mytk.labels import Label
-from mytk.notificationcenter import NotificationCenter
+import sys
+
+try:
+    from tkinter import DoubleVar
+    from tkinter import filedialog
+    from mytk import *
+    from mytk.base import BaseNotification
+    from mytk.canvasview import *
+    from mytk.dataviews import *
+    from mytk.vectors import Point, PointDefault, DynamicBasis
+    from mytk.labels import Label
+    from mytk.notificationcenter import NotificationCenter
+except ImportError as e:
+    print(f"Error: {e}", file=sys.stderr)
+    print("\nThe graphical interface requires 'mytk' and 'tkinter'.", file=sys.stderr)
+    print("Install mytk with: pip install mytk", file=sys.stderr)
+    print("On Linux, you may also need: sudo apt install python3-tk (Debian/Ubuntu)", file=sys.stderr)
+    print("                          or: sudo dnf install python3-tkinter (Fedora)", file=sys.stderr)
+    sys.exit(1)
 
 import time
 import ast
@@ -830,9 +840,6 @@ class RaytracingApp(App):
         return line_traces
 
     def create_line_segments_from_raytrace(self, raytrace, basis, color):
-        for ray in raytrace:
-            print(ray.z, ray.n)
-
         points = [Point(r.z, r.y, basis=basis) for r in raytrace]
         return [Line(points, tag=("ray"), fill=color, width=2)]
 
