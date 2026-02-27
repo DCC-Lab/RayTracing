@@ -5,7 +5,7 @@ from raytracing import *
 inf = float("+inf")
 
 class TestCompactRays(envtest.RaytracingTestCase):
-    def testCompactRaysInit(self):
+    def testCompactRaysInitNotNone(self):
         self.assertIsNotNone(CompactRays(maxCount=100))
 
     def testCompactRaysInit(self):
@@ -100,7 +100,72 @@ class TestCompactRays(envtest.RaytracingTestCase):
         self.assertTrue(hasNonZeroY, "fillWithRandomUniform did not modify y values")
         self.assertTrue(hasNonZeroTheta, "fillWithRandomUniform did not modify theta values")
 
+    def testFillWithRandomUniformValuesWithinRange(self):
+        rays = CompactRays(maxCount=1000)
+        rays.fillWithRandomUniform(yMax=2.0, thetaMax=0.3)
+        for i in range(len(rays)):
+            ray = rays[i]
+            self.assertGreaterEqual(ray.y, -2.0)
+            self.assertLessEqual(ray.y, 2.0)
+            self.assertGreaterEqual(ray.theta, -0.3)
+            self.assertLessEqual(ray.theta, 0.3)
 
+    def testFillWithRandomUniformExplicitMin(self):
+        rays = CompactRays(maxCount=1000)
+        rays.fillWithRandomUniform(yMax=5.0, yMin=1.0, thetaMax=0.5, thetaMin=0.1)
+        for i in range(len(rays)):
+            ray = rays[i]
+            self.assertGreaterEqual(ray.y, 1.0)
+            self.assertLessEqual(ray.y, 5.0)
+            self.assertGreaterEqual(ray.theta, 0.1)
+            self.assertLessEqual(ray.theta, 0.5)
+
+    def testCompactRayIsBlockedSetter(self):
+        rays = CompactRays(maxCount=1)
+        ray = rays[0]
+        self.assertFalse(ray.isBlocked)
+        ray.isBlocked = True
+        self.assertTrue(ray.isBlocked)
+        ray.isBlocked = False
+        self.assertFalse(ray.isBlocked)
+
+    def testCompactRayApertureDiameter(self):
+        rays = CompactRays(maxCount=1)
+        ray = rays[0]
+        ray.apertureDiameter = 25.4
+        self.assertAlmostEqual(ray.apertureDiameter, 25.4, places=3)
+
+    def testCompactRayWavelength(self):
+        rays = CompactRays(maxCount=1)
+        ray = rays[0]
+        ray.wavelength = 0.532
+        self.assertAlmostEqual(ray.wavelength, 0.532, places=3)
+
+    def testCompactRayAssignRoundTrip(self):
+        rays = CompactRays(maxCount=1)
+        original = Ray(y=1.5, theta=-0.3, z=10.0, isBlocked=True)
+        original.apertureDiameter = 25.0
+        original.wavelength = 0.633
+        rays[0].assign(original)
+        ray = rays[0]
+        self.assertAlmostEqual(ray.y, 1.5, places=3)
+        self.assertAlmostEqual(ray.theta, -0.3, places=3)
+        self.assertAlmostEqual(ray.z, 10.0, places=3)
+        self.assertTrue(ray.isBlocked)
+        self.assertAlmostEqual(ray.apertureDiameter, 25.0, places=3)
+        self.assertAlmostEqual(ray.wavelength, 0.633, places=3)
+
+    def testCompactRaysFromRayList(self):
+        originals = [Ray(y=1, theta=0.1), Ray(y=-2, theta=0.5), Ray(y=0, theta=-0.3)]
+        rays = CompactRays(rays=originals)
+        self.assertEqual(len(rays), 3)
+        for i, original in enumerate(originals):
+            self.assertAlmostEqual(rays[i].y, original.y, places=3)
+            self.assertAlmostEqual(rays[i].theta, original.theta, places=3)
+
+    def testCompactRaysNoArgsRaises(self):
+        with self.assertRaises(ValueError):
+            CompactRays()
 
 
     # def testDefaultCompactRay(self):
@@ -176,7 +241,7 @@ class TestCompactRaytraces(envtest.RaytracingTestCase):
             self.assertEqual(ray.theta, i)
             self.assertEqual(ray.z, i)
 
-    def testCompactRaytraces(self):
+    def testCompactRaytracesMultiple(self):
         rays = CompactRays(maxCount=10)
         self.assertIsNotNone(rays)
         self.assertEqual(len(rays), 10)
@@ -195,6 +260,27 @@ class TestCompactRaytraces(envtest.RaytracingTestCase):
 
         for raytrace in raytraces:
             self.assertEqual(len(raytrace), 5)
+
+    def testCompactRaytraceNegativeIndex(self):
+        rays = CompactRays(maxCount=5)
+        for i in range(5):
+            rays[i].y = i * 10
+
+        raytrace = CompactRaytrace(rays, firstIndex=0, traceLength=5)
+        self.assertAlmostEqual(raytrace[-1].y, 40, places=3)
+        self.assertAlmostEqual(raytrace[-2].y, 30, places=3)
+        self.assertAlmostEqual(raytrace[-5].y, 0, places=3)
+
+    def testCompactRaytracesNegativeIndex(self):
+        rays = CompactRays(maxCount=10)
+        for i in range(10):
+            rays[i].y = i
+
+        raytraces = CompactRaytraces(rays, traceLength=5)
+        # raytraces[0] covers indices 0-4, raytraces[1] covers 5-9
+        # raytraces[-1] should be the same as raytraces[1]
+        self.assertAlmostEqual(raytraces[-1][0].y, 5, places=3)
+        self.assertAlmostEqual(raytraces[-1][-1].y, 9, places=3)
 
     def testCompactRaytraces(self):
         inputRays1 = []

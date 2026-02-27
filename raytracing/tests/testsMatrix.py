@@ -894,5 +894,138 @@ class TestTrace(envtest.RaytracingTestCase):
         print(native)
         print(openCL)
 
+try:
+    import pyopencl
+    hasOpenCL = True
+except ImportError:
+    hasOpenCL = False
+
+
+class TestComputationValidation(envtest.RaytracingTestCase):
+
+    def testFreeSpacePropagation(self):
+        """y_out should equal y_in + theta * d for free space."""
+        d = 10.0
+        rays = [Ray(y=1.0, theta=0.1), Ray(y=-2.0, theta=0.3), Ray(y=0, theta=-0.5)]
+        m = Space(d=d)
+        for ray in rays:
+            output = m.traceThrough(ray)
+            self.assertAlmostEqual(output.y, ray.y + ray.theta * d, places=5)
+            self.assertAlmostEqual(output.theta, ray.theta, places=5)
+
+    def testFreeSpacePropagationCompactRays(self):
+        """Same free space test with CompactRays through traceManyNative."""
+        d = 10.0
+        originals = [Ray(y=1.0, theta=0.1), Ray(y=-2.0, theta=0.3), Ray(y=0, theta=-0.5)]
+        compact = CompactRays(rays=originals)
+        m = Space(d=d)
+        traces = m.traceManyNative(compact)
+        for i, ray in enumerate(originals):
+            output = traces[i][-1]
+            self.assertAlmostEqual(output.y, ray.y + ray.theta * d, places=3)
+            self.assertAlmostEqual(output.theta, ray.theta, places=3)
+
+    def testLensImagingAt2f(self):
+        """Object at 2f from a lens images at 2f with magnification -1."""
+        f = 10.0
+        group = MatrixGroup()
+        group.append(Space(d=2 * f))
+        group.append(Lens(f=f))
+        group.append(Space(d=2 * f))
+
+        rays = [Ray(y=1.0, theta=0), Ray(y=-3.0, theta=0), Ray(y=0.5, theta=0)]
+        traces = group.traceManyNative(rays)
+        for i, ray in enumerate(rays):
+            output = traces[i][-1]
+            if output.isNotBlocked:
+                self.assertAlmostEqual(output.y, -ray.y, places=5)
+
+    def testBlockedRayStaysBlocked(self):
+        """A ray blocked early stays blocked for the rest of the trace."""
+        group = MatrixGroup()
+        group.append(Lens(f=10, diameter=1))
+        group.append(Space(d=5))
+        group.append(Lens(f=20))
+        group.append(Space(d=5))
+
+        ray = Ray(y=10, theta=0)  # way outside 1mm aperture
+        trace = group.trace(ray)
+        self.assertTrue(trace[-1].isBlocked)
+        # Find the first blocked ray and verify all subsequent are blocked too
+        firstBlocked = None
+        for i, r in enumerate(trace):
+            if r.isBlocked:
+                firstBlocked = i
+                break
+        self.assertIsNotNone(firstBlocked)
+        for r in trace[firstBlocked:]:
+            self.assertTrue(r.isBlocked)
+
+    def testBlockedRayStaysBlockedCompactRays(self):
+        """Same blocked-ray test through traceManyNative with CompactRays."""
+        group = MatrixGroup()
+        group.append(Lens(f=10, diameter=1))
+        group.append(Space(d=5))
+        group.append(Lens(f=20))
+        group.append(Space(d=5))
+
+        compact = CompactRays(maxCount=1)
+        compact[0].y = 10
+        compact[0].theta = 0
+
+        traces = group.traceManyNative(compact)
+        self.assertTrue(traces[0][-1].isBlocked)
+
+    @envtest.skipIf(not hasOpenCL, "pyopencl not installed")
+    def testTraceManyOpenCLIntermediateRays(self):
+        """Validate ALL intermediate rays match between OpenCL and Native, not just first/last."""
+        inputRaysOpenCL = CompactRays(rays=UniformRays(M=10, N=5))
+        inputRaysNative = list(UniformRays(M=10, N=5))
+
+        group = MatrixGroup()
+        group.append(Space(d=5))
+        group.append(Lens(f=10, diameter=25))
+        group.append(Space(d=5))
+
+        tracesOpenCL = group.traceManyOpenCL(inputRaysOpenCL)
+        tracesNative = group.traceManyNative(inputRaysNative)
+
+        for traceOCL, traceNat in zip(tracesOpenCL, tracesNative):
+            self.assertEqual(len(traceOCL), len(traceNat))
+            for j in range(len(traceNat)):
+                self.assertEqual(traceOCL[j], traceNat[j])
+
+    @envtest.skipIf(not hasOpenCL, "pyopencl not installed")
+    def testTraceManyOpenCLFreeSpacePropagation(self):
+        """Validate OpenCL free space gives y_out = y_in + theta * d."""
+        d = 7.0
+        originals = [Ray(y=1.0, theta=0.2), Ray(y=-1.0, theta=-0.1), Ray(y=0, theta=0.5)]
+        compact = CompactRays(rays=originals)
+
+        m = MatrixGroup([Space(d=d)])
+        traces = m.traceManyOpenCL(compact)
+        for i, ray in enumerate(originals):
+            output = traces[i][-1]
+            self.assertAlmostEqual(output.y, ray.y + ray.theta * d, places=3)
+            self.assertAlmostEqual(output.theta, ray.theta, places=3)
+
+    @envtest.skipIf(not hasOpenCL, "pyopencl not installed")
+    def testTraceManyOpenCLBlockedRay(self):
+        """Validate OpenCL correctly blocks rays outside aperture."""
+        group = MatrixGroup()
+        group.append(Lens(f=10, diameter=1))
+        group.append(Space(d=5))
+
+        compact = CompactRays(maxCount=2)
+        compact[0].y = 0.1   # inside 1mm aperture
+        compact[0].theta = 0
+        compact[1].y = 10.0  # outside 1mm aperture
+        compact[1].theta = 0
+
+        traces = group.traceManyOpenCL(compact)
+        self.assertFalse(traces[0][-1].isBlocked)
+        self.assertTrue(traces[1][-1].isBlocked)
+
+
 if __name__ == '__main__':
     envtest.main()
