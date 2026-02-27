@@ -53,7 +53,7 @@ from .preferences import *
 
 import os
 from datetime import datetime
-    
+
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)
@@ -62,12 +62,19 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.3.10"
+try:  # to get __version__ dynamically from pyproject.toml
+    from importlib.metadata import version
+except ImportError:  # Python <3.8
+    from importlib_metadata import version
+
+from ._version import version as __version__
+
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
 import os.path as path
 import time
 import tempfile
+
 
 def lastCheckMoreThanADay():
     if "lastVersionCheck" in prefs:
@@ -89,7 +96,7 @@ if lastCheckMoreThanADay():
 
 if "RAYTRACING_EXPERT" in os.environ:
     prefs["mode"] = "expert"
-    
+
 try:
     if "mode" in prefs:
         if prefs["mode"] == "silent":
@@ -104,5 +111,3 @@ try:
 except Exception as err:
     beginnerMode(saveToPrefs=True)
     pass
-
-

@@ -259,7 +259,7 @@ class SingletLens(CompoundLens):
         The refraction index of the material if material not used
     diameter : float
         The diameter of the lens
-    mat1 : object of Material class
+    mat : object of Material class
         The material of the lens
     wavelengthRef : float
         The defined wavelength of reference for the index of refraction

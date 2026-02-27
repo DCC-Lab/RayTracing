@@ -1,8 +1,11 @@
 import envtest  # modifies path
+import os
 import subprocess
 
 from raytracing import *
 inf = float("+inf")
+
+testsDir = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestMatrix(envtest.RaytracingTestCase):
@@ -415,7 +418,7 @@ class TestMatrix(envtest.RaytracingTestCase):
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallelNoOutput(self):
-        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True,
+        processComplete = subprocess.run([sys.executable, os.path.join(testsDir, "traceManyThroughInParallelNoOutput.py")], capture_output=True,
                                          universal_newlines=True)
         self.assertEqual(processComplete.stdout, "")
 
@@ -423,7 +426,7 @@ class TestMatrix(envtest.RaytracingTestCase):
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
     def testTraceManyThroughInParallelWithOutput(self):
-        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
+        processComplete = subprocess.run([sys.executable, os.path.join(testsDir, "traceManyThroughInParallelWithOutput.py")],
                                          capture_output=True, universal_newlines=True)
         self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
 
