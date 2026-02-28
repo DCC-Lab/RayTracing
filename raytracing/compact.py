@@ -280,6 +280,20 @@ class CompactRaytrace:
         self.firstIndex = firstIndex
         self.traceLength = traceLength
 
+    def __str__(self):
+        if len(self) == 0:
+            return "Empty CompactRaytrace()"
+
+        lines = []
+        for i, ray in enumerate(self):
+            blocked = " (blocked)" if ray.isBlocked else ""
+            lines.append("[{0}] y = {1:6.3f}, theta = {2:6.3f}, z = {3:4.3f}{4}".format(
+                i, ray.y, ray.theta, ray.z, blocked))
+        return "\n".join(lines)
+
+    def __repr__(self):
+        return "{0}".format(self)
+
     def __len__(self):
         return self.traceLength
 
@@ -325,8 +339,19 @@ class CompactRaytraces:
         self.traceLength = traceLength
         self.traceCount = int(compactRays.maxCount / traceLength)
 
+    def __str__(self):
+        lines = []
+        for i, trace in enumerate(self):
+            lines.append("Trace {0}:".format(i))
+            lines.append(str(trace))
+        return "\n".join(lines)
+
+    def __repr__(self):
+        return "{0}".format(self)
+
     def __len__(self):
         return self.traceCount
+
     def __getitem__(self, traceIndex):
         while (traceIndex < 0):
             traceIndex += self.traceCount
