@@ -315,12 +315,13 @@ class TestOpenCL(unittest.TestCase):
             calcTimeOpenNP.append((time.time()-startTime)*1000)
             nptimes.append(np.mean(calcTimeOpenNP))
 
-        plt.plot(range(P), cltimes, label="OpenCL")
-        plt.plot(range(P), nptimes, label="Numpy")
-        plt.xlabel("Size of array 2^x")
-        plt.ylabel("Computation time [ms]")
-        plt.legend()
-        plt.show()
+        if False:
+            plt.plot(range(P), cltimes, label="OpenCL")
+            plt.plot(range(P), nptimes, label="Numpy")
+            plt.xlabel("Size of array 2^x")
+            plt.ylabel("Computation time [ms]")
+            plt.legend()
+            plt.show()
 
     def test004_2x2Matrix_and_Vectors(self):
         """
