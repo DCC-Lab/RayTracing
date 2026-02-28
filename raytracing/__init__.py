@@ -63,7 +63,10 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-__version__ = "1.4.0"
+try:
+    from ._version import __version__
+except ImportError:
+    __version__ = "0.0.0"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
 import os.path as path
