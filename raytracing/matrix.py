@@ -830,9 +830,29 @@ class Matrix(object):
         if not isinstance(inputRays, CompactRays):
             raise ValueError("Only CompactRays can be used with OpenCL.  Convert your rays to CompactRays.")
 
-        import pyopencl as pycl
+        try:
+            import pyopencl as pycl
+        except ImportError:
+            raise RuntimeError(
+                "pyopencl is required for GPU-accelerated tracing but is not installed.\n"
+                "Install it with: pip install pyopencl\n"
+                "Or use traceManyNative() instead."
+            )
 
-        devices = pycl.get_platforms()[0].get_devices(device_type=pycl.device_type.GPU)
+        platforms = pycl.get_platforms()
+        if not platforms:
+            raise RuntimeError(
+                "No OpenCL platforms found on this system.\n"
+                "Use traceManyNative() instead."
+            )
+
+        devices = platforms[0].get_devices(device_type=pycl.device_type.GPU)
+        if not devices:
+            raise RuntimeError(
+                "No OpenCL GPU devices found on this system.\n"
+                "Use traceManyNative() instead."
+            )
+
         context = pycl.Context(devices=devices)
         queue = pycl.CommandQueue(context)
 
