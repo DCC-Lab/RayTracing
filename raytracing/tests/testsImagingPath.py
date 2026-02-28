@@ -4,7 +4,6 @@ from raytracing import *
 inf = float("+inf")
 
 
-
 class TestImagingPath(envtest.RaytracingTestCase):
     def testImagingPath(self):
         path = ImagingPath()
@@ -12,7 +11,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
         self.assertListEqual(path.elements, [])
         self.assertEqual(path._objectHeight, 10)
         self.assertEqual(path.objectPosition, 0)
-        self.assertIsNone(path.fanAngle) # Means full angle
+        self.assertIsNone(path.fanAngle)  # Means full angle
         self.assertEqual(path.fanNumber, 3)
         self.assertEqual(path.rayNumber, 3)
         self.assertEqual(path.precision, 1e-6)
@@ -174,7 +173,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
         path.append(Aperture(20))
         self.assertEqual(path.imageSize(), inf)
 
-
     def testImageSizeInfinite(self):
         path = ImagingPath(System4f(f1=10, f2=2, diameter1=10))
         self.assertEqual(path.imageSize(), inf)
@@ -200,7 +198,9 @@ class TestImagingPath(envtest.RaytracingTestCase):
         filePath = self.tempFilePath("test.png")
         comments = "This is a test"
         path = ImagingPath(System4f(10, 10, 10, 10))
-        path.saveFigure(rays=ObjectRays(diameter=10), filePath=filePath, comments=comments)
+        path.saveFigure(
+            rays=ObjectRays(diameter=10), filePath=filePath, comments=comments
+        )
         if not os.path.exists(filePath):
             self.fail("No file saved (with comments)")
 
@@ -213,13 +213,13 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
     def testChiefRayNoApertureStop(self):
         path = ImagingPath(System2f(10))
-        chiefRay = path.chiefRay()
-        self.assertIsNone(chiefRay)
+        with self.assertRaises(ValueError):
+            chiefRay = path.chiefRay()
 
     def testChiefRayBIs0(self):
         path = ImagingPath(System4f(10, 10))
         path.append(Aperture(10))
-        self.assertIsNone(path.chiefRay())
+        self.assertEqual(path.chiefRay(), Ray(0, 0))
 
     def testChiefRayYIsNone(self):
         path = ImagingPath()
@@ -294,7 +294,7 @@ class TestImagingPath(envtest.RaytracingTestCase):
 
     def testNA(self):
         path = ImagingPath(System2f(f=1000, diameter=20))
-        self.assertAlmostEqual(path.NA(), 0.01,4)
+        self.assertAlmostEqual(path.NA(), 0.01, 4)
 
     def testLargeNA(self):
         path = ImagingPath(System2f(f=10, diameter=200))
@@ -353,6 +353,6 @@ class TestImagingPath(envtest.RaytracingTestCase):
         with self.assertRaises(ValueError):
             path.chiefRay()
 
-if __name__ == '__main__':
-    envtest.main()
 
+if __name__ == "__main__":
+    envtest.main()

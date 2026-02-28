@@ -92,7 +92,7 @@ celerybeat-schedule
 .env
 .venv
 env/
-venv/
+venv*/
 ENV/
 env.bak/
 venv.bak/
@@ -195,3 +195,4 @@ fabric.properties
 .DS_Store
 env-*/
 venv/
+raytracing/_version.py

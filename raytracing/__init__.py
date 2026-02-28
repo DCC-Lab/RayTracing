@@ -54,7 +54,7 @@ from .preferences import *
 
 import os
 from datetime import datetime
-    
+
 """ Synonym of Matrix: Element 
 
 We can use a mathematical language (Matrix) or optics terms (Element)
@@ -73,9 +73,11 @@ import os.path as path
 import time
 import tempfile
 
+
 def lastCheckMoreThanADay():
     if "lastVersionCheck" in prefs:
-        then = datetime.fromisoformat(prefs["lastVersionCheck"])
+        isoFormat = "%Y-%m-%dT%H:%M:%S.%f"
+        then = datetime.strptime(prefs["lastVersionCheck"], isoFormat)
         difference = datetime.now() - then
         if difference.days > 1:
             return True
@@ -92,7 +94,7 @@ if lastCheckMoreThanADay():
 
 if "RAYTRACING_EXPERT" in os.environ:
     prefs["mode"] = "expert"
-    
+
 try:
     if "mode" in prefs:
         if prefs["mode"] == "silent":
@@ -107,5 +109,3 @@ try:
 except Exception as err:
     beginnerMode(saveToPrefs=True)
     pass
-
-

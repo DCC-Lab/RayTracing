@@ -7,10 +7,11 @@ from raytracing.materials import *
 
 inf = float("+inf")
 
-_SPECS_DIR = os.path.join(os.path.dirname(__file__), '..', 'specifications')
+testsDir = os.path.dirname(os.path.abspath(__file__))
+specsDir = os.path.join(os.path.dirname(testsDir), "specifications")
 
 class TestZemax(envtest.RaytracingTestCase):
-    zmx = ZMXReader(os.path.join(_SPECS_DIR, "AC254-100-A-Zemax(ZMX).zmx"))
+    zmx = ZMXReader(os.path.join(specsDir, "AC254-100-A-Zemax(ZMX).zmx"))
 
     def testCreation(self):
         self.assertIsNotNone(self.zmx)
@@ -69,11 +70,11 @@ class TestZemax(envtest.RaytracingTestCase):
         self.assertAlmostEqual(self.zmx.designWavelength, 0.5876)
 
     def testEdmundFile(self):
-        zmx = ZMXReader(os.path.join(_SPECS_DIR, "zmax_49270.zmx"))
+        zmx = ZMXReader(os.path.join(specsDir, "zmax_49270.zmx"))
         self.assertIsNotNone(zmx)
 
     def testEdmundFile2(self):
-        zmx = ZMXReader(os.path.join(_SPECS_DIR, "AC254-125-A-Zemax(ZMX).zmx"))
+        zmx = ZMXReader(os.path.join(specsDir, "AC254-125-A-Zemax(ZMX).zmx"))
         self.assertIsNotNone(zmx)
         #print(zmx.prescription())
         #print(zmx.matrixGroup().effectiveFocalLengths())

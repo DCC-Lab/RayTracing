@@ -110,7 +110,7 @@ class Figure:
     def fontScale(self):
         return self.designParams['fontScale']
 
-    def initializeDisplay(self):
+    def applyDesign(self):
         """ Configure the imaging path and the figure according to the display conditions. """
 
         note1 = ""
@@ -686,7 +686,7 @@ class MplFigure(Figure):
         for point in self.points:
             if point.hasPointMarker:
                 y = 0 if point.fixToAxis else point.y
-                self.axes.plot([point.x], [y], 'ko', markersize=3, color=point.color, linewidth=0.4)
+                self.axes.plot([point.x], [y], marker='o', markersize=5, color=point.color, linewidth=0.4)
             if point.text is not None:
                 point.fontsize *= self.fontScale
                 self.labels.append(point)
@@ -705,11 +705,16 @@ class MplFigure(Figure):
         if kElementsKey in visibility.keys():
             visibility.pop(kElementsKey)
 
-        subAxes = plt.axes([0.81, 0.4, 0.1, 0.5], frameon=False, anchor='NW')
-        self.checkBoxes = CheckButtons(subAxes, list(visibility.keys()),
-                                       list(visibility.values()))
-        for label in self.checkBoxes.labels:
-            label.set_fontsize(11)
+        subAxes = plt.axes((0.81, 0.4, 0.1, 0.5), frameon=False, anchor='NW')
+
+        nBoxes = len(visibility)
+        heightStep = 0.15
+        offsets = [(0.11, 0.85 - heightStep * i) for i in range(nBoxes)]
+        checkProps = {'sizes': [100] * nBoxes, 'offsets': offsets}
+        self.checkBoxes = CheckButtons(
+            subAxes, visibility.keys(), visibility.values(), check_props=checkProps, frame_props=checkProps
+        )
+        self.checkBoxes.set_label_props({'x': [0.22] * nBoxes, 'y': [v[1] - 0.003 for v in offsets], 'fontsize': [11] * nBoxes})
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):

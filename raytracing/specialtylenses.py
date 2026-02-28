@@ -226,6 +226,12 @@ class AchromatDoubletLens(CompoundLens):
                 SphericalInterface(R=self.R2, L=self.tc2, n=self.n2),
                 SphericalInterface(R=self.R3)]
 
+    def __str__(self):
+        ef1, ef2 = self.effectiveFocalLengths()
+        return "{0} efl={1}, diameter={2}".format(self.label, ef1, self.diameter)
+
+    def __repr__(self):
+        return self.__str__()
 
 class SingletLens(CompoundLens):
     """
@@ -253,7 +259,7 @@ class SingletLens(CompoundLens):
         The refraction index of the material if material not used
     diameter : float
         The diameter of the lens
-    mat1 : object of Material class
+    mat : object of Material class
         The material of the lens
     wavelengthRef : float
         The defined wavelength of reference for the index of refraction

@@ -179,12 +179,12 @@ class Rays:
         And to plot the hitogram we can use xVal and yVal as the following:
 
         >>> import matplotlib.pyplot as plt
-        >>> plt.figure()
-        >>> plt.bar(xVal,yVal,width=maxHeight/nBin)
-        >>> plt.title('Histogram of the inputRay')
-        >>> plt.ylabel('Counts')
-        >>> plt.xlabel('Height of Rays')
-        >>> plt.show()
+        >>> _ = plt.figure()
+        >>> _ = plt.bar(xVal,yVal,width=maxHeight/nBin)
+        >>> _ = plt.title('Histogram of the inputRay')
+        >>> _ = plt.ylabel('Counts')
+        >>> _ = plt.xlabel('Height of Rays')
+        >>> _ = plt.show()
 
         .. image:: /images/Histogram.png
                     :width: 70%
@@ -258,12 +258,12 @@ class Rays:
         And to plot the hitogram we can use xVal and yVal of the theta as the following:
 
         >>> import matplotlib.pyplot as plt
-        >>> plt.figure()
-        >>> plt.bar(xVal,yVal,width=maxTheta/nBin)
-        >>> plt.title('Histogram of the inputRay')
-        >>> plt.ylabel('Counts')
-        >>> plt.xlabel('Angle of Rays')
-        >>> plt.show()
+        >>> _ = plt.figure()
+        >>> _ = plt.bar(xVal,yVal,width=maxTheta/nBin)
+        >>> _ = plt.title('Histogram of the inputRay')
+        >>> _ = plt.ylabel('Counts')
+        >>> _ = plt.xlabel('Angle of Rays')
+        >>> _ = plt.show()
 
         .. image:: /images/AngleHist.png
                     :width: 70%

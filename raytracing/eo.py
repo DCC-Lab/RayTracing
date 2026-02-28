@@ -48,9 +48,10 @@ class PN_33_922(AchromatDoubletLens):
     def __init__(self):
         # PN for Part number
         super(PN_33_922,self).__init__(fa=150.00,fb=126.46, R1=92.05,R2=-72.85, R3=-305.87, 
-                                    tc1=23.2, tc2=23.1, te=36.01, n1=N_BAK1.n(0.5876), n2=N_SF8.n(0.5876), diameter=75,
+                                    tc1=23.2, tc2=23.1, te=36.01, n1=None, mat1=N_BAK1, n2=None, mat2=N_SF8, diameter=75,
                                     label="EO #33-922",
-                                    url="https://www.edmundoptics.com/p/75mm-dia-x-150mm-fl-vis-0-coated-achromatic-lens/3376/")
+                                    url="https://www.edmundoptics.com/p/75mm-dia-x-150mm-fl-vis-0-coated-achromatic-lens/3376/",
+                                    wavelengthRef=0.5876)
 
 class PN_88_593(AchromatDoubletLens):
     """PN_88_593
@@ -98,6 +99,7 @@ class PN_85_877(AchromatDoubletLens):
     """
     def __init__(self):
         super(PN_85_877,self).__init__(fa=-10.0,fb=-11.92, R1=-6.55, R2=5.10, R3=89.10, 
-                                    tc1=1.0, tc2=2.5, te=4.2, n1=N_BAF10.n(0.5876), n2=N_SF10.n(0.5876), diameter=6.25,
+                                    tc1=1.0, tc2=2.5, te=4.2, n1=None, mat1=N_BAF10, n2=None, mat2=N_SF10, diameter=6.25,
                                     label="EO #85-877",
-                                    url="https://www.edmundoptics.com/p/625mm-dia-x10mm-fl-vis-nir-coated-negative-achromatic-lens/28478/")
+                                    url="https://www.edmundoptics.com/p/625mm-dia-x10mm-fl-vis-nir-coated-negative-achromatic-lens/28478/",
+                                    wavelengthRef=0.5876)

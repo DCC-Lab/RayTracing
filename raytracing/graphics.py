@@ -255,6 +255,11 @@ class MatrixGraphic(Graphic):
         -----
         If the component has no power (i.e. C == 0) this will fail.
         """
+        fig = self.createFigure()
+        fig.display2D(interactive=False)
+        return fig
+
+    def createFigure(self) -> 'Figure':
         self.points = []
         self.points.extend(self.cardinalPoints)
         if self.matrix.L != 0:
@@ -266,13 +271,13 @@ class MatrixGraphic(Graphic):
         from .figure import MplFigure
         from .imagingpath import ImagingPath
         path = ImagingPath(elements=[self.matrix])
-        figure = MplFigure(path)
-        figure.graphicGroups['Elements'] = [self]
+        mplFigure = MplFigure(path)
+        mplFigure.graphicGroups['Elements'] = [self]
         if self.displayComponents:
             path.elements = self.matrix
-            figure.setGraphicsFromOpticalPath()
-        figure.create(title="Element properties")
-        figure.display2D(interactive=False)
+            mplFigure.setGraphicsFromOpticalPath()
+        mplFigure.create(title="Element properties")
+        return mplFigure
 
 
 class LensGraphic(MatrixGraphic):

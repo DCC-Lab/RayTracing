@@ -4,6 +4,7 @@ import inspect
 import sys
 from raytracing.preferences import Preferences
 import os
+import ssl
 
 """ Two constants: deg and rad to quickly convert to degrees
 or radians with angle*degPerRad or angle*radPerDeg """
@@ -250,6 +251,9 @@ def checkLatestVersion(currentVersion):
                 print("Latest version {0} available on PyPi (you are using {1}).".format(latestVersion, currentVersion))
                 print("run `pip install --upgrade raytracing` to update.")
                 return True
+    except ssl.SSLError as err:        
+        print("You may have to install the SSL certificates for Python try:\n\npython -m pip install certifi")
+        print(err)
 
     except Exception as err:
         print("Unable to check for latest version of raytracing on pypi.org")
