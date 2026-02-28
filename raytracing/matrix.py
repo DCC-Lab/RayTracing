@@ -796,13 +796,13 @@ class Matrix(object):
         raytracing.Matrix.traceManyThrough
         """
 
-        manyRayTraces = []
         if useOpenCL and isinstance(inputRays, CompactRays):
-            manyRayTraces = self.traceManyOpenCL(inputRays=inputRays)
-        else:
-            manyRayTraces = self.traceManyNative(inputRays=inputRays)
+            try:
+                return self.traceManyOpenCL(inputRays=inputRays)
+            except Exception:
+                pass
 
-        return manyRayTraces
+        return self.traceManyNative(inputRays=inputRays)
 
     def traceManyNative(self, inputRays):
         r"""This function trace each ray from a group of rays from front edge of element to
