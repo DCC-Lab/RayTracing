@@ -15,7 +15,7 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 > *Equal contributions.
 > Permalink: https://doi.org/10.1117/1.NPh.8.1.010801
 
-The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in english or french, with english subtitles when in french) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
+The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in english or french, with english subtitles when in french) on YouTube. We have made no attempts at making high performance code but there is a GPU acceleration option through OpenCL and it still uses a python-like approach and hides the details, see below.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
 ## Where do I get started?
    * If you want to use the module, keep reading.
@@ -35,7 +35,7 @@ To get information about what is new, currently the best place is the [release p
 
 There is a **[Frequently Asked Questions](./FAQ.md)** page.
 
-The article above is fully compatible with all 1.3.x versions.  As long as the API does not change, versions will be 1.3.x.
+The article above is fully compatible with all 1.x versions starting at 1.3.
 
 
 
@@ -318,7 +318,7 @@ All example code on your machine is found at: /somedirectory/on/your/machine
 
 ## GPU-accelerated ray tracing with OpenCL
 
-As of version 2.0, the module supports **GPU-accelerated batch ray tracing** via [OpenCL](https://www.khronos.org/opencl/). When tracing large numbers of rays (100k–1M+) through an optical system, the GPU can provide 10–100x speedup over the pure-Python path.
+As of version 1.4.0, the module supports **GPU-accelerated batch ray tracing** via [OpenCL](https://www.khronos.org/opencl/). When tracing large numbers of rays (100k–1M+) through an optical system, the GPU can provide 10–100x speedup over the pure-Python path.
 
 ### Highlights
 
@@ -348,9 +348,6 @@ rays.fillWithRandomUniform(yMax=5)
 traces = group.traceManyOpenCL(rays)
 traces.lastRays.display("Output profile (OpenCL)")
 
-# CPU fallback — same interface, no OpenCL needed
-traces = group.traceManyNative(rays)
-traces.lastRays.display("Output profile (native)")
 ```
 
 ## Known limitations
