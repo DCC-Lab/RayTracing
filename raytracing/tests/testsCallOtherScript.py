@@ -8,7 +8,7 @@ class TestCallScript(envtest.RaytracingTestCase):
     def setUp(self):
         super().setUp()
         self.exec = sys.executable
-        self.encoding = sys.stdout.encoding
+        self.encoding = sys.stdout.encoding or 'utf-8'
         self.emptyFile = self.tempFilePath('script.py')
         open(self.emptyFile, "w").close()
         self.assertTrue(os.path.exists(self.emptyFile))

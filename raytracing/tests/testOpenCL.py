@@ -199,7 +199,7 @@ class TestOpenCL(unittest.TestCase):
         startTime = time.time()        
         b = a+a
         calcTime = (time.time()-startTime)*1000
-        print("\nOpenCL 1 scalar: {0:.1f} ms ".format(calcTime))
+        # print("\nOpenCL 1 scalar: {0:.1f} ms ".format(calcTime))
 
         a = np.array(object=[0]*(2<<14), dtype=pycl.cltypes.float)
         for i in range(a.size):
@@ -208,7 +208,7 @@ class TestOpenCL(unittest.TestCase):
         startTime = time.time()        
         b = a+a
         calcTime = (time.time()-startTime)*1000
-        print("\nnumpy: {0:.1f} ms ".format(calcTime))
+        # print("\nnumpy: {0:.1f} ms ".format(calcTime))
 
         a = clArray(cq=queue, shape=(2<<14,), dtype=pycl.cltypes.float)
         for i in range(a.size):
@@ -217,7 +217,7 @@ class TestOpenCL(unittest.TestCase):
         startTime = time.time()        
         b = a+a
         calcTime = (time.time()-startTime)*1000
-        print("\nOpenCL 2 scalar: {0:.1f} ms ".format(calcTime))
+        # print("\nOpenCL 2 scalar: {0:.1f} ms ".format(calcTime))
 
     @unittest.skip("Skipping for now")
     def test002ArraysWithAllocator(self):
@@ -266,7 +266,7 @@ class TestOpenCL(unittest.TestCase):
         calcTimeOpenCL2 = (time.time()-startTime)*1000
 
         self.assertTrue(calcTimeOpenCL2 < calcTimeNumpy,msg="\nNumpy is faster than OpenCL: CL1 {0:.1f} ms NP {1:.1f} ms CL2 {2:.1f} ms".format(calcTimeOpenCL1, calcTimeNumpy, calcTimeOpenCL2))
-        print("\nCL1 {0:.1f} ms NP {1:.1f} ms".format(calcTimeOpenCL2, calcTimeNumpy))
+        # print("\nCL1 {0:.1f} ms NP {1:.1f} ms".format(calcTimeOpenCL2, calcTimeNumpy))
 
     # @unittest.skip("Skipping for now")
     def test003PerformanceVsSize(self):
@@ -389,10 +389,6 @@ class TestOpenCL(unittest.TestCase):
         knl(queue, (N,), None, matrix.data, M, vector.data, result.data)
 
 
-        print(result.shape)
-        # print(vector.get())
-        print(result.get())
-        print("\n{0:0.1f} ms".format((time.time()-startTime)*1000))
         # print(result.shape)
         # print(vector.get())
         # print(result.get())
