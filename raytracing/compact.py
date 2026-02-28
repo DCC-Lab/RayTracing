@@ -106,45 +106,45 @@ class CompactRay(Ray):
 
     @property
     def y(self):
-        return self.elementAsStruct[0]
+        return self.elementAsStruct['y']
     @y.setter
     def y(self, value):
-        self.elementAsStruct[0] = value
+        self.elementAsStruct['y'] = value
 
     @property
     def theta(self):
-        return self.elementAsStruct[1]
+        return self.elementAsStruct['theta']
     @theta.setter
     def theta(self, value):
-        self.elementAsStruct[1] = value
+        self.elementAsStruct['theta'] = value
 
     @property
     def z(self):
-        return self.elementAsStruct[2]
+        return self.elementAsStruct['z']
     @z.setter
     def z(self, value):
-        self.elementAsStruct[2] = value
+        self.elementAsStruct['z'] = value
 
     @property
     def isBlocked(self):
-        return self.elementAsStruct[3] != 0
+        return self.elementAsStruct['isBlocked'] != 0
     @isBlocked.setter
     def isBlocked(self, value):
-        self.elementAsStruct[3] = (value != 0)
+        self.elementAsStruct['isBlocked'] = (value != 0)
 
     @property
     def apertureDiameter(self):
-        return self.elementAsStruct[4]
+        return self.elementAsStruct['apertureDiameter']
     @apertureDiameter.setter
     def apertureDiameter(self, value):
-        self.elementAsStruct[4] = value
+        self.elementAsStruct['apertureDiameter'] = value
 
     @property
     def wavelength(self):
-        return self.elementAsStruct[5]
+        return self.elementAsStruct['wavelength']
     @wavelength.setter
     def wavelength(self, value):
-        self.elementAsStruct[5] = value
+        self.elementAsStruct['wavelength'] = value
 
 class CompactRays(Rays):
     """A contiguous buffer holding many rays, ready for GPU transfer.
@@ -187,18 +187,19 @@ class CompactRays(Rays):
 
     def __init__(self, compactRaysStructuredBuffer=None, maxCount=None, rays=None):
         super().__init__()
-        self.maxCount = maxCount
 
         if compactRaysStructuredBuffer is not None:
             self.buffer = compactRaysStructuredBuffer
             self._rays = np.frombuffer(self.buffer, dtype=CompactRay.Struct)
+            self.maxCount = len(self._rays)
         elif maxCount is not None:
             self._rays = np.zeros((maxCount,), dtype=CompactRay.Struct)
             self.buffer = self._rays.data
+            self.maxCount = maxCount
         elif rays is not None:
-            maxCount = len(rays)
-            self._rays = np.zeros((maxCount,), dtype=CompactRay.Struct)
+            self._rays = np.zeros((len(rays),), dtype=CompactRay.Struct)
             self.buffer = self._rays.data
+            self.maxCount = len(rays)
 
             for i, ray in enumerate(rays):
                 CompactRay(self, i).assign(ray)
