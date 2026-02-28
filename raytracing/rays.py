@@ -908,6 +908,11 @@ class RayTrace:
                 i, ray.y, ray.theta, ray.z, blocked))
         return "\n".join(lines)
 
+    @property
+    def lastRay(self):
+        """The final ray after propagation through all elements."""
+        return self[-1]
+
     def __eq__(self, other):
         if not isinstance(other, RayTrace):
             return NotImplemented
@@ -963,6 +968,11 @@ class RayTraces:
             lines.append("Trace {0}:".format(i))
             lines.append(str(trace))
         return "\n".join(lines)
+
+    @property
+    def lastRays(self):
+        """The last ray from each trace, as a Rays collection."""
+        return Rays([trace.lastRay for trace in self])
 
     def __eq__(self, other):
         if not isinstance(other, RayTraces):
