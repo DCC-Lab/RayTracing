@@ -254,6 +254,18 @@ class CompactRays(Rays):
 
         raise StopIteration
 
+    @property
+    def yValues(self):
+        if self._yValues is None:
+            self._yValues = self._rays['y'].tolist()
+        return self._yValues
+
+    @property
+    def thetaValues(self):
+        if self._thetaValues is None:
+            self._thetaValues = self._rays['theta'].tolist()
+        return self._thetaValues
+
     def append(self, tuple):
         raise RuntimeError('You can only replace elements from a pre-allocated CompactRays')
 
