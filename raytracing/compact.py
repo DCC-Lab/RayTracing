@@ -230,10 +230,9 @@ class CompactRays(Rays):
         if thetaMin is None:
             thetaMin = -thetaMax
 
-        for i in range(len(self._rays)):
-            ray = self[i]
-            ray.y = yMin + np.random.random() * (yMax - yMin)
-            ray.theta = thetaMin + np.random.random() * (thetaMax - thetaMin)
+        n = len(self._rays)
+        self._rays['y'] = np.random.uniform(yMin, yMax, n).astype(np.float32)
+        self._rays['theta'] = np.random.uniform(thetaMin, thetaMax, n).astype(np.float32)
 
     def __getitem__(self, index):
         return CompactRay(self, index)
