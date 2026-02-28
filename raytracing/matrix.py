@@ -862,8 +862,9 @@ class Matrix(object):
                           MatrixStruct m = mat[j];
                           
                           if (!v.isBlocked) {
-                              v.y     = m.A * v.y + m.B * v.theta;
-                              v.theta = m.C * v.y + m.D * v.theta;
+                              float old_y = v.y;
+                              v.y     = m.A * old_y + m.B * v.theta;
+                              v.theta = m.C * old_y + m.D * v.theta;
                               
                               v.z += m.L;
                               v.apertureDiameter = m.apertureDiameter;
