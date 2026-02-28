@@ -434,7 +434,10 @@ class MatrixGroup(Matrix):
             rayTrace = [ray]
             for element in self.elements:
                 rayTraceInElement = element.trace(ray)
-                rayTrace.extend(rayTraceInElement)
+                if rayTraceInElement[0] is ray:
+                    rayTrace.extend(rayTraceInElement[1:])
+                else:
+                    rayTrace.extend(rayTraceInElement)
                 ray = rayTraceInElement[-1]  # last
             self._lastRayToBeTraced = inputRay
             self._lastRayTrace = rayTrace
