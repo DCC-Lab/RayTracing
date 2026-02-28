@@ -737,8 +737,8 @@ class TestTrace(envtest.RaytracingTestCase):
     def testTraceManyJustOne(self):
         rays = [Ray()]
         m = Matrix(physicalLength=1e-9)
-        traceMany = [rays * 2]
-        self.assertListEqual(m.traceMany(rays), traceMany)
+        traceMany = RayTraces([RayTrace(rays * 2)])
+        self.assertEqual(m.traceMany(rays), traceMany)
 
     def testTraceManyThroughIterable(self):
         rays = [Ray(y, y) for y in range(3)]

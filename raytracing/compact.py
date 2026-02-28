@@ -28,7 +28,7 @@ raytracing.rays : The base ``Rays`` collection.
 
 import numpy as np
 from .ray import Ray
-from .rays import Rays
+from .rays import Rays, RayTrace, RayTraces
 
 class CompactRay(Ray):
     """A view into a shared buffer that behaves like a ``Ray``.
@@ -257,13 +257,16 @@ class CompactRays(Rays):
     def append(self, tuple):
         raise RuntimeError('You can only replace elements from a pre-allocated CompactRays')
 
-class CompactRaytrace:
+class CompactRaytrace(RayTrace):
     """A view into a slice of a ``CompactRays`` buffer representing one ray trace.
 
     When a single input ray is propagated through *N* optical elements, it
     produces *N* output rays (one after each element). These *N* consecutive
     entries in the output buffer form one *trace*. ``CompactRaytrace`` gives
     convenient access to that slice without copying any data.
+
+    Inherits ``__str__``, ``__repr__``, ``__iter__``, and ``__next__`` from
+    ``RayTrace``. Overrides ``__len__`` and ``__getitem__`` for buffer access.
 
     Parameters
     ----------
@@ -280,20 +283,6 @@ class CompactRaytrace:
         self.firstIndex = firstIndex
         self.traceLength = traceLength
 
-    def __str__(self):
-        if len(self) == 0:
-            return "Empty CompactRaytrace()"
-
-        lines = []
-        for i, ray in enumerate(self):
-            blocked = " (blocked)" if ray.isBlocked else ""
-            lines.append("[{0}] y = {1:6.3f}, theta = {2:6.3f}, z = {3:4.3f}{4}".format(
-                i, ray.y, ray.theta, ray.z, blocked))
-        return "\n".join(lines)
-
-    def __repr__(self):
-        return "{0}".format(self)
-
     def __len__(self):
         return self.traceLength
 
@@ -303,21 +292,7 @@ class CompactRaytrace:
         return self.compactRays[self.firstIndex + rayIndex]
 
 
-    def __iter__(self):
-        self.iteration = 0
-        return self
-
-    def __next__(self) -> CompactRay:
-
-        if self.iteration < len(self):
-            ray = self[self.iteration] # Again we want to use __getitem__ for self for CompactRays
-            self.iteration += 1
-            return ray
-
-        raise StopIteration
-
-
-class CompactRaytraces:
+class CompactRaytraces(RayTraces):
     """A collection of all ray traces from a GPU computation.
 
     After propagating *M* input rays through *N* optical elements, the GPU
@@ -325,6 +300,9 @@ class CompactRaytraces:
     this flat buffer into *M* individual ``CompactRaytrace`` slices, one per
     input ray, so that ``traces[i]`` gives the full journey of the *i*-th ray
     through the optical system.
+
+    Inherits ``__str__``, ``__repr__``, ``__iter__``, and ``__next__`` from
+    ``RayTraces``. Overrides ``__len__`` and ``__getitem__`` for buffer access.
 
     Parameters
     ----------
@@ -339,16 +317,6 @@ class CompactRaytraces:
         self.traceLength = traceLength
         self.traceCount = int(compactRays.maxCount / traceLength)
 
-    def __str__(self):
-        lines = []
-        for i, trace in enumerate(self):
-            lines.append("Trace {0}:".format(i))
-            lines.append(str(trace))
-        return "\n".join(lines)
-
-    def __repr__(self):
-        return "{0}".format(self)
-
     def __len__(self):
         return self.traceCount
 
@@ -357,17 +325,3 @@ class CompactRaytraces:
             traceIndex += self.traceCount
         traceIndex = traceIndex % self.traceCount
         return CompactRaytrace(self.compactRays, traceIndex * self.traceLength, self.traceLength)
-
-
-    def __iter__(self):
-        self.iteration = 0
-        return self
-
-    def __next__(self) -> CompactRaytrace:
-
-        if self.iteration < len(self):
-            raytrace = self[self.iteration]
-            self.iteration += 1
-            return raytrace
-
-        raise StopIteration

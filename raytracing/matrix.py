@@ -813,10 +813,10 @@ class Matrix(object):
          """
         manyRayTraces = []
         for inputRay in inputRays:
-            rayTrace = self.trace(inputRay)
+            rayTrace = RayTrace(self.trace(inputRay))
             manyRayTraces.append(rayTrace)
 
-        return manyRayTraces
+        return RayTraces(manyRayTraces)
 
     def traceManyOpenCL(self, inputRays):
         r"""This function trace each ray from a group of rays from front edge of element to
