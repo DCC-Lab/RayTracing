@@ -316,6 +316,43 @@ All example code on your machine is found at: /somedirectory/on/your/machine
 
 ![ex18](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex18.png)
 
+## GPU-accelerated ray tracing with OpenCL
+
+As of version 2.0, the module supports **GPU-accelerated batch ray tracing** via [OpenCL](https://www.khronos.org/opencl/). When tracing large numbers of rays (100k–1M+) through an optical system, the GPU can provide 10–100x speedup over the pure-Python path.
+
+### Highlights
+
+- **Contiguous memory layout**: `CompactRays` stores all ray data in a single numpy structured array (24 bytes per ray), ready for GPU transfer in one call. Individual rays are accessed through lightweight `CompactRay` views that behave exactly like regular `Ray` objects.
+- **On-device ABCD matrix multiplication**: An OpenCL kernel runs one GPU workitem per ray, propagating it through all optical elements in sequence — including aperture blocking.
+- **Organized output**: The flat GPU output buffer is wrapped by `CompactRaytrace` and `CompactRaytraces`, giving convenient per-ray access to the full trace through the system without copying any data.
+- **Optional dependency**: `pyopencl` is only imported when you call `traceManyOpenCL()`. The rest of the module works without it.
+
+### Quick example
+
+```python
+from raytracing import *
+from raytracing.compact import CompactRays
+
+path = ImagingPath()
+path.append(Space(d=10))
+path.append(Lens(f=50, diameter=25))
+path.append(Space(d=100))
+path.append(Lens(f=50, diameter=25))
+path.append(Space(d=10))
+group = MatrixGroup(path.transferMatrices())
+
+rays = CompactRays(maxCount=1_000_000)
+rays.fillWithRandomUniform(yMax=5)
+
+# GPU path (requires pyopencl)
+traces = group.traceManyOpenCL(rays)
+traces.lastRays.display("Output profile (OpenCL)")
+
+# CPU fallback — same interface, no OpenCL needed
+traces = group.traceManyNative(rays)
+traces.lastRays.display("Output profile (native)")
+```
+
 ## Known limitations
 
 There are no known bugs in the actual calculations, but there are bugs or limitations in the display:
