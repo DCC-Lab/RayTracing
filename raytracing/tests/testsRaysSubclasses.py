@@ -94,9 +94,11 @@ class TestRandomRays(envtest.RaytracingTestCase):
             next(rays)
 
     def testRandomRaysGetWarnsWhenGeneratingRaysOnlyForLongTimes(self):
-        rays = RandomUniformRays(maxCount=1_000_000)
-        with self.assertWarns(UserWarning):
-            rays[1_000_000-1]
+        rays = RandomUniformRays(maxCount=10)
+        # Simulate slow generation: first call sets start=0, subsequent calls return 4s
+        with envtest.patch('time.monotonic', side_effect=[0] + [4]*10):
+            with self.assertWarns(UserWarning):
+                rays[9]
 
     def testRandomRaysGetNotImplemented(self):
         rays = RandomRays()
