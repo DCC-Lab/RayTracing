@@ -60,6 +60,28 @@ Rays
     RandomLambertianRays
     RandomUniformRays
 
+Compact Rays (GPU-ready)
+------------------------
+
+.. autosummary::
+    :template: autoClass.rst
+    :toctree: modules
+
+    compact.CompactRay
+    compact.CompactRays
+    compact.CompactRaytrace
+    compact.CompactRaytraces
+
+Ray Traces
+------------------
+
+.. autosummary::
+    :template: autoClass.rst
+    :toctree: modules
+
+    RayTrace
+    RayTraces
+
 Laser Path
 ------------------
 

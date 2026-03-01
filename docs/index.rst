@@ -36,6 +36,7 @@ Contents
 
    raytracing
    gettingStarted
+   opencl
    reference
    examples
    contribute
