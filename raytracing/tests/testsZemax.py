@@ -72,9 +72,8 @@ class TestZemax(envtest.RaytracingTestCase):
     def testEdmundFile(self):
         zmx = ZMXReader(os.path.join(specsDir, "zmax_49270.zmx"))
         self.assertIsNotNone(zmx)
-        # print(zmx.prescription())
 
-    def testEdmundFile(self):
+    def testEdmundFile2(self):
         zmx = ZMXReader(os.path.join(specsDir, "AC254-125-A-Zemax(ZMX).zmx"))
         self.assertIsNotNone(zmx)
         #print(zmx.prescription())

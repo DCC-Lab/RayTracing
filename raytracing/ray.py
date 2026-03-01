@@ -1,6 +1,4 @@
-import warnings
-from .utils import deprecated
-
+from .utils import deprecated, areAbsolutelyAlmostEqual
 
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
@@ -37,14 +35,56 @@ class Ray:
     """
 
     def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked:bool = False, wavelength: float = None):
-        self.y = y
-        self.theta = theta
+        self._y = y
+        self._theta = theta
 
-        self.z = z
-        self.isBlocked = isBlocked
-        self.apertureDiameter = float("+Inf")
+        self._z = z
+        self._isBlocked = isBlocked
+        self._apertureDiameter = float("+Inf")
 
-        self.wavelength = wavelength
+        self._wavelength = wavelength
+
+    @property
+    def y(self):
+        return self._y
+    @y.setter
+    def y(self, value):
+        self._y = value
+
+    @property
+    def theta(self):
+        return self._theta
+    @theta.setter
+    def theta(self, value):
+        self._theta = value
+
+    @property
+    def z(self):
+        return self._z
+    @z.setter
+    def z(self, value):
+        self._z = value
+
+    @property
+    def isBlocked(self):
+        return self._isBlocked
+    @isBlocked.setter
+    def isBlocked(self, value):
+        self._isBlocked = value
+
+    @property
+    def apertureDiameter(self):
+        return self._apertureDiameter
+    @apertureDiameter.setter
+    def apertureDiameter(self, value):
+        self._apertureDiameter = value
+
+    @property
+    def wavelength(self):
+        return self._wavelength
+    @wavelength.setter
+    def wavelength(self, value):
+        self._wavelength = value
 
     @property
     def isNotBlocked(self) -> bool:
@@ -255,14 +295,26 @@ class Ray:
 
         return description
 
+    def __repr__(self):
+        return "{0}".format(self)
+
     def __eq__(self, other):
         """Define rays to be equal if they have the same height and angle."""
+        if other is None:
+            return False
 
-        if not isinstance(other, Ray):
-            return False
-        elif self.y != other.y:
-            return False
-        elif self.theta != other.theta:
+        try:
+            if not areAbsolutelyAlmostEqual(self.y, other.y):
+                return False
+            elif not areAbsolutelyAlmostEqual(self.theta, other.theta):
+                return False
+            elif not areAbsolutelyAlmostEqual(self.z, other.z):
+                return False
+            elif self.isBlocked != other.isBlocked:
+                return False
+        except Exception as err:
+            print(err)
             return False
 
         return True
+

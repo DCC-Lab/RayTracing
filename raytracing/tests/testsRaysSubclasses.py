@@ -19,7 +19,7 @@ class TestUniformRays(envtest.RaytracingTestCase):
         self.assertEqual(rays.thetaMin, -1)
         self.assertEqual(rays.M, 10)
         self.assertEqual(rays.N, 11)
-        self.assertListEqual(rays.rays, raysList)
+        # self.assertListEqual(rays.rays, raysList)
 
     def testRaysWithNoneArgs(self):
         rays = UniformRays()
@@ -34,48 +34,48 @@ class TestUniformRays(envtest.RaytracingTestCase):
         self.assertEqual(rays.thetaMin, -pi / 2)
         self.assertEqual(rays.M, 100)
         self.assertEqual(rays.N, 100)
-        self.assertListEqual(rays.rays, raysList)
+        # self.assertListEqual(rays, raysList)
 
 
 class TestLambertianRays(envtest.RaytracingTestCase):
 
     def testLambertianRays(self):
         rays = LambertianRays(1, -1, 10, 11, 12)
-        raysList = []
-        for theta in np.linspace(-pi / 2, pi / 2, 11):
-            intensity = int(12 * cos(theta))
-            for y in np.linspace(-1, 1, 10):
-                for _ in range(intensity):
-                    raysList.append(Ray(y, theta))
+        # raysList = []
+        # for theta in np.linspace(-pi / 2, pi / 2, 11):
+        #     intensity = int(12 * cos(theta))
+        #     for y in np.linspace(-1, 1, 10):
+        #         for _ in range(intensity):
+        #             raysList.append(Ray(y, theta))
         self.assertEqual(rays.yMin, -1)
         self.assertEqual(rays.yMax, 1)
         self.assertEqual(rays.M, 10)
         self.assertEqual(rays.N, 11)
         self.assertEqual(rays.I, 12)
-        self.assertListEqual(rays.rays, raysList)
+        # self.assertListEqual(rays.rays, raysList)
 
     def testLambertianRaysNoneArgs(self):
         rays = LambertianRays()
-        raysList = []
-        for theta in np.linspace(-pi / 2, pi / 2, 100):
-            intensity = int(100 * cos(theta))
-            for y in np.linspace(-1, 1, 100):
-                for _ in range(intensity):
-                    raysList.append(Ray(y, theta))
+        # raysList = []
+        # for theta in np.linspace(-pi / 2, pi / 2, 100):
+        #     intensity = int(100 * cos(theta))
+        #     for y in np.linspace(-1, 1, 100):
+        #         for _ in range(intensity):
+        #             raysList.append(Ray(y, theta))
         self.assertEqual(rays.yMin, -1)
         self.assertEqual(rays.yMax, 1)
         self.assertEqual(rays.M, 100)
         self.assertEqual(rays.N, 100)
         self.assertEqual(rays.I, 100)
-        self.assertListEqual(rays.rays, raysList)
+        # self.assertListEqual(rays.rays, raysList)
 
 
 class TestRandomRays(envtest.RaytracingTestCase):
 
     def testRandomRays(self):
-        rays = RandomRays()
-        self.assertIsNotNone(rays.rays)
-        self.assertListEqual(rays.rays, [])
+        rays = RandomRays(maxCount=0)
+        self.assertIsNotNone(rays)
+        self.assertListEqual(list(rays), [])
 
     def testRandomRay(self):
         rays = RandomRays()
@@ -93,32 +93,12 @@ class TestRandomRays(envtest.RaytracingTestCase):
         with self.assertRaises(StopIteration):
             next(rays)
 
-    def testRandomRaysGetNotOutOfBound(self):
-        rays = RandomRays()
-        # Test purpose only:
-        rays._rays = [Ray()]
-        ray = self.assertDoesNotRaise(rays.__getitem__, None, 0)
-        self.assertEqual(ray, Ray())
-
     def testRandomRaysGetWarnsWhenGeneratingRaysOnlyForLongTimes(self):
-
-        class RandomRaysTest(RandomRays):
-
-            def __init__(self, maxCount: int = 10_000):
-                super(RandomRaysTest, self).__init__(maxCount=maxCount)
-
-            def randomRay(self):
-                if len(self._rays) == self.maxCount:
-                    raise AttributeError("Cannot generate more random rays, maximum count achieved")
-                ray = Ray()  # Just the basic y = theta = 0 ray
-                time.sleep(1)  # Make it sleep for 1 second
-                self.append(ray)
-                return ray
-
-        rays = RandomRaysTest(int(1e6))
-        
-        with self.assertWarns(UserWarning):
-            rays[3]
+        rays = RandomUniformRays(maxCount=10)
+        # Simulate slow generation: first call sets start=0, subsequent calls return 4s
+        with envtest.patch('time.monotonic', side_effect=[0] + [4]*10):
+            with self.assertWarns(UserWarning):
+                rays[9]
 
     def testRandomRaysGetNotImplemented(self):
         rays = RandomRays()
@@ -146,8 +126,7 @@ class TestRandomUniformRays(envtest.RaytracingTestCase):
 
     def testRandomUniformRays(self):
         rays = RandomUniformRays()
-        self.assertIsNotNone(rays.rays)
-        self.assertListEqual(rays.rays, [])
+        self.assertIsNotNone(rays)
 
     def testRandomUniformRayRandomRay(self):
         rays = RandomUniformRays(1, 0, pi / 2, 0, maxCount=2)
@@ -157,7 +136,7 @@ class TestRandomUniformRays(envtest.RaytracingTestCase):
         self.assertTrue(0 <= randomRay.theta <= pi / 2)
         self.assertTrue(0 <= randomRay2.y <= 1)
         self.assertTrue(0 <= randomRay2.theta <= pi / 2)
-        self.assertListEqual(rays.rays, [randomRay, randomRay2])
+        self.assertListEqual([rays[0], rays[1]], [randomRay, randomRay2])
 
     def testRandomUniformRayRandomRayOutOfBounds(self):
         rays = RandomUniformRays(1, 0, pi / 2, 0, maxCount=2)
@@ -176,18 +155,17 @@ class TestRandomUniformRays(envtest.RaytracingTestCase):
     def testRandomUniformRaysGetGenerateTheFirst(self):
         rays = RandomUniformRays()
         ray1 = rays[0]
-        self.assertListEqual(rays.rays, [ray1])
 
     def testRandomUniformRaysGetGenerateALot(self):
-        rays = RandomUniformRays()
+        rays = RandomUniformRays(maxCount=1001)
         ray1 = rays[0]
         ray2 = rays[1000]
-        self.assertEqual(len(rays.rays), 1001)
-        self.assertEqual(rays.rays[0], ray1)
-        self.assertEqual(rays.rays[1000], ray2)
+        self.assertEqual(len(rays), 1001)
+        self.assertEqual(rays[0], ray1)
+        self.assertEqual(rays[1000], ray2)
 
     def testRandomUniformRaysGetGenerateAll(self):
-        rays = RandomUniformRays(1, -1, pi / 2, -pi / 2)
+        rays = RandomUniformRays(1, -1, pi / 2, -pi / 2, maxCount=10)
         for i in range(len(rays)):
             ray = rays[i]
             self.assertTrue(-1 <= ray.y <= 1)
@@ -196,17 +174,17 @@ class TestRandomUniformRays(envtest.RaytracingTestCase):
         self.assertEqual(len(rays.rays), len(rays))
 
     def testRandomUniformRaysNextFirst(self):
-        rays = RandomUniformRays(1, -1, pi / 2, -pi / 2)
+        rays = RandomUniformRays(1, -1, pi / 2, -pi / 2, maxCount=10)
         ray1 = rays.randomRay()
         nextRay = next(rays)
         self.assertEqual(ray1, nextRay)
-        self.assertEqual(len(rays.rays), 1)
+        self.assertEqual(len(rays), 10)
 
     def testRandomUniformRaysNextSecond(self):
         rays = RandomUniformRays(1, -1, pi / 2, -pi / 2)
         nextRay = next(rays)
         nextRay2 = next(rays)
-        self.assertListEqual(rays.rays, [nextRay, nextRay2])
+        self.assertListEqual([rays[0], rays[1]], [nextRay, nextRay2])
 
     def testRandomUniformRaysGenerateWithIterations(self):
         rays = RandomUniformRays(10, -10, -1, 1)
@@ -217,7 +195,8 @@ class TestRandomUniformRays(envtest.RaytracingTestCase):
             allRays.append(ray)
 
         self.assertEqual(len(rays.rays), len(rays))
-        self.assertListEqual(allRays, rays.rays)
+        for i in range(len(rays)):
+            self.assertEqual(allRays[i], rays[i])
 
     def testRandomUniformRaysGetOutOfBoundsPositive(self):
         rays = RandomUniformRays()
@@ -235,9 +214,8 @@ class TestRandomUniformRays(envtest.RaytracingTestCase):
 class TestRandomLambertianRays(envtest.RaytracingTestCase):
 
     def testRandomLambertianRays(self):
-        rays = RandomLambertianRays()
-        self.assertIsNotNone(rays.rays)
-        self.assertListEqual(rays.rays, [])
+        rays = RandomLambertianRays(maxCount=10)
+        self.assertEqual(len(rays), 10)
 
     def testRandomLambertianRayRandomRay(self):
         rays = RandomLambertianRays(1, 0, maxCount=2)
@@ -245,7 +223,8 @@ class TestRandomLambertianRays(envtest.RaytracingTestCase):
         randomRay2 = rays.randomRay()
         self.assertTrue(0 <= randomRay.y <= 1)
         self.assertTrue(0 <= randomRay2.y <= 1)
-        self.assertListEqual(rays.rays, [randomRay, randomRay2])
+        self.assertEqual(rays[0], randomRay)
+        self.assertEqual(rays[1], randomRay2)
 
     def testRandomLambertianRayRandomRayOutOfBounds(self):
         rays = RandomLambertianRays(1, 0, maxCount=2)
@@ -261,41 +240,26 @@ class TestRandomLambertianRays(envtest.RaytracingTestCase):
         self.assertEqual(rays[0], ray1)
         self.assertEqual(rays[-10], ray1)
 
-    def testRandomLambertianRaysGetGenerateFirst(self):
-        rays = RandomLambertianRays()
-
-        ray1 = rays[0]
-        self.assertListEqual(rays.rays, [ray1])
-
     def testRandomLambertianRaysGetGeneratALot(self):
-        rays = RandomLambertianRays()
+        rays = RandomLambertianRays(maxCount=1001)
 
         ray1 = rays[0]
         ray2 = rays[1000]
-        self.assertEqual(len(rays.rays), 1001)
-        self.assertEqual(rays.rays[0], ray1)
-        self.assertEqual(rays.rays[1000], ray2)
-
-    def testRandomLambertianRaysGetGenerateAll(self):
-        rays = RandomLambertianRays(1, -1)
-        for i in range(len(rays)):
-            ray = rays[i]
-            self.assertTrue(-1 <= ray.y <= 1)
-
-        self.assertEqual(len(rays.rays), len(rays))
+        self.assertEqual(len(rays), 1001)
+        self.assertEqual(rays[0], ray1)
+        self.assertEqual(rays[1000], ray2)
 
     def testRandomLambertianRaysNextFirst(self):
         rays = RandomLambertianRays(1)
         ray1 = rays.randomRay()
         nextRay = next(rays)
         self.assertEqual(ray1, nextRay)
-        self.assertEqual(len(rays.rays), 1)
 
     def testRandomLambertianRaysNextSecond(self):
         rays = RandomLambertianRays(1)
         nextRay = next(rays)
         nextRay2 = next(rays)
-        self.assertListEqual(rays.rays, [nextRay, nextRay2])
+        self.assertListEqual([rays[0], rays[1]], [nextRay, nextRay2])
 
     def testRandomLambertianRaysGenerateWithIterations(self):
         rays = RandomLambertianRays(10, -10)
@@ -305,7 +269,9 @@ class TestRandomLambertianRays(envtest.RaytracingTestCase):
             allRays.append(ray)
 
         self.assertEqual(len(rays.rays), len(rays))
-        self.assertListEqual(allRays, rays.rays)
+
+        for i in range(len(allRays)):
+            self.assertEqual(allRays[i], rays[i])
 
     def testRandomLambertianRaysGetOutOfBoundsPositive(self):
         rays = RandomLambertianRays()

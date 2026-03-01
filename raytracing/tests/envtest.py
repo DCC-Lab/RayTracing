@@ -22,6 +22,11 @@ if perfTestKey in os.environ:
 else:
     performanceTests = False
 
+# Global control for test output. Set RAYTRACING_TEST_VERBOSE=1 to see print output.
+# By default, all stdout/stderr from tests is suppressed.
+verboseTestsKey = "RAYTRACING_TEST_VERBOSE"
+verboseTests = os.environ.get(verboseTestsKey, "0") != "0"
+
 class RaytracingTestCase(unittest.TestCase):
     tempDir = os.path.join(tempfile.gettempdir(), "tempDir")
     setupCalled = False
@@ -38,9 +43,21 @@ class RaytracingTestCase(unittest.TestCase):
         # Seed with same seed every time
         np.random.seed(0)
 
+        # Suppress stdout/stderr unless verbose mode is enabled
+        if not verboseTests:
+            self._stdoutCapture = io.StringIO()
+            self._stderrCapture = io.StringIO()
+            self._stdoutCtx = redirect_stdout(self._stdoutCapture)
+            self._stderrCtx = redirect_stderr(self._stderrCapture)
+            self._stdoutCtx.__enter__()
+            self._stderrCtx.__enter__()
+
         self.setupCalled = True
 
     def tearDown(self) -> None:
+        if not verboseTests:
+            self._stderrCtx.__exit__(None, None, None)
+            self._stdoutCtx.__exit__(None, None, None)
         self.clearMatplotlibPlots()
 
     def testProperlySetup(self):

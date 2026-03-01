@@ -28,6 +28,7 @@ from .matrixgroup import *
 """ Ray matrices for geometrical optics """
 from .ray import *
 from .rays import *
+from .compact import *
 from .imagingpath import *
 
 """ ABCD matrices for gaussian beams """
@@ -62,13 +63,10 @@ Element = Matrix
 Group = MatrixGroup
 OpticalPath = ImagingPath
 
-try:  # to get __version__ dynamically from pyproject.toml
-    from importlib.metadata import version
-except ImportError:  # Python <3.8
-    from importlib_metadata import version
-
-from ._version import version as __version__
-
+try:
+    from ._version import __version__
+except ImportError:
+    __version__ = "0.0.0"
 __author__ = "Daniel Cote <dccote@cervo.ulaval.ca>"
 
 import os.path as path

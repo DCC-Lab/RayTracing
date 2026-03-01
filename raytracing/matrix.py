@@ -1,6 +1,7 @@
 from .ray import *
 from .gaussianbeam import *
 from .rays import *
+from .compact import *
 from .interface import *
 from .utils import *
 
@@ -35,6 +36,7 @@ class Conjugate(NamedTuple):
     transferMatrix:'Matrix' = None
 
 # todo: fix docstrings since draw-related methods were removed
+
 
 class Matrix(object):
     r"""A matrix and an optical element that can transform a ray or another
@@ -115,6 +117,20 @@ class Matrix(object):
 
     __epsilon__ = 1e-5  # Anything smaller is zero
 
+    Struct = np.dtype([("A", np.float32),
+                      ("B", np.float32), 
+                      ("C", np.float32), 
+                      ("D", np.float32), 
+                      ("L", np.float32),
+                      ("frontVertex", np.float32),
+                      ("backVertex", np.float32),
+                      ("frontIndex", np.float32),
+                      ("backIndex", np.float32),
+                      ("apertureDiameter", np.float32),
+                      ("apertureNA", np.float32),
+                      ("isFlipped", np.int32)
+                      ])
+
     def __init__(
             self,
             A: float = 1,
@@ -161,6 +177,30 @@ class Matrix(object):
         if areAbsolutelyNotEqual(self.determinant, frontIndex / backIndex, self.__epsilon__):
             raise ValueError("The matrix has inconsistent values: \
                 determinant is incorrect considering front and back indices.")
+
+    def toStruct(self):
+        theStruct = np.array( (self.A, self.B, self.C, self.D, self.L,
+                               self.frontVertex, self.backVertex, self.frontIndex, self.backIndex,
+                               self.apertureDiameter, self.apertureNA, self.isFlipped), dtype=Matrix.Struct)
+        return theStruct
+
+    def fromStruct(self, theStruct):
+        self.A = theStruct["A"]
+        self.B = theStruct["B"]
+        self.C = theStruct["C"]
+        self.D = theStruct["D"]
+        self.L = theStruct["L"]
+        self.frontVertex = theStruct["frontVertex"]
+        if np.isnan(self.frontVertex):
+            self.frontVertex = None
+        self.backVertex = theStruct["backVertex"]
+        if np.isnan(self.backVertex):
+            self.backVertex = None
+        self.frontIndex = theStruct["frontIndex"]
+        self.backIndex = theStruct["backIndex"]
+        self.apertureDiameter = theStruct["apertureDiameter"]
+        self.apertureNA = theStruct["apertureNA"]
+        self.isFlipped = theStruct["isFlipped"]
 
     @property
     def isIdentity(self):
@@ -706,7 +746,7 @@ class Matrix(object):
         rayTrace = self.trace(inputRay)
         return rayTrace[-1]
 
-    def traceMany(self, inputRays):
+    def traceMany(self, inputRays, useOpenCL=True):
         r"""This function trace each ray from a group of rays from front edge of element to
         the back edge. It can be either a list of Ray(), or a Rays() object:
         the Rays() object is an iterator and can be used like a list.
@@ -755,14 +795,134 @@ class Matrix(object):
         raytracing.Matrix.traceThrough
         raytracing.Matrix.traceManyThrough
         """
+
+        if useOpenCL and isinstance(inputRays, CompactRays):
+            try:
+                return self.traceManyOpenCL(inputRays=inputRays)
+            except Exception:
+                pass
+
+        return self.traceManyNative(inputRays=inputRays)
+
+    def traceManyNative(self, inputRays):
+        r"""This function trace each ray from a group of rays from front edge of element to
+         the back edge. It can be either a list of Ray(), or a Rays() object:
+         the Rays() object is an iterator and can be used like a list.
+
+         It uses a safe, simple, native Python algorithm
+         """
         manyRayTraces = []
         for inputRay in inputRays:
-            rayTrace = self.trace(inputRay)
+            rayTrace = RayTrace(self.trace(inputRay))
             manyRayTraces.append(rayTrace)
 
-        return manyRayTraces
+        return RayTraces(manyRayTraces)
 
-    def traceManyThrough(self, inputRays, progress=True):
+    def traceManyOpenCL(self, inputRays):
+        r"""This function trace each ray from a group of rays from front edge of element to
+        the back edge. It can be either a list of Ray(), or a Rays() object:
+        the Rays() object is an iterator and can be used like a list.
+
+        It uses OpenCL, which will calculate everything on the GPU or even make use
+        of CPU properties to run as many calculations as possible in parallel.
+
+        """
+        if not isinstance(inputRays, CompactRays):
+            raise ValueError("Only CompactRays can be used with OpenCL.  Convert your rays to CompactRays.")
+
+        try:
+            import pyopencl as pycl
+        except ImportError:
+            raise RuntimeError(
+                "pyopencl is required for GPU-accelerated tracing but is not installed.\n"
+                "Install it with: pip install pyopencl\n"
+                "Or use traceManyNative() instead."
+            )
+
+        platforms = pycl.get_platforms()
+        if not platforms:
+            raise RuntimeError(
+                "No OpenCL platforms found on this system.\n"
+                "Use traceManyNative() instead."
+            )
+
+        devices = platforms[0].get_devices(device_type=pycl.device_type.GPU)
+        if not devices:
+            raise RuntimeError(
+                "No OpenCL GPU devices found on this system.\n"
+                "Use traceManyNative() instead."
+            )
+
+        context = pycl.Context(devices=devices)
+        queue = pycl.CommandQueue(context)
+
+        CompactRay.Struct, RayStruct_OpenCL = pycl.tools.match_dtype_to_c_struct(devices[0], "RayStruct", CompactRay.Struct)
+        Matrix.Struct, MatrixStruct_OpenCL = pycl.tools.match_dtype_to_c_struct(devices[0], "MatrixStruct", Matrix.Struct)
+
+        matrices = self.transferMatrices()
+        matricesAsStructArray = np.array([ m.toStruct() for m in matrices], dtype=Matrix.Struct )
+        outputRays = CompactRays(maxCount= len(inputRays) * (len(matrices)+1) )
+
+        mf = pycl.mem_flags
+        matriceBuffer = pycl.Buffer(context, flags=mf.HOST_READ_ONLY| mf.COPY_HOST_PTR, hostbuf=matricesAsStructArray)
+        inputRayBuffer = pycl.Buffer(context, flags=mf.HOST_READ_ONLY| mf.COPY_HOST_PTR, hostbuf=inputRays.buffer)
+        outputRayBuffer = pycl.Buffer(context, flags=mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=outputRays.buffer)
+
+        N = len(inputRays)
+        M = len(matrices)
+        program_source_floats = RayStruct_OpenCL + MatrixStruct_OpenCL + """
+        kernel void product(global MatrixStruct *mat, global RayStruct *vec, global RayStruct* res, int M)
+                      {
+                      int i    = get_global_id(0); // the vector index
+                      int j;                       // the matrix index
+                      int N    = get_global_size(0);
+                      RayStruct v = vec[i];
+                      res[i*(M+1)] = v;
+                      for (j = 0; j < M; j++) {
+                          MatrixStruct m = mat[j];
+                          
+                          if (!v.isBlocked) {
+                              float old_y = v.y;
+                              v.y     = m.A * old_y + m.B * v.theta;
+                              v.theta = m.C * old_y + m.D * v.theta;
+                              
+                              v.z += m.L;
+                              v.apertureDiameter = m.apertureDiameter;
+
+                              if ( (v.y > m.apertureDiameter/2) || (v.y < -m.apertureDiameter/2) || (v.theta > m.apertureNA) || (v.theta < -m.apertureNA) )  {
+                                 v.isBlocked = 1;
+                              }                          
+                          }
+
+                          //res[i+N*(j+1)] = v;
+                          // res[i*(M+1)+(j+1)] = v;
+                          res[i*(M+1)+(j+1)] = v;
+                      }
+                    }
+        """
+        import time
+        start = time.time()
+        program = pycl.Program(context, program_source_floats).build()
+
+        knl = program.product
+        knl(queue, (N,), None, matriceBuffer, inputRayBuffer, outputRayBuffer, np.int32(M))
+
+        pycl.enqueue_copy(queue, outputRays.buffer, outputRayBuffer)
+
+        raytraces = CompactRaytraces(outputRays, traceLength = M + 1)
+        # # #
+        # # #
+        # # # print(time.time()-start)
+        # raytraces = []
+        # for i in range(N):
+        #     raytrace = []
+        #     for j in range(M+1):
+        #         raytrace.append(outputRays[i*(M+1)+j])
+        #     raytraces.append(raytrace)
+
+        return raytraces
+
+    def traceManyThrough(self, inputRays, progress=True, useOpenCL=True):
         """This function trace each ray from a list or a Rays() distribution from
         front edge of element to the back edge.
         Input can be either a list of Ray(), or a Rays() object:
@@ -873,14 +1033,14 @@ class Matrix(object):
                 processes = multiprocessing.cpu_count()
 
             theExplicitList = list(inputRays)
-            manyInputRays = [(theExplicitList[i::processes], progress) for i in range(processes)]
+            manyInputArguments = [(theExplicitList[i::processes], progress) for i in range(processes)]
 
             with multiprocessing.Pool(processes=processes) as pool:
-                outputRays = pool.starmap(self.traceManyThrough, manyInputRays)
+                outputRays = pool.starmap(self.traceManyThrough, manyInputArguments)
 
             outputRaysList = []
             for rays in outputRays:
-                outputRaysList += rays.rays
+                outputRaysList.extend(rays)
 
             return Rays(rays=outputRaysList)
         except Exception as err:

@@ -95,6 +95,20 @@ class Rays:
             return 0
         return len(self._rays)
 
+    def __str__(self):
+        if len(self) == 0:
+            return "Empty Rays()"
+
+        lines = []
+        for i, ray in enumerate(self):
+            blocked = " (blocked)" if ray.isBlocked else ""
+            lines.append("[{0}] y = {1:6.3f}, theta = {2:6.3f}, z = {3:4.3f}{4}".format(
+                i, ray.y, ray.theta, ray.z, blocked))
+        return "\n".join(lines)
+
+    def __repr__(self):
+        return "{0}".format(self)
+
     @property
     def rays(self):
         # Even if "read only" property, we can change the content of the list.
@@ -375,7 +389,7 @@ class Rays:
     def __getitem__(self, item):
         return self._rays[item]
 
-    def append(self, ray):
+    def append(self, ray, copy=False):
         """A ray can be appended to the List of the rays using this function.
 
          Parameters
@@ -387,7 +401,18 @@ class Rays:
         if not isinstance(ray, Ray):
             raise TypeError("'ray' must be a 'Ray' object.")
         if self._rays is not None:
-            self._rays.append(ray)
+            if copy:
+                rayCopy = Ray()
+                rayCopy.y = ray.y
+                rayCopy.theta = ray.theta
+                rayCopy.z = ray.z
+                rayCopy.isBlocked = ray.isBlocked
+                rayCopy.wavelength = ray.wavelength
+                rayCopy.apertureDiameter = ray.apertureDiameter
+
+                self._rays.append(rayCopy)
+            else:
+                self._rays.append(ray)
 
         # Invalidate cached values
         self._yValues = None
@@ -647,7 +672,7 @@ class RandomRays(Rays):
         while len(self._rays) <= item:
             self.randomRay()
             if time.monotonic() - start > 3:
-                warnings.warn(f"Generating missing rays. This can take a few seconds.", UserWarning)
+                warnings.warn("Generating missing rays. This can take a few seconds.", UserWarning)
 
         return self._rays[item]
 
@@ -832,6 +857,132 @@ class GaussianProfileUniformRays(RandomRays):
         ray = Ray(y, theta)
         self.append(ray)
         return ray
+
+
+class RayTrace:
+    """A single ray trace: the path of one ray through an optical system.
+
+    When a ray is propagated through optical elements, it produces a sequence
+    of Ray objects (one per element). This class wraps that sequence with
+    a clean interface for indexing, iteration, and display.
+
+    Parameters
+    ----------
+    rays : list of Ray, optional
+        The sequence of rays forming this trace.
+    """
+
+    def __init__(self, rays=None):
+        if rays is None:
+            self._rays = []
+        else:
+            self._rays = list(rays)
+
+    def __len__(self):
+        return len(self._rays)
+
+    def __getitem__(self, index):
+        if index < 0:
+            index += len(self)
+        return self._rays[index]
+
+    def __iter__(self):
+        self.iteration = 0
+        return self
+
+    def __next__(self):
+        if self.iteration < len(self):
+            ray = self[self.iteration]
+            self.iteration += 1
+            return ray
+        raise StopIteration
+
+    def __str__(self):
+        if len(self) == 0:
+            return "Empty {0}()".format(type(self).__name__)
+
+        lines = []
+        for i, ray in enumerate(self):
+            blocked = " (blocked)" if ray.isBlocked else ""
+            lines.append("[{0}] y = {1:6.3f}, theta = {2:6.3f}, z = {3:4.3f}{4}".format(
+                i, ray.y, ray.theta, ray.z, blocked))
+        return "\n".join(lines)
+
+    @property
+    def lastRay(self):
+        """The final ray after propagation through all elements."""
+        return self[-1]
+
+    def __eq__(self, other):
+        if not isinstance(other, RayTrace):
+            return NotImplemented
+        if len(self) != len(other):
+            return False
+        return all(a == b for a, b in zip(self, other))
+
+    def __repr__(self):
+        return "{0}".format(self)
+
+
+class RayTraces:
+    """A collection of ray traces from tracing multiple input rays.
+
+    When many rays are propagated through an optical system (e.g. via
+    ``traceManyNative``), the result is a list of traces — one per input ray.
+    This class wraps that list with the same interface as ``CompactRaytraces``.
+
+    Parameters
+    ----------
+    rayTraces : list of RayTrace, optional
+        The individual traces to collect.
+    """
+
+    def __init__(self, rayTraces=None):
+        if rayTraces is None:
+            self._rayTraces = []
+        else:
+            self._rayTraces = list(rayTraces)
+
+    def __len__(self):
+        return len(self._rayTraces)
+
+    def __getitem__(self, index):
+        if index < 0:
+            index += len(self)
+        return self._rayTraces[index]
+
+    def __iter__(self):
+        self.iteration = 0
+        return self
+
+    def __next__(self):
+        if self.iteration < len(self):
+            trace = self[self.iteration]
+            self.iteration += 1
+            return trace
+        raise StopIteration
+
+    def __str__(self):
+        lines = []
+        for i, trace in enumerate(self):
+            lines.append("Trace {0}:".format(i))
+            lines.append(str(trace))
+        return "\n".join(lines)
+
+    @property
+    def lastRays(self):
+        """The last ray from each trace, as a Rays collection."""
+        return Rays([trace.lastRay for trace in self])
+
+    def __eq__(self, other):
+        if not isinstance(other, RayTraces):
+            return NotImplemented
+        if len(self) != len(other):
+            return False
+        return all(a == b for a, b in zip(self, other))
+
+    def __repr__(self):
+        return "{0}".format(self)
 
 
 class ObjectRays(UniformRays):

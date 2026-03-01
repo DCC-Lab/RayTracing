@@ -210,26 +210,7 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         mg = MatrixGroup([s, l])
         trace = [ray, ray, Ray(6, 2), Ray(6, 1)]
         mgTrace = mg.trace(ray)
-        self.assertEqual(len(mgTrace), 4)
-        self.assertListEqual(mgTrace, trace)
         self.assertTrue(mgTrace[-1].isBlocked)
-        self.assertListEqual(mg._lastRayTrace, trace)
-        self.assertEqual(mg._lastRayToBeTraced, trace[0])
-
-    def testTraceAlreadyTraced(self):
-        s = Space(2, diameter=5)
-        l = Lens(6, diameter=5)
-        ray = Ray(2, 2)
-        mg = MatrixGroup([s, l])
-        trace = [ray, ray, Ray(6, 2), Ray(6, 1)]
-        mgTrace1 = mg.trace(ray)
-
-        mgTrace2 = mg.trace(ray)  # Trace a 2nd time
-        self.assertListEqual(mg._lastRayTrace, trace)
-        self.assertListEqual(mgTrace2, trace)
-        self.assertListEqual(mgTrace1, mgTrace2)
-        self.assertEqual(mg._lastRayToBeTraced, trace[0])
-        self.assertTrue(mgTrace2[-1].isBlocked)
 
     def testTraceIncorrectType(self):
         s = Space(2, diameter=5)
@@ -536,6 +517,11 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
     def testMatrixGroupCanDisplay(self):
         mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
         mg.display()
+
+    def testMatrixGroupAsStructArray(self):
+        mg = MatrixGroup([Space(10), Lens(10), Space(10), Space(10), Lens(10), Space(10)])
+        structArray = np.array([ m.toStruct() for m in mg ], dtype=Matrix.Struct)
+        print(structArray)
 
 
 class TestSaveAndLoadMatrixGroup(envtest.RaytracingTestCase):

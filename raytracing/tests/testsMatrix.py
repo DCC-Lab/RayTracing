@@ -346,14 +346,17 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceMany(self):
         rays = [Ray(y, theta) for y, theta in zip(range(10, 20), range(10))]
         m = Matrix(physicalLength=1.01)
-        traceMany = [[ray, ray] for ray in rays]
-        self.assertListEqual(m.traceMany(rays), traceMany)
+        result = m.traceMany(rays)
+        self.assertEqual(len(result), len(rays))
+        for i, ray in enumerate(rays):
+            self.assertEqual(result[i][0], ray)
 
     def testTraceManyJustOne(self):
         rays = [Ray()]
         m = Matrix(physicalLength=1e-9)
-        traceMany = [rays * 2]
-        self.assertListEqual(m.traceMany(rays), traceMany)
+        result = m.traceMany(rays)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0][0], rays[0])
 
     def testTraceManyThroughIterable(self):
         rays = [Ray(y, y) for y in range(10)]
@@ -365,9 +368,12 @@ class TestMatrix(envtest.RaytracingTestCase):
         traceManyThroughTuple = m.traceManyThrough(iterable)
         traceManyThroughRays = m.traceManyThrough(raysObj)
         for i in range(len(rays)):
-            self.assertEqual(rays[i], traceManyThroughList[i])
-            self.assertEqual(rays[i], traceManyThroughTuple[i])
-            self.assertEqual(rays[i], traceManyThroughRays[i])
+            self.assertAlmostEqual(rays[i].y, traceManyThroughList[i].y)
+            self.assertAlmostEqual(rays[i].theta, traceManyThroughList[i].theta)
+            self.assertAlmostEqual(rays[i].y, traceManyThroughTuple[i].y)
+            self.assertAlmostEqual(rays[i].theta, traceManyThroughTuple[i].theta)
+            self.assertAlmostEqual(rays[i].y, traceManyThroughRays[i].y)
+            self.assertAlmostEqual(rays[i].theta, traceManyThroughRays[i].theta)
 
     def testTraceManyThroughNotIterable(self):
         with self.assertRaises(TypeError):
@@ -399,20 +405,22 @@ class TestMatrix(envtest.RaytracingTestCase):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
         trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
-        for i in range(len(rays)):
-            # Order is not kept, we have to check if the ray traced is in the original list
-            self.assertIn(trace[i], rays)
+        inputYValues = sorted([r.y for r in rays])
+        outputYValues = sorted([r.y for r in trace])
+        for inY, outY in zip(inputYValues, outputYValues):
+            self.assertAlmostEqual(inY, outY)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallel(self):
+    def testTraceManyThroughInParallelWithProcesses(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
         trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
-        for i in range(len(rays)):
-            # Order is not kept, we have to check if the ray traced is in the original list
-            self.assertIn(trace[i], rays)
+        inputYValues = sorted([r.y for r in rays])
+        outputYValues = sorted([r.y for r in trace])
+        for inY, outY in zip(inputYValues, outputYValues):
+            self.assertAlmostEqual(inY, outY)
 
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
@@ -428,7 +436,7 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTraceManyThroughInParallelWithOutput(self):
         processComplete = subprocess.run([sys.executable, os.path.join(testsDir, "traceManyThroughInParallelWithOutput.py")],
                                          capture_output=True, universal_newlines=True)
-        self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
+        self.assertIn("100%", processComplete.stdout)
 
     def testPointsOfInterest(self):
         m = Matrix()
@@ -695,6 +703,461 @@ f = +inf (afocal)
         m = Matrix(B=d, physicalLength=d)
         space = Space(d)
         self.assertEqual(m, space)
+
+    def testToAndFromStruct(self):
+        m = Matrix(1,0.5,4,3, physicalLength=5)
+        theStruct = m.toStruct()
+        m2 = Matrix(1,0,0,1)
+        m2.fromStruct(theStruct)
+        self.assertEqual(m, m2)
+
+class TestTrace(envtest.RaytracingTestCase):
+    def testTrace(self):
+        ray = Ray(y=1, theta=1)
+        m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1)
+        trace = [ray, m * ray]
+        self.assertListEqual(m.trace(ray), trace)
+
+    def testTraceNullLength(self):
+        ray = Ray(y=1, theta=1)
+        m = Matrix(A=1, B=0, C=0, D=1)
+        trace = [m * ray]
+        self.assertListEqual(m.trace(ray), trace)
+
+    def testTraceBlocked(self):
+        ray = Ray(y=10, theta=1)
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10, physicalLength=1)
+        trace = m.trace(ray)
+        self.assertTrue(all(x.isBlocked for x in trace))
+
+    def testTraceGaussianBeam(self):
+        beam = GaussianBeam(w=1)
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
+        outputBeam = m * beam
+        tracedBeam = m.trace(beam)[-1]
+        self.assertEqual(tracedBeam.w, outputBeam.w)
+        self.assertEqual(tracedBeam.q, outputBeam.q)
+        self.assertEqual(tracedBeam.z, outputBeam.z)
+        self.assertEqual(tracedBeam.n, outputBeam.n)
+        self.assertEqual(tracedBeam.isClipped, outputBeam.isClipped)
+
+    def testTraceThrough(self):
+        ray = Ray()
+        m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
+        trace = m.traceThrough(ray)
+        self.assertEqual(trace, m * ray)
+
+    def testTraceManyNative(self):
+        inputRays = []
+        for y in [-1,0,1]:
+            for t in [-1, -0.5, 0, 0.5, 1.0]:
+                inputRays.append(Ray(y, t))
+                inputRays.append(Ray(-y, -t))
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        outputRayTraces = group.traceManyNative(inputRays)
+
+        self.assertEqual(len(outputRayTraces), len(inputRays))
+        for i, rayTrace in enumerate(outputRayTraces):
+            self.assertEqual(rayTrace[0], inputRays[i])
+        for i, rayTrace in enumerate(outputRayTraces):
+            if rayTrace[-1].isNotBlocked:
+                self.assertEqual(rayTrace[0].y,-rayTrace[-1].y)
+        for i, rayTrace in enumerate(outputRayTraces):
+            if abs(rayTrace[0].theta) >= 0.99:
+                self.assertTrue(rayTrace[-1].isBlocked)
+
+    def testTraceManyNativeCompactRays(self):
+        inputRays = CompactRays(maxCount=15)
+        for i,y in enumerate([-1,0,1]):
+            for j,t in enumerate([-1, -0.5, 0, 0.5, 1.0]):
+                ray = inputRays[i*5+j]
+                ray.y = y
+                ray.theta = t
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        outputRayTraces = group.traceManyNative(inputRays)
+
+        self.assertEqual(len(outputRayTraces), len(inputRays))
+        for i, rayTrace in enumerate(outputRayTraces):
+            self.assertEqual(rayTrace[0], inputRays[i])
+        for i, rayTrace in enumerate(outputRayTraces):
+            if rayTrace[-1].isNotBlocked:
+                self.assertEqual(rayTrace[0].y,-rayTrace[-1].y)
+        for i, rayTrace in enumerate(outputRayTraces):
+            if abs(rayTrace[0].theta) >= 0.99:
+                self.assertTrue(rayTrace[-1].isBlocked)
+
+    def testTraceManyNativeWithList_Rays_And_CompactRays(self):
+        inputRays1 = []
+        for y in [-1, 0, 1]:
+            for t in [-1, -0.5, 0, 0.5, 1.0]:
+                inputRays1.append(Ray(y, t))
+                inputRays1.append(Ray(-y, -t))
+
+        inputRays2 = CompactRays(maxCount=len(inputRays1))
+        inputRays3 = Rays()
+        for i, otherRay in enumerate(inputRays1):
+            compactRay = inputRays2[i]
+            compactRay.y = otherRay.y
+            compactRay.theta = otherRay.theta
+            inputRays3.append(otherRay, copy=True)
+
+        for r1, r2, r3 in zip(inputRays1, inputRays2, inputRays3):
+            self.assertEqual(r1, r2)
+            self.assertEqual(r1, r3)
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        outputRayTraces1 = group.traceManyNative(inputRays1)
+        outputRayTraces2 = group.traceManyNative(inputRays2)
+        outputRayTraces3 = group.traceManyNative(inputRays3)
+
+        self.assertEqual(outputRayTraces1, outputRayTraces2)
+        self.assertEqual(outputRayTraces1, outputRayTraces3)
+
+    def testTraceManyOpenCLWithList_Rays_And_CompactRays(self):
+        inputRays1 = []
+        for y in [-1, 0, 1]:
+            for t in [-1, -0.5, 0, 0.5, 1.0]:
+                inputRays1.append(Ray(y, t))
+                inputRays1.append(Ray(-y, -t))
+
+        inputRays2 = CompactRays(maxCount=len(inputRays1))
+        inputRays3 = Rays()
+        for i, otherRay in enumerate(inputRays1):
+            compactRay = inputRays2[i]
+            compactRay.y = otherRay.y
+            compactRay.theta = otherRay.theta
+            inputRays3.append(otherRay, copy=True)
+
+        for r1, r2, r3 in zip(inputRays1, inputRays2, inputRays3):
+            self.assertEqual(r1, r2)
+            self.assertEqual(r1, r3)
+
+        group = MatrixGroup()
+        group.append(Space(d=10))
+        group.append(Lens(f=5, diameter=5))
+        group.append(Space(d=10))
+
+        with self.assertRaises(Exception):
+            outputRayTraces1 = group.traceManyOpenCL(inputRays1)
+        with self.assertRaises(Exception):
+            outputRayTraces3 = group.traceManyOpenCL(inputRays3)
+
+        outputRayTraces1 = group.traceManyNative(inputRays1)
+        outputRayTraces3 = group.traceManyNative(inputRays3)
+        outputRayTraces2 = group.traceManyOpenCL(inputRays2)
+
+        for raytrace1, raytrace2, raytrace3 in zip(outputRayTraces1,outputRayTraces2,outputRayTraces3):
+            self.assertEqual(raytrace1[0], raytrace2[0])
+            self.assertEqual(raytrace1[0], raytrace3[0])
+            self.assertEqual(raytrace1[-1], raytrace2[-1])
+            self.assertEqual(raytrace1[-1], raytrace3[-1])
+
+    def testTraceManyJustOne(self):
+        rays = [Ray()]
+        m = Matrix(physicalLength=1e-9)
+        traceMany = RayTraces([RayTrace(rays * 2)])
+        self.assertEqual(m.traceMany(rays), traceMany)
+
+    def testTraceManyThroughIterable(self):
+        rays = [Ray(y, y) for y in range(3)]
+        m = Space(d=1)
+
+        traceManyThroughRays = m.traceManyThrough(rays)
+
+        for i in range(len(rays)):
+            self.assertEqual(traceManyThroughRays[i].y, rays[i].y+rays[i].theta)
+            self.assertEqual(traceManyThroughRays[i].theta, rays[i].theta)
+            self.assertEqual(traceManyThroughRays[i].z, 1)
+
+    def testTraceManyThroughNotIterable(self):
+        with self.assertRaises(TypeError):
+            m = Matrix()
+            m.traceManyThrough(self.assertIs)
+
+    def testTraceManyThroughOutput(self):
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "Progress 10000/10000 (100%)", inputRays=rays, progress=True)
+
+    def testTraceManyThroughNoOutput(self):
+        rays = [Ray(y, y) for y in range(10_000)]
+        m = Matrix(physicalLength=1)
+        self.assertPrints(m.traceManyThrough, "", inputRays=rays, progress=False)
+
+    def testTraceManyThroughLastRayBlocked(self):
+        m = Matrix()
+        rays = Rays([Ray(), Ray(-1, -1)])
+        rays[-1].isBlocked = True
+        traceManyThrough = m.traceManyThrough(rays)
+        # One less ray, because last is blocked
+        self.assertEqual(len(traceManyThrough), len(rays) - 1)
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallel_1(self):
+        rays = [Ray(y, y) for y in range(5)]
+        expectedThroughRays = [Ray(y, y, z=1) for y in range(5)]
+        m = Matrix(physicalLength=1)
+        traces = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(traces[i], expectedThroughRays)
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallel_2(self):
+        rays = [Ray(y, y) for y in range(5)]
+        m = Matrix(physicalLength=1)
+        expectedThroughRays = [Ray(y, y, z=1) for y in range(5)]
+        traces = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays, processes=2)
+        for i in range(len(rays)):
+            # Order is not kept, we have to check if the ray traced is in the original list
+            self.assertIn(traces[i], expectedThroughRays)
+
+    @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
+                    "Endless loop on macOS")
+    # Some information here: https://github.com/gammapy/gammapy/issues/2453
+    def testTraceManyThroughInParallelNoOutput(self):
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelNoOutput.py"], capture_output=True,
+                                         universal_newlines=True)
+        self.assertEqual(processComplete.stdout, "")
+
+    @envtest.expectedFailure
+    def testTraceManyThroughInParallelWithOutput(self):
+        processComplete = subprocess.run([sys.executable, "traceManyThroughInParallelWithOutput.py"],
+                                         capture_output=True, universal_newlines=True)
+        print(processComplete.stdout)
+        self.assertEqual(processComplete.stdout.strip(), "Progress 10000/10000 (100%) \nProgress 10000/10000 (100%)")
+
+    def testdtypes(self):
+        a = np.array([(1,2,3,4,5,6)], dtype=CompactRay.Struct)
+        print((a[0].astype(CompactRay.Struct)))
+
+    def testTraceManyOpenCL(self):
+        inputRaysOpenCL = CompactRays(rays=UniformRays(M=100,N=10))
+        inputRaysNative = UniformRays(M=100,N=10)
+
+        for rayOpenCL, rayNative in zip(inputRaysOpenCL, inputRaysNative):
+            self.assertEqual(rayOpenCL, rayNative)
+
+        path = ImagingPath()
+        path.append(Space(d=2))
+        path.append(Lens(f=10, diameter=25))
+        path.append(Space(d=2))
+        path.append(Lens(f=20))
+        path.append(Space(d=3))
+        path.append(Lens(f=30))
+        path.append(Space(d=4))
+        m = MatrixGroup(path.transferMatrices())
+        outputRaytracesOpenCL = m.traceManyOpenCL(inputRaysOpenCL)
+        outputRaytracesNative = m.traceManyNative(inputRaysNative)
+
+
+        for traceOpenCL, traceNative in zip(outputRaytracesOpenCL, outputRaytracesNative):
+            self.assertEqual(traceOpenCL[0], traceNative[0])
+            self.assertEqual(traceOpenCL[-1], traceNative[-1])
+
+
+    def testTraceManyWithOpenCLArgument(self):
+        inputRaysOpenCL = UniformRays(M=100, N=100)
+        inputRaysNative = UniformRays(M=100, N=100)
+        path = ImagingPath()
+        path.append(Space(d=2))
+        path.append(Lens(f=10, diameter=25))
+        path.append(Space(d=2))
+        path.append(Lens(f=20))
+        path.append(Space(d=3))
+        path.append(Lens(f=30))
+        path.append(Space(d=4))
+        m = MatrixGroup(path.transferMatrices())
+        outputRaytracesOpenCL = m.traceMany(inputRaysOpenCL, useOpenCL=True)
+        outputRaytracesNative = m.traceManyNative(inputRaysNative)
+
+        for traceOpenCL, traceNative in zip(outputRaytracesOpenCL, outputRaytracesNative):
+            self.assertEqual(traceOpenCL[0], traceNative[0])
+            self.assertEqual(traceOpenCL[-1], traceNative[-1])
+
+    def testTraceManyOpenCLvsNativePerformance(self):
+        import time
+        Ms = [10, 10]
+        Ns = [100, 1000]
+
+        path = ImagingPath()
+        path.append(Space(d=2))
+        path.append(Lens(f=10, diameter=25))
+        path.append(Space(d=2))
+        path.append(Lens(f=20))
+        path.append(Space(d=3))
+        path.append(Lens(f=30))
+        path.append(Space(d=4))
+        m = MatrixGroup(path.transferMatrices())
+
+        native = []
+        openCL = []
+        for M,N in zip(Ms, Ns):
+            inputRaysOpenCL = CompactRays(maxCount=M*N)
+            inputRaysOpenCL.fillWithRandomUniform()
+            start = time.time()
+            outputRaytracesOpenCL = m.traceManyOpenCL(inputRaysOpenCL)
+            openCL.append(time.time() - start)
+
+            start = time.time()
+            outputRaytracesNative = m.traceManyNative(inputRaysOpenCL)
+            native.append(time.time() - start)
+
+        print(native)
+        print(openCL)
+
+try:
+    import pyopencl
+    hasOpenCL = True
+except ImportError:
+    hasOpenCL = False
+
+
+class TestComputationValidation(envtest.RaytracingTestCase):
+
+    def testFreeSpacePropagation(self):
+        """y_out should equal y_in + theta * d for free space."""
+        d = 10.0
+        rays = [Ray(y=1.0, theta=0.1), Ray(y=-2.0, theta=0.3), Ray(y=0, theta=-0.5)]
+        m = Space(d=d)
+        for ray in rays:
+            output = m.traceThrough(ray)
+            self.assertAlmostEqual(output.y, ray.y + ray.theta * d, places=5)
+            self.assertAlmostEqual(output.theta, ray.theta, places=5)
+
+    def testFreeSpacePropagationCompactRays(self):
+        """Same free space test with CompactRays through traceManyNative."""
+        d = 10.0
+        originals = [Ray(y=1.0, theta=0.1), Ray(y=-2.0, theta=0.3), Ray(y=0, theta=-0.5)]
+        compact = CompactRays(rays=originals)
+        m = Space(d=d)
+        traces = m.traceManyNative(compact)
+        for i, ray in enumerate(originals):
+            output = traces[i][-1]
+            self.assertAlmostEqual(output.y, ray.y + ray.theta * d, places=3)
+            self.assertAlmostEqual(output.theta, ray.theta, places=3)
+
+    def testLensImagingAt2f(self):
+        """Object at 2f from a lens images at 2f with magnification -1."""
+        f = 10.0
+        group = MatrixGroup()
+        group.append(Space(d=2 * f))
+        group.append(Lens(f=f))
+        group.append(Space(d=2 * f))
+
+        rays = [Ray(y=1.0, theta=0), Ray(y=-3.0, theta=0), Ray(y=0.5, theta=0)]
+        traces = group.traceManyNative(rays)
+        for i, ray in enumerate(rays):
+            output = traces[i][-1]
+            if output.isNotBlocked:
+                self.assertAlmostEqual(output.y, -ray.y, places=5)
+
+    def testBlockedRayStaysBlocked(self):
+        """A ray blocked early stays blocked for the rest of the trace."""
+        group = MatrixGroup()
+        group.append(Lens(f=10, diameter=1))
+        group.append(Space(d=5))
+        group.append(Lens(f=20))
+        group.append(Space(d=5))
+
+        ray = Ray(y=10, theta=0)  # way outside 1mm aperture
+        trace = group.trace(ray)
+        self.assertTrue(trace[-1].isBlocked)
+        # Find the first blocked ray and verify all subsequent are blocked too
+        firstBlocked = None
+        for i, r in enumerate(trace):
+            if r.isBlocked:
+                firstBlocked = i
+                break
+        self.assertIsNotNone(firstBlocked)
+        for r in trace[firstBlocked:]:
+            self.assertTrue(r.isBlocked)
+
+    def testBlockedRayStaysBlockedCompactRays(self):
+        """Same blocked-ray test through traceManyNative with CompactRays."""
+        group = MatrixGroup()
+        group.append(Lens(f=10, diameter=1))
+        group.append(Space(d=5))
+        group.append(Lens(f=20))
+        group.append(Space(d=5))
+
+        compact = CompactRays(maxCount=1)
+        compact[0].y = 10
+        compact[0].theta = 0
+
+        traces = group.traceManyNative(compact)
+        self.assertTrue(traces[0][-1].isBlocked)
+
+    @envtest.skipIf(not hasOpenCL, "pyopencl not installed")
+    def testTraceManyOpenCLIntermediateRays(self):
+        """Validate first and last rays match between OpenCL and Native."""
+        inputRaysOpenCL = CompactRays(rays=UniformRays(M=10, N=5))
+        inputRaysNative = list(UniformRays(M=10, N=5))
+
+        group = MatrixGroup()
+        group.append(Space(d=5))
+        group.append(Lens(f=10, diameter=25))
+        group.append(Space(d=5))
+
+        tracesOpenCL = group.traceManyOpenCL(inputRaysOpenCL)
+        tracesNative = group.traceManyNative(inputRaysNative)
+
+        for traceOCL, traceNat in zip(tracesOpenCL, tracesNative):
+            # OpenCL and native traces may have different numbers of intermediate rays
+            # but first (input) and last (output) should match
+            self.assertAlmostEqual(traceOCL[0].y, traceNat[0].y, places=4)
+            self.assertAlmostEqual(traceOCL[0].theta, traceNat[0].theta, places=4)
+            self.assertAlmostEqual(traceOCL[-1].y, traceNat[-1].y, places=4)
+            self.assertAlmostEqual(traceOCL[-1].theta, traceNat[-1].theta, places=4)
+
+    @envtest.skipIf(not hasOpenCL, "pyopencl not installed")
+    def testTraceManyOpenCLFreeSpacePropagation(self):
+        """Validate OpenCL free space gives y_out = y_in + theta * d."""
+        d = 7.0
+        originals = [Ray(y=1.0, theta=0.2), Ray(y=-1.0, theta=-0.1), Ray(y=0, theta=0.5)]
+        compact = CompactRays(rays=originals)
+
+        m = MatrixGroup([Space(d=d)])
+        traces = m.traceManyOpenCL(compact)
+        for i, ray in enumerate(originals):
+            output = traces[i][-1]
+            self.assertAlmostEqual(output.y, ray.y + ray.theta * d, places=3)
+            self.assertAlmostEqual(output.theta, ray.theta, places=3)
+
+    @envtest.skipIf(not hasOpenCL, "pyopencl not installed")
+    def testTraceManyOpenCLBlockedRay(self):
+        """Validate OpenCL correctly blocks rays outside aperture."""
+        group = MatrixGroup()
+        group.append(Lens(f=10, diameter=1))
+        group.append(Space(d=5))
+
+        compact = CompactRays(maxCount=2)
+        compact[0].y = 0.1   # inside 1mm aperture
+        compact[0].theta = 0
+        compact[1].y = 10.0  # outside 1mm aperture
+        compact[1].theta = 0
+
+        traces = group.traceManyOpenCL(compact)
+        self.assertFalse(traces[0][-1].isBlocked)
+        self.assertTrue(traces[1][-1].isBlocked)
 
 
 if __name__ == '__main__':

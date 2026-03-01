@@ -25,7 +25,7 @@ The code has been developed first for teaching purposes and is used in my "[Opti
 > *Equal contributions.
 > Permalink: https://doi.org/10.1117/1.NPh.8.1.010801
 
-The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in english or french, with english subtitles when in french) on YouTube. We have made no attempts at making high performance code.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
+The published tutorial assumes version 1.3.x.  There are video [tutorials](https://www.youtube.com/playlist?list=PLUxTghemi4Ft0NzQwuufpU-EGgkmaInAf) (in english or french, with english subtitles when in french) on YouTube. We have made no attempts at making high performance code but there is a GPU acceleration option through OpenCL and it still uses a python-like approach and hides the details, see below.  **Readability** and **simplicity of usage** are the key here. It is a module with a few files, and only `matplotlib` and `numpy` as dependent modules.
 
 ## Where do I get started?
    * If you want to use the module, keep reading.
@@ -45,7 +45,7 @@ To get information about what is new, currently the best place is the [release p
 
 There is a **[Frequently Asked Questions](./FAQ.md)** page.
 
-The article above is fully compatible with all 1.3.x versions.  As long as the API does not change, versions will be 1.3.x.
+The article above is fully compatible with all 1.x versions starting at 1.3.
 
 
 
@@ -326,6 +326,40 @@ All example code on your machine is found at: /somedirectory/on/your/machine
 ![ex17](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex17.png)
 
 ![ex18](https://github.com/DCC-Lab/RayTracing/raw/master/README.assets/ex18.png)
+
+## GPU-accelerated ray tracing with OpenCL
+
+As of version 1.4.0, the module supports **GPU-accelerated batch ray tracing** via [OpenCL](https://www.khronos.org/opencl/). When tracing large numbers of rays (100k–1M+) through an optical system, the GPU can provide 10–100x speedup over the pure-Python path.
+
+### Highlights
+
+- **Contiguous memory layout**: `CompactRays` stores all ray data in a single numpy structured array (24 bytes per ray), ready for GPU transfer in one call. Individual rays are accessed through lightweight `CompactRay` views that behave exactly like regular `Ray` objects.
+- **On-device ABCD matrix multiplication**: An OpenCL kernel runs one GPU workitem per ray, propagating it through all optical elements in sequence — including aperture blocking.
+- **Organized output**: The flat GPU output buffer is wrapped by `CompactRaytrace` and `CompactRaytraces`, giving convenient per-ray access to the full trace through the system without copying any data.
+- **Optional dependency**: `pyopencl` is only imported when you call `traceManyOpenCL()`. The rest of the module works without it.
+
+### Quick example
+
+```python
+from raytracing import *
+from raytracing.compact import CompactRays
+
+path = ImagingPath()
+path.append(Space(d=10))
+path.append(Lens(f=50, diameter=25))
+path.append(Space(d=100))
+path.append(Lens(f=50, diameter=25))
+path.append(Space(d=10))
+group = MatrixGroup(path.transferMatrices())
+
+rays = CompactRays(maxCount=1_000_000)
+rays.fillWithRandomUniform(yMax=5)
+
+# GPU path (requires pyopencl)
+traces = group.traceManyOpenCL(rays)
+traces.lastRays.display("Output profile (OpenCL)")
+
+```
 
 ## Known limitations
 

@@ -715,7 +715,6 @@ class MplFigure(Figure):
             subAxes, visibility.keys(), visibility.values(), check_props=checkProps, frame_props=checkProps
         )
         self.checkBoxes.set_label_props({'x': [0.22] * nBoxes, 'y': [v[1] - 0.003 for v in offsets], 'fontsize': [11] * nBoxes})
-
         self.checkBoxes.on_clicked(self.onCheckBoxCallback)
 
     def updateGraphics(self):

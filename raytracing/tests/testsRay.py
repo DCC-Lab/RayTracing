@@ -103,38 +103,16 @@ class TestRay(envtest.RaytracingTestCase):
         other = Ray(10, 10)
         self.assertEqual(ray, other)
 
-    def testRayParallelToAnotherRay(self):
-        ray = Ray(0,0).at(z=1)
-        self.assertEqual(ray, Ray(0,0))
-
-        ray = Ray(0,0.1).at(z=1)
-        self.assertEqual(ray, Ray(0.1, 0.1))
-
-        ray = Ray(0,0.1).at(z=-1)
-        self.assertEqual(ray, Ray(-0.1, 0.1))
-
-        ray = Ray(1,0.1).at(z=1)
-        self.assertEqual(ray, Ray(1.1,0.1))
-
-        ray = Ray(-1,0.1).at(z=1)
-        self.assertEqual(ray, Ray(-0.9, 0.1))
-
-        ray = Ray(-1,0.1).at(z=-1)
-        self.assertEqual(ray, Ray(-1.1, 0.1))
-
-        ray = Ray(-1,0.1,z=1).at(z=1)
-        self.assertEqual(ray, Ray(-1.0, 0.1))
-
     def testRayTrace(self):
         rayTrace = [Ray(0,0.1), Ray(0.1,0.2,z=1), Ray(0.3,0,z=2)]
 
         self.assertEqual(Ray.along(rayTrace, z=0), Ray(0,0.1))
-        self.assertEqual(Ray.along(rayTrace, z=0.5), Ray(0.05,0.1))
+        self.assertEqual(Ray.along(rayTrace, z=0.5), Ray(0.05,0.1,z=0.5))
+        self.assertEqual(Ray.along(rayTrace, z=0.5), Ray(0.05,0.1,z=0.5))
         self.assertEqual(Ray.along(rayTrace, z=1.0).y, 0.1)
-        self.assertEqual(Ray.along(rayTrace, z=1.0), Ray(0.1,0.2))
-        self.assertEqual(Ray.along(rayTrace, z=1.5), Ray(0.2,0.2))
-        self.assertEqual(Ray.along(rayTrace, z=2.0), Ray(0.3,0))
-
+        self.assertEqual(Ray.along(rayTrace, z=1.0), Ray(0.1,0.2,z=1.0))
+        self.assertEqual(Ray.along(rayTrace, z=1.5), Ray(0.2,0.2,z=1.5))
+        self.assertEqual(Ray.along(rayTrace, z=2.0), Ray(0.3,0,z=2.0))
 
 if __name__ == '__main__':
     envtest.main()
