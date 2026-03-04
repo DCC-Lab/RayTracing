@@ -55,5 +55,10 @@ class Test4fSystem(envtest.RaytracingTestCase):
         self.assertEqual(composed4fSystem.frontVertex, system4f.frontVertex)
 
 
+    def testTelescopeIsAfocal(self):
+        system = System4f(10, 5)
+        self.assertTrue(system.isAfocal)
+
+
 if __name__ == '__main__':
     envtest.main()
