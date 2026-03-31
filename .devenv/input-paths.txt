@@ -1,0 +1,7 @@
+/home/thinky/Projects/RayTracing/.devenv/bootstrap/bootstrapLib.nix
+/home/thinky/Projects/RayTracing/.devenv/bootstrap/default.nix
+/home/thinky/Projects/RayTracing/.devenv/bootstrap/resolve-lock.nix
+/home/thinky/Projects/RayTracing/devenv.local.nix
+/home/thinky/Projects/RayTracing/devenv.lock
+/home/thinky/Projects/RayTracing/devenv.nix
+/home/thinky/Projects/RayTracing/.env
