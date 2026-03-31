@@ -196,3 +196,5 @@ fabric.properties
 env-*/
 venv/
 raytracing/_version.py
+.devenv/
+.direnv/
