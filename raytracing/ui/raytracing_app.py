@@ -58,9 +58,16 @@ class RaytracingApp(App):
         )
         self.table_group.column_resize_weight(index=0, weight=1)
 
+        self.table_hint_label = Label(
+            text="Double-click a cell to edit. The optical layout refreshes automatically."
+        )
+        self.table_hint_label.grid_into(
+            self.table_group, row=0, column=0, pady=(5, 0), padx=5, sticky="w"
+        )
+
         self.button_group = View(width=300, height=200)
         self.button_group.grid_into(
-            self.table_group, row=1, column=0, pady=5, padx=5, sticky="nsew"
+            self.table_group, row=2, column=0, pady=5, padx=5, sticky="nsew"
         )
 
         self.add_lens_button = Button(
@@ -105,12 +112,13 @@ class RaytracingApp(App):
         self.tableview.grid_into(
             self.table_group,
             column=0,
-            row=0,
+            row=1,
             columnspan=2,
             pady=5,
             padx=5,
             sticky="nsew",
         )
+        self.tableview.all_elements_are_editable = True
         self.tableview.displaycolumns = [
             "position",
             "element",
@@ -472,7 +480,11 @@ class RaytracingApp(App):
             self.coords.create_y_major_ticks()
             self.coords.create_y_major_ticks_labels()
 
-            self.calculate_imaging_path_results(finite_imaging_path)
+            image_distance = conjugate.d if isfinite(conjugate.d) else None
+            self.calculate_imaging_path_results(
+                finite_imaging_path,
+                image_distance=image_distance,
+            )
 
             self.create_optical_path(finite_path, self.coords)
 
@@ -544,21 +556,25 @@ class RaytracingApp(App):
             principal_ray = path.principalRay()
             if principal_ray is not None:
                 principal_raytrace = path.trace(principal_ray)
-                line_trace = self.create_line_from_raytrace(
+                line_traces = self.create_line_segments_from_raytrace(
                     principal_raytrace,
                     basis=DynamicBasis(self.coords, "basis"),
                     color="green",
                 )
-                self.coords.place(line_trace, position=Point(0, 0))
+                for line_trace in line_traces:
+                    self.canvas.place(line_trace, position=self.coords_origin)
+                    self.canvas.widget.tag_lower(line_trace.id)
 
                 axial_ray = path.axialRay()
                 axial_raytrace = path.trace(axial_ray)
-                line_trace = self.create_line_from_raytrace(
+                line_traces = self.create_line_segments_from_raytrace(
                     axial_raytrace,
                     basis=DynamicBasis(self.coords, "basis"),
                     color="red",
                 )
-                self.coords.place(line_trace, position=Point(0, 0))
+                for line_trace in line_traces:
+                    self.canvas.place(line_trace, position=self.coords_origin)
+                    self.canvas.widget.tag_lower(line_trace.id)
 
         else:
             M = int(self.number_of_heights)
@@ -1030,7 +1046,7 @@ path.display(rays=rays)
 
         return script
 
-    def calculate_imaging_path_results(self, imaging_path):
+    def calculate_imaging_path_results(self, imaging_path, image_distance=None):
         data_source = self.results_tableview.data_source
 
         uuids = data_source.sorted_records_uuids(field="__uuid")
@@ -1041,6 +1057,12 @@ path.display(rays=rays)
             data_source.append_record(
                 {"property": "Imaging Path", "value": "Non-imaging/infinite conjugate"}
             )
+            data_source.append_record(
+                {"property": "Image distance", "value": "Infinite"}
+            )
+            data_source.append_record(
+                {"property": "Image size", "value": "Infinite [no image plane]"}
+            )
             return
         """
         Object and Image positions
@@ -1050,6 +1072,11 @@ path.display(rays=rays)
 
         data_source.append_record(
             {"property": "Object position", "value": f"0.0 (always)"}
+        )
+        if image_distance is None:
+            image_distance = imaging_path.L
+        data_source.append_record(
+            {"property": "Image distance", "value": f"{image_distance:.2f}"}
         )
         data_source.append_record(
             {"property": "Image position", "value": f"{image_position:.2f}"}
@@ -1154,10 +1181,10 @@ path.display(rays=rays)
                 {"property": "Field of view [FOV]", "value": f"{fov:.2f}"}
             )
             data_source.append_record(
-                {"property": "Object size [same as FOV]", "value": f"{fov:.2f}"}
+                {"property": "Image size", "value": f"{imaging_path.imageSize():.2f}"}
             )
             data_source.append_record(
-                {"property": "Image size", "value": f"{imaging_path.imageSize():.2f}"}
+                {"property": "Object size [same as FOV]", "value": f"{fov:.2f}"}
             )
             data_source.append_record(
                 {"property": "Magnification [Transverse]", "value": f"{mag_tran:.2f}"}
