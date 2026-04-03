@@ -679,6 +679,25 @@ class RaytracingApp(App):
     def canvas_did_resize(self, notification):
         self.refresh()
 
+    def infinite_object_axis_offset(self, x_reference=None):
+        if x_reference is None:
+            x_reference = max(self.coords.axes_limits[0][1], 1.0)
+        return max(20.0, min(60.0, x_reference * 0.18))
+
+    def infinite_object_axis_x(self, x_reference=None):
+        x_min, _x_max = self.coords.axes_limits[0]
+        try:
+            negative_ticks = [tick for tick in self.coords.x_major_ticks() if tick < 0]
+        except Exception:
+            negative_ticks = []
+        if negative_ticks:
+            return max(negative_ticks)
+        return x_min
+
+    def infinite_object_plot_min_x(self, x_reference=None):
+        offset = self.infinite_object_axis_offset(x_reference)
+        return -offset
+
     def relabel_infinite_x_axis_ends(self):
         if (
             self.object_conjugate_mode != "Preset: object at infinity"
@@ -686,22 +705,57 @@ class RaytracingApp(App):
         ):
             return
 
-        tick_label_ids = [
+        for item_id in [
             item_id
             for item_id in self.canvas.widget.find_withtag("tick-label")
             if "x-axis" in self.canvas.widget.gettags(item_id)
-        ]
-        if len(tick_label_ids) < 2:
-            return
+        ]:
+            self.canvas.widget.delete(item_id)
 
-        tick_label_ids.sort(key=lambda item_id: self.canvas.widget.coords(item_id)[0])
-        left_label_id = tick_label_ids[0]
-        right_label_id = tick_label_ids[-1]
+        origin = self.coords.reference_point
+        y_lims = self.coords.axes_limits[1]
+        if self.coords.x_axis_at_bottom:
+            origin = origin + Point(0, y_lims[0], basis=self.coords.basis)
 
-        if self.object_conjugate_mode == "Preset: object at infinity":
-            self.canvas.widget.itemconfigure(left_label_id, text="−∞")
-        if self.image_conjugate_mode == "Preset: image at infinity":
-            self.canvas.widget.itemconfigure(right_label_id, text="+∞")
+        tick_basis = Basis(e0=self.coords.basis.e0, e1=self.coords.basis.e1.normalized())
+        tick_values = list(self.coords.x_major_ticks())
+        width = self.coords._element_kwargs.get("width", 1)
+
+        for tick_value in tick_values:
+            label_text = self.coords.x_format.format(tick_value)
+            if (
+                self.object_conjugate_mode == "Preset: object at infinity"
+                and abs(tick_value - self.infinite_object_axis_x()) < 1e-9
+            ):
+                label_text = "−∞"
+            elif (
+                self.image_conjugate_mode == "Preset: image at infinity"
+                and tick_value == max(tick_values)
+            ):
+                label_text = "+∞"
+
+            tick_start = Point(tick_value, 0, basis=tick_basis)
+            tick_start = tick_start + Vector(
+                0,
+                self.coords.major_length * width * self.coords.tick_value_offset,
+                tick_basis,
+            )
+
+            value = CanvasLabel(
+                text=label_text,
+                font_size=self.coords.tick_text_size * width,
+                anchor="center",
+            )
+            value.create(self.canvas, position=origin + tick_start)
+            value.add_tag(f"group-{self.coords.id}")
+            value.add_tag("x-axis")
+            value.add_tag("tick-label")
+
+    def reposition_y_axis_for_infinite_object(self):
+        return
+
+    def add_infinite_object_x_marker(self):
+        return
 
     def observed_property_changed(
         self, observed_object, observed_property_name, new_value, context
@@ -768,14 +822,18 @@ class RaytracingApp(App):
                 if object_is_infinite:
                     updates = {}
                     try:
-                        first_thickness = self.parse_thickness(first_real_element.get("thickness", 0))
+                        first_thickness = self.parse_thickness(
+                            first_real_element.get("thickness", 0)
+                        )
                     except (TypeError, ValueError):
                         first_thickness = 0.0
                     if isfinite(first_thickness):
-                        updates["__finite_thickness_backup"] = self.normalized_thickness_text(
-                            first_real_element.get("thickness", 0)
+                        updates["__finite_thickness_backup"] = (
+                            self.normalized_thickness_text(
+                                first_real_element.get("thickness", 0)
+                            )
                         )
-                    if first_real_element.get("thickness") != "Infinity":
+                    if str(first_real_element.get("thickness", "")) != "Infinity":
                         updates["thickness"] = "Infinity"
                     if updates:
                         self.tableview.data_source.update_record(
@@ -783,9 +841,12 @@ class RaytracingApp(App):
                         )
                 else:
                     if str(first_real_element.get("thickness", "")) == "Infinity":
-                        restored_value = first_real_element.get("__finite_thickness_backup", "200")
+                        restored_value = first_real_element.get(
+                            "__finite_thickness_backup", "200"
+                        )
                         self.tableview.data_source.update_record(
-                            first_real_element["__uuid"], {"thickness": restored_value}
+                            first_real_element["__uuid"],
+                            {"thickness": restored_value},
                         )
         if image_record is not None:
             image_is_infinite = self.parse_thickness(image_record.get("thickness", 0)) == float("inf")
@@ -842,10 +903,27 @@ class RaytracingApp(App):
 
         dragged_index = item_ids.index(dragged_item_id)
         target_index = item_ids.index(target_item_id)
+        first_real_element = self.first_real_element_record()
+        object_is_infinite = (
+            self.object_record() is not None
+            and self.parse_thickness(self.object_record().get("thickness", "Finite")) == float("inf")
+        )
 
         if records[dragged_index].get("element") in {"Object", "Image"}:
             return
+        if (
+            object_is_infinite
+            and first_real_element is not None
+            and records[dragged_index].get("__uuid") == first_real_element.get("__uuid")
+        ):
+            return
         if records[target_index].get("element") in {"Object", "Image"}:
+            return
+        if (
+            object_is_infinite
+            and first_real_element is not None
+            and records[target_index].get("__uuid") == first_real_element.get("__uuid")
+        ):
             return
         if insert_after:
             target_index += 1
@@ -863,13 +941,30 @@ class RaytracingApp(App):
         if selected_item_id not in item_ids:
             return
         selected_index = item_ids.index(selected_item_id)
+        first_real_element = self.first_real_element_record()
+        object_is_infinite = (
+            self.object_record() is not None
+            and self.parse_thickness(self.object_record().get("thickness", "Finite")) == float("inf")
+        )
         if records[selected_index].get("element") in {"Object", "Image"}:
+            return
+        if (
+            object_is_infinite
+            and first_real_element is not None
+            and records[selected_index].get("__uuid") == first_real_element.get("__uuid")
+        ):
             return
         target_index = selected_index + offset
 
         if target_index < 0 or target_index >= len(records):
             return
         if records[target_index].get("element") in {"Object", "Image"}:
+            return
+        if (
+            object_is_infinite
+            and first_real_element is not None
+            and records[target_index].get("__uuid") == first_real_element.get("__uuid")
+        ):
             return
 
         target_item_id = item_ids[target_index]
@@ -969,16 +1064,11 @@ class RaytracingApp(App):
             self.refresh()
             return
 
-        system_path = self.get_path_from_ui(
-            without_apertures=False, max_position=None, include_image_plane=False
-        )
-        conjugate = system_path.forwardConjugate()
-        if conjugate.transferMatrix is None or conjugate.d is None or not isfinite(conjugate.d):
+        solved_image_distance = self.solved_image_thickness()
+        if solved_image_distance is None or not isfinite(solved_image_distance):
             self.solver_status_message = "Image distance is not finite for this system."
             self.refresh()
             return
-
-        solved_image_distance = conjugate.d
         self.tableview.data_source.update_record(
             variable_record["__uuid"], {"thickness": solved_image_distance}
         )
@@ -1025,14 +1115,9 @@ class RaytracingApp(App):
                 and self.image_conjugate_mode == "Preset: finite image"
             ):
                 finite_path = self.get_path_from_ui(
-                    without_apertures=False, max_position=None
+                    without_apertures=False, max_position=None, include_image_plane=True
                 )
-                finite_imaging_path = self.get_path_from_ui(
-                    without_apertures=False, max_position=None
-                )
-                back_focus = finite_imaging_path.backFocalLength()
-                if back_focus is not None and isfinite(back_focus) and back_focus > 0:
-                    finite_imaging_path.append(Space(d=back_focus))
+                finite_imaging_path = finite_path
             else:
                 conjugate = user_provided_path.forwardConjugate()
 
@@ -1082,6 +1167,8 @@ class RaytracingApp(App):
             self.coords.create_y_major_ticks()
             self.coords.create_y_major_ticks_labels()
             self.relabel_infinite_x_axis_ends()
+            self.reposition_y_axis_for_infinite_object()
+            self.add_infinite_object_x_marker()
 
             self.calculate_imaging_path_results(finite_imaging_path)
 
@@ -1101,10 +1188,42 @@ class RaytracingApp(App):
             if self.show_apertures:
                 self.create_apertures_labels(display_path)
 
+            if self.object_conjugate_mode == "Preset: object at infinity":
+                self.canvas.widget.tag_raise("conjugates")
+
             if self.show_labels:
                 self.create_object_labels(display_path)
         except Exception:
             traceback.print_exc()
+
+    def system_path_without_image_plane(self):
+        return self.get_path_from_ui(
+            without_apertures=False, max_position=None, include_image_plane=False
+        )
+
+    def solved_image_axis_position(self):
+        system_path = self.system_path_without_image_plane()
+        if self.object_conjugate_mode == "Preset: object at infinity":
+            back_focus = system_path.backFocalLength()
+            if back_focus is None or not isfinite(back_focus):
+                return None
+            return system_path.L + back_focus
+
+        conjugate = system_path.forwardConjugate()
+        if (
+            conjugate.transferMatrix is None
+            or conjugate.d is None
+            or not isfinite(conjugate.d)
+        ):
+            return None
+        return system_path.L + conjugate.d
+
+    def solved_image_thickness(self):
+        system_path = self.system_path_without_image_plane()
+        image_axis_position = self.solved_image_axis_position()
+        if image_axis_position is None or not isfinite(image_axis_position):
+            return None
+        return image_axis_position - system_path.L
 
     def adjust_axes_limits(self, path):
         # half_diameter = (
@@ -1123,8 +1242,22 @@ class RaytracingApp(App):
 
         x_max = max(float(path.L), 1.0)
 
+        solved_image_position = self.solved_image_axis_position()
+        if solved_image_position is not None and isfinite(solved_image_position):
+            x_max = max(x_max, solved_image_position)
+
+        x_min = 0.0
+        if self.object_conjugate_mode == "Preset: object at infinity":
+            x_min = self.infinite_object_plot_min_x(x_max)
+        if solved_image_position is not None and solved_image_position < x_min:
+            x_min = min(x_min, solved_image_position * 1.1)
+
+        x_span = max(x_max - x_min, 1.0)
+        left_padding = max(90.0, min(260.0, x_span * 0.48))
+        right_padding = max(35.0, min(110.0, x_span * 0.18))
+
         self.coords.axes_limits = (
-            (0, x_max),
+            (x_min - left_padding, x_max + right_padding),
             (min(y_min, -half_diameter) * 1.1, max(y_max, half_diameter) * 1.1),
         )
 
@@ -1172,7 +1305,7 @@ class RaytracingApp(App):
         return max(100.0, path.L * 0.5)
 
     def raytraces_to_display(self, path):
-        if self.show_principal_rays and self.object_conjugate_mode != "Preset: object at infinity":
+        if self.show_principal_rays:
             raytraces = []
             principal_ray = path.principalRay()
             if principal_ray is not None:
@@ -1188,7 +1321,7 @@ class RaytracingApp(App):
         return path.traceMany(rays)
 
     def create_all_traces(self, path):
-        if self.show_principal_rays and self.object_conjugate_mode != "Preset: object at infinity":
+        if self.show_principal_rays:
             line_traces = []
             principal_ray = path.principalRay()
             if principal_ray is not None:
@@ -1236,7 +1369,11 @@ class RaytracingApp(App):
 
     def create_conjugate_planes(self, path):
         arrow_width = 10
-        object_z = 0
+        object_z = (
+            self.infinite_object_axis_x()
+            if self.object_conjugate_mode == "Preset: object at infinity"
+            else 0
+        )
         object_height = self.safe_float(self.max_height, 5.0) * 2
         if self.show_principal_rays:
             object_height = path.fieldOfView()
@@ -1253,11 +1390,26 @@ class RaytracingApp(App):
         )
         self.coords.place(canvas_object, position=Point(0, 0))
 
-        conjugate = path.forwardConjugate()
-        if conjugate.transferMatrix is not None:
-            image_z = conjugate.transferMatrix.L
-            magnification = conjugate.transferMatrix.magnification().transverse
-            image_height = magnification * object_height
+        if self.object_conjugate_mode == "Preset: object at infinity":
+            if self.image_conjugate_mode == "Preset: finite image":
+                image_z = path.L
+                image_height = object_height
+            else:
+                image_z = self.solved_image_axis_position()
+                if image_z is not None and isfinite(image_z):
+                    image_height = object_height
+                else:
+                    image_z = None
+        else:
+            conjugate = path.forwardConjugate()
+            if conjugate.transferMatrix is not None:
+                image_z = conjugate.transferMatrix.L
+                magnification = conjugate.transferMatrix.magnification().transverse
+                image_height = magnification * object_height
+            else:
+                image_z = None
+
+        if image_z is not None:
             canvas_image = Arrow(
                 start=Point(image_z, -image_height / 2, basis=basis),
                 end=Point(image_z, image_height / 2, basis=basis),
@@ -1746,6 +1898,12 @@ class RaytracingApp(App):
         if len(finite_points) < 2:
             return []
 
+        if self.object_conjugate_mode == "Preset: object at infinity":
+            left_x = self.infinite_object_axis_x()
+            first_point = finite_points[0]
+            if left_x < first_point.c0:
+                finite_points.insert(0, Point(left_x, first_point.c1, basis=basis))
+
         return [Line(finite_points, tag=("ray"), fill=color, width=2)]
 
     def color_from_hue(self, hue):
@@ -1842,10 +2000,11 @@ class RaytracingApp(App):
                     and element.get("__uuid") == first_real_element.get("__uuid")
                     and object_is_infinite
                 ):
-                    continue
+                    delta = 0.0
                 if element_name == "Image":
                     continue
-                raise ValueError("Infinite thickness is only supported on Object or Image rows.")
+                if not isfinite(delta):
+                    raise ValueError("Infinite thickness is only supported on Object or Image rows.")
             if max_position is not None and z + delta > max_position:
                 delta = max_position - z
             if delta > 0:
@@ -1969,6 +2128,10 @@ path.display(rays=rays)
         """
 
         image_position = imaging_path.L
+        if self.image_conjugate_mode == "Preset: image at infinity":
+            solved_image_position = self.solved_image_axis_position()
+            if solved_image_position is not None:
+                image_position = solved_image_position
         principal_planes = imaging_path.principalPlanePositions(z=0)
 
         object_position_value = "Infinity" if self.object_conjugate_mode == "Preset: object at infinity" else "0.0"
