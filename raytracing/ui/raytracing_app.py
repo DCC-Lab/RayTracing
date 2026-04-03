@@ -667,6 +667,8 @@ class RaytracingApp(App):
 
         self.add_observer(self, "number_of_heights")
         self.add_observer(self, "number_of_angles")
+        self.add_observer(self, "max_height")
+        self.add_observer(self, "max_fan_angle")
         self.add_observer(self, "dont_show_blocked_rays")
         self.add_observer(self, "show_apertures")
         self.add_observer(self, "show_principal_rays")
@@ -1346,16 +1348,7 @@ class RaytracingApp(App):
                 )
 
             if not line_traces:
-                M = self.safe_int(self.number_of_heights, 5)
-                N = self.safe_int(self.number_of_angles, 5)
-                yMax = self.safe_float(self.max_height, 5.0)
-                thetaMax = self.safe_float(self.max_fan_angle, 0.1)
-
-                if M == 1:
-                    yMax = 0
-                if N == 1:
-                    thetaMax = 0
-                rays = UniformRays(yMax=yMax, thetaMax=thetaMax, M=M, N=N)
+                rays = self.input_rays_to_display()
                 self.create_raytraces_lines(path, rays)
                 return
 
@@ -1366,6 +1359,19 @@ class RaytracingApp(App):
         else:
             rays = self.input_rays_to_display()
             self.create_raytraces_lines(path, rays)
+
+    def displayed_image_height(self, path, default_height):
+        image_height = self.visible_image_size(path)
+        if image_height is None:
+            image_height = path.imageSize()
+        if image_height is None:
+            return default_height
+        try:
+            if isfinite(image_height):
+                return image_height
+        except TypeError:
+            pass
+        return default_height
 
     def create_conjugate_planes(self, path):
         arrow_width = 10
@@ -1393,11 +1399,11 @@ class RaytracingApp(App):
         if self.object_conjugate_mode == "Preset: object at infinity":
             if self.image_conjugate_mode == "Preset: finite image":
                 image_z = path.L
-                image_height = object_height
+                image_height = self.displayed_image_height(path, object_height)
             else:
                 image_z = self.solved_image_axis_position()
                 if image_z is not None and isfinite(image_z):
-                    image_height = object_height
+                    image_height = self.displayed_image_height(path, object_height)
                 else:
                     image_z = None
         else:
@@ -1869,12 +1875,16 @@ class RaytracingApp(App):
     def raytraces_to_lines(self, raytraces, basis):
         line_traces = []
 
-        all_initial_y = [raytrace[0].y for raytrace in raytraces]
+        nonempty_raytraces = [raytrace for raytrace in raytraces if raytrace]
+        if not nonempty_raytraces:
+            return line_traces
+
+        all_initial_y = [raytrace[0].y for raytrace in nonempty_raytraces]
         max_y = max(all_initial_y)
         min_y = min(all_initial_y)
 
         with PointDefault(basis=basis):
-            for raytrace in raytraces:
+            for raytrace in nonempty_raytraces:
                 initial_y = raytrace[0].y
                 if float(max_y - min_y) != 0:
                     hue = (initial_y - min_y) / float(max_y - min_y)
