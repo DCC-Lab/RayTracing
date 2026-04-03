@@ -50,6 +50,90 @@ ELEMENT_ALIASES = {
 }
 
 
+LAYOUT_PRESETS = {
+    "Single Lens": [
+        {"element": "Thin Lens", "arguments": "f=100, diameter=25.4", "thickness": 0, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 200, "solve": "*"},
+    ],
+    "2f": [
+        {"element": "Aperture", "arguments": "diameter=25.4", "thickness": 0, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=100, diameter=25.4", "thickness": 200, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 200, "solve": "*"},
+    ],
+    "4f": [
+        {"element": "Thin Lens", "arguments": "f=100, diameter=30", "thickness": 100, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=18", "thickness": 100, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=100, diameter=30", "thickness": 100, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 100, "solve": "*"},
+    ],
+    "Galilean Beam Expander": [
+        {"element": "Aperture", "arguments": "diameter=8", "thickness": 0, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=-25, diameter=14", "thickness": 25, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=100, diameter=40", "thickness": 75, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": "Infinity", "solve": ""},
+    ],
+    "Keplerian Beam Expander": [
+        {"element": "Aperture", "arguments": "diameter=12", "thickness": 0, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=40, diameter=20", "thickness": 40, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=10", "thickness": 40, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=120, diameter=42", "thickness": 120, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": "Infinity", "solve": ""},
+    ],
+    "Cooke Triplet": [
+        {"element": "ThickLens", "arguments": "n=1.69, R1=38.0, R2=150.0, thickness=6.0, diameter=34", "thickness": 7.5, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.67, R1=-28.0, R2=24.0, thickness=2.5, diameter=20", "thickness": 4.0, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=11", "thickness": 10.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.72, R1=65.0, R2=-32.0, thickness=6.5, diameter=30", "thickness": 32.0, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 38.0, "solve": "*"},
+    ],
+    "Double Gauss Lens": [
+        {"element": "ThickLens", "arguments": "n=1.67, R1=55.0, R2=180.0, thickness=7.0, diameter=40", "thickness": 8.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.62, R1=-42.0, R2=28.0, thickness=3.0, diameter=28", "thickness": 4.0, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=18", "thickness": 10.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.62, R1=28.0, R2=-42.0, thickness=3.0, diameter=28", "thickness": 4.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.67, R1=180.0, R2=-55.0, thickness=7.0, diameter=40", "thickness": 28.0, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 48.0, "solve": "*"},
+    ],
+    "Telephoto (Infinity Focus)": [
+        {"element": "ThickLens", "arguments": "n=1.69, R1=140.0, R2=-80.0, thickness=8.0, diameter=42", "thickness": 20.0, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=20", "thickness": 8.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.72, R1=-35.0, R2=140.0, thickness=4.0, diameter=26", "thickness": 55.0, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 12.0, "solve": "*"},
+    ],
+    "Retrofocus Lenses": [
+        {"element": "ThickLens", "arguments": "n=1.61, R1=-65.0, R2=34.0, thickness=7.0, diameter=44", "thickness": 12.0, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=18", "thickness": 20.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.70, R1=42.0, R2=-120.0, thickness=8.0, diameter=34", "thickness": 8.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.72, R1=58.0, R2=-44.0, thickness=6.5, diameter=30", "thickness": 26.0, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 36.0, "solve": "*"},
+    ],
+    "Finite Conjugate Objective": [
+        {"element": "Aperture", "arguments": "diameter=12", "thickness": 0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.72, R1=32.0, R2=-45.0, thickness=5.0, diameter=24", "thickness": 18.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.67, R1=48.0, R2=-120.0, thickness=4.0, diameter=22", "thickness": 6.0, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 140.0, "solve": "*"},
+    ],
+    "Infinite Conjugate Objective": [
+        {"element": "Aperture", "arguments": "diameter=10", "thickness": 0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.74, R1=28.0, R2=-38.0, thickness=4.5, diameter=22", "thickness": 8.0, "solve": ""},
+        {"element": "ThickLens", "arguments": "n=1.69, R1=36.0, R2=-90.0, thickness=4.0, diameter=20", "thickness": 4.0, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 90.0, "solve": "*"},
+    ],
+    "Object-Space Telecentric": [
+        {"element": "Thin Lens", "arguments": "f=80, diameter=32", "thickness": 20, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=12", "thickness": 80, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=120, diameter=34", "thickness": 70, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 120, "solve": "*"},
+    ],
+    "Double-Sided Telecentric": [
+        {"element": "Thin Lens", "arguments": "f=80, diameter=32", "thickness": 20, "solve": ""},
+        {"element": "Aperture", "arguments": "diameter=10", "thickness": 80, "solve": ""},
+        {"element": "Thin Lens", "arguments": "f=80, diameter=32", "thickness": 80, "solve": ""},
+        {"element": "Image", "arguments": "", "thickness": 80, "solve": "*"},
+    ],
+}
+
+
 class ElementCellEditor(CellEntry):
     def create_widget(self, master):
         record = self.tableview.data_source.record(self.item_id)
@@ -294,6 +378,7 @@ class RaytracingApp(App):
         self.image_conjugate_mode = "Preset: finite image"
         self.conjugation_status_message = ""
         self.solver_status_message = ""
+        self.loading_layout_preset = False
 
         self.create_window_widgets()
         self.refresh()
@@ -358,11 +443,26 @@ class RaytracingApp(App):
             self.table_group, row=1, column=0, pady=5, padx=5, sticky="nsew"
         )
 
+        self.layout_preset_variable = StringVar(value="Single Lens")
+        preset_values = list(LAYOUT_PRESETS.keys())
+        preset_width = max(len(name) for name in preset_values) + 2
+        self.layout_preset_menu = ttk.Combobox(
+            self.button_group.widget,
+            textvariable=self.layout_preset_variable,
+            values=preset_values,
+            state="readonly",
+            width=preset_width,
+        )
+        self.layout_preset_menu.grid(
+            row=0, column=0, pady=5, padx=5, sticky="ew"
+        )
+        self.layout_preset_menu.bind("<<ComboboxSelected>>", self.apply_layout_preset)
+
         self.add_lens_button = Button(
             "Add element", user_event_callback=self.click_table_buttons
         )
         self.add_lens_button.grid_into(
-            self.button_group, row=0, column=0, pady=5, padx=5
+            self.button_group, row=0, column=1, pady=5, padx=5
         )
         # self.add_aperture_button = Button(
         #     "Add Aperture", user_event_callback=self.click_table_buttons
@@ -377,15 +477,15 @@ class RaytracingApp(App):
         self.delete_button.grid_into(self.button_group, row=0, column=2, pady=5, padx=5)
 
         self.move_up_button = Button(
-            "⬆", user_event_callback=self.click_table_buttons
+            "▲", user_event_callback=self.click_table_buttons, width=2
         )
-        self.move_up_button.grid_into(self.button_group, row=0, column=3, pady=5, padx=5)
+        self.move_up_button.grid_into(self.button_group, row=0, column=3, pady=5, padx=2)
 
         self.move_down_button = Button(
-            "⬇", user_event_callback=self.click_table_buttons
+            "▼", user_event_callback=self.click_table_buttons, width=2
         )
         self.move_down_button.grid_into(
-            self.button_group, row=0, column=4, pady=5, padx=5
+            self.button_group, row=0, column=4, pady=5, padx=2
         )
 
         self.copy_code_button = Button(
@@ -470,6 +570,7 @@ class RaytracingApp(App):
         # )
         self.tableview.delegate = self
         self.update_variable_row_styles()
+        self.apply_layout_preset()
 
         self.results_tableview = TableView(
             columns_labels={
@@ -772,6 +873,8 @@ class RaytracingApp(App):
         self.refresh()
 
     def source_data_changed(self, tableview):
+        if self.loading_layout_preset:
+            return
         self.normalize_special_rows()
         self.ensure_image_row_last()
         self.update_variable_row_styles()
@@ -1015,6 +1118,57 @@ class RaytracingApp(App):
         if button == self.copy_code_button:
             script = self.get_path_script()
             pyperclip.copy(script)
+
+    def base_object_record(self):
+        return {
+            "element": "Object",
+            "arguments": "",
+            "thickness": "Finite",
+            "solve": "",
+        }
+
+    def image_record_template(self):
+        return {
+            "element": "Image",
+            "arguments": "",
+            "thickness": 200,
+            "solve": "*",
+        }
+
+    def apply_layout_preset(self, event=None):
+        preset_name = self.layout_preset_variable.get()
+        if preset_name not in LAYOUT_PRESETS:
+            return
+
+        self.tableview.dismiss_active_editors()
+        self.loading_layout_preset = True
+        try:
+            for item_id in list(self.tableview.items_ids()):
+                self.tableview.data_source.remove_record(item_id)
+
+            object_record = self.base_object_record()
+            if preset_name in {
+                "Telephoto (Infinity Focus)",
+                "Galilean Beam Expander",
+                "Keplerian Beam Expander",
+                "Infinite Conjugate Objective",
+            }:
+                object_record["thickness"] = "Infinity"
+            self.tableview.data_source.append_record(object_record)
+            for row in LAYOUT_PRESETS[preset_name]:
+                self.tableview.data_source.append_record(dict(row))
+
+            if self.ordered_table_records()[-1].get("element") != "Image":
+                self.tableview.data_source.append_record(self.image_record_template())
+        finally:
+            self.loading_layout_preset = False
+
+        self.layout_preset_menu.set(preset_name)
+        self.normalize_special_rows()
+        self.ensure_image_row_last()
+        self.update_variable_row_styles()
+        self.solver_status_message = f"Loaded {preset_name} layout preset."
+        self.refresh()
 
     def click_table_buttons(self, event, button):
         path = self.get_path_from_ui(
@@ -1988,6 +2142,7 @@ class RaytracingApp(App):
         z = 0
         ordered_records = self.ordered_table_records()
         first_real_element = self.first_real_element_record()
+        consumed_infinite_first_real_element = False
         object_is_infinite = (
             self.object_record() is not None
             and self.parse_thickness(self.object_record().get("thickness", "Finite")) == float("inf")
@@ -2006,11 +2161,16 @@ class RaytracingApp(App):
             delta = self.parse_thickness(element["thickness"])
             if not isfinite(delta):
                 if (
-                    first_real_element is not None
-                    and element.get("__uuid") == first_real_element.get("__uuid")
-                    and object_is_infinite
+                    object_is_infinite
+                    and not consumed_infinite_first_real_element
+                    and element_name not in {"Object", "Image"}
+                    and (
+                        first_real_element is None
+                        or element.get("__uuid") == first_real_element.get("__uuid")
+                    )
                 ):
                     delta = 0.0
+                    consumed_infinite_first_real_element = True
                 if element_name == "Image":
                     continue
                 if not isfinite(delta):
