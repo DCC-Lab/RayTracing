@@ -539,6 +539,55 @@ class ImagingPath(MatrixGroup):
         else:
             return Stop(None, None)
 
+    def exitPupil(self):
+        """The exit pupil is the image of the aperture stop as seen from image space.
+
+        Returns
+        -------
+         exitPupil : (float,float)
+            the position of the pupil relative to input reference plane
+            (positive means to the right) and its diameter.
+        """
+
+        if not self.hasFiniteApertureDiameter():
+            return Stop(None, None)
+        stop = self.apertureStop()
+        if stop.z is None or stop.diameter is None:
+            return Stop(None, None)
+
+        suffix_path = ImagingPath()
+        z = 0.0
+        epsilon = 1e-9
+
+        for element in self.elements:
+            next_z = z + element.L
+
+            if next_z <= stop.z + epsilon:
+                z = next_z
+                continue
+
+            if z < stop.z - epsilon < next_z:
+                partial_length = next_z - stop.z
+                suffix_path.append(element.transferMatrix(upTo=partial_length))
+            elif z >= stop.z + epsilon:
+                suffix_path.append(element)
+
+            z = next_z
+
+        if suffix_path.D == 0:
+            return Stop(None, None)
+
+        conjugate_distance = -suffix_path.B / suffix_path.D
+        determinant = suffix_path.frontIndex / suffix_path.backIndex
+        magnification = determinant / suffix_path.D
+        if magnification == 0:
+            pupil_diameter = float("+inf")
+        else:
+            pupil_diameter = stop.diameter * abs(magnification)
+
+        pupil_position = stop.z + suffix_path.L + conjugate_distance
+        return Stop(pupil_position, pupil_diameter)
+
     def fieldStop(self):
         """ The field stop is the aperture that limits the image size (or field of view)
         It is possible to have finite diameter elements but
