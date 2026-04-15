@@ -19,11 +19,33 @@ except ImportError as e:
 
 import ast
 import inspect
+from math import sqrt, copysign
 from numpy import linspace, isfinite
 from raytracing import *
 import colorsys
 import pyperclip
 from contextlib import suppress
+
+
+class Polygon(CanvasElement):
+    """A filled polygon. mytk doesn't ship one, so we define a small
+    wrapper that follows the same pattern as mytk's Line / Oval classes
+    but calls Tkinter's create_polygon under the hood. Used for lens
+    bodies bounded by spherical (arc) surfaces and for objective
+    silhouettes.
+    """
+
+    def __init__(self, points=None, basis=None, **kwargs):
+        super().__init__(basis=basis, **kwargs)
+        self.points = points
+
+    def create(self, canvas, position=None):
+        if position is None:
+            position = Point(0, 0)
+        self.canvas = canvas
+        shifted = [(position + p).standard_tuple() for p in self.points]
+        self.id = canvas.widget.create_polygon(shifted, **self._element_kwargs)
+        return self.id
 
 
 class RaytracingApp(App):
@@ -592,10 +614,11 @@ class RaytracingApp(App):
         return f"#{r:02x}{g:02x}{b:02x}"
 
     def create_optical_path(self, path, coords):
-        # Each drawer is responsible for placing all canvas items for one
-        # element type at position z. Add a new element type by adding one
-        # entry here and writing one helper method.
-        drawers = {
+        # Each drawer places all canvas items for one element at position z.
+        # Compound elements (doublets, objectives) are checked first via
+        # isinstance so they're drawn as a single unit instead of being
+        # decomposed into their child surfaces.
+        type_drawers = {
             Lens: self._draw_thin_lens,
             Aperture: self._draw_aperture,
             ThickLens: lambda z, e, c: self._draw_thick_element(z, e, c, Oval),
@@ -604,29 +627,41 @@ class RaytracingApp(App):
 
         z = 0
         for element in path:
-            draw = drawers.get(type(element))
-            if draw is not None:
-                draw(z, element, coords)
+            if isinstance(element, AchromatDoubletLens):
+                self._draw_doublet(z, element, coords)
+            elif isinstance(element, Objective):
+                self._draw_objective(z, element, coords)
+            else:
+                draw = type_drawers.get(type(element))
+                if draw is not None:
+                    draw(z, element, coords)
             z += element.L
 
-    def _draw_aperture_marks(self, z, diameter, coords):
-        thickness = 3
+    def _draw_aperture_marks(self, z_start, z_end, diameter, coords):
+        # Two horizontal lines marking the rim at ±diameter/2 along the
+        # whole z extent of the element. For thin elements pass
+        # z_start == z_end and the marks degenerate to short ticks
+        # (extended ±3 beyond the vertex for visibility). For thick
+        # elements (ThickLens, doublet, slab) the marks span the full
+        # length so the rim reads as a continuous line.
+        overhang = 3
+        half_d = diameter / 2
         for y_sign in (1, -1):
             mark = Line(
                 points=(
-                    Point(-thickness, y_sign * diameter / 2, basis=coords.basis),
-                    Point(thickness, y_sign * diameter / 2, basis=coords.basis),
+                    Point(z_start - overhang, y_sign * half_d, basis=coords.basis),
+                    Point(z_end + overhang, y_sign * half_d, basis=coords.basis),
                 ),
                 fill="black",
                 width=4,
                 tag=("optics"),
             )
-            coords.place(mark, position=Point(z, 0, basis=coords.basis))
+            coords.place(mark, position=Point(0, 0, basis=coords.basis))
 
     def _draw_thin_lens(self, z, element, coords):
         diameter = element.apertureDiameter
         if isfinite(diameter):
-            self._draw_aperture_marks(z, diameter, coords)
+            self._draw_aperture_marks(z, z, diameter, coords)
         else:
             y_lims = self.coords.axes_limits[1]
             diameter = 0.98 * (y_lims[1] - y_lims[0])
@@ -646,12 +681,12 @@ class RaytracingApp(App):
         diameter = element.apertureDiameter
         if not isfinite(diameter):
             diameter = 90
-        self._draw_aperture_marks(z, diameter, coords)
+        self._draw_aperture_marks(z, z, diameter, coords)
 
     def _draw_thick_element(self, z, element, coords, body_class):
         diameter = element.apertureDiameter
         if isfinite(diameter):
-            self._draw_aperture_marks(z, diameter, coords)
+            self._draw_aperture_marks(z, z + element.L, diameter, coords)
         else:
             y_lims = self.coords.axes_limits[1]
             diameter = 0.98 * (y_lims[1] - y_lims[0])
@@ -666,6 +701,143 @@ class RaytracingApp(App):
             tag=("optics"),
         )
         coords.place(body, position=Point(z + element.L / 2, 0, basis=coords.basis))
+
+    def _arc_points(self, z_vertex, R, half_diameter, n_samples=30):
+        # Sample n_samples+1 points along a spherical surface of radius R,
+        # vertex at (z_vertex, 0), running from y=-half_diameter to
+        # y=+half_diameter. R > 0: center of curvature to the right of the
+        # vertex (surface bulges left). R < 0: center to the left (bulges
+        # right). For a flat surface (infinite R), returns just the two
+        # endpoints — the polygon edge is a straight line.
+        if not isfinite(R):
+            return [(z_vertex, -half_diameter), (z_vertex, half_diameter)]
+
+        # A spherical surface cannot be wider than its own diameter (2|R|);
+        # clamp so we don't take sqrt of a negative number for over-sized
+        # lenses. The 0.999 keeps us strictly inside the sphere.
+        if half_diameter >= abs(R):
+            half_diameter = abs(R) * 0.999
+
+        points = []
+        for i in range(n_samples + 1):
+            y = -half_diameter + i * (2 * half_diameter) / n_samples
+            # On the sphere centered at (z_vertex + R, 0):
+            #   (z - (z_vertex + R))**2 + y**2 = R**2
+            #   z = z_vertex + R - sign(R) * sqrt(R**2 - y**2)
+            z = z_vertex + R - copysign(sqrt(R * R - y * y), R)
+            points.append((z, y))
+        return points
+
+    def _lens_body_points(self, z_front, R_front, z_back, R_back, half_diameter):
+        # Closed polygon for the glass between two spherical surfaces:
+        # walk the front surface bottom → top, across the top rim, down
+        # the back surface, across the bottom rim, close.
+        #
+        # Each of the four corners (where an arc meets a rim) is
+        # duplicated 3x. Under smooth=True Tk's Bezier smoothing passes
+        # through repeated points without curving them, which keeps the
+        # top/bottom rims straight while the arcs stay smooth. Without
+        # the repeats, the rim segments get bent into curves too.
+        front = self._arc_points(z_front, R_front, half_diameter)
+        back = list(reversed(self._arc_points(z_back, R_back, half_diameter)))
+        pts = (
+            [front[0]] * 3 +       # pin bottom-front corner
+            front[1:-1] +
+            [front[-1]] * 3 +      # pin top-front corner
+            [back[0]] * 3 +        # pin top-back corner
+            back[1:-1] +
+            [back[-1]] * 3         # pin bottom-back corner
+        )
+        return [Point(z, y, basis=None) for z, y in pts]
+
+    def _place_lens_body(self, z_front, R_front, z_back, R_back, half_diameter,
+                          fill_color, coords):
+        # Build a Polygon from sampled arc points and place it on the canvas.
+        # Points are constructed with a basis of None then re-parented to
+        # the coordinate system at place-time via the position argument.
+        body_points = self._lens_body_points(
+            z_front, R_front, z_back, R_back, half_diameter
+        )
+        for p in body_points:
+            p.basis = coords.basis
+
+        body = Polygon(
+            points=body_points,
+            basis=coords.basis,
+            fill=fill_color,
+            outline="black",
+            width=2,
+            # smooth=True tells Tk to Bezier-interpolate between the
+            # sampled arc points instead of connecting them with straight
+            # segments, which is what made the polyline approximation
+            # look jagged. splinesteps controls the curve resolution per
+            # segment — 24 is plenty for a 30-sample arc.
+            smooth=True,
+            splinesteps=24,
+            tag=("optics"),
+        )
+        coords.place(body, position=Point(0, 0, basis=coords.basis))
+
+    def _draw_doublet(self, z, element, coords):
+        # AchromatDoubletLens has three surfaces (R1, R2, R3) and two
+        # thicknesses (tc1, tc2). We render the crown (between R1 and R2)
+        # and the flint (between R2 and R3) as two separate filled
+        # polygons. The cement interface at R2 falls naturally as the
+        # shared edge between the two — no separate line needed.
+        diameter = element.apertureDiameter
+        if isfinite(diameter):
+            self._draw_aperture_marks(z, z + element.L, diameter, coords)
+        else:
+            y_lims = self.coords.axes_limits[1]
+            diameter = 0.98 * (y_lims[1] - y_lims[0])
+        half_d = diameter / 2
+
+        z_R1 = z
+        z_R2 = z + element.tc1
+        z_R3 = z + element.tc1 + element.tc2
+
+        self._place_lens_body(
+            z_R1, element.R1, z_R2, element.R2, half_d,
+            self.fill_color_for_index(element.n1), coords,
+        )
+        self._place_lens_body(
+            z_R2, element.R2, z_R3, element.R3, half_d,
+            self.fill_color_for_index(element.n2), coords,
+        )
+
+    def _draw_objective(self, z, element, coords):
+        # Objectives render as a dashed truncated-cone silhouette:
+        # back aperture at the entry plane, narrowing to the front
+        # aperture at (L - workingDistance). This matches the matplotlib
+        # ObjectiveGraphic shape from the main raytracing library.
+        L = element.focusToFocusLength
+        wd = element.workingDistance
+        half_back = element.backAperture / 2
+        half_front = element.frontAperture / 2
+        # NA dictates how steeply the cone narrows toward the front.
+        shoulder = half_back / element.NA if element.NA else 0
+
+        outline = [
+            (z, half_back),
+            (z + L - shoulder, half_back),
+            (z + L - wd, half_front),
+            (z + L - wd, -half_front),
+            (z + L - shoulder, -half_back),
+            (z, -half_back),
+        ]
+        if getattr(element, "isFlipped", False):
+            outline = [(2 * z + L - zp, y) for zp, y in outline]
+
+        body = Polygon(
+            points=[Point(zp, y, basis=coords.basis) for zp, y in outline],
+            basis=coords.basis,
+            fill="",
+            outline="black",
+            width=2,
+            dash=(5, 3),
+            tag=("optics"),
+        )
+        coords.place(body, position=Point(0, 0, basis=coords.basis))
 
     def raytraces_to_lines(self, raytraces, basis):
         line_traces = []
