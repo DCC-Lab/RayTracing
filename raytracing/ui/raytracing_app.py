@@ -333,6 +333,17 @@ class RaytracingApp(App):
             )
             return False
         except Exception as err:
+            # Only the missing-required-args ValueError from
+            # get_path_from_ui carries err.details with the full
+            # signature we need to write "<param>=?" hints. Anything
+            # else (e.g. ast.parse SyntaxError triggered by the "?"
+            # placeholders still sitting in a cell the user hasn't
+            # edited yet) would have crashed trying to access the
+            # nonexistent err.details — just report validation failure
+            # and leave the cell alone.
+            if not hasattr(err, "details"):
+                return True
+
             mandatory_arguments = [
                 f"{k}=?" for k, v in err.details.items() if v is inspect._empty
             ]
@@ -348,10 +359,6 @@ class RaytracingApp(App):
             updated_record["arguments"] = ", ".join(mandatory_arguments)
 
             self.tableview.data_source.update_record(uuid, updated_record)
-            # Dialog.showerror(
-            #     title=f"Error in element argument",
-            #     message=f"The element {uuid} requires at least the following arguments: {', '.join(mandatory_arguments)}",
-            # )
 
             return True
 
