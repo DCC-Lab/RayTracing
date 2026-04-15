@@ -1,11 +1,13 @@
 import sys
 
 try:
-    from tkinter import filedialog
+    import tkinter as tk
+    from tkinter import filedialog, ttk, StringVar
     from mytk import *
     from mytk.base import BaseNotification
     from mytk.canvasview import *
     from mytk.dataviews import *
+    from mytk.entries import CellEntry
     from mytk.vectors import Point, PointDefault, DynamicBasis
     from mytk.labels import Label
     from mytk.notificationcenter import NotificationCenter
@@ -52,6 +54,159 @@ class Polygon(CanvasElement):
         shifted = [(position + p).standard_tuple() for p in self.points]
         self.id = canvas.widget.create_polygon(shifted, **self._element_kwargs)
         return self.id
+
+
+def _collect_element_class_names():
+    """All class names the user can type in the Element column: the
+    primitives shipped by raytracing plus every catalog part from
+    thorlabs, eo, and olympus. Used to populate the autocomplete popup.
+    """
+    from raytracing import thorlabs, eo, olympus
+    names = {
+        "Lens", "ThickLens", "Aperture", "DielectricSlab",
+        "DielectricInterface", "Space", "Matrix",
+        "AchromatDoubletLens", "Objective",
+    }
+    for mod in (thorlabs, eo, olympus):
+        for n, obj in inspect.getmembers(mod, inspect.isclass):
+            if obj.__module__ == mod.__name__:
+                names.add(n)
+    return sorted(names)
+
+
+ELEMENT_CLASS_NAMES = _collect_element_class_names()
+
+
+class AutocompleteCellEntry(CellEntry):
+    """CellEntry with a filter-as-you-type popup listbox.
+
+    Behaviour:
+      - Typing filters the listbox to prefix (and then substring) matches.
+      - No item is pre-selected — Enter on free-form text commits what
+        the user typed verbatim (so "Lens(f=50)" still works).
+      - Pressing Down moves into the listbox; Up/Down navigate from
+        there; Enter then commits the highlighted item instead.
+      - Clicking an item in the listbox commits it immediately.
+      - Escape dismisses the popup and the edit without changes.
+    """
+
+    def __init__(self, *args, choices=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.choices = choices or []
+        self.popup = None
+        self.listbox = None
+        self._user_activated_listbox = False
+
+    def create_widget(self, master):
+        super().create_widget(master)
+        self.widget.bind("<KeyRelease>", self._on_key_release)
+        self.widget.bind("<Down>", self._on_down_arrow)
+        self.widget.bind("<Up>", self._on_up_arrow)
+        self.widget.bind("<Escape>", self._on_escape)
+        # Override the inherited <Return> binding so Enter consults the
+        # listbox selection when the user has navigated into it.
+        self.widget.bind("<Return>", self._on_return)
+        self.widget.after_idle(self._open_popup)
+
+    def _open_popup(self):
+        if self.popup is not None or self.widget is None:
+            return
+        # Force Tk to finish laying the entry widget out so winfo_rootx /
+        # winfo_rooty return its actual screen coordinates instead of 0.
+        self.widget.update_idletasks()
+        self.popup = tk.Toplevel(self.widget)
+        self.popup.wm_overrideredirect(True)  # borderless, no title bar
+        x = self.widget.winfo_rootx()
+        y = self.widget.winfo_rooty() + self.widget.winfo_height()
+        self.popup.wm_geometry(f"+{x}+{y}")
+        self.listbox = tk.Listbox(
+            self.popup, height=12, width=28, activestyle="dotbox"
+        )
+        self.listbox.pack()
+        self.listbox.bind("<Button-1>", self._on_listbox_click)
+        self._refresh_listbox()
+
+    def _close_popup(self):
+        if self.popup is not None:
+            self.popup.destroy()
+        self.popup = None
+        self.listbox = None
+
+    def _refresh_listbox(self):
+        if self.listbox is None:
+            return
+        typed = self.value_variable.get().lower()
+        prefix = [c for c in self.choices if c.lower().startswith(typed)]
+        substr = [c for c in self.choices
+                  if typed and typed in c.lower() and c not in prefix]
+        matches = prefix + substr
+        self.listbox.delete(0, "end")
+        for c in matches:
+            self.listbox.insert("end", c)
+        # Reset the "user navigated into listbox" flag every time the
+        # text changes — typed text always wins on Enter unless the user
+        # explicitly pressed Down after typing.
+        self._user_activated_listbox = False
+
+    def _on_key_release(self, event):
+        if event.keysym in ("Up", "Down", "Return", "Escape"):
+            return
+        self._refresh_listbox()
+
+    def _on_down_arrow(self, event):
+        if self.listbox is None or self.listbox.size() == 0:
+            return "break"
+        cur = self.listbox.curselection()
+        idx = (cur[0] + 1) if cur else 0
+        idx = min(idx, self.listbox.size() - 1)
+        self.listbox.select_clear(0, "end")
+        self.listbox.select_set(idx)
+        self.listbox.see(idx)
+        self._user_activated_listbox = True
+        return "break"
+
+    def _on_up_arrow(self, event):
+        if self.listbox is None or self.listbox.size() == 0:
+            return "break"
+        cur = self.listbox.curselection()
+        idx = (cur[0] - 1) if cur else 0
+        idx = max(idx, 0)
+        self.listbox.select_clear(0, "end")
+        self.listbox.select_set(idx)
+        self.listbox.see(idx)
+        self._user_activated_listbox = True
+        return "break"
+
+    def _on_listbox_click(self, event):
+        idx = self.listbox.nearest(event.y)
+        if idx < 0:
+            return "break"
+        self.value_variable.set(self.listbox.get(idx))
+        self._commit()
+        return "break"
+
+    def _on_return(self, event):
+        if self._user_activated_listbox and self.listbox is not None:
+            cur = self.listbox.curselection()
+            if cur:
+                self.value_variable.set(self.listbox.get(cur[0]))
+        self._commit()
+        return "break"
+
+    def _on_escape(self, event):
+        self._close_popup()
+        self.widget.destroy()
+        return "break"
+
+    def _commit(self):
+        self._close_popup()
+        # Defer to CellEntry's existing commit path (writes back to the
+        # data source, then destroys this widget via FocusOut).
+        super().event_return_callback(None)
+
+    def event_focusout_callback(self, event):
+        self._close_popup()
+        return super().event_focusout_callback(event)
 
 
 class RaytracingApp(App):
@@ -146,6 +301,35 @@ class RaytracingApp(App):
             {"element": "Lens", "arguments": "f=100", "position": 200}
         )
         self.tableview.delegate = self
+        self._install_element_autocomplete()
+
+    def _install_element_autocomplete(self):
+        # Replace TableView.focus_edit_cell with a wrapper that pops up
+        # an autocomplete listbox for the "element" column and falls
+        # back to the default Entry for every other column. The other
+        # columns (Properties, Position) are still plain text.
+        original_focus_edit_cell = self.tableview.focus_edit_cell
+        tableview = self.tableview
+
+        def focus_edit_cell(item_id, column_name):
+            if column_name != "element":
+                original_focus_edit_cell(item_id, column_name)
+                return
+            bbox = tableview.widget.bbox(item_id, column=column_name)
+            entry = AutocompleteCellEntry(
+                tableview=tableview,
+                item_id=item_id,
+                column_name=column_name,
+                choices=ELEMENT_CLASS_NAMES,
+            )
+            entry.place_into(
+                parent=tableview,
+                x=bbox[0] - 2, y=bbox[1] - 2,
+                width=bbox[2] + 4, height=bbox[3] + 4,
+            )
+            entry.widget.focus()
+
+        self.tableview.focus_edit_cell = focus_edit_cell
 
     def _build_results_table(self):
         # Imaging-path results table in the rightmost column.
