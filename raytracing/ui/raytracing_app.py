@@ -908,11 +908,66 @@ path.display(rays=rays)
 
         return script
 
+    # One row per imaging-path metric. Each lambda returns the string to
+    # display in the results table; the inline `if ... else "..."` handles
+    # the "this metric doesn't exist for this path" case (no aperture
+    # stop, no field stop, infinite field of view).
+    RESULT_ROWS = [
+        # Object and image positions
+        ("Object position", lambda p: "0.0 (always)"),
+        ("Image position", lambda p: f"{p.L:.2f}"),
+
+        # Aperture stop and axial ray (require an aperture stop)
+        ("AS position",
+            lambda p: f"{p.apertureStop().z:.2f}"
+                      if p.apertureStop().z is not None else "Inexistent"),
+        ("AS size",
+            lambda p: f"{p.apertureStop().diameter:.2f}"
+                      if p.apertureStop().z is not None else "Inexistent"),
+        ("Axial ray θ_max",
+            lambda p: f"{p.axialRay().theta:.2f} rad / "
+                      f"{p.axialRay().theta * 180 / 3.1416:.2f}°"
+                      if p.apertureStop().z is not None else "Inexistent [no AS]"),
+        ("NA",
+            lambda p: f"{p.NA():.1f}"
+                      if p.apertureStop().z is not None else "Inexistent"),
+
+        # Field stop, vignetting and principal ray (require a field stop)
+        ("FS position",
+            lambda p: f"{p.fieldStop().z:.2f}"
+                      if p.fieldStop().z is not None else "Inexistent"),
+        ("FS size",
+            lambda p: f"{p.fieldStop().diameter:.2f}"
+                      if p.fieldStop().z is not None else "Inexistent"),
+        ("Has vignetting [FS before image]",
+            lambda p: str(p.fieldStop().z < p.L)
+                      if p.fieldStop().z is not None else "Inexistent"),
+        ("Principal ray y_max",
+            lambda p: f"{p.principalRay().y:.2f}"
+                      if p.fieldStop().z is not None else "Inexistent [no FS]"),
+
+        # Field of view, sizes and magnification (require a finite FOV)
+        ("Field of view [FOV]",
+            lambda p: f"{p.fieldOfView():.2f}"
+                      if isfinite(p.fieldOfView()) else "Infinite [no FS]"),
+        ("Object size [same as FOV]",
+            lambda p: f"{p.fieldOfView():.2f}"
+                      if isfinite(p.fieldOfView()) else "Infinite [no FS]"),
+        ("Image size",
+            lambda p: f"{p.imageSize():.2f}"
+                      if isfinite(p.fieldOfView()) else "Infinite [no FS]"),
+        ("Magnification [Transverse]",
+            lambda p: f"{p.magnification()[0]:.2f}"
+                      if isfinite(p.fieldOfView()) else "Inexistent"),
+        ("Magnification [Angular]",
+            lambda p: f"{p.magnification()[1]:.2f}"
+                      if isfinite(p.fieldOfView()) else "Inexistent"),
+    ]
+
     def calculate_imaging_path_results(self, imaging_path):
         data_source = self.results_tableview.data_source
 
-        uuids = data_source.sorted_records_uuids(field="__uuid")
-        for uid in uuids:
+        for uid in data_source.sorted_records_uuids(field="__uuid"):
             data_source.remove_record(uid)
 
         if imaging_path is None:
@@ -920,144 +975,10 @@ path.display(rays=rays)
                 {"property": "Imaging Path", "value": "Non-imaging/infinite conjugate"}
             )
             return
-        """
-        Object and Image positions
-        """
 
-        image_position = imaging_path.L
-
-        data_source.append_record(
-            {"property": "Object position", "value": f"0.0 (always)"}
-        )
-        data_source.append_record(
-            {"property": "Image position", "value": f"{image_position:.2f}"}
-        )
-
-        """
-        Aperture Stop and Axial ray
-        """
-        aperture_stop = imaging_path.apertureStop()
-        has_aperture_stop = False
-
-        if aperture_stop.z is not None:
-            has_aperture_stop = True
-
-        if has_aperture_stop:
+        for label, get_value in self.RESULT_ROWS:
             data_source.append_record(
-                {"property": "AS position", "value": f"{aperture_stop.z:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "AS size", "value": f"{aperture_stop.diameter:.2f}"}
-            )
-
-            axial_ray = imaging_path.axialRay()
-            NA = imaging_path.NA()
-            data_source.append_record(
-                {
-                    "property": "Axial ray θ_max",
-                    "value": f"{axial_ray.theta:.2f} rad / {axial_ray.theta*180/3.1416:.2f}°",
-                }
-            )
-            data_source.append_record(
-                {
-                    "property": "NA",
-                    "value": f"{NA:.1f}",
-                }
-            )
-        else:
-            data_source.append_record(
-                {"property": "AS position", "value": f"Inexistent"}
-            )
-            data_source.append_record({"property": "AS size", "value": f"Inexistent"})
-
-            data_source.append_record(
-                {"property": "Axial ray θ_max", "value": f"Inexistent [no AS]"}
-            )
-            data_source.append_record(
-                {
-                    "property": "NA",
-                    "value": f"Inexistent",
-                }
-            )
-
-        """
-        Field Stop
-        """
-        has_field_stop = False
-        field_stop = imaging_path.fieldStop()
-        if field_stop.z is not None:
-            has_field_stop = True
-
-        if has_field_stop:
-            data_source.append_record(
-                {"property": "FS position", "value": f"{field_stop.z:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "FS size", "value": f"{field_stop.diameter:.2f}"}
-            )
-            if field_stop.z < image_position:
-                data_source.append_record(
-                    {"property": "Has vignetting [FS before image]", "value": f"True"}
-                )
-            else:
-                data_source.append_record(
-                    {"property": "Has vignetting [FS before image]", "value": f"False"}
-                )
-            principal_ray = imaging_path.principalRay()
-            data_source.append_record(
-                {"property": "Principal ray y_max", "value": f"{principal_ray.y:.2f}"}
-            )
-        else:
-            data_source.append_record(
-                {"property": "FS position", "value": f"Inexistent"}
-            )
-            data_source.append_record({"property": "FS size", "value": f"Inexistent"})
-            data_source.append_record(
-                {"property": "Has vignetting [FS before image]", "value": f"Inexistent"}
-            )
-
-            data_source.append_record(
-                {"property": "Principal ray y_max", "value": f"Inexistent [no FS]"}
-            )
-
-        """
-        Object [FOV] and Image Sizes, dicated by finite FOV
-        """
-        fov = imaging_path.fieldOfView()
-
-        if isfinite(fov):
-            mag_tran, mag_angle = imaging_path.magnification()
-
-            data_source.append_record(
-                {"property": "Field of view [FOV]", "value": f"{fov:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Object size [same as FOV]", "value": f"{fov:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Image size", "value": f"{imaging_path.imageSize():.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Transverse]", "value": f"{mag_tran:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Angular]", "value": f"{mag_angle:.2f}"}
-            )
-        else:
-            data_source.append_record(
-                {"property": "Field of view [FOV]", "value": f"Infinite [no FS]"}
-            )
-            data_source.append_record(
-                {"property": "Object size [same as FOV]", "value": f"Infinite [no FS]"}
-            )
-            data_source.append_record(
-                {"property": "Image size", "value": f"Infinite [no FS]"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Transverse]", "value": f"Inexistent"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Angular]", "value": f"Inexistent"}
+                {"property": label, "value": get_value(imaging_path)}
             )
 
         self.results_tableview.sort_column(column_name="property")
