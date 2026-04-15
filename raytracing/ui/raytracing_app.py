@@ -619,160 +619,80 @@ class RaytracingApp(App):
         return f"#{r:02x}{g:02x}{b:02x}"
 
     def create_optical_path(self, path, coords):
+        # Each drawer is responsible for placing all canvas items for one
+        # element type at position z. Add a new element type by adding one
+        # entry here and writing one helper method.
+        drawers = {
+            Lens: self._draw_thin_lens,
+            Aperture: self._draw_aperture,
+            ThickLens: lambda z, e, c: self._draw_thick_element(z, e, c, Oval),
+            DielectricSlab: lambda z, e, c: self._draw_thick_element(z, e, c, Rectangle),
+        }
+
         z = 0
-        thickness = 3
         for element in path:
-            if type(element) is Lens:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    y_lims = self.coords.axes_limits[1]
-                    diameter = 0.98 * (y_lims[1] - y_lims[0])
-                else:
-                    aperture_top = Line(
-                        points=(
-                            Point(-thickness, diameter / 2, basis=coords.basis),
-                            Point(thickness, diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                    aperture_bottom = Line(
-                        points=(
-                            Point(-thickness, -diameter / 2, basis=coords.basis),
-                            Point(thickness, -diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(
-                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
-                    )
-
-                lens = Oval(
-                    size=(5, diameter),
-                    basis=coords.basis,
-                    position_is_center=True,
-                    fill=self.fill_color_for_index(1.5),
-                    outline="black",
-                    width=2,
-                    tag=("optics"),
-                )
-                coords.place(lens, position=Point(z, 0, basis=coords.basis))
-
-            elif type(element) is Aperture:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    diameter = 90
-
-                aperture_top = Line(
-                    points=(
-                        Point(-thickness, diameter / 2, basis=coords.basis),
-                        Point(thickness, diameter / 2, basis=coords.basis),
-                    ),
-                    fill="black",
-                    width=4,
-                    tag=("optics"),
-                )
-                coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                aperture_bottom = Line(
-                    points=(
-                        Point(-thickness, -diameter / 2, basis=coords.basis),
-                        Point(thickness, -diameter / 2, basis=coords.basis),
-                    ),
-                    fill="black",
-                    width=4,
-                    tag=("optics"),
-                )
-                coords.place(aperture_bottom, position=Point(z, 0, basis=coords.basis))
-
-            elif type(element) is ThickLens:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    y_lims = self.coords.axes_limits[1]
-                    diameter = 0.98 * (y_lims[1] - y_lims[0])
-                else:
-                    aperture_top = Line(
-                        points=(
-                            Point(-thickness, diameter / 2, basis=coords.basis),
-                            Point(thickness, diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                    aperture_bottom = Line(
-                        points=(
-                            Point(-thickness, -diameter / 2, basis=coords.basis),
-                            Point(thickness, -diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(
-                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
-                    )
-
-                lens = Oval(
-                    size=(element.L, diameter),
-                    basis=coords.basis,
-                    position_is_center=True,
-                    fill=self.fill_color_for_index(element.n),
-                    outline="black",
-                    width=2,
-                    tag=("optics"),
-                )
-                coords.place(
-                    lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
-                )
-
-            elif type(element) is DielectricSlab:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    y_lims = self.coords.axes_limits[1]
-                    diameter = 0.98 * (y_lims[1] - y_lims[0])
-                else:
-                    aperture_top = Line(
-                        points=(
-                            Point(-thickness, diameter / 2, basis=coords.basis),
-                            Point(thickness, diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                    aperture_bottom = Line(
-                        points=(
-                            Point(-thickness, -diameter / 2, basis=coords.basis),
-                            Point(thickness, -diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(
-                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
-                    )
-
-                lens = Rectangle(
-                    size=(element.L, diameter),
-                    basis=coords.basis,
-                    position_is_center=True,
-                    fill=self.fill_color_for_index(element.n),
-                    outline="black",
-                    width=2,
-                    tag=("optics"),
-                )
-                coords.place(
-                    lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
-                )
-
+            draw = drawers.get(type(element))
+            if draw is not None:
+                draw(z, element, coords)
             z += element.L
+
+    def _draw_aperture_marks(self, z, diameter, coords):
+        thickness = 3
+        for y_sign in (1, -1):
+            mark = Line(
+                points=(
+                    Point(-thickness, y_sign * diameter / 2, basis=coords.basis),
+                    Point(thickness, y_sign * diameter / 2, basis=coords.basis),
+                ),
+                fill="black",
+                width=4,
+                tag=("optics"),
+            )
+            coords.place(mark, position=Point(z, 0, basis=coords.basis))
+
+    def _draw_thin_lens(self, z, element, coords):
+        diameter = element.apertureDiameter
+        if isfinite(diameter):
+            self._draw_aperture_marks(z, diameter, coords)
+        else:
+            y_lims = self.coords.axes_limits[1]
+            diameter = 0.98 * (y_lims[1] - y_lims[0])
+
+        body = Oval(
+            size=(5, diameter),
+            basis=coords.basis,
+            position_is_center=True,
+            fill=self.fill_color_for_index(1.5),
+            outline="black",
+            width=2,
+            tag=("optics"),
+        )
+        coords.place(body, position=Point(z, 0, basis=coords.basis))
+
+    def _draw_aperture(self, z, element, coords):
+        diameter = element.apertureDiameter
+        if not isfinite(diameter):
+            diameter = 90
+        self._draw_aperture_marks(z, diameter, coords)
+
+    def _draw_thick_element(self, z, element, coords, body_class):
+        diameter = element.apertureDiameter
+        if isfinite(diameter):
+            self._draw_aperture_marks(z, diameter, coords)
+        else:
+            y_lims = self.coords.axes_limits[1]
+            diameter = 0.98 * (y_lims[1] - y_lims[0])
+
+        body = body_class(
+            size=(element.L, diameter),
+            basis=coords.basis,
+            position_is_center=True,
+            fill=self.fill_color_for_index(element.n),
+            outline="black",
+            width=2,
+            tag=("optics"),
+        )
+        coords.place(body, position=Point(z + element.L / 2, 0, basis=coords.basis))
 
     def raytraces_to_lines(self, raytraces, basis):
         line_traces = []
