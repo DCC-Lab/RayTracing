@@ -21,7 +21,7 @@ except ImportError as e:
 
 import ast
 import inspect
-from math import sqrt, copysign
+from math import sqrt, copysign, asin, degrees
 from numpy import linspace, isfinite
 from raytracing import *
 # Vendor catalogs — pull every catalog class into the module namespace
@@ -53,6 +53,44 @@ class Polygon(CanvasElement):
         self.canvas = canvas
         shifted = [(position + p).standard_tuple() for p in self.points]
         self.id = canvas.widget.create_polygon(shifted, **self._element_kwargs)
+        return self.id
+
+
+class FilledArc(CanvasElement):
+    """A filled circular arc wrapping Tk's create_arc. Unlike a sampled
+    polygon, this renders as a true circular segment — the same native
+    primitive that makes Oval look smooth — so lens surfaces stay
+    anti-aliased even at extreme zoom.
+
+    Parameters:
+      center — (z, y) of the underlying circle centre, in data coords.
+      radius — circle radius.
+      start  — starting angle in degrees, Tk convention (0° = east).
+      extent — arc span in degrees, positive = counter-clockwise.
+      style  — 'chord' (default), 'pieslice', or 'arc'.
+    """
+
+    def __init__(self, center, radius, start, extent, basis=None, **kwargs):
+        super().__init__(basis=basis, **kwargs)
+        self.center = center
+        self.radius = radius
+        self.start = start
+        self.extent = extent
+
+    def create(self, canvas, position=None):
+        if position is None:
+            position = Point(0, 0)
+        self.canvas = canvas
+        cx, cy = self.center
+        p1 = Point(cx - self.radius, cy - self.radius, basis=self.basis) + position
+        p2 = Point(cx + self.radius, cy + self.radius, basis=self.basis) + position
+        rect = (*p1.standard_tuple(), *p2.standard_tuple())
+        self.id = canvas.widget.create_arc(
+            rect,
+            start=self.start,
+            extent=self.extent,
+            **self._element_kwargs,
+        )
         return self.id
 
 
@@ -892,88 +930,175 @@ class RaytracingApp(App):
         )
         coords.place(body, position=Point(z + element.L / 2, 0, basis=coords.basis))
 
-    def _arc_points(self, z_vertex, R, half_diameter, n_samples=30):
-        # Sample n_samples+1 points along a spherical surface of radius R,
-        # vertex at (z_vertex, 0), running from y=-half_diameter to
-        # y=+half_diameter. R > 0: center of curvature to the right of the
-        # vertex (surface bulges left). R < 0: center to the left (bulges
-        # right). For a flat surface (infinite R), returns just the two
-        # endpoints — the polygon edge is a straight line.
+    def _chord_z(self, z_vertex, R, half_diameter):
+        # Where the spherical surface of radius R with vertex at z_vertex
+        # meets y = ±half_diameter. Surface equation:
+        #   z = z_vertex + R - sign(R) * sqrt(R**2 - y**2)
+        # At y = ±half_diameter that z is the "chord" edge of the surface.
         if not isfinite(R):
-            return [(z_vertex, -half_diameter), (z_vertex, half_diameter)]
-
-        # A spherical surface cannot be wider than its own diameter (2|R|);
-        # clamp so we don't take sqrt of a negative number for over-sized
-        # lenses. The 0.999 keeps us strictly inside the sphere.
+            return z_vertex
         if half_diameter >= abs(R):
             half_diameter = abs(R) * 0.999
-
-        points = []
-        for i in range(n_samples + 1):
-            y = -half_diameter + i * (2 * half_diameter) / n_samples
-            # On the sphere centered at (z_vertex + R, 0):
-            #   (z - (z_vertex + R))**2 + y**2 = R**2
-            #   z = z_vertex + R - sign(R) * sqrt(R**2 - y**2)
-            z = z_vertex + R - copysign(sqrt(R * R - y * y), R)
-            points.append((z, y))
-        return points
-
-    def _lens_body_points(self, z_front, R_front, z_back, R_back, half_diameter):
-        # Closed polygon for the glass between two spherical surfaces:
-        # walk the front surface bottom → top, across the top rim, down
-        # the back surface, across the bottom rim, close.
-        #
-        # Each of the four corners (where an arc meets a rim) is
-        # duplicated 3x. Under smooth=True Tk's Bezier smoothing passes
-        # through repeated points without curving them, which keeps the
-        # top/bottom rims straight while the arcs stay smooth. Without
-        # the repeats, the rim segments get bent into curves too.
-        front = self._arc_points(z_front, R_front, half_diameter)
-        back = list(reversed(self._arc_points(z_back, R_back, half_diameter)))
-        pts = (
-            [front[0]] * 3 +       # pin bottom-front corner
-            front[1:-1] +
-            [front[-1]] * 3 +      # pin top-front corner
-            [back[0]] * 3 +        # pin top-back corner
-            back[1:-1] +
-            [back[-1]] * 3         # pin bottom-back corner
-        )
-        return [Point(z, y, basis=None) for z, y in pts]
+        sag = abs(R) - sqrt(R * R - half_diameter * half_diameter)
+        return z_vertex + sag if R > 0 else z_vertex - sag
 
     def _place_lens_body(self, z_front, R_front, z_back, R_back, half_diameter,
                           fill_color, coords):
-        # Build a Polygon from sampled arc points and place it on the canvas.
-        # Points are constructed with a basis of None then re-parented to
-        # the coordinate system at place-time via the position argument.
-        body_points = self._lens_body_points(
-            z_front, R_front, z_back, R_back, half_diameter
-        )
-        for p in body_points:
-            p.basis = coords.basis
+        # Render a lens body bounded by two spherical surfaces by splitting
+        # fill from outline:
+        #
+        #   Fill primitives (outline="") — a rectangle between the two
+        #     surface chords and one chord-style arc per surface. The
+        #     arc's fill is glass colour when the surface is convex from
+        #     the body's side (adds the bulge) or background white when
+        #     the surface is concave (carves out the dish). All three
+        #     pieces blend seamlessly because none of them draw an edge.
+        #
+        #   Outline primitives — one arc-style curve per surface (just
+        #     the surface's arc, no chord), plus two horizontal rim
+        #     lines at y = ±half_diameter connecting the two chord
+        #     positions. No spurious line across the middle of the lens.
+        #
+        # Sign convention for R:
+        #   Front surface: R > 0 is convex (bulges away from body, ADD),
+        #                  R < 0 is concave (dishes into body, SUBTRACT).
+        #   Back  surface: R < 0 is convex (ADD), R > 0 is concave.
+        BG = "white"
 
-        body = Polygon(
-            points=body_points,
+        z_f_chord = self._chord_z(z_front, R_front, half_diameter)
+        z_b_chord = self._chord_z(z_back, R_back, half_diameter)
+
+        # --- Fills ---
+        # Each filled primitive takes a 1-px outline in its own fill
+        # colour. Anti-aliasing leaves sub-pixel gaps where two filled
+        # shapes meet; the colour-matched outline bleeds into the seam
+        # and makes it invisible.
+        if z_b_chord > z_f_chord:
+            rect_width = z_b_chord - z_f_chord
+            rect = Rectangle(
+                size=(rect_width, 2 * half_diameter),
+                basis=coords.basis,
+                position_is_center=True,
+                fill=fill_color,
+                outline=fill_color,
+                width=1,
+                tag=("optics"),
+            )
+            coords.place(
+                rect,
+                position=Point(z_f_chord + rect_width / 2, 0, basis=coords.basis),
+            )
+
+        self._place_surface_fill(
+            z_front, R_front, half_diameter, fill_color, BG,
+            is_front=True, coords=coords,
+        )
+        self._place_surface_fill(
+            z_back, R_back, half_diameter, fill_color, BG,
+            is_front=False, coords=coords,
+        )
+
+        # --- Outlines ---
+        self._place_surface_outline(z_front, R_front, half_diameter, coords)
+        self._place_surface_outline(z_back, R_back, half_diameter, coords)
+
+        # Rim lines connecting the two chord positions at y = ±half_diameter.
+        for y_sign in (1, -1):
+            rim = Line(
+                points=(
+                    Point(z_f_chord, y_sign * half_diameter, basis=coords.basis),
+                    Point(z_b_chord, y_sign * half_diameter, basis=coords.basis),
+                ),
+                fill="black",
+                width=2,
+                tag=("optics"),
+            )
+            coords.place(rim, position=Point(0, 0, basis=coords.basis))
+
+    def _place_surface_fill(self, z_vertex, R, half_diameter,
+                              fill_color, bg_color, is_front, coords):
+        # Fill the crescent between the surface's arc and its chord. No
+        # outline — the chord would otherwise appear as a line across
+        # the interior of the lens.
+        if not isfinite(R):
+            return  # flat surface has no crescent to fill
+
+        if half_diameter >= abs(R):
+            half_diameter = abs(R) * 0.999
+
+        theta = degrees(asin(half_diameter / abs(R)))
+        if R > 0:
+            start, extent = 180 - theta, 2 * theta
+            convex_from_body = is_front
+        else:
+            start, extent = -theta, 2 * theta
+            convex_from_body = not is_front
+
+        arc_fill = fill_color if convex_from_body else bg_color
+        crescent = FilledArc(
+            center=(z_vertex + R, 0),
+            radius=abs(R),
+            start=start,
+            extent=extent,
+            style="chord",
+            fill=arc_fill,
+            # Match outline to fill — a 1-px same-colour border closes
+            # anti-alias gaps where the crescent meets the rectangle.
+            outline=arc_fill,
+            width=1,
             basis=coords.basis,
-            fill=fill_color,
-            outline="black",
-            width=2,
-            # smooth=True tells Tk to Bezier-interpolate between the
-            # sampled arc points instead of connecting them with straight
-            # segments, which is what made the polyline approximation
-            # look jagged. splinesteps controls the curve resolution per
-            # segment — 24 is plenty for a 30-sample arc.
-            smooth=True,
-            splinesteps=24,
             tag=("optics"),
         )
-        coords.place(body, position=Point(0, 0, basis=coords.basis))
+        coords.place(crescent, position=Point(0, 0, basis=coords.basis))
+
+    def _place_surface_outline(self, z_vertex, R, half_diameter, coords):
+        # The outline of the surface, drawn as just the curve (arc style,
+        # no chord, no fill). A flat surface (infinite R) is drawn as a
+        # vertical line instead.
+        if not isfinite(R):
+            line = Line(
+                points=(
+                    Point(z_vertex, -half_diameter, basis=coords.basis),
+                    Point(z_vertex, half_diameter, basis=coords.basis),
+                ),
+                fill="black",
+                width=2,
+                tag=("optics"),
+            )
+            coords.place(line, position=Point(0, 0, basis=coords.basis))
+            return
+
+        if half_diameter >= abs(R):
+            half_diameter = abs(R) * 0.999
+
+        theta = degrees(asin(half_diameter / abs(R)))
+        if R > 0:
+            start, extent = 180 - theta, 2 * theta
+        else:
+            start, extent = -theta, 2 * theta
+
+        outline = FilledArc(
+            center=(z_vertex + R, 0),
+            radius=abs(R),
+            start=start,
+            extent=extent,
+            style="arc",
+            outline="black",
+            width=2,
+            basis=coords.basis,
+            tag=("optics"),
+        )
+        coords.place(outline, position=Point(0, 0, basis=coords.basis))
 
     def _draw_doublet(self, z, element, coords):
         # AchromatDoubletLens has three surfaces (R1, R2, R3) and two
-        # thicknesses (tc1, tc2). We render the crown (between R1 and R2)
-        # and the flint (between R2 and R3) as two separate filled
-        # polygons. The cement interface at R2 falls naturally as the
-        # shared edge between the two — no separate line needed.
+        # thicknesses (tc1, tc2). Render the crown (between R1 and R2)
+        # and the flint (between R2 and R3) as two separate bodies.
+        #
+        # The flint is rendered FIRST so the crown's R2 convex bulge —
+        # drawn afterwards in crown glass — paints over any "white"
+        # carve-out the flint may have left there. The cement
+        # interface at R2 thus reads as the crown's side edge.
         diameter = element.apertureDiameter
         if isfinite(diameter):
             self._draw_aperture_marks(z, z + element.L, diameter, coords)
@@ -987,12 +1112,12 @@ class RaytracingApp(App):
         z_R3 = z + element.tc1 + element.tc2
 
         self._place_lens_body(
-            z_R1, element.R1, z_R2, element.R2, half_d,
-            self.fill_color_for_index(element.n1), coords,
-        )
-        self._place_lens_body(
             z_R2, element.R2, z_R3, element.R3, half_d,
             self.fill_color_for_index(element.n2), coords,
+        )
+        self._place_lens_body(
+            z_R1, element.R1, z_R2, element.R2, half_d,
+            self.fill_color_for_index(element.n1), coords,
         )
 
     def _draw_objective(self, z, element, coords):
