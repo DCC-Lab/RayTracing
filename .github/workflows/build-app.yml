@@ -27,7 +27,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          # 3.12 (not 3.11) — mytk warns about a UI quirk in the Tk
+          # bindings shipped with python.org's 3.11 build on macOS
+          # Sonoma. 3.12 ships a Tk that doesn't trip it.
+          python-version: '3.12'
 
       - name: Install Tk (Linux only)
         if: runner.os == 'Linux'
@@ -91,3 +94,35 @@ jobs:
         with:
           files: artifacts/*
           fail_on_unmatched_files: false
+
+  pypi:
+    # Done here (not in pythonpublish.yml) because GitHub does not fire
+    # downstream `release` events for releases created with GITHUB_TOKEN,
+    # so the softprops action above can't trigger a separate publish
+    # workflow. Keeping everything in one workflow side-steps that.
+    name: Publish to PyPI
+    needs: release
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # setuptools_scm needs full history + tags
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: twine upload dist/*
