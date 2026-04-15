@@ -651,7 +651,7 @@ class RaytracingApp(App):
         # (extended ±3 beyond the vertex for visibility). For thick
         # elements (ThickLens, doublet, slab) the marks span the full
         # length so the rim reads as a continuous line.
-        overhang = 3
+        overhang = min(3, abs(z_start - z_end))
         half_d = diameter / 2
         for y_sign in (1, -1):
             mark = Line(
