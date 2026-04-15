@@ -83,6 +83,31 @@ consider `--icon app.ico` to set the executable icon. For a proper
 installer, wrap the `dist/Raytracing` folder with
 [Inno Setup](https://jrsoftware.org/isinfo.php) or NSIS.
 
+## Automated builds for all three platforms
+
+`.github/workflows/build-app.yml` builds macOS, Windows, and Linux
+bundles on GitHub Actions. Two triggers:
+
+- **Push a `v*` tag** — builds all three, attaches the zips/tarball to
+  the GitHub Release for that tag.
+- **Actions → "Build standalone app" → "Run workflow"** — manual
+  trigger, downloads available under the run's Artifacts section.
+
+Artifacts produced:
+
+- `Raytracing-macOS.zip` — contains `Raytracing.app` (Apple Silicon).
+  Built on `macos-14`; for Intel Macs, change the matrix entry to
+  `macos-13` or add both.
+- `Raytracing-Windows.zip` — contains a `Raytracing/` folder with
+  `Raytracing.exe` plus its DLLs.
+- `Raytracing-Linux.tar.gz` — contains a `Raytracing/` folder with the
+  executable, built against Ubuntu 22.04's glibc.
+
+The workflow installs Tk on Linux (`python3-tk`), runs the same
+PyInstaller command shown above, and does no code signing. Unsigned
+macOS builds will still prompt Gatekeeper; see the signing section
+above if you need a signed distribution.
+
 ## Alternative: install from PyPI
 
 For technical users, the simplest "deployment" is still:
