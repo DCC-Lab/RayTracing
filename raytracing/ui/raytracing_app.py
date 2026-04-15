@@ -22,6 +22,12 @@ import inspect
 from math import sqrt, copysign
 from numpy import linspace, isfinite
 from raytracing import *
+# Vendor catalogs — pull every catalog class into the module namespace
+# so the table can instantiate parts by name (e.g. "AC254_050_A()" with
+# no args) via globals() lookup in instantiate_element.
+from raytracing.thorlabs import *
+from raytracing.eo import *
+from raytracing.olympus import *
 import colorsys
 import pyperclip
 from contextlib import suppress
@@ -930,6 +936,24 @@ class RaytracingApp(App):
 
         return instance, signature_kwargs
 
+    def _describe_element(self, element):
+        # Short "f=..., diameter=..." string summarising an instantiated
+        # element. Used to populate the Properties cell after a catalog
+        # part is loaded so the user can see what they got. Only the
+        # values that are finite are shown. Both kwarg names match real
+        # constructor params for Lens / AchromatDoubletLens / Objective
+        # so editing one back into the cell behaves predictably.
+        parts = []
+        try:
+            f = element.effectiveFocalLengths()[0]
+            if isfinite(f):
+                parts.append(f"f={f:.1f}")
+        except Exception:
+            pass
+        if hasattr(element, "apertureDiameter") and isfinite(element.apertureDiameter):
+            parts.append(f"diameter={element.apertureDiameter:.1f}")
+        return ", ".join(parts)
+
     def get_path_from_ui(self, without_apertures=True, max_position=None):
         path = ImagingPath()
 
@@ -965,6 +989,19 @@ class RaytracingApp(App):
                 err.details = signature_kwargs
                 err.details["element"] = element
                 raise err
+
+            # Keep the Properties cell in sync with the instantiated
+            # element: after every successful instantiation, re-derive
+            # an "f=..., diameter=..." string and write it back if it
+            # changed. This means switching Element from one catalog
+            # part to another automatically refreshes Properties.
+            # Typed input like "f=50" gets normalised to "f=50.0" on
+            # the first refresh — same value, slightly different form.
+            description = self._describe_element(path_element)
+            if description and description != element["arguments"]:
+                updated = {k: v for k, v in element.items() if not k.startswith("__")}
+                updated["arguments"] = description
+                self.tableview.data_source.update_record(element["__uuid"], updated)
 
             next_z = float(element["position"])
 
