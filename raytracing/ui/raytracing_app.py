@@ -50,6 +50,17 @@ class RaytracingApp(App):
         self.refresh()
 
     def create_window_widgets(self):
+        self._build_element_table()
+        self._build_results_table()
+        self._build_controls_panel()
+        self._build_canvas()
+        self._wire_bindings()
+        self._register_observers()
+        self.initialization_completed = True
+
+    def _build_element_table(self):
+        # Element table on the right side of the window, with its three
+        # action buttons (Add / Delete / Copy script) underneath.
         self.table_group = View(width=300, height=300)
         self.table_group.grid_into(
             self.window, row=0, column=1, pady=5, padx=5, sticky="nsew"
@@ -95,41 +106,23 @@ class RaytracingApp(App):
         self.tableview.data_source.update_field_properties("position", {"type": float})
 
         self.tableview.grid_into(
-            self.table_group,
-            column=0,
-            row=0,
-            columnspan=2,
-            pady=5,
-            padx=5,
-            sticky="nsew",
+            self.table_group, column=0, row=0, columnspan=2,
+            pady=5, padx=5, sticky="nsew",
         )
-        self.tableview.displaycolumns = [
-            "position",
-            "element",
-            "arguments",
-        ]
+        self.tableview.displaycolumns = ["position", "element", "arguments"]
+        widths = {"position": 5, "element": 5, "arguments": 150}
         for column in self.tableview.displaycolumns:
-            widths = {
-                "position": 5,
-                "element": 5,
-                "arguments": 150,
-            }
             self.tableview.widget.column(column, width=widths[column], anchor=W)
 
         self.tableview.data_source.append_record(
-            {
-                "element": "Lens",
-                "arguments": "f=100",
-                "position": 200,
-            }
+            {"element": "Lens", "arguments": "f=100", "position": 200}
         )
         self.tableview.delegate = self
 
+    def _build_results_table(self):
+        # Imaging-path results table in the rightmost column.
         self.results_tableview = TableView(
-            columns_labels={
-                "property": "Property",
-                "value": "Value",
-            }
+            columns_labels={"property": "Property", "value": "Value"}
         )
         self.results_tableview.grid_into(
             self.window, column=2, row=0, pady=5, padx=5, sticky="nsew"
@@ -138,6 +131,10 @@ class RaytracingApp(App):
         self.results_tableview.widget.column("property", width=250)
         self.results_tableview.widget.column("value", width=150)
 
+    def _build_controls_panel(self):
+        # Display controls on the left: an "Input ray" sub-box with the
+        # principal/custom radio + ray-fan parameters, and four checkboxes
+        # for what to draw on the canvas.
         self.controls = Box(label="Display", width=200)
         self.controls.grid_into(
             self.window, column=0, row=0, columnspan=1, pady=5, padx=5, sticky="nsew"
@@ -148,35 +145,25 @@ class RaytracingApp(App):
             self.controls, column=0, row=0, columnspan=1, pady=5, padx=5, sticky="nsew"
         )
 
-        radio_principal, radio_custom = RadioButton.linked_group(
+        # radio_custom is gridded but never referenced again; only
+        # radio_principal needs to live on self for the bindings step.
+        self.radio_principal, radio_custom = RadioButton.linked_group(
             labels_values={"Principal rays": 1, "Custom rays": 0}
         )
         radio_custom.grid_into(
-            self.control_input_rays,
-            column=0,
-            row=0,
-            columnspan=1,
-            pady=5,
-            padx=5,
-            sticky="nsew",
+            self.control_input_rays, column=0, row=0, columnspan=1,
+            pady=5, padx=5, sticky="nsew",
         )
-        radio_principal.grid_into(
-            self.control_input_rays,
-            column=0,
-            row=4,
-            columnspan=1,
-            pady=5,
-            padx=5,
-            sticky="nsew",
+        self.radio_principal.grid_into(
+            self.control_input_rays, column=0, row=4, columnspan=1,
+            pady=5, padx=5, sticky="nsew",
         )
-
-        radio_principal.bind_properties("is_enabled", self, "path_has_field_stop")
+        self.radio_principal.bind_properties("is_enabled", self, "path_has_field_stop")
 
         self.number_heights_label = Label(text="# ray heights:")
         self.number_heights_label.grid_into(
             self.control_input_rays, column=0, row=1, pady=5, padx=5, sticky="e"
         )
-
         self.number_heights_entry = IntEntry(minimum=1, maximum=100, width=3)
         self.number_heights_entry.grid_into(
             self.control_input_rays, column=1, row=1, pady=5, padx=5, sticky="w"
@@ -186,7 +173,6 @@ class RaytracingApp(App):
         self.number_angles_label.grid_into(
             self.control_input_rays, column=0, row=2, pady=5, padx=5, sticky="e"
         )
-
         self.number_angles_entry = IntEntry(minimum=1, maximum=100, width=3)
         self.number_angles_entry.grid_into(
             self.control_input_rays, column=1, row=2, pady=5, padx=5, sticky="w"
@@ -196,7 +182,6 @@ class RaytracingApp(App):
         self.max_heights_label.grid_into(
             self.control_input_rays, column=3, row=1, pady=5, padx=5, sticky="w"
         )
-
         self.max_heights_entry = Entry(character_width=3)
         self.max_heights_entry.grid_into(
             self.control_input_rays, column=4, row=1, pady=5, padx=5, sticky="w"
@@ -206,7 +191,6 @@ class RaytracingApp(App):
         self.fan_angles_label.grid_into(
             self.control_input_rays, column=3, row=2, pady=5, padx=5, sticky="w"
         )
-
         self.fan_angles_entry = Entry(character_width=3)
         self.fan_angles_entry.grid_into(
             self.control_input_rays, column=4, row=2, pady=5, padx=5, sticky="w"
@@ -234,6 +218,9 @@ class RaytracingApp(App):
             self.controls, column=0, row=5, columnspan=4, pady=5, padx=5, sticky="w"
         )
 
+    def _build_canvas(self):
+        # Drawing surface that fills the bottom row of the window, plus
+        # the coordinate system element rays and optics are rendered on.
         self.canvas = CanvasView(width=1000, height=400, background="white")
         self.canvas.grid_into(
             self.window, column=0, row=1, columnspan=3, pady=5, padx=5, sticky="nsew"
@@ -263,55 +250,41 @@ class RaytracingApp(App):
         self.canvas.place(
             self.coords, position=Point(0.05, 0.5, basis=self.canvas.relative_basis)
         )
-        optics_basis = DynamicBasis(self.coords, "basis")
 
-        self.bind_properties(
-            "number_of_heights", self.number_heights_entry, "value_variable"
-        )
-        self.bind_properties(
-            "number_of_angles", self.number_angles_entry, "value_variable"
-        )
-
-        # self.bind_properties('maximum_x', self.maximum_x_entry, 'value_variable')
-        self.bind_properties(
-            "dont_show_blocked_rays", self.blocked_rays_checkbox, "value_variable"
-        )
-        self.bind_properties(
-            "show_apertures", self.apertures_checkbox, "value_variable"
-        )
+    def _wire_bindings(self):
+        # Two-way property bindings: `self.<attr>` <-> widget value.
+        self.bind_properties("number_of_heights", self.number_heights_entry, "value_variable")
+        self.bind_properties("number_of_angles", self.number_angles_entry, "value_variable")
+        self.bind_properties("dont_show_blocked_rays", self.blocked_rays_checkbox, "value_variable")
+        self.bind_properties("show_apertures", self.apertures_checkbox, "value_variable")
         self.bind_properties("show_labels", self.show_labels_checkbox, "value_variable")
-        self.bind_properties("show_principal_rays", radio_principal, "value_variable")
-
-        self.bind_properties(
-            "show_conjugates", self.show_conjugates_checkbox, "value_variable"
-        )
+        self.bind_properties("show_principal_rays", self.radio_principal, "value_variable")
+        self.bind_properties("show_conjugates", self.show_conjugates_checkbox, "value_variable")
         self.bind_properties("max_height", self.max_heights_entry, "value_variable")
         self.bind_properties("max_fan_angle", self.fan_angles_entry, "value_variable")
-        self.number_heights_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.number_angles_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.max_heights_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.fan_angles_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.blocked_rays_checkbox.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
 
-        self.add_observer(self, "number_of_heights")
-        self.add_observer(self, "number_of_angles")
-        self.add_observer(self, "dont_show_blocked_rays")
-        self.add_observer(self, "show_apertures")
-        self.add_observer(self, "show_principal_rays")
-        self.add_observer(self, "show_labels")
-        self.add_observer(self, "show_conjugates")
+        # When "Principal rays" is selected, the custom-ray inputs gray out.
+        for widget in (
+            self.number_heights_entry,
+            self.number_angles_entry,
+            self.max_heights_entry,
+            self.fan_angles_entry,
+            self.blocked_rays_checkbox,
+        ):
+            widget.bind_properties("is_disabled", self, "show_principal_rays")
 
-        self.initialization_completed = True
+    def _register_observers(self):
+        # Any change to one of these triggers a canvas refresh.
+        for prop in (
+            "number_of_heights",
+            "number_of_angles",
+            "dont_show_blocked_rays",
+            "show_apertures",
+            "show_principal_rays",
+            "show_labels",
+            "show_conjugates",
+        ):
+            self.add_observer(self, prop)
 
     def canvas_did_resize(self, notification):
         self.refresh()
