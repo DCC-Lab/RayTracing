@@ -1,7 +1,6 @@
 import sys
 
 try:
-    from tkinter import DoubleVar
     from tkinter import filedialog
     from mytk import *
     from mytk.base import BaseNotification
@@ -18,7 +17,6 @@ except ImportError as e:
     print("                          or: sudo dnf install python3-tkinter (Fedora)", file=sys.stderr)
     sys.exit(1)
 
-import time
 import ast
 import inspect
 from numpy import linspace, isfinite
@@ -69,12 +67,6 @@ class RaytracingApp(App):
         self.add_lens_button.grid_into(
             self.button_group, row=0, column=0, pady=5, padx=5
         )
-        # self.add_aperture_button = Button(
-        #     "Add Aperture", user_event_callback=self.click_table_buttons
-        # )
-        # self.add_aperture_button.grid_into(
-        #     self.button_group, row=0, column=1, pady=5, padx=5
-        # )
 
         self.delete_button = Button(
             "Delete element", user_event_callback=self.click_table_buttons
@@ -131,15 +123,6 @@ class RaytracingApp(App):
                 "position": 200,
             }
         )
-        # self.tableview.data_source.append_record(
-        #     {
-        #         "element": "Aperture",
-        #         "focal_length": "",
-        #         "diameter": 10,
-        #         "position": 400,
-        #         "label": "Camera",
-        #     }
-        # )
         self.tableview.delegate = self
 
         self.results_tableview = TableView(
@@ -393,12 +376,6 @@ class RaytracingApp(App):
             record = self.tableview.data_source.empty_record()
             record["element"] = "Lens"
             record["arguments"] = "f=50, diameter=25.4"
-            record["position"] = position = path.L + 50
-            self.tableview.data_source.append_record(record)
-        elif button == self.add_aperture_button:
-            record = self.tableview.data_source.empty_record()
-            record["element"] = "Aperture"
-            record["arguments"] = "diameter=25.4"
             record["position"] = position = path.L + 50
             self.tableview.data_source.append_record(record)
 
