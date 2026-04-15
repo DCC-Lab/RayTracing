@@ -27,7 +27,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          # 3.12 (not 3.11) — mytk warns about a UI quirk in the Tk
+          # bindings shipped with python.org's 3.11 build on macOS
+          # Sonoma. 3.12 ships a Tk that doesn't trip it.
+          python-version: '3.12'
 
       - name: Install Tk (Linux only)
         if: runner.os == 'Linux'
