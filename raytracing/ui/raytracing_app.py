@@ -251,25 +251,6 @@ class RaytracingApp(App):
             self.controls, column=0, row=5, columnspan=4, pady=5, padx=5, sticky="w"
         )
 
-        self.conjugation_box = Box(label="Conjugation")
-        self.conjugation_box.grid_into(
-            self.controls, column=0, row=6, pady=5, padx=5, sticky="nsew"
-        )
-
-        self.object_conjugate = PopupMenu(
-            menu_items=["Finite object", "Infinite object"]
-        )
-        self.object_conjugate.grid_into(
-            self.conjugation_box, column=0, row=0, pady=5, padx=5, sticky="w"
-        )
-        self.object_conjugate.selection_changed(0)
-
-        self.image_conjugate = PopupMenu(menu_items=["Finite image", "Infinite image"])
-        self.image_conjugate.grid_into(
-            self.conjugation_box, column=1, row=0, pady=5, padx=5, sticky="w"
-        )
-        self.image_conjugate.selection_changed(0)
-
         self.canvas = CanvasView(width=1000, height=400, background="white")
         self.canvas.grid_into(
             self.window, column=0, row=1, columnspan=3, pady=5, padx=5, sticky="nsew"
