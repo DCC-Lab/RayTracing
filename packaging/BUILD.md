@@ -27,6 +27,7 @@ From the repo root:
 
 ```bash
 pyinstaller --windowed --name Raytracing --noconfirm \
+    --collect-submodules PIL \
     --distpath packaging/dist --workpath packaging/build \
     raytracing/ui/raytracing_app.py
 ```
@@ -52,6 +53,11 @@ matplotlib, and scipy dominate).
 - `--distpath` / `--workpath` — keeps build artifacts inside
   `packaging/` instead of scattering `build/` and `dist/` folders at
   the repo root.
+- `--collect-submodules PIL` — `mytk` loads `PIL.ImageDraw` and
+  `PIL.ImageTk` via `importlib.import_module()`, which PyInstaller's
+  static analyzer cannot follow. Without this flag, the bundled app
+  prompts the user to "install the missing module 'ImageDraw'" on
+  first launch.
 
 ## Per-platform notes
 
