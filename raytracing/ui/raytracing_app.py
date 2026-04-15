@@ -524,7 +524,7 @@ class RaytracingApp(App):
         )
 
         self.number_heights_entry = Entry(
-            value=str(self.number_of_heights), character_width=3
+            text=str(self.number_of_heights), character_width=3
         )
         self.number_heights_entry.grid_into(
             self.control_input_rays, column=1, row=1, pady=5, padx=5, sticky="w"
@@ -536,7 +536,7 @@ class RaytracingApp(App):
         )
 
         self.number_angles_entry = Entry(
-            value=str(self.number_of_angles), character_width=3
+            text=str(self.number_of_angles), character_width=3
         )
         self.number_angles_entry.grid_into(
             self.control_input_rays, column=1, row=2, pady=5, padx=5, sticky="w"
@@ -547,7 +547,7 @@ class RaytracingApp(App):
             self.control_input_rays, column=3, row=1, pady=5, padx=5, sticky="w"
         )
 
-        self.max_heights_entry = Entry(value=str(self.max_height), character_width=3)
+        self.max_heights_entry = Entry(text=str(self.max_height), character_width=3)
         self.max_heights_entry.grid_into(
             self.control_input_rays, column=4, row=1, pady=5, padx=5, sticky="w"
         )
@@ -558,7 +558,7 @@ class RaytracingApp(App):
         )
 
         self.fan_angles_entry = Entry(
-            value=str(self.max_fan_angle), character_width=3
+            text=str(self.max_fan_angle), character_width=3
         )
         self.fan_angles_entry.grid_into(
             self.control_input_rays, column=4, row=2, pady=5, padx=5, sticky="w"
