@@ -1018,38 +1018,38 @@ class RaytracingApp(App):
         return path
 
     def get_path_script(self):
+        # Reconstruct the constructor string ("ClassName(args)") from
+        # the element and arguments columns — the same format
+        # get_path_from_ui parses. Works uniformly for primitives
+        # (Lens, Aperture, ThickLens, ...), compound types
+        # (AchromatDoubletLens, Objective) and zero-arg catalog parts
+        # (AC254_050_A, PN_33_922, XLUMPlanFLN20X, ...). The old code
+        # special-cased Lens and Aperture with table columns
+        # (focal_length, label, diameter) that no longer exist, and
+        # crashed with UnboundLocalError on anything else.
         z = 0
-        ordered_records = self.tableview.data_source.records
-        ordered_records.sort(key=lambda e: float(e["position"]))
+        ordered_records = sorted(
+            self.tableview.data_source.records,
+            key=lambda e: float(e["position"]),
+        )
 
-        script = "from raytracing import *\n\npath = ImagingPath()\n"
+        script = (
+            "from raytracing import *\n"
+            "# Vendor catalog imports so part numbers like AC254_050_A\n"
+            "# or PN_33_922 resolve when this script is run standalone.\n"
+            "from raytracing.thorlabs import *\n"
+            "from raytracing.eo import *\n"
+            "from raytracing.olympus import *\n"
+            "\npath = ImagingPath()\n"
+        )
 
         for element in ordered_records:
-            if element["element"] == "Lens":
-                focal_length = float(element["focal_length"])
-                label = element["label"]
-                next_z = float(element["position"])
-                diameter = float("+inf")
-                if element["diameter"] != "":
-                    diameter = float(element["diameter"])
-                script_line = f"path.append(Lens(f={focal_length}, diameter={diameter}, label='{label}'))\n"
-            elif element["element"] == "Aperture":
-                label = element["label"]
-                next_z = float(element["position"])
-                diameter = float("+inf")
-                if element["diameter"] != "":
-                    diameter = float(element["diameter"])
-                path_element = Aperture(diameter=diameter, label=label)
-                script_line = (
-                    f"path.append(Aperture(diameter={diameter}, label='{label}'))\n"
-                )
-            else:
-                print(f"Unable to include unknown element {element['element']}")
-
+            next_z = float(element["position"])
             delta = next_z - z
+            constructor = f"{element['element']}({element['arguments']})"
             script += f"path.append(Space(d={delta}))\n"
-            script += script_line
-            z += delta
+            script += f"path.append({constructor})\n"
+            z = next_z
 
         script += "\n"
 
