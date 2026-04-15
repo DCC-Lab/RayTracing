@@ -17,7 +17,7 @@ name = "raytracing"
 dynamic = ["version"]  
 description = "Simple optical ray tracing library to validate the design of an optical system."
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.6"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 
 authors = [
@@ -40,10 +40,6 @@ classifiers = [
   "Topic :: Education",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.6",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
