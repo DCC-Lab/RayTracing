@@ -1,0 +1,88 @@
+name: Build standalone app
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            artifact: Raytracing-macOS-arm64
+          - os: windows-latest
+            artifact: Raytracing-Windows
+          - os: ubuntu-22.04
+            artifact: Raytracing-Linux
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # setuptools_scm needs full history + tags
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Tk (Linux only)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y python3-tk
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[gui]"
+          pip install pyperclip pillow pyinstaller
+
+      - name: Build with PyInstaller
+        run: pyinstaller --windowed --name Raytracing --noconfirm
+             --distpath packaging/dist --workpath packaging/build
+             raytracing/ui/raytracing_app.py
+
+      - name: Package macOS .app as zip
+        if: runner.os == 'macOS'
+        working-directory: packaging/dist
+        run: ditto -c -k --keepParent Raytracing.app Raytracing-macOS.zip
+
+      - name: Package Windows folder as zip
+        if: runner.os == 'Windows'
+        working-directory: packaging/dist
+        run: Compress-Archive -Path Raytracing -DestinationPath Raytracing-Windows.zip
+
+      - name: Package Linux folder as tar.gz
+        if: runner.os == 'Linux'
+        working-directory: packaging/dist
+        run: tar -czf Raytracing-Linux.tar.gz Raytracing
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            packaging/dist/Raytracing-macOS.zip
+            packaging/dist/Raytracing-Windows.zip
+            packaging/dist/Raytracing-Linux.tar.gz
+          if-no-files-found: ignore
+
+  release:
+    name: Attach to GitHub Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          fail_on_unmatched_files: false
