@@ -196,3 +196,8 @@ fabric.properties
 env-*/
 venv/
 raytracing/_version.py
+
+# PyInstaller build outputs (see packaging/BUILD.md)
+packaging/build/
+packaging/dist/
+build-app/
