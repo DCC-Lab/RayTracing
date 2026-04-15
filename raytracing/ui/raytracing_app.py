@@ -1,7 +1,6 @@
 import sys
 
 try:
-    from tkinter import DoubleVar
     from tkinter import filedialog
     from mytk import *
     from mytk.base import BaseNotification
@@ -18,7 +17,6 @@ except ImportError as e:
     print("                          or: sudo dnf install python3-tkinter (Fedora)", file=sys.stderr)
     sys.exit(1)
 
-import time
 import ast
 import inspect
 from numpy import linspace, isfinite
@@ -52,6 +50,17 @@ class RaytracingApp(App):
         self.refresh()
 
     def create_window_widgets(self):
+        self._build_element_table()
+        self._build_results_table()
+        self._build_controls_panel()
+        self._build_canvas()
+        self._wire_bindings()
+        self._register_observers()
+        self.initialization_completed = True
+
+    def _build_element_table(self):
+        # Element table on the right side of the window, with its three
+        # action buttons (Add / Delete / Copy script) underneath.
         self.table_group = View(width=300, height=300)
         self.table_group.grid_into(
             self.window, row=0, column=1, pady=5, padx=5, sticky="nsew"
@@ -69,12 +78,6 @@ class RaytracingApp(App):
         self.add_lens_button.grid_into(
             self.button_group, row=0, column=0, pady=5, padx=5
         )
-        # self.add_aperture_button = Button(
-        #     "Add Aperture", user_event_callback=self.click_table_buttons
-        # )
-        # self.add_aperture_button.grid_into(
-        #     self.button_group, row=0, column=1, pady=5, padx=5
-        # )
 
         self.delete_button = Button(
             "Delete element", user_event_callback=self.click_table_buttons
@@ -103,50 +106,23 @@ class RaytracingApp(App):
         self.tableview.data_source.update_field_properties("position", {"type": float})
 
         self.tableview.grid_into(
-            self.table_group,
-            column=0,
-            row=0,
-            columnspan=2,
-            pady=5,
-            padx=5,
-            sticky="nsew",
+            self.table_group, column=0, row=0, columnspan=2,
+            pady=5, padx=5, sticky="nsew",
         )
-        self.tableview.displaycolumns = [
-            "position",
-            "element",
-            "arguments",
-        ]
+        self.tableview.displaycolumns = ["position", "element", "arguments"]
+        widths = {"position": 5, "element": 5, "arguments": 150}
         for column in self.tableview.displaycolumns:
-            widths = {
-                "position": 5,
-                "element": 5,
-                "arguments": 150,
-            }
             self.tableview.widget.column(column, width=widths[column], anchor=W)
 
         self.tableview.data_source.append_record(
-            {
-                "element": "Lens",
-                "arguments": "f=100",
-                "position": 200,
-            }
+            {"element": "Lens", "arguments": "f=100", "position": 200}
         )
-        # self.tableview.data_source.append_record(
-        #     {
-        #         "element": "Aperture",
-        #         "focal_length": "",
-        #         "diameter": 10,
-        #         "position": 400,
-        #         "label": "Camera",
-        #     }
-        # )
         self.tableview.delegate = self
 
+    def _build_results_table(self):
+        # Imaging-path results table in the rightmost column.
         self.results_tableview = TableView(
-            columns_labels={
-                "property": "Property",
-                "value": "Value",
-            }
+            columns_labels={"property": "Property", "value": "Value"}
         )
         self.results_tableview.grid_into(
             self.window, column=2, row=0, pady=5, padx=5, sticky="nsew"
@@ -155,6 +131,10 @@ class RaytracingApp(App):
         self.results_tableview.widget.column("property", width=250)
         self.results_tableview.widget.column("value", width=150)
 
+    def _build_controls_panel(self):
+        # Display controls on the left: an "Input ray" sub-box with the
+        # principal/custom radio + ray-fan parameters, and four checkboxes
+        # for what to draw on the canvas.
         self.controls = Box(label="Display", width=200)
         self.controls.grid_into(
             self.window, column=0, row=0, columnspan=1, pady=5, padx=5, sticky="nsew"
@@ -165,35 +145,25 @@ class RaytracingApp(App):
             self.controls, column=0, row=0, columnspan=1, pady=5, padx=5, sticky="nsew"
         )
 
-        radio_principal, radio_custom = RadioButton.linked_group(
+        # radio_custom is gridded but never referenced again; only
+        # radio_principal needs to live on self for the bindings step.
+        self.radio_principal, radio_custom = RadioButton.linked_group(
             labels_values={"Principal rays": 1, "Custom rays": 0}
         )
         radio_custom.grid_into(
-            self.control_input_rays,
-            column=0,
-            row=0,
-            columnspan=1,
-            pady=5,
-            padx=5,
-            sticky="nsew",
+            self.control_input_rays, column=0, row=0, columnspan=1,
+            pady=5, padx=5, sticky="nsew",
         )
-        radio_principal.grid_into(
-            self.control_input_rays,
-            column=0,
-            row=4,
-            columnspan=1,
-            pady=5,
-            padx=5,
-            sticky="nsew",
+        self.radio_principal.grid_into(
+            self.control_input_rays, column=0, row=4, columnspan=1,
+            pady=5, padx=5, sticky="nsew",
         )
-
-        radio_principal.bind_properties("is_enabled", self, "path_has_field_stop")
+        self.radio_principal.bind_properties("is_enabled", self, "path_has_field_stop")
 
         self.number_heights_label = Label(text="# ray heights:")
         self.number_heights_label.grid_into(
             self.control_input_rays, column=0, row=1, pady=5, padx=5, sticky="e"
         )
-
         self.number_heights_entry = IntEntry(minimum=1, maximum=100, width=3)
         self.number_heights_entry.grid_into(
             self.control_input_rays, column=1, row=1, pady=5, padx=5, sticky="w"
@@ -203,7 +173,6 @@ class RaytracingApp(App):
         self.number_angles_label.grid_into(
             self.control_input_rays, column=0, row=2, pady=5, padx=5, sticky="e"
         )
-
         self.number_angles_entry = IntEntry(minimum=1, maximum=100, width=3)
         self.number_angles_entry.grid_into(
             self.control_input_rays, column=1, row=2, pady=5, padx=5, sticky="w"
@@ -213,7 +182,6 @@ class RaytracingApp(App):
         self.max_heights_label.grid_into(
             self.control_input_rays, column=3, row=1, pady=5, padx=5, sticky="w"
         )
-
         self.max_heights_entry = Entry(character_width=3)
         self.max_heights_entry.grid_into(
             self.control_input_rays, column=4, row=1, pady=5, padx=5, sticky="w"
@@ -223,7 +191,6 @@ class RaytracingApp(App):
         self.fan_angles_label.grid_into(
             self.control_input_rays, column=3, row=2, pady=5, padx=5, sticky="w"
         )
-
         self.fan_angles_entry = Entry(character_width=3)
         self.fan_angles_entry.grid_into(
             self.control_input_rays, column=4, row=2, pady=5, padx=5, sticky="w"
@@ -251,6 +218,9 @@ class RaytracingApp(App):
             self.controls, column=0, row=5, columnspan=4, pady=5, padx=5, sticky="w"
         )
 
+    def _build_canvas(self):
+        # Drawing surface that fills the bottom row of the window, plus
+        # the coordinate system element rays and optics are rendered on.
         self.canvas = CanvasView(width=1000, height=400, background="white")
         self.canvas.grid_into(
             self.window, column=0, row=1, columnspan=3, pady=5, padx=5, sticky="nsew"
@@ -280,55 +250,41 @@ class RaytracingApp(App):
         self.canvas.place(
             self.coords, position=Point(0.05, 0.5, basis=self.canvas.relative_basis)
         )
-        optics_basis = DynamicBasis(self.coords, "basis")
 
-        self.bind_properties(
-            "number_of_heights", self.number_heights_entry, "value_variable"
-        )
-        self.bind_properties(
-            "number_of_angles", self.number_angles_entry, "value_variable"
-        )
-
-        # self.bind_properties('maximum_x', self.maximum_x_entry, 'value_variable')
-        self.bind_properties(
-            "dont_show_blocked_rays", self.blocked_rays_checkbox, "value_variable"
-        )
-        self.bind_properties(
-            "show_apertures", self.apertures_checkbox, "value_variable"
-        )
+    def _wire_bindings(self):
+        # Two-way property bindings: `self.<attr>` <-> widget value.
+        self.bind_properties("number_of_heights", self.number_heights_entry, "value_variable")
+        self.bind_properties("number_of_angles", self.number_angles_entry, "value_variable")
+        self.bind_properties("dont_show_blocked_rays", self.blocked_rays_checkbox, "value_variable")
+        self.bind_properties("show_apertures", self.apertures_checkbox, "value_variable")
         self.bind_properties("show_labels", self.show_labels_checkbox, "value_variable")
-        self.bind_properties("show_principal_rays", radio_principal, "value_variable")
-
-        self.bind_properties(
-            "show_conjugates", self.show_conjugates_checkbox, "value_variable"
-        )
+        self.bind_properties("show_principal_rays", self.radio_principal, "value_variable")
+        self.bind_properties("show_conjugates", self.show_conjugates_checkbox, "value_variable")
         self.bind_properties("max_height", self.max_heights_entry, "value_variable")
         self.bind_properties("max_fan_angle", self.fan_angles_entry, "value_variable")
-        self.number_heights_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.number_angles_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.max_heights_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.fan_angles_entry.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
-        self.blocked_rays_checkbox.bind_properties(
-            "is_disabled", self, "show_principal_rays"
-        )
 
-        self.add_observer(self, "number_of_heights")
-        self.add_observer(self, "number_of_angles")
-        self.add_observer(self, "dont_show_blocked_rays")
-        self.add_observer(self, "show_apertures")
-        self.add_observer(self, "show_principal_rays")
-        self.add_observer(self, "show_labels")
-        self.add_observer(self, "show_conjugates")
+        # When "Principal rays" is selected, the custom-ray inputs gray out.
+        for widget in (
+            self.number_heights_entry,
+            self.number_angles_entry,
+            self.max_heights_entry,
+            self.fan_angles_entry,
+            self.blocked_rays_checkbox,
+        ):
+            widget.bind_properties("is_disabled", self, "show_principal_rays")
 
-        self.initialization_completed = True
+    def _register_observers(self):
+        # Any change to one of these triggers a canvas refresh.
+        for prop in (
+            "number_of_heights",
+            "number_of_angles",
+            "dont_show_blocked_rays",
+            "show_apertures",
+            "show_principal_rays",
+            "show_labels",
+            "show_conjugates",
+        ):
+            self.add_observer(self, prop)
 
     def canvas_did_resize(self, notification):
         self.refresh()
@@ -393,12 +349,6 @@ class RaytracingApp(App):
             record = self.tableview.data_source.empty_record()
             record["element"] = "Lens"
             record["arguments"] = "f=50, diameter=25.4"
-            record["position"] = position = path.L + 50
-            self.tableview.data_source.append_record(record)
-        elif button == self.add_aperture_button:
-            record = self.tableview.data_source.empty_record()
-            record["element"] = "Aperture"
-            record["arguments"] = "diameter=25.4"
             record["position"] = position = path.L + 50
             self.tableview.data_source.append_record(record)
 
@@ -642,160 +592,80 @@ class RaytracingApp(App):
         return f"#{r:02x}{g:02x}{b:02x}"
 
     def create_optical_path(self, path, coords):
+        # Each drawer is responsible for placing all canvas items for one
+        # element type at position z. Add a new element type by adding one
+        # entry here and writing one helper method.
+        drawers = {
+            Lens: self._draw_thin_lens,
+            Aperture: self._draw_aperture,
+            ThickLens: lambda z, e, c: self._draw_thick_element(z, e, c, Oval),
+            DielectricSlab: lambda z, e, c: self._draw_thick_element(z, e, c, Rectangle),
+        }
+
         z = 0
-        thickness = 3
         for element in path:
-            if type(element) is Lens:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    y_lims = self.coords.axes_limits[1]
-                    diameter = 0.98 * (y_lims[1] - y_lims[0])
-                else:
-                    aperture_top = Line(
-                        points=(
-                            Point(-thickness, diameter / 2, basis=coords.basis),
-                            Point(thickness, diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                    aperture_bottom = Line(
-                        points=(
-                            Point(-thickness, -diameter / 2, basis=coords.basis),
-                            Point(thickness, -diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(
-                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
-                    )
-
-                lens = Oval(
-                    size=(5, diameter),
-                    basis=coords.basis,
-                    position_is_center=True,
-                    fill=self.fill_color_for_index(1.5),
-                    outline="black",
-                    width=2,
-                    tag=("optics"),
-                )
-                coords.place(lens, position=Point(z, 0, basis=coords.basis))
-
-            elif type(element) is Aperture:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    diameter = 90
-
-                aperture_top = Line(
-                    points=(
-                        Point(-thickness, diameter / 2, basis=coords.basis),
-                        Point(thickness, diameter / 2, basis=coords.basis),
-                    ),
-                    fill="black",
-                    width=4,
-                    tag=("optics"),
-                )
-                coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                aperture_bottom = Line(
-                    points=(
-                        Point(-thickness, -diameter / 2, basis=coords.basis),
-                        Point(thickness, -diameter / 2, basis=coords.basis),
-                    ),
-                    fill="black",
-                    width=4,
-                    tag=("optics"),
-                )
-                coords.place(aperture_bottom, position=Point(z, 0, basis=coords.basis))
-
-            elif type(element) is ThickLens:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    y_lims = self.coords.axes_limits[1]
-                    diameter = 0.98 * (y_lims[1] - y_lims[0])
-                else:
-                    aperture_top = Line(
-                        points=(
-                            Point(-thickness, diameter / 2, basis=coords.basis),
-                            Point(thickness, diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                    aperture_bottom = Line(
-                        points=(
-                            Point(-thickness, -diameter / 2, basis=coords.basis),
-                            Point(thickness, -diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(
-                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
-                    )
-
-                lens = Oval(
-                    size=(element.L, diameter),
-                    basis=coords.basis,
-                    position_is_center=True,
-                    fill=self.fill_color_for_index(element.n),
-                    outline="black",
-                    width=2,
-                    tag=("optics"),
-                )
-                coords.place(
-                    lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
-                )
-
-            elif type(element) is DielectricSlab:
-                diameter = element.apertureDiameter
-                if not isfinite(diameter):
-                    y_lims = self.coords.axes_limits[1]
-                    diameter = 0.98 * (y_lims[1] - y_lims[0])
-                else:
-                    aperture_top = Line(
-                        points=(
-                            Point(-thickness, diameter / 2, basis=coords.basis),
-                            Point(thickness, diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(aperture_top, position=Point(z, 0, basis=coords.basis))
-                    aperture_bottom = Line(
-                        points=(
-                            Point(-thickness, -diameter / 2, basis=coords.basis),
-                            Point(thickness, -diameter / 2, basis=coords.basis),
-                        ),
-                        fill="black",
-                        width=4,
-                        tag=("optics"),
-                    )
-                    coords.place(
-                        aperture_bottom, position=Point(z, 0, basis=coords.basis)
-                    )
-
-                lens = Rectangle(
-                    size=(element.L, diameter),
-                    basis=coords.basis,
-                    position_is_center=True,
-                    fill=self.fill_color_for_index(element.n),
-                    outline="black",
-                    width=2,
-                    tag=("optics"),
-                )
-                coords.place(
-                    lens, position=Point(z + element.L / 2, 0, basis=coords.basis)
-                )
-
+            draw = drawers.get(type(element))
+            if draw is not None:
+                draw(z, element, coords)
             z += element.L
+
+    def _draw_aperture_marks(self, z, diameter, coords):
+        thickness = 3
+        for y_sign in (1, -1):
+            mark = Line(
+                points=(
+                    Point(-thickness, y_sign * diameter / 2, basis=coords.basis),
+                    Point(thickness, y_sign * diameter / 2, basis=coords.basis),
+                ),
+                fill="black",
+                width=4,
+                tag=("optics"),
+            )
+            coords.place(mark, position=Point(z, 0, basis=coords.basis))
+
+    def _draw_thin_lens(self, z, element, coords):
+        diameter = element.apertureDiameter
+        if isfinite(diameter):
+            self._draw_aperture_marks(z, diameter, coords)
+        else:
+            y_lims = self.coords.axes_limits[1]
+            diameter = 0.98 * (y_lims[1] - y_lims[0])
+
+        body = Oval(
+            size=(5, diameter),
+            basis=coords.basis,
+            position_is_center=True,
+            fill=self.fill_color_for_index(1.5),
+            outline="black",
+            width=2,
+            tag=("optics"),
+        )
+        coords.place(body, position=Point(z, 0, basis=coords.basis))
+
+    def _draw_aperture(self, z, element, coords):
+        diameter = element.apertureDiameter
+        if not isfinite(diameter):
+            diameter = 90
+        self._draw_aperture_marks(z, diameter, coords)
+
+    def _draw_thick_element(self, z, element, coords, body_class):
+        diameter = element.apertureDiameter
+        if isfinite(diameter):
+            self._draw_aperture_marks(z, diameter, coords)
+        else:
+            y_lims = self.coords.axes_limits[1]
+            diameter = 0.98 * (y_lims[1] - y_lims[0])
+
+        body = body_class(
+            size=(element.L, diameter),
+            basis=coords.basis,
+            position_is_center=True,
+            fill=self.fill_color_for_index(element.n),
+            outline="black",
+            width=2,
+            tag=("optics"),
+        )
+        coords.place(body, position=Point(z + element.L / 2, 0, basis=coords.basis))
 
     def raytraces_to_lines(self, raytraces, basis):
         line_traces = []
@@ -1011,11 +881,66 @@ path.display(rays=rays)
 
         return script
 
+    # One row per imaging-path metric. Each lambda returns the string to
+    # display in the results table; the inline `if ... else "..."` handles
+    # the "this metric doesn't exist for this path" case (no aperture
+    # stop, no field stop, infinite field of view).
+    RESULT_ROWS = [
+        # Object and image positions
+        ("Object position", lambda p: "0.0 (always)"),
+        ("Image position", lambda p: f"{p.L:.2f}"),
+
+        # Aperture stop and axial ray (require an aperture stop)
+        ("AS position",
+            lambda p: f"{p.apertureStop().z:.2f}"
+                      if p.apertureStop().z is not None else "Inexistent"),
+        ("AS size",
+            lambda p: f"{p.apertureStop().diameter:.2f}"
+                      if p.apertureStop().z is not None else "Inexistent"),
+        ("Axial ray θ_max",
+            lambda p: f"{p.axialRay().theta:.2f} rad / "
+                      f"{p.axialRay().theta * 180 / 3.1416:.2f}°"
+                      if p.apertureStop().z is not None else "Inexistent [no AS]"),
+        ("NA",
+            lambda p: f"{p.NA():.1f}"
+                      if p.apertureStop().z is not None else "Inexistent"),
+
+        # Field stop, vignetting and principal ray (require a field stop)
+        ("FS position",
+            lambda p: f"{p.fieldStop().z:.2f}"
+                      if p.fieldStop().z is not None else "Inexistent"),
+        ("FS size",
+            lambda p: f"{p.fieldStop().diameter:.2f}"
+                      if p.fieldStop().z is not None else "Inexistent"),
+        ("Has vignetting [FS before image]",
+            lambda p: str(p.fieldStop().z < p.L)
+                      if p.fieldStop().z is not None else "Inexistent"),
+        ("Principal ray y_max",
+            lambda p: f"{p.principalRay().y:.2f}"
+                      if p.fieldStop().z is not None else "Inexistent [no FS]"),
+
+        # Field of view, sizes and magnification (require a finite FOV)
+        ("Field of view [FOV]",
+            lambda p: f"{p.fieldOfView():.2f}"
+                      if isfinite(p.fieldOfView()) else "Infinite [no FS]"),
+        ("Object size [same as FOV]",
+            lambda p: f"{p.fieldOfView():.2f}"
+                      if isfinite(p.fieldOfView()) else "Infinite [no FS]"),
+        ("Image size",
+            lambda p: f"{p.imageSize():.2f}"
+                      if isfinite(p.fieldOfView()) else "Infinite [no FS]"),
+        ("Magnification [Transverse]",
+            lambda p: f"{p.magnification()[0]:.2f}"
+                      if isfinite(p.fieldOfView()) else "Inexistent"),
+        ("Magnification [Angular]",
+            lambda p: f"{p.magnification()[1]:.2f}"
+                      if isfinite(p.fieldOfView()) else "Inexistent"),
+    ]
+
     def calculate_imaging_path_results(self, imaging_path):
         data_source = self.results_tableview.data_source
 
-        uuids = data_source.sorted_records_uuids(field="__uuid")
-        for uid in uuids:
+        for uid in data_source.sorted_records_uuids(field="__uuid"):
             data_source.remove_record(uid)
 
         if imaging_path is None:
@@ -1023,144 +948,10 @@ path.display(rays=rays)
                 {"property": "Imaging Path", "value": "Non-imaging/infinite conjugate"}
             )
             return
-        """
-        Object and Image positions
-        """
 
-        image_position = imaging_path.L
-
-        data_source.append_record(
-            {"property": "Object position", "value": f"0.0 (always)"}
-        )
-        data_source.append_record(
-            {"property": "Image position", "value": f"{image_position:.2f}"}
-        )
-
-        """
-        Aperture Stop and Axial ray
-        """
-        aperture_stop = imaging_path.apertureStop()
-        has_aperture_stop = False
-
-        if aperture_stop.z is not None:
-            has_aperture_stop = True
-
-        if has_aperture_stop:
+        for label, get_value in self.RESULT_ROWS:
             data_source.append_record(
-                {"property": "AS position", "value": f"{aperture_stop.z:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "AS size", "value": f"{aperture_stop.diameter:.2f}"}
-            )
-
-            axial_ray = imaging_path.axialRay()
-            NA = imaging_path.NA()
-            data_source.append_record(
-                {
-                    "property": "Axial ray θ_max",
-                    "value": f"{axial_ray.theta:.2f} rad / {axial_ray.theta*180/3.1416:.2f}°",
-                }
-            )
-            data_source.append_record(
-                {
-                    "property": "NA",
-                    "value": f"{NA:.1f}",
-                }
-            )
-        else:
-            data_source.append_record(
-                {"property": "AS position", "value": f"Inexistent"}
-            )
-            data_source.append_record({"property": "AS size", "value": f"Inexistent"})
-
-            data_source.append_record(
-                {"property": "Axial ray θ_max", "value": f"Inexistent [no AS]"}
-            )
-            data_source.append_record(
-                {
-                    "property": "NA",
-                    "value": f"Inexistent",
-                }
-            )
-
-        """
-        Field Stop
-        """
-        has_field_stop = False
-        field_stop = imaging_path.fieldStop()
-        if field_stop.z is not None:
-            has_field_stop = True
-
-        if has_field_stop:
-            data_source.append_record(
-                {"property": "FS position", "value": f"{field_stop.z:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "FS size", "value": f"{field_stop.diameter:.2f}"}
-            )
-            if field_stop.z < image_position:
-                data_source.append_record(
-                    {"property": "Has vignetting [FS before image]", "value": f"True"}
-                )
-            else:
-                data_source.append_record(
-                    {"property": "Has vignetting [FS before image]", "value": f"False"}
-                )
-            principal_ray = imaging_path.principalRay()
-            data_source.append_record(
-                {"property": "Principal ray y_max", "value": f"{principal_ray.y:.2f}"}
-            )
-        else:
-            data_source.append_record(
-                {"property": "FS position", "value": f"Inexistent"}
-            )
-            data_source.append_record({"property": "FS size", "value": f"Inexistent"})
-            data_source.append_record(
-                {"property": "Has vignetting [FS before image]", "value": f"Inexistent"}
-            )
-
-            data_source.append_record(
-                {"property": "Principal ray y_max", "value": f"Inexistent [no FS]"}
-            )
-
-        """
-        Object [FOV] and Image Sizes, dicated by finite FOV
-        """
-        fov = imaging_path.fieldOfView()
-
-        if isfinite(fov):
-            mag_tran, mag_angle = imaging_path.magnification()
-
-            data_source.append_record(
-                {"property": "Field of view [FOV]", "value": f"{fov:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Object size [same as FOV]", "value": f"{fov:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Image size", "value": f"{imaging_path.imageSize():.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Transverse]", "value": f"{mag_tran:.2f}"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Angular]", "value": f"{mag_angle:.2f}"}
-            )
-        else:
-            data_source.append_record(
-                {"property": "Field of view [FOV]", "value": f"Infinite [no FS]"}
-            )
-            data_source.append_record(
-                {"property": "Object size [same as FOV]", "value": f"Infinite [no FS]"}
-            )
-            data_source.append_record(
-                {"property": "Image size", "value": f"Infinite [no FS]"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Transverse]", "value": f"Inexistent"}
-            )
-            data_source.append_record(
-                {"property": "Magnification [Angular]", "value": f"Inexistent"}
+                {"property": label, "value": get_value(imaging_path)}
             )
 
         self.results_tableview.sort_column(column_name="property")
