@@ -501,24 +501,17 @@ class RaytracingApp(App):
 
     def create_all_traces(self, path):
         if self.show_principal_rays:
+            basis = DynamicBasis(self.coords, "basis")
             principal_ray = path.principalRay()
             if principal_ray is not None:
-                principal_raytrace = path.trace(principal_ray)
-                line_trace = self.create_line_from_raytrace(
-                    principal_raytrace,
-                    basis=DynamicBasis(self.coords, "basis"),
-                    color="green",
-                )
-                self.coords.place(line_trace, position=Point(0, 0))
-
-                axial_ray = path.axialRay()
-                axial_raytrace = path.trace(axial_ray)
-                line_trace = self.create_line_from_raytrace(
-                    axial_raytrace,
-                    basis=DynamicBasis(self.coords, "basis"),
-                    color="red",
-                )
-                self.coords.place(line_trace, position=Point(0, 0))
+                for raytrace, color in (
+                    (path.trace(principal_ray), "green"),
+                    (path.trace(path.axialRay()), "red"),
+                ):
+                    for segment in self.create_line_segments_from_raytrace(
+                        raytrace, basis=basis, color=color
+                    ):
+                        self.coords.place(segment, position=Point(0, 0))
 
         else:
             M = int(self.number_of_heights)
