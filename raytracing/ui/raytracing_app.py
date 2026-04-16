@@ -109,6 +109,12 @@ def _collect_element_class_names():
         for n, obj in inspect.getmembers(mod, inspect.isclass):
             if obj.__module__ == mod.__name__:
                 names.add(n)
+                # Catalog parts use underscores (AC254_050_A) but the
+                # real part number has hyphens (AC254-050-A). Include
+                # both so the user can type either in the autocomplete.
+                hyphenated = n.replace("_", "-")
+                if hyphenated != n:
+                    names.add(hyphenated)
     return sorted(names)
 
 
@@ -1311,7 +1317,10 @@ class RaytracingApp(App):
             # invalid Python — strip them so a newly-selected element
             # gets a clean instantiation attempt.
             args = element["arguments"] if "?" not in element["arguments"] else ""
-            constructor_string = f"{element['element']}({args})"
+            # Catalog part numbers use hyphens (AC254-050-A) but Python
+            # class names use underscores (AC254_050_A). Accept both.
+            elem_name = element["element"].replace("-", "_")
+            constructor_string = f"{elem_name}({args})"
             class_name, class_kwargs = self.parse_element_call(constructor_string)
 
             path_element, signature_kwargs = self.instantiate_element(
@@ -1380,7 +1389,8 @@ class RaytracingApp(App):
         for element in ordered_records:
             next_z = float(element["position"])
             delta = next_z - z
-            constructor = f"{element['element']}({element['arguments']})"
+            elem_name = element["element"].replace("-", "_")
+            constructor = f"{elem_name}({element['arguments']})"
             script += f"path.append(Space(d={delta}))\n"
             script += f"path.append({constructor})\n"
             z = next_z
