@@ -52,6 +52,43 @@ jobs:
              --distpath packaging/dist --workpath packaging/build
              raytracing/ui/raytracing_app.py
 
+      - name: Sign and notarize (macOS)
+        if: runner.os == 'macOS' && secrets.MACOS_CERTIFICATE != ''
+        env:
+          CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          IDENTITY: ${{ secrets.MACOS_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
+          TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAMID }}
+          APP_PWD: ${{ secrets.MACOS_NOTARY_PWD }}
+        run: |
+          # Import certificate into a temporary keychain
+          KEYCHAIN=build.keychain
+          KEYCHAIN_PWD=$(uuidgen)
+          security create-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN"
+          security default-keychain -s "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN"
+          echo "$CERTIFICATE" | base64 --decode > cert.p12
+          security import cert.p12 -k "$KEYCHAIN" -P "$CERTIFICATE_PWD" \
+            -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: \
+            -s -k "$KEYCHAIN_PWD" "$KEYCHAIN"
+          rm cert.p12
+
+          # Sign the .app bundle
+          codesign --deep --force --options runtime --timestamp \
+            --sign "$IDENTITY" packaging/dist/Raytracing.app
+
+          # Notarize (Apple checks the binary, typically 1-5 min)
+          ditto -c -k --keepParent packaging/dist/Raytracing.app \
+            /tmp/Raytracing-notarize.zip
+          xcrun notarytool submit /tmp/Raytracing-notarize.zip \
+            --apple-id "$APPLE_ID" --team-id "$TEAM_ID" \
+            --password "$APP_PWD" --wait
+
+          # Staple the ticket so Gatekeeper works offline
+          xcrun stapler staple packaging/dist/Raytracing.app
+
       - name: Package macOS .app as zip
         if: runner.os == 'macOS'
         working-directory: packaging/dist
