@@ -872,7 +872,7 @@ class RaytracingApp(App):
         # (extended ±3 beyond the vertex for visibility). For thick
         # elements (ThickLens, doublet, slab) the marks span the full
         # length so the rim reads as a continuous line.
-        overhang = min(3, abs(z_start - z_end))
+        overhang = 3 if z_start == z_end else 0
         half_d = diameter / 2
         for y_sign in (1, -1):
             mark = Line(
@@ -941,6 +941,19 @@ class RaytracingApp(App):
             half_diameter = abs(R) * 0.999
         sag = abs(R) - sqrt(R * R - half_diameter * half_diameter)
         return z_vertex + sag if R > 0 else z_vertex - sag
+
+    def _vertex_from_chord(self, z_chord, R, half_diameter):
+        # Inverse of _chord_z: given the position of the rim (where the
+        # surface meets y = ±half_diameter), return the vertex position.
+        # Used so that the element's path position z lines up with its
+        # physical rim rather than the surface vertex — otherwise a
+        # convex front surface appears shifted forward by one sag.
+        if not isfinite(R):
+            return z_chord
+        if half_diameter >= abs(R):
+            half_diameter = abs(R) * 0.999
+        sag = abs(R) - sqrt(R * R - half_diameter * half_diameter)
+        return z_chord - sag if R > 0 else z_chord + sag
 
     def _place_lens_body(self, z_front, R_front, z_back, R_back, half_diameter,
                           fill_color, coords):
@@ -1099,10 +1112,9 @@ class RaytracingApp(App):
         # drawn afterwards in crown glass — paints over any "white"
         # carve-out the flint may have left there. The cement
         # interface at R2 thus reads as the crown's side edge.
+        #
         diameter = element.apertureDiameter
-        if isfinite(diameter):
-            self._draw_aperture_marks(z, z + element.L, diameter, coords)
-        else:
+        if not isfinite(diameter):
             y_lims = self.coords.axes_limits[1]
             diameter = 0.98 * (y_lims[1] - y_lims[0])
         half_d = diameter / 2
@@ -1110,6 +1122,15 @@ class RaytracingApp(App):
         z_R1 = z
         z_R2 = z + element.tc1
         z_R3 = z + element.tc1 + element.tc2
+
+        # Aperture marks span the rim-to-rim extent (where the body
+        # actually meets y = ±half_d), not vertex-to-vertex. For a
+        # deeply-curved front surface the chord is well right of the
+        # vertex, so vertex-to-vertex would overshoot.
+        front_rim = self._chord_z(z_R1, element.R1, half_d)
+        back_rim = self._chord_z(z_R3, element.R3, half_d)
+        if isfinite(element.apertureDiameter):
+            self._draw_aperture_marks(front_rim, back_rim, diameter, coords)
 
         self._place_lens_body(
             z_R2, element.R2, z_R3, element.R3, half_d,
@@ -1286,7 +1307,11 @@ class RaytracingApp(App):
         for element in ordered_records:
             path_element = None
 
-            constructor_string = f"{element['element']}({element['arguments']})"
+            # "?" placeholders from a previous validation failure are
+            # invalid Python — strip them so a newly-selected element
+            # gets a clean instantiation attempt.
+            args = element["arguments"] if "?" not in element["arguments"] else ""
+            constructor_string = f"{element['element']}({args})"
             class_name, class_kwargs = self.parse_element_call(constructor_string)
 
             path_element, signature_kwargs = self.instantiate_element(
