@@ -53,7 +53,7 @@ jobs:
              raytracing/ui/raytracing_app.py
 
       - name: Sign and notarize (macOS)
-        if: runner.os == 'macOS' && secrets.MACOS_CERTIFICATE != ''
+        if: runner.os == 'macOS'
         env:
           CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
