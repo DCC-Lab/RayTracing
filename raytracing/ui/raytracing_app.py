@@ -8,6 +8,7 @@ try:
     from mytk.canvasview import *
     from mytk.dataviews import *
     from mytk.entries import CellEntry
+    from mytk.tabulardata import PostponeChangeCalls
     from mytk.vectors import Point, PointDefault, DynamicBasis
     from mytk.labels import Label
     from mytk.notificationcenter import NotificationCenter
@@ -1344,7 +1345,8 @@ class RaytracingApp(App):
             if description and description != element["arguments"]:
                 updated = {k: v for k, v in element.items() if not k.startswith("__")}
                 updated["arguments"] = description
-                self.tableview.data_source.update_record(element["__uuid"], updated)
+                with PostponeChangeCalls(self.tableview.data_source):
+                    self.tableview.data_source.update_record(element["__uuid"], updated)
 
             next_z = float(element["position"])
 
@@ -1352,7 +1354,7 @@ class RaytracingApp(App):
 
             path.append(Space(d=delta))
             path.append(path_element)
-            z += delta
+            z += delta + path_element.L
 
         if max_position is not None:
             if path.L < max_position:
@@ -1484,10 +1486,10 @@ path.display(rays=rays)
                       if isfinite(p.fieldOfView()) else "Infinite [no FS]"),
         ("Magnification [Transverse]",
             lambda p: f"{p.magnification()[0]:.2f}"
-                      if isfinite(p.fieldOfView()) else "Inexistent"),
+                      if p.magnification()[0] is not None else "Inexistent"),
         ("Magnification [Angular]",
             lambda p: f"{p.magnification()[1]:.2f}"
-                      if isfinite(p.fieldOfView()) else "Inexistent"),
+                      if p.magnification()[1] is not None else "Inexistent"),
     ]
 
     def calculate_imaging_path_results(self, imaging_path):
@@ -1503,9 +1505,11 @@ path.display(rays=rays)
             return
 
         for label, get_value in self.RESULT_ROWS:
-            data_source.append_record(
-                {"property": label, "value": get_value(imaging_path)}
-            )
+            try:
+                value = get_value(imaging_path)
+            except Exception:
+                value = "N/A"
+            data_source.append_record({"property": label, "value": value})
 
         self.results_tableview.sort_column(column_name="property")
 
