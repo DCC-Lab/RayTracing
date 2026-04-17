@@ -5,6 +5,7 @@ from .compact import *
 from .interface import *
 from .utils import *
 
+from enum import Enum
 from typing import List
 import multiprocessing
 import sys
@@ -34,6 +35,25 @@ class Magnification(NamedTuple):
 class Conjugate(NamedTuple):
     d: float = None
     transferMatrix:'Matrix' = None
+
+
+class Conjugation(Enum):
+    """The four conjugation types of an ABCD transfer matrix,
+    each corresponding to one matrix element being zero.
+
+    y₂ = A·y₁ + B·θ₁
+    θ₂ = C·y₁ + D·θ₁
+
+    FiniteFinite (B=0):   y₂ depends only on y₁
+    InfiniteFinite (A=0): y₂ depends only on θ₁
+    FiniteInfinite (D=0): θ₂ depends only on y₁
+    Afocal (C=0):         θ₂ depends only on θ₁
+    """
+    FiniteFinite = "FiniteFinite"
+    InfiniteFinite = "InfiniteFinite"
+    FiniteInfinite = "FiniteInfinite"
+    Afocal = "Afocal"
+
 
 # todo: fix docstrings since draw-related methods were removed
 
@@ -1081,9 +1101,83 @@ class Matrix(object):
         A = transverse magnification
         D = angular magnification
         And as usual, C = -1/f (always).
+
+        See Also
+        --------
+        conjugation : Returns the full Conjugation enum type (FiniteFinite,
+            InfiniteFinite, FiniteInfinite, or Afocal).
         """
 
         return isAlmostZero(self.B, self.__epsilon__)
+
+    @property
+    def conjugation(self):
+        """Returns the conjugation type of this matrix as a Conjugation enum,
+        or None if no ABCD element is zero.
+
+        The four types correspond to one matrix element being zero:
+        - FiniteFinite (B=0): object and image are at finite distances
+        - InfiniteFinite (A=0): object at infinity, image at finite distance
+        - FiniteInfinite (D=0): object at finite distance, image at infinity
+        - Afocal (C=0): both object and image at infinity
+
+        Priority order when multiple elements are zero: B, A, D, C.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> m = Space(10) * Lens(5) * Space(10)
+        >>> m.conjugation
+        <Conjugation.FiniteFinite: 'FiniteFinite'>
+        """
+        if isAlmostZero(self.B, self.__epsilon__):
+            return Conjugation.FiniteFinite
+        elif isAlmostZero(self.A, self.__epsilon__):
+            return Conjugation.InfiniteFinite
+        elif isAlmostZero(self.D, self.__epsilon__):
+            return Conjugation.FiniteInfinite
+        elif isAlmostZero(self.C, self.__epsilon__):
+            return Conjugation.Afocal
+        return None
+
+    @property
+    def isAfocal(self):
+        """True if C=0 (no optical power), meaning the system is afocal
+        (e.g. a telescope). This is the complement of hasPower.
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> System4f(10, 5).isAfocal
+        True
+        """
+        return isAlmostZero(self.C, self.__epsilon__)
+
+    @property
+    def isInfiniteFiniteConjugate(self):
+        """True if A=0, meaning an object at infinity is imaged at a
+        finite distance (e.g. a single lens with object at infinity).
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> System2f(10).isInfiniteFiniteConjugate
+        True
+        """
+        return isAlmostZero(self.A, self.__epsilon__)
+
+    @property
+    def isFiniteInfiniteConjugate(self):
+        """True if D=0, meaning an object at a finite distance produces
+        a collimated output (e.g. object at focal point of a lens).
+
+        Examples
+        --------
+        >>> from raytracing import *
+        >>> (Lens(10) * Space(10)).isFiniteInfiniteConjugate
+        True
+        """
+        return isAlmostZero(self.D, self.__epsilon__)
 
     @property
     def hasPower(self):
