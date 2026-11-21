@@ -11,7 +11,13 @@ try:
     from mytk.tabulardata import PostponeChangeCalls
     from mytk.vectors import Point, PointDefault, DynamicBasis
     from mytk.labels import Label
-    from mytk.notificationcenter import NotificationCenter
+    try:
+        # mytk < 1.9 bundled its own NotificationCenter; it must be the one
+        # used here since that is where mytk posts its notifications.
+        from mytk.notificationcenter import NotificationCenter
+    except ImportError:
+        # mytk >= 1.9 uses the standalone `notifcenter` package instead.
+        from notificationcenter import NotificationCenter
 except ImportError as e:
     print(f"Error: {e}", file=sys.stderr)
     print("\nThe graphical interface requires 'mytk' and 'tkinter'.", file=sys.stderr)
