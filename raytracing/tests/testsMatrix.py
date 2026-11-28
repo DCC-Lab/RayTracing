@@ -1160,5 +1160,78 @@ class TestComputationValidation(envtest.RaytracingTestCase):
         self.assertTrue(traces[1][-1].isBlocked)
 
 
+class TestConjugation(envtest.RaytracingTestCase):
+
+    def testConjugationFiniteFiniteBZero(self):
+        m = Space(10) * Lens(5) * Space(10)
+        self.assertEqual(m.conjugation, Conjugation.FiniteFinite)
+
+    def testConjugationInfiniteFiniteAZero(self):
+        m = System2f(10)
+        self.assertEqual(m.conjugation, Conjugation.InfiniteFinite)
+
+    def testConjugationFiniteInfiniteDZero(self):
+        m = Lens(10) * Space(10)
+        self.assertEqual(m.conjugation, Conjugation.FiniteInfinite)
+
+    def testConjugationAfocalCZero(self):
+        m = Space(10)  # free space: A=1, B=10, C=0, D=1
+        self.assertEqual(m.conjugation, Conjugation.Afocal)
+
+    def testConjugationNoneWhenNoElementZero(self):
+        m = Matrix(2, 1, 1, 1)  # det = 2*1 - 1*1 = 1, no element is zero
+        self.assertIsNone(m.conjugation)
+
+    def testConjugationPriorityIdentityMatrix(self):
+        m = Matrix(1, 0, 0, 1)
+        self.assertEqual(m.conjugation, Conjugation.FiniteFinite)
+
+    def testConjugationConsistencyWithIsImaging(self):
+        m = Space(10) * Lens(5) * Space(10)
+        self.assertEqual(m.conjugation == Conjugation.FiniteFinite, m.isImaging)
+
+    def testConjugationConsistencyWithIsImagingFalse(self):
+        m = Matrix(2, 1, 1, 1)  # det=1, no B=0
+        self.assertEqual(m.conjugation == Conjugation.FiniteFinite, m.isImaging)
+
+    def testIsAfocalTrue(self):
+        m = System4f(10, 5)
+        self.assertTrue(m.isAfocal)
+
+    def testIsAfocalFalse(self):
+        m = Lens(10)
+        self.assertFalse(m.isAfocal)
+
+    def testIsAfocalConsistencyWithHasPower(self):
+        m = System4f(10, 5)
+        self.assertEqual(m.isAfocal, not m.hasPower)
+
+    def testIsAfocalConsistencyWithHasPowerLens(self):
+        m = Lens(10)
+        self.assertEqual(m.isAfocal, not m.hasPower)
+
+    def testIsInfiniteFiniteConjugateTrue(self):
+        m = System2f(10)
+        self.assertTrue(m.isInfiniteFiniteConjugate)
+
+    def testIsInfiniteFiniteConjugateFalse(self):
+        m = Matrix(1, 2, 0, 1)
+        self.assertFalse(m.isInfiniteFiniteConjugate)
+
+    def testIsFiniteInfiniteConjugateTrue(self):
+        m = Lens(10) * Space(10)
+        self.assertTrue(m.isFiniteInfiniteConjugate)
+
+    def testIsFiniteInfiniteConjugateFalse(self):
+        m = Matrix(1, 0, 0, 1)
+        self.assertFalse(m.isFiniteInfiniteConjugate)
+
+    def testConjugationLensAt2f(self):
+        f = 10
+        m = Space(2 * f) * Lens(f) * Space(2 * f)
+        self.assertEqual(m.conjugation, Conjugation.FiniteFinite)
+        self.assertTrue(m.isImaging)
+
+
 if __name__ == '__main__':
     envtest.main()
